@@ -3,288 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>JHIOS | INFINITE EXCHANGE</title>
 
 <style>
-
 * {
-    box-sizing:border-box;
+    box-sizing: border-box;
 }
 
 body {
-    margin:0;
-    background:
-    radial-gradient(circle at top, #222 0%, #050505 45%, #000 100%);
-    color:#eee;
-    font-family:Arial, Helvetica, sans-serif;
-    min-height:100vh;
+    margin: 0;
+    background: #000;
+    color: #ccc;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+}
+
+/* Strong Glitch Effect */
+.glitch {
+    position: relative;
+    display: inline-block;
+    font-size: 52px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    color: #fff;
+    animation: glitch 1.2s infinite;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    15% { transform: translate(-4px, 3px); }
+    30% { transform: translate(4px, -3px); }
+    45% { transform: translate(-3px, 2px); }
+    60% { transform: translate(3px, -2px); }
+    75% { transform: translate(0); }
+    100% { transform: translate(0); }
 }
 
 header {
-    padding:60px 20px;
-    text-align:center;
-    border-bottom:1px solid #333;
-}
-
-.logo {
-    font-size:42px;
-    letter-spacing:8px;
-    font-weight:bold;
+    padding: 50px 20px 30px;
+    text-align: center;
+    border-bottom: 2px solid #222;
 }
 
 .tagline {
-    margin-top:20px;
-    color:#aaa;
-    font-size:18px;
+    margin-top: 15px;
+    color: #666;
+    font-size: 16px;
 }
 
 .container {
-    max-width:1100px;
-    margin:auto;
-    padding:40px 20px;
+    max-width: 1100px;
+    margin: auto;
+    padding: 40px 20px;
 }
 
 .section {
-    margin-bottom:50px;
+    margin-bottom: 50px;
 }
 
 .card {
-    background:rgba(255,255,255,0.04);
-    border:1px solid #333;
-    border-radius:15px;
-    padding:25px;
-    margin:15px 0;
-    transition:.3s;
-}
-
-.card:hover {
-    border-color:#777;
-    transform:translateY(-3px);
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 15px 0;
 }
 
 h2 {
-    letter-spacing:3px;
+    color: #fff;
+    letter-spacing: 4px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
 }
 
 .button {
-    display:inline-block;
-    padding:12px 25px;
-    margin-top:15px;
-    background:#eee;
-    color:#000;
-    text-decoration:none;
-    border-radius:30px;
-    font-weight:bold;
+    display: inline-block;
+    padding: 12px 28px;
+    margin-top: 15px;
+    background: #fff;
+    color: #000;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.2s;
 }
 
 .button:hover {
-    background:#aaa;
+    background: #aaa;
 }
 
 .grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.in-progress {
+    background: #1a0000;
+    border: 1px solid #660000;
+    padding: 20px;
+    margin-bottom: 40px;
 }
 
 footer {
-    text-align:center;
-    padding:40px;
-    color:#777;
-    border-top:1px solid #222;
+    text-align: center;
+    padding: 40px 20px;
+    color: #555;
+    border-top: 1px solid #222;
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
 <header>
-
-<div class="logo">
-JHIOS
-</div>
-
-<h1>
-INFINITE EXCHANGE
-</h1>
-
-<div class="tagline">
-Independent Music Vault • AI Creation Platform • Digital Archive
-</div>
-
+    <div class="glitch">JHIOS</div>
+    <h1 class="glitch" style="font-size: 48px; margin: 10px 0;">INFINITE EXCHANGE</h1>
+    <div class="tagline">Independent Music Vault • AI Creation Platform • Digital Archive</div>
 </header>
-
-
 
 <div class="container">
 
+    <!-- SITE IN PROGRESS -->
+    <div class="in-progress">
+        <h2 style="color:#ff4444; border:none;">⚠️ SITE IN PROGRESS</h2>
+        <p>This platform is currently being built live with the community. We're constructing it step by step from the ground up — starting raw and evolving into a fully sovereign space for independent creators.</p>
+        <p><strong>We're building this together.</strong> Expect changes, experiments, and new features over the coming weeks.</p>
+    </div>
 
-<section class="section">
+    <!-- WHY WE'RE BUILDING THIS -->
+    <section class="section">
+        <h2>WHY WE'RE BUILDING THIS</h2>
+        <div class="card">
+            <p>Infinite Exchange exists because too many artists are being limited, filtered, and controlled by corporate platforms.</p>
+            <p>This is not just another streaming site. It is an independent archive and ecosystem where creators can release music, build directly with their audience, and own their infrastructure.</p>
+            <p>We document the journey — the struggle, the creation, and the evolution — because the story behind the sound matters.</p>
+        </div>
+    </section>
 
-<h2>THE EXCHANGE</h2>
+    <!-- CATALOGUE VAULT -->
+    <section class="section">
+        <h2>CATALOGUE VAULT</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>SCR3WFAC3</h3>
+                <p>Experimental electronic / dark future soundscapes.</p>
+                <a class="button" href="#">ENTER VAULT</a>
+            </div>
 
-<div class="card">
+            <div class="card">
+                <h3>Luce Aether</h3>
+                <p>Cinematic, ancestral and atmospheric compositions.</p>
+                <a class="button" href="#">ENTER VAULT</a>
+            </div>
 
-<p>
-Infinite Exchange is a creator-first music ecosystem built for the next era of sound.
-</p>
+            <div class="card">
+                <h3>JHIOS Soundtracks</h3>
+                <p>Custom business themes and AI-powered soundtrack creation.</p>
+                <a class="button" href="#">REQUEST TRACK</a>
+            </div>
+        </div>
+    </section>
 
-<p>
-AI-assisted music, human creativity, independent artists and experimental audio exist here beyond traditional limitations.
-</p>
-
-</div>
-
-</section>
-
-
-
-<section class="section">
-
-<h2>CATALOGUE VAULT</h2>
-
-
-<div class="grid">
-
-
-<div class="card">
-
-<h3>SCR3WFAC3</h3>
-
-<p>
-Experimental electronic / dark future soundscapes.
-</p>
-
-<a class="button" href="#">
-ENTER VAULT
-</a>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>Luce Aether</h3>
-
-<p>
-Cinematic, ancestral and atmospheric compositions.
-</p>
-
-<a class="button" href="#">
-ENTER VAULT
-</a>
-
-</div>
-
-
-
-<div class="card">
-
-<h3>JHIOS Soundtracks</h3>
-
-<p>
-Custom business themes and AI-powered soundtrack creation.
-</p>
-
-<a class="button" href="#">
-REQUEST TRACK
-</a>
+    <!-- SUPPORT -->
+    <section class="section">
+        <h2>SUPPORT THE ARCHIVE</h2>
+        <div class="card">
+            <p>Direct support keeps this space alive and independent.</p>
+            
+            <p><strong>Want to get in touch?</strong></p>
+            <p>Message me on Facebook. To make sure your message reaches me, <strong>comment on one of my recent or pinned posts</strong> instead of sending a direct message.</p>
+            
+            <a class="button" href="https://www.facebook.com/share/1JRrvxGoGV/" target="_blank">
+                MESSAGE ON FACEBOOK
+            </a>
+        </div>
+    </section>
 
 </div>
-
-
-</div>
-
-</section>
-
-
-
-<section class="section">
-
-
-<h2>THE AI MUSIC FRONTIER</h2>
-
-
-<div class="card">
-
-<p>
-Music technology is evolving. Infinite Exchange exists as a space where creators can experiment, publish and connect directly with audiences.
-</p>
-
-<p>
-The future belongs to those who build the infrastructure.
-</p>
-
-</div>
-
-
-</section>
-
-
-
-
-<section class="section">
-
-
-<h2>SUPPORT THE ARCHIVE</h2>
-
-
-<div class="card">
-
-<p>
-Direct support keeps independent creation alive.
-</p>
-
-<a class="button" href="#">
-SUPPORT
-</a>
-
-</div>
-
-
-</section>
-
-
-
-
-<section class="section">
-
-
-<h2>CREATOR NETWORK</h2>
-
-
-<div class="card">
-
-<p>
-Future portal:
-Submit music • Build profiles • Exchange ideas • Collaborate globally
-</p>
-
-</div>
-
-
-</section>
-
-
-
-</div>
-
-
 
 <footer>
-
-JHIOS | INFINITE EXCHANGE<br>
-© 2026 Independent Digital Archive
-
+    JHIOS | INFINITE EXCHANGE — Building in Public<br>
+    © 2026 Independent Digital Archive
 </footer>
 
-
 </body>
-
 </html>
