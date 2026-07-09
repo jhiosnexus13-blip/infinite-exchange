@@ -18,7 +18,6 @@ body {
     min-height: 100vh;
 }
 
-/* Strong Glitch Effect */
 .glitch {
     position: relative;
     display: inline-block;
@@ -111,6 +110,18 @@ footer {
     color: #555;
     border-top: 1px solid #222;
 }
+
+/* Scroll Rotating Image */
+#rotating-mask {
+    max-width: 100%;
+    width: 100%;
+    max-width: 520px;
+    display: block;
+    margin: 30px auto;
+    border-radius: 12px;
+    border: 1px solid #333;
+    transition: transform 0.1s linear;
+}
 </style>
 </head>
 
@@ -122,13 +133,18 @@ footer {
     <div class="tagline">Independent Music Vault • AI Creation Platform • Digital Archive</div>
 </header>
 
+<!-- Scroll Rotating Mask Image -->
+<img src="https://i.postimg.cc/pXvmjb4S/aifaceswap-061825aac99e95860c5008ee7e473bd4.jpg" 
+     alt="SCR3WFAC3 Mask" 
+     id="rotating-mask">
+
 <div class="container">
 
     <!-- SITE IN PROGRESS -->
     <div class="in-progress">
         <h2 style="color:#ff4444; border:none;">⚠️ SITE IN PROGRESS</h2>
-        <p>This platform is currently being built live with the community. We're constructing it step by step from the ground up — starting raw and evolving into a fully sovereign space for independent creators.</p>
-        <p><strong>We're building this together.</strong> Expect changes, experiments, and new features over the coming weeks.</p>
+        <p>This platform is currently being built live with the community. We're constructing it step by step from the ground up.</p>
+        <p><strong>We're building this together.</strong> Expect changes and new features over the coming weeks.</p>
     </div>
 
     <!-- WHY WE'RE BUILDING THIS -->
@@ -186,6 +202,18 @@ footer {
     JHIOS | INFINITE EXCHANGE — Building in Public<br>
     © 2026 Independent Digital Archive
 </footer>
+
+<script>
+// Scroll-based rotation for the mask image
+window.addEventListener('scroll', () => {
+    const img = document.getElementById('rotating-mask');
+    if (!img) return;
+
+    const scrollY = window.scrollY;
+    const rotation = (scrollY / 8) % 360;
+    img.style.transform = `rotate(${rotation}deg)`;
+});
+</script>
 
 </body>
 </html>
