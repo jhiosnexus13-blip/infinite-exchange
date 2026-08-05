@@ -7,11 +7,6 @@
 <meta name="description" content="Independent Music Vault • AI Creation Platform • Digital Archive. Building in public, owned by no one but the artists.">
 
 <style>
-/* ============================================================
-   JHIOS — INFINITE EXCHANGE
-   Design system: terminal-console cyberpunk.
-   ============================================================ */
-
 :root {
   --bg:        #050607;
   --panel:     #0a0e0d;
@@ -263,46 +258,21 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
   color: var(--text-dim);
 }
 
-.vault-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap);
+.yt-embed {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
 }
-.vault-card {
-  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-  padding: 1.5rem; position: relative; transition: border-color 0.25s ease, transform 0.25s ease; overflow: hidden;
-}
-.vault-card:hover { border-color: var(--signal-dim); transform: translateY(-3px); }
-.vault-tag {
-  font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim);
-  letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.75rem;
-}
-.vault-card h3 { font-family: var(--mono); font-size: 1.15rem; margin: 0 0 0.6rem; color: var(--text); }
-.vault-card p { font-size: 0.88rem; color: var(--text-dim); margin: 0 0 1.5rem; min-height: 3em; }
-.vault-link {
-  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--signal); text-decoration: none;
-  display: inline-flex; align-items: center; gap: 0.4rem;
-}
-
-.player-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-.player-art {
-  width: 56px; height: 56px; border-radius: var(--radius);
-  background: linear-gradient(135deg, var(--signal-dim), #04231a);
-  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); color: var(--signal); font-size: 0.7rem;
-}
-.player-meta { flex: 1; min-width: 140px; }
-.player-meta .track { font-family: var(--mono); font-size: 0.85rem; color: var(--text); }
-.player-meta .artist { font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim); }
-.player-controls { display: flex; align-items: center; gap: 0.75rem; }
-.player-btn {
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 1px solid var(--line); background: transparent; color: var(--text);
-  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem;
-}
-.player-btn.play { background: var(--signal); color: #001a10; border-color: var(--signal); }
-.player-note {
-  font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
-  margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--line);
+.yt-embed iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .support-body { text-align: left; }
@@ -338,7 +308,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       <a href="#status">Status</a>
       <a href="#why">Manifesto</a>
       <a href="#roadmap">Road Map</a>
-      <a href="#vault">Vault</a>
+      <a href="#player">Player</a>
       <a href="#support">Join</a>
     </nav>
   </div>
@@ -354,7 +324,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           <h1 class="title">INFINITE<br><span class="glitch-word">EXCHANGE</span></h1>
           <p class="tagline">Independent Music Vault <span class="sep">/</span> AI Creation Platform <span class="sep">/</span> Digital Archive</p>
           <div class="hero-actions">
-            <a href="#roadmap" class="btn btn-primary">THE ROAD MAP</a>
+            <a href="#player" class="btn btn-primary">LISTEN NOW</a>
             <a href="#support" class="btn btn-ghost">JOIN THE LIST</a>
           </div>
         </div>
@@ -440,64 +410,29 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
     </section>
 
-    <section id="vault">
-      <div class="section-head reveal">
-        <span class="idx">03</span>
-        <h2>Catalogue Vault</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="vault-grid reveal">
-        <div class="vault-card">
-          <span class="vault-tag">Vault // 001</span>
-          <h3>SCR3WFAC3</h3>
-          <p>Experimental electronic / dark future soundscapes.</p>
-          <a href="#" class="vault-link">ENTER VAULT →</a>
-        </div>
-        <div class="vault-card">
-          <span class="vault-tag">Vault // 002</span>
-          <h3>Luce Aether</h3>
-          <p>Cinematic, ancestral and atmospheric compositions.</p>
-          <a href="#" class="vault-link">ENTER VAULT →</a>
-        </div>
-        <div class="vault-card">
-          <span class="vault-tag">Vault // 003</span>
-          <h3>JHIOS Soundtracks</h3>
-          <p>Custom business themes and AI-powered soundtrack creation.</p>
-          <a href="#" class="vault-link">REQUEST TRACK →</a>
-        </div>
-      </div>
-    </section>
-
     <section id="player">
       <div class="section-head reveal">
-        <span class="idx">04</span>
+        <span class="idx">03</span>
         <h2>Now Playing</h2>
         <span class="rule"></span>
       </div>
       <div class="console player-console bracket reveal">
         <div class="console-bar">
           <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          audio_stream.exe
+          jhios_global_enterprises.playlist
         </div>
         <div class="console-body">
-          <div class="player-row">
-            <div class="player-art">SCR3W</div>
-            <div class="player-meta">
-              <div class="track">Untitled Transmission 04</div>
-              <div class="artist">SCR3WFAC3</div>
-            </div>
-            <div class="player-controls">
-              <button class="player-btn play" type="button">▶</button>
-            </div>
+          <div class="yt-embed">
+            <iframe src="https://www.youtube.com/embed/videoseries?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR" title="JHIOS Global Enterprises" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
-          <p class="player-note">Full player integration coming.</p>
+          <p style="margin-top:1rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">Full SCR3WFAC3 / JHIOS catalogue — play, skip, or open on YouTube.</p>
         </div>
       </div>
     </section>
 
     <section id="support">
       <div class="section-head reveal">
-        <span class="idx">05</span>
+        <span class="idx">04</span>
         <h2>Join the Archive</h2>
         <span class="rule"></span>
       </div>
