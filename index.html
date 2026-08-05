@@ -236,6 +236,34 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
 .why-lede { font-size: clamp(1rem, 2vw, 1.2rem); color: var(--text); max-width: 62ch; margin: 0 0 1.75rem; }
 .why-lede strong { color: var(--signal); }
 
+.roadmap-steps { display: grid; gap: 1rem; }
+.roadmap-step {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+.roadmap-step .step-num {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--signal);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.roadmap-step h3 {
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+  color: var(--text);
+}
+.roadmap-step p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text-dim);
+}
+
 .vault-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--gap);
 }
@@ -310,8 +338,8 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
     <nav>
       <a href="#status">Status</a>
       <a href="#why">Manifesto</a>
+      <a href="#roadmap">Road Map</a>
       <a href="#vault">Vault</a>
-      <a href="#player">Player</a>
       <a href="#support">Join</a>
     </nav>
   </div>
@@ -327,7 +355,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           <h1 class="title">INFINITE<br><span class="glitch-word">EXCHANGE</span></h1>
           <p class="tagline">Independent Music Vault <span class="sep">/</span> AI Creation Platform <span class="sep">/</span> Digital Archive</p>
           <div class="hero-actions">
-            <a href="#vault" class="btn btn-primary">ENTER THE VAULT</a>
+            <a href="#roadmap" class="btn btn-primary">THE ROAD MAP</a>
             <a href="#support" class="btn btn-ghost">JOIN THE LIST</a>
           </div>
         </div>
@@ -381,9 +409,40 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
     </section>
 
-    <section id="vault">
+    <!-- ============ ROAD MAP ============ -->
+    <section id="roadmap">
       <div class="section-head reveal">
         <span class="idx">02</span>
+        <h2>The Road Map</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="roadmap-steps reveal">
+        <div class="roadmap-step">
+          <span class="step-num">STEP 01</span>
+          <h3>Recognise the loop</h3>
+          <p>You are inside systems that decide what you see, what you hear, and what reaches you. Most people never notice the walls.</p>
+        </div>
+        <div class="roadmap-step">
+          <span class="step-num">STEP 02</span>
+          <h3>Own the channel</h3>
+          <p>Stop renting attention. Build or join infrastructure that cannot be switched off by an algorithm or a corporation.</p>
+        </div>
+        <div class="roadmap-step">
+          <span class="step-num">STEP 03</span>
+          <h3>Archive the signal</h3>
+          <p>Document what is being made and why. Music, writing, process — keep the record outside the platforms that filter it.</p>
+        </div>
+        <div class="roadmap-step">
+          <span class="step-num">STEP 04</span>
+          <h3>Connect directly</h3>
+          <p>The strongest connection is the one that does not pass through an intermediary that profits from keeping you scrolling.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="vault">
+      <div class="section-head reveal">
+        <span class="idx">03</span>
         <h2>Catalogue Vault</h2>
         <span class="rule"></span>
       </div>
@@ -411,7 +470,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
 
     <section id="player">
       <div class="section-head reveal">
-        <span class="idx">03</span>
+        <span class="idx">04</span>
         <h2>Now Playing</h2>
         <span class="rule"></span>
       </div>
@@ -436,10 +495,9 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
     </section>
 
-    <!-- ============ SUPPORT (UPDATED) ============ -->
     <section id="support">
       <div class="section-head reveal">
-        <span class="idx">04</span>
+        <span class="idx">05</span>
         <h2>Join the Archive</h2>
         <span class="rule"></span>
       </div>
