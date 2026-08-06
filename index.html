@@ -275,12 +275,33 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
   border: 0;
 }
 
-.voice-frame {
-  width: 100%;
-  height: 420px;
-  border: 1px solid var(--line);
+.command {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--signal);
+  margin: 0 0 1rem;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+.voice-btn {
+  background: var(--signal);
+  color: #001a10;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  padding: 1rem 1.6rem;
   border-radius: var(--radius);
-  background: #0a0e0d;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
+  transition: box-shadow 0.15s ease;
+}
+.voice-btn:hover {
+  box-shadow: 0 0 22px rgba(0,255,157,0.45);
 }
 
 .support-body { text-align: left; }
@@ -334,7 +355,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           <p class="tagline">Independent Music Vault <span class="sep">/</span> AI Creation Platform <span class="sep">/</span> Digital Archive</p>
           <div class="hero-actions">
             <a href="#player" class="btn btn-primary">LISTEN NOW</a>
-            <a href="#support" class="btn btn-ghost">JOIN THE LIST</a>
+            <a href="#voice" class="btn btn-ghost">TALK TO JHIOS</a>
           </div>
         </div>
         <div class="mask-panel reveal">
@@ -431,8 +452,11 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           jhios_global_enterprises.playlist
         </div>
         <div class="console-body">
-          <p style="font-family:var(--mono);font-size:0.78rem;color:var(--signal);margin:0 0 1rem;letter-spacing:0.04em;">
-            TAP LISTEN NOW → STAY ON THIS PAGE → UNMUTE THE PLAYER → DO NOT REFRESH WHILE THE MUSIC PLAYS
+          <p class="command">
+            1. TAP THE GREEN PLAY BUTTON IF NEEDED<br>
+            2. UNMUTE THE PLAYER<br>
+            3. STAY ON THIS PAGE — DO NOT REFRESH<br>
+            Music will keep playing while you explore.
           </p>
           <div class="yt-embed">
             <iframe 
@@ -442,9 +466,6 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
               allowfullscreen>
             </iframe>
           </div>
-          <p style="margin-top:1rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
-            Full SCR3WFAC3 / JHIOS catalogue — play, skip, or open on YouTube. Unmute in the player if needed.
-          </p>
         </div>
       </div>
     </section>
@@ -452,26 +473,22 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
     <section id="voice">
       <div class="section-head reveal">
         <span class="idx">04</span>
-        <h2>JHIOS Voice // SpaceX.AI</h2>
+        <h2>JHIOS Voice</h2>
         <span class="rule"></span>
       </div>
       <div class="console bracket reveal">
         <div class="console-bar">
           <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          spacex.ai_protocol // voice_interface
+          jhios_voice_protocol
         </div>
         <div class="console-body">
-          <p style="font-family:var(--mono);font-size:0.78rem;color:var(--signal);margin:0 0 1rem;letter-spacing:0.04em;">
-            FREE VOICE CHANNEL — TYPE OR SPEAK. NO ACCOUNT REQUIRED.
+          <p class="command">
+            TAP THE BUTTON BELOW.<br>
+            The voice will explain what is happening on this page.
           </p>
-          <iframe 
-            class="voice-frame"
-            src="https://free.ai/embed/tts/" 
-            allow="autoplay; microphone"
-            title="JHIOS Voice Interface">
-          </iframe>
-          <p style="margin-top:1rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
-            Powered by free public AI. Branded as JHIOS / SpaceX.AI protocol layer.
+          <button class="voice-btn" id="speakBtn">ACTIVATE JHIOS VOICE</button>
+          <p style="margin-top:1.25rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
+            Uses your device’s free speech engine. No external connection required.
           </p>
         </div>
       </div>
@@ -543,6 +560,21 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
   }, { threshold: 0.15 });
   items.forEach(function(el) { io.observe(el); });
 })();
+
+// JHIOS Voice - browser TTS
+document.getElementById('speakBtn').addEventListener('click', function() {
+  if (!window.speechSynthesis) {
+    alert('Speech not supported on this device');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  var msg = new SpeechSynthesisUtterance(
+    "Welcome to Infinite Exchange. This is an independent music archive. The playlist is already playing. Unmute the player if you have not already. Stay on this page. Explore the road map. You are not inside a normal streaming site. This is a direct channel."
+  );
+  msg.rate = 0.95;
+  msg.pitch = 1;
+  window.speechSynthesis.speak(msg);
+});
 </script>
 
 </body>
