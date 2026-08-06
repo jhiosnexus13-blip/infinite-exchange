@@ -275,6 +275,14 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
   border: 0;
 }
 
+.voice-frame {
+  width: 100%;
+  height: 420px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #0a0e0d;
+}
+
 .support-body { text-align: left; }
 .support-lede { font-size: 0.98rem; margin: 0 0 1.5rem; max-width: 56ch; }
 
@@ -309,6 +317,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       <a href="#why">Manifesto</a>
       <a href="#roadmap">Road Map</a>
       <a href="#player">Player</a>
+      <a href="#voice">Voice</a>
       <a href="#support">Join</a>
     </nav>
   </div>
@@ -423,7 +432,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
         </div>
         <div class="console-body">
           <p style="font-family:var(--mono);font-size:0.78rem;color:var(--signal);margin:0 0 1rem;letter-spacing:0.04em;">
-            TAP LISTEN NOW → STAY ON THIS PAGE → DO NOT REFRESH WHILE THE MUSIC PLAYS
+            TAP LISTEN NOW → STAY ON THIS PAGE → UNMUTE THE PLAYER → DO NOT REFRESH WHILE THE MUSIC PLAYS
           </p>
           <div class="yt-embed">
             <iframe 
@@ -440,9 +449,37 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
     </section>
 
-    <section id="support">
+    <section id="voice">
       <div class="section-head reveal">
         <span class="idx">04</span>
+        <h2>JHIOS Voice // SpaceX.AI</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="console bracket reveal">
+        <div class="console-bar">
+          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+          spacex.ai_protocol // voice_interface
+        </div>
+        <div class="console-body">
+          <p style="font-family:var(--mono);font-size:0.78rem;color:var(--signal);margin:0 0 1rem;letter-spacing:0.04em;">
+            FREE VOICE CHANNEL — TYPE OR SPEAK. NO ACCOUNT REQUIRED.
+          </p>
+          <iframe 
+            class="voice-frame"
+            src="https://free.ai/embed/tts/" 
+            allow="autoplay; microphone"
+            title="JHIOS Voice Interface">
+          </iframe>
+          <p style="margin-top:1rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
+            Powered by free public AI. Branded as JHIOS / SpaceX.AI protocol layer.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="support">
+      <div class="section-head reveal">
+        <span class="idx">05</span>
         <h2>Join the Archive</h2>
         <span class="rule"></span>
       </div>
