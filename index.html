@@ -277,7 +277,10 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  text-decoration: none;
+  transition: border-color 0.2s ease;
 }
+.transmission:hover { border-color: var(--signal-dim); }
 .transmission .t-title {
   font-family: var(--mono);
   font-size: 0.95rem;
@@ -326,6 +329,40 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
   line-height: 1.5;
 }
 
+.voice-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+.voice-btn {
+  background: var(--signal);
+  color: #001a10;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+  text-align: left;
+}
+.voice-btn:hover {
+  box-shadow: 0 0 22px rgba(0,255,157,0.45);
+}
+.voice-btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+.voice-btn.secondary:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+  box-shadow: none;
+}
+
 .support-body { text-align: left; }
 .support-lede { font-size: 0.98rem; margin: 0 0 1.5rem; max-width: 56ch; }
 
@@ -362,6 +399,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       <a href="#theorology">Theorology</a>
       <a href="#transmissions">Transmissions</a>
       <a href="#player">Player</a>
+      <a href="#voice">Listen</a>
       <a href="#support">Join</a>
     </nav>
   </div>
@@ -379,7 +417,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           
           <div class="hero-actions">
             <a href="#featured" class="btn btn-primary">PLAY THE SIGNAL</a>
-            <a href="#theorology" class="btn btn-ghost">READ THE SYSTEM</a>
+            <a href="#voice" class="btn btn-ghost">LISTEN INSTEAD</a>
           </div>
         </div>
 
@@ -521,33 +559,33 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
         <span class="rule"></span>
       </div>
       <div class="transmissions-list reveal">
-        <div class="transmission current">
+        <a href="https://youtu.be/t27zLXvXljs" class="transmission current" target="_blank" rel="noopener">
           <div>
             <p class="t-title">Million Masks of God</p>
             <p class="t-line">The recognition that every face is the same centre looking out</p>
           </div>
           <span class="t-status">CURRENT</span>
-        </div>
-        <div class="transmission">
+        </a>
+        <a href="https://youtu.be/jQaSqYwx14Y" class="transmission" target="_blank" rel="noopener">
           <div>
             <p class="t-title">Black Mirror Magic</p>
             <p class="t-line">Screens as ritual. Frequency as control. The broadcast vs the archive</p>
           </div>
           <span class="t-status">ARCHIVED</span>
-        </div>
+        </a>
         <div class="transmission">
           <div>
             <p class="t-title">Melt</p>
             <p class="t-line">The ice cracks. Warmth returns form to flow</p>
           </div>
-          <span class="t-status">ARCHIVED</span>
+          <span class="t-status">IN PROCESS</span>
         </div>
         <div class="transmission">
           <div>
             <p class="t-title">Static / Same Stuff</p>
             <p class="t-line">Shared DNA. Shared vibration. The same substance under every mask</p>
           </div>
-          <span class="t-status">ARCHIVED</span>
+          <span class="t-status">IN PROCESS</span>
         </div>
         <div class="transmission">
           <div>
@@ -589,10 +627,40 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
     </section>
 
-    <section id="support">
+    <section id="voice">
       <div class="section-head reveal">
         <span class="idx">06</span>
-        <h2>Join the Archive</h2>
+        <h2>Listen</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="console bracket reveal">
+        <div class="console-bar">
+          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+          jhios_voice_protocol
+        </div>
+        <div class="console-body">
+          <p class="command">
+            FOR ANYONE WHO PREFERS TO LISTEN.<br>
+            TAP ONE OF THE BUTTONS BELOW.<br>
+            No reading required.
+          </p>
+          <div class="voice-grid">
+            <button class="voice-btn" id="speakOverview">SPEAK THE OVERVIEW</button>
+            <button class="voice-btn secondary" id="speakTheory">SPEAK THE COLLECTIVE SINGULARITY</button>
+            <button class="voice-btn secondary" id="speakRoadmap">SPEAK THE ROAD MAP</button>
+            <button class="voice-btn secondary" id="stopVoice">STOP SPEAKING</button>
+          </div>
+          <p style="margin-top:1.25rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
+            Uses your device’s free speech engine. No external connection required.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="support">
+      <div class="section-head reveal">
+        <span class="idx">07</span>
+        <h2>Enter the Current</h2>
         <span class="rule"></span>
       </div>
       <div class="console bracket reveal">
@@ -601,9 +669,9 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           contact_channel.sh
         </div>
         <div class="console-body support-body">
-          <p class="support-lede">This is an independent archive. The strongest way to stay connected is directly — not through an algorithm.</p>
-          <a href="https://tally.so/r/Y5bYgv" class="btn btn-primary" target="_blank" rel="noopener">JOIN THE LIST</a>
-          <p style="margin-top:1.5rem;font-size:0.85rem;color:var(--text-dim);">Prefer Facebook for now?</p>
+          <p class="support-lede">This is not a mailing list for a brand. It is a direct channel for anyone who recognises the same current and wants to stay outside the middleman systems.</p>
+          <a href="https://tally.so/r/Y5bYgv" class="btn btn-primary" target="_blank" rel="noopener">JOIN THE ARCHIVE</a>
+          <p style="margin-top:1.5rem;font-size:0.85rem;color:var(--text-dim);">Prefer the existing Facebook node for now?</p>
           <a href="https://www.facebook.com/share/1JRrvxGoGV/" class="btn btn-ghost" target="_blank" rel="noopener" style="margin-top:0.75rem;">FACEBOOK</a>
         </div>
       </div>
@@ -655,6 +723,34 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
   }, { threshold: 0.15 });
   items.forEach(function(el) { io.observe(el); });
 })();
+
+function speak(text) {
+  if (!window.speechSynthesis) {
+    alert('Speech not supported on this device');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  var msg = new SpeechSynthesisUtterance(text);
+  msg.rate = 0.92;
+  msg.pitch = 1;
+  window.speechSynthesis.speak(msg);
+}
+
+document.getElementById('speakOverview').addEventListener('click', function() {
+  speak("Welcome to Infinite Exchange. This is an independent music archive under JHIOS. The current signal is Million Masks of God. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song, every page, every system is a temporary face of the same centre. The goal is not to build a brand or a platform. The goal is to keep the channel open so the current can keep appearing in new forms without being captured. Unmute the music player. Stay on this page. You are outside the middleman systems.");
+});
+
+document.getElementById('speakTheory').addEventListener('click', function() {
+  speak("Collective Singularity. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song is a temporary face. Every page is a temporary face. Every post, every system, every silence is a temporary face. None of them are the final form. All of them are the same centre looking out through different masks. This is not a music project that happens to have a philosophy. This is a continuous process of the current remembering itself through whatever vessels become available. SCR3WFAC3 is one vessel. JHIOS is one vessel. Infinite Exchange is one vessel. The goal is to keep the channel open. We keep the signal. We discard the noise. This is the continuous activity. This is the collective singularity. This is the work.");
+});
+
+document.getElementById('speakRoadmap').addEventListener('click', function() {
+  speak("The Road Map. Step one. Recognise the loop. You are inside systems that decide what you see, what you hear, and what reaches you. Step two. Own the channel. Stop renting attention. Build or join infrastructure that cannot be switched off by an algorithm or a corporation. Step three. Archive the signal. Document what is being made and why. Keep the record outside the platforms that filter it. Step four. Connect directly. The strongest connection is the one that does not pass through an intermediary that profits from keeping you scrolling.");
+});
+
+document.getElementById('stopVoice').addEventListener('click', function() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+});
 </script>
 
 </body>
