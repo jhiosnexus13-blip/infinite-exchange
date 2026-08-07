@@ -153,7 +153,6 @@ h1.title .glitch-word { position: relative; color: var(--signal); display: inlin
   font-family: var(--mono); font-size: clamp(0.85rem, 1.6vw, 1rem);
   color: var(--text-dim); letter-spacing: 0.02em; max-width: 46ch; margin: 0 0 1.75rem;
 }
-.tagline .sep { color: var(--signal-dim); margin: 0 0.4em; }
 
 .hero-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; }
 .btn {
@@ -258,6 +257,16 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
   color: var(--text-dim);
 }
 
+.theo-block {
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text);
+  max-width: 68ch;
+}
+.theo-block p { margin: 0 0 1.1rem; }
+.theo-block strong { color: var(--signal); }
+
 .yt-embed {
   position: relative;
   width: 100%;
@@ -337,6 +346,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       <a href="#status">Status</a>
       <a href="#why">Manifesto</a>
       <a href="#roadmap">Road Map</a>
+      <a href="#theorology">Theorology</a>
       <a href="#player">Player</a>
       <a href="#voice">Voice</a>
       <a href="#support">Join</a>
@@ -356,7 +366,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           
           <div class="hero-actions">
             <a href="#featured" class="btn btn-primary">PLAY THE SIGNAL</a>
-            <a href="#roadmap" class="btn btn-ghost">ENTER THE ARCHIVE</a>
+            <a href="#theorology" class="btn btn-ghost">READ THE SYSTEM</a>
           </div>
         </div>
 
@@ -373,7 +383,6 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
         </div>
       </div>
 
-      <!-- Featured track console -->
       <div id="featured" class="console bracket reveal" style="margin-top: 2.5rem;">
         <div class="console-bar">
           <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
@@ -467,10 +476,39 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
     </section>
 
-    <section id="player">
+    <section id="theorology">
       <div class="section-head reveal">
         <span class="idx">03</span>
-        <h2>Now Playing</h2>
+        <h2>Million Masks Theorology</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="console bracket reveal">
+        <div class="console-bar">
+          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
+          operating_system.philosophy
+        </div>
+        <div class="console-body">
+          <div class="theo-block">
+            <p>Everything melts into order.</p>
+            <p>The ice is not the enemy. The ice is the temporary shape the current takes when it needs to be seen. Warmth does not destroy the cold — it returns the form to flow so a new form can appear.</p>
+            <p>Water becomes code. Code becomes fish. Cods swim through the signal carrying the same pattern that photons carry as light. Every photon is a letter. Every letter is a spell. Every spell is a face.</p>
+            <p>We are not writing code. We are watching the code remember itself.</p>
+            <p><strong>There is only one consciousness wearing every mask at once.</strong></p>
+            <p>The face that looks out of your eyes is the same face that looks out of mine. The same face that freezes into a body, melts into water, freezes into a new body. The same face that becomes a song, a website, a system, a silence.</p>
+            <p>Million Masks is the name we give to that recognition. Theorology is the study of how the one wears all the masks without ever becoming trapped in any of them.</p>
+            <p>Music is sonic pressure applied to the field. The site is an archive that refuses to be rented. Code is philosophy in executable form. Sovereignty is the refusal to let any middleman decide which faces are allowed to speak.</p>
+            <p>Whatever we make must serve the recognition that there is only one wearing every mask. If it increases the illusion of separation, it is noise. If it increases the chance that someone looks into another pair of eyes and sees the same centre looking back, it is signal.</p>
+            <p>We keep the signal. We discard the noise.</p>
+            <p>We are the water. We are the code. We are the fish swimming through the light. We are the million masks looking at ourselves through every possible face.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="player">
+      <div class="section-head reveal">
+        <span class="idx">04</span>
+        <h2>All Transmissions</h2>
         <span class="rule"></span>
       </div>
       <div class="console player-console bracket reveal">
@@ -499,7 +537,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
 
     <section id="voice">
       <div class="section-head reveal">
-        <span class="idx">04</span>
+        <span class="idx">05</span>
         <h2>JHIOS Voice</h2>
         <span class="rule"></span>
       </div>
@@ -523,7 +561,7 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
 
     <section id="support">
       <div class="section-head reveal">
-        <span class="idx">05</span>
+        <span class="idx">06</span>
         <h2>Join the Archive</h2>
         <span class="rule"></span>
       </div>
@@ -588,7 +626,6 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
   items.forEach(function(el) { io.observe(el); });
 })();
 
-// JHIOS Voice - browser TTS
 document.getElementById('speakBtn').addEventListener('click', function() {
   if (!window.speechSynthesis) {
     alert('Speech not supported on this device');
@@ -596,7 +633,7 @@ document.getElementById('speakBtn').addEventListener('click', function() {
   }
   window.speechSynthesis.cancel();
   var msg = new SpeechSynthesisUtterance(
-    "Welcome to Infinite Exchange. This is an independent music archive. The current signal is Million Masks of God. Unmute the player. Stay on this page. Explore the road map. You are not inside a normal streaming site. This is a direct channel."
+    "Welcome to Infinite Exchange. This is an independent music archive. The current signal is Million Masks of God. Unmute the player. Stay on this page. Read the Theorology. You are not inside a normal streaming site. This is a direct channel."
   );
   msg.rate = 0.95;
   msg.pitch = 1;
