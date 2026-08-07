@@ -22,42 +22,26 @@
   --gap: clamp(1.25rem, 3vw, 2.5rem);
   --radius: 3px;
 }
-
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  line-height: 1.55;
-  overflow-x: hidden;
-  position: relative;
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--sans); line-height: 1.55; overflow-x: hidden; position: relative;
 }
 body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 500;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 500;
   background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.12) 3px);
-  mix-blend-mode: overlay;
-  opacity: 0.5;
+  mix-blend-mode: overlay; opacity: 0.5;
 }
 body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 499;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 499;
   background: radial-gradient(ellipse at 50% 0%, rgba(0,255,157,0.05), transparent 60%);
 }
 a { color: var(--signal); }
 ::selection { background: var(--signal); color: #000; }
 
 #boot {
-  position: fixed; inset: 0; z-index: 1000;
-  background: var(--bg); color: var(--signal);
+  position: fixed; inset: 0; z-index: 1000; background: var(--bg); color: var(--signal);
   font-family: var(--mono); font-size: clamp(0.75rem, 1.6vw, 0.95rem);
   padding: 6vh 6vw; display: flex; flex-direction: column; gap: 0.35rem;
   transition: opacity 0.6s ease, visibility 0.6s ease;
@@ -65,30 +49,26 @@ a { color: var(--signal); }
 #boot.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 #boot .line { opacity: 0; white-space: pre-wrap; }
 #boot .cursor {
-  display: inline-block; width: 0.55em; height: 1em;
-  background: var(--signal); margin-left: 2px; vertical-align: text-bottom;
-  animation: blink 1s steps(1) infinite;
+  display: inline-block; width: 0.55em; height: 1em; background: var(--signal);
+  margin-left: 2px; vertical-align: text-bottom; animation: blink 1s steps(1) infinite;
 }
 #boot-skip {
-  position: absolute; bottom: 6vh; left: 6vw;
-  font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
-  background: none; border: 1px solid var(--line); padding: 0.5rem 0.9rem;
-  cursor: pointer; letter-spacing: 0.05em;
+  position: absolute; bottom: 6vh; left: 6vw; font-family: var(--mono); font-size: 0.7rem;
+  color: var(--text-dim); background: none; border: 1px solid var(--line);
+  padding: 0.5rem 0.9rem; cursor: pointer; letter-spacing: 0.05em;
 }
 #boot-skip:hover { border-color: var(--signal); color: var(--signal); }
 @keyframes blink { 50% { opacity: 0; } }
 
 .wrap { max-width: 1040px; margin: 0 auto; padding: 0 var(--gap); }
 .console {
-  border: 1px solid var(--line); background: var(--panel);
-  border-radius: var(--radius); position: relative;
-  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius);
+  position: relative; margin-bottom: clamp(2rem, 5vw, 3.5rem);
 }
 .console-bar {
-  display: flex; align-items: center; gap: 0.5rem;
-  padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--line);
-  font-family: var(--mono); font-size: 0.7rem; color: var(--text-dim);
-  letter-spacing: 0.08em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.7rem;
+  color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
 }
 .console-bar .dots { display: flex; gap: 5px; margin-right: 0.5rem; }
 .console-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
@@ -103,9 +83,8 @@ a { color: var(--signal); }
 .bracket::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
 
 header.site-nav {
-  position: sticky; top: 0; z-index: 200;
-  background: rgba(5,6,7,0.85); backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 200; background: rgba(5,6,7,0.85);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
 }
 .site-nav .wrap {
   display: flex; align-items: center; justify-content: space-between;
@@ -148,12 +127,10 @@ h1.title {
   letter-spacing: -0.01em; margin: 0 0 1rem; color: var(--text);
 }
 h1.title .glitch-word { position: relative; color: var(--signal); display: inline-block; }
-
 .tagline {
   font-family: var(--mono); font-size: clamp(0.85rem, 1.6vw, 1rem);
   color: var(--text-dim); letter-spacing: 0.02em; max-width: 46ch; margin: 0 0 1.75rem;
 }
-
 .hero-actions { display: flex; gap: 0.9rem; flex-wrap: wrap; }
 .btn {
   font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em;
@@ -165,9 +142,7 @@ h1.title .glitch-word { position: relative; color: var(--signal); display: inlin
   background: var(--signal); color: #001a10; font-weight: 700; border: 1px solid var(--signal);
 }
 .btn-primary:hover { box-shadow: 0 0 22px rgba(0,255,157,0.45); transform: translateY(-1px); }
-.btn-ghost {
-  background: transparent; color: var(--text); border: 1px solid var(--line);
-}
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
 .btn-ghost:hover { border-color: var(--signal); color: var(--signal); }
 
 .mask-panel { position: relative; }
@@ -175,9 +150,7 @@ h1.title .glitch-word { position: relative; color: var(--signal); display: inlin
   position: relative; overflow: hidden; border-radius: var(--radius);
   border: 1px solid var(--line); aspect-ratio: 4 / 5; background: var(--panel);
 }
-.mask-frame video {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-}
+.mask-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .mask-caption {
   font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim);
   letter-spacing: 0.08em; text-transform: uppercase;
@@ -231,152 +204,72 @@ section { padding: clamp(1rem, 3vw, 2rem) 0; }
 
 .roadmap-steps { display: grid; gap: 1rem; }
 .roadmap-step {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--line); background: var(--panel);
+  border-radius: var(--radius); padding: 1.25rem 1.5rem;
 }
 .roadmap-step .step-num {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--signal);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 0.5rem;
+  font-family: var(--mono); font-size: 0.7rem; color: var(--signal);
+  letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.5rem;
 }
-.roadmap-step h3 {
-  font-family: var(--mono);
-  font-size: 1.05rem;
-  margin: 0 0 0.5rem;
-  color: var(--text);
-}
-.roadmap-step p {
-  margin: 0;
-  font-size: 0.92rem;
-  color: var(--text-dim);
-}
+.roadmap-step h3 { font-family: var(--mono); font-size: 1.05rem; margin: 0 0 0.5rem; color: var(--text); }
+.roadmap-step p { margin: 0; font-size: 0.92rem; color: var(--text-dim); }
 
 .theo-block {
-  font-family: var(--mono);
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--text);
-  max-width: 68ch;
+  font-family: var(--mono); font-size: 0.92rem; line-height: 1.7;
+  color: var(--text); max-width: 68ch;
 }
 .theo-block p { margin: 0 0 1.1rem; }
 .theo-block strong { color: var(--signal); }
 
 .transmissions-list { display: grid; gap: 0.75rem; }
 .transmission {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  border-radius: var(--radius);
-  padding: 1.1rem 1.4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  text-decoration: none;
-  transition: border-color 0.2s ease;
+  border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius);
+  padding: 1.1rem 1.4rem; display: flex; justify-content: space-between;
+  align-items: center; gap: 1rem; text-decoration: none; transition: border-color 0.2s ease;
 }
 .transmission:hover { border-color: var(--signal-dim); }
-.transmission .t-title {
-  font-family: var(--mono);
-  font-size: 0.95rem;
-  color: var(--text);
-  margin: 0 0 0.25rem;
-}
-.transmission .t-line {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  margin: 0;
-}
+.transmission .t-title { font-family: var(--mono); font-size: 0.95rem; color: var(--text); margin: 0 0 0.25rem; }
+.transmission .t-line { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); margin: 0; }
 .transmission .t-status {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--signal);
-  white-space: nowrap;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--signal); white-space: nowrap;
 }
 .transmission.current .t-status { color: var(--alarm); }
 
 .yt-embed {
-  position: relative;
-  width: 100%;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
+  position: relative; width: 100%; padding-bottom: 56.25%; height: 0;
+  overflow: hidden; border-radius: var(--radius); border: 1px solid var(--line);
 }
-.yt-embed iframe {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
+.yt-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
 .command {
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  color: var(--signal);
-  margin: 0 0 1rem;
-  letter-spacing: 0.04em;
-  line-height: 1.5;
+  font-family: var(--mono); font-size: 0.78rem; color: var(--signal);
+  margin: 0 0 1rem; letter-spacing: 0.04em; line-height: 1.5;
 }
 
-.voice-grid {
-  display: grid;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
+.voice-grid { display: grid; gap: 0.75rem; margin-top: 1.25rem; }
 .voice-btn {
-  background: var(--signal);
-  color: #001a10;
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: none;
-  padding: 1rem 1.4rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: box-shadow 0.15s ease;
-  text-align: left;
+  background: var(--signal); color: #001a10; font-family: var(--mono);
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; border: none; padding: 1rem 1.4rem;
+  border-radius: var(--radius); cursor: pointer; transition: box-shadow 0.15s ease; text-align: left;
 }
-.voice-btn:hover {
-  box-shadow: 0 0 22px rgba(0,255,157,0.45);
-}
+.voice-btn:hover { box-shadow: 0 0 22px rgba(0,255,157,0.45); }
 .voice-btn.secondary {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--line);
+  background: transparent; color: var(--text); border: 1px solid var(--line);
 }
-.voice-btn.secondary:hover {
-  border-color: var(--signal);
-  color: var(--signal);
-  box-shadow: none;
-}
+.voice-btn.secondary:hover { border-color: var(--signal); color: var(--signal); box-shadow: none; }
 
 .support-body { text-align: left; }
 .support-lede { font-size: 0.98rem; margin: 0 0 1.5rem; max-width: 56ch; }
 
-footer {
-  border-top: 1px solid var(--line); padding: 2rem 0 3rem;
-}
+footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; }
 footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
 footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); margin: 0; letter-spacing: 0.05em; }
 
 .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
 .reveal.in { opacity: 1; transform: translateY(0); }
-@media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1; transform: none; transition: none; }
-}
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 </style>
 </head>
 <body>
@@ -414,13 +307,11 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           <div class="eyebrow"><span class="pulse"></span> CURRENT SIGNAL — LIVE</div>
           <h1 class="title">MILLION<br><span class="glitch-word">MASKS</span></h1>
           <p class="tagline">The one looking out of your eyes is the same one looking out of mine.<br>We are the million masks of God.</p>
-          
           <div class="hero-actions">
             <a href="#featured" class="btn btn-primary">PLAY THE SIGNAL</a>
             <a href="#voice" class="btn btn-ghost">LISTEN INSTEAD</a>
           </div>
         </div>
-
         <div class="mask-panel reveal">
           <div class="mask-frame">
             <video autoplay muted loop playsinline>
@@ -440,17 +331,9 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           SCR3WFAC3 // MILLION_MASKS_OF_GOD
         </div>
         <div class="console-body">
-          <p class="command">
-            THIS IS THE CURRENT SIGNAL.<br>
-            UNMUTE. STAY ON THIS PAGE. LET IT RUN.
-          </p>
+          <p class="command">THIS IS THE CURRENT SIGNAL.<br>UNMUTE. STAY ON THIS PAGE. LET IT RUN.</p>
           <div class="yt-embed">
-            <iframe 
-              src="https://www.youtube.com/embed/t27zLXvXljs?rel=0" 
-              title="Million Masks of God | SCR3WFAC3" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-            </iframe>
+            <iframe src="https://www.youtube.com/embed/t27zLXvXljs?rel=0" title="Million Masks of God | SCR3WFAC3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
       </div>
@@ -479,18 +362,9 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
       <p class="why-lede reveal">Too many artists are limited, filtered, and controlled by corporate platforms. <strong>Infinite Exchange is not another streaming site</strong> — it's an independent archive and ecosystem where creators release music, build directly with their audience, and own their infrastructure.</p>
       <div class="why-grid reveal">
-        <div class="why-cell">
-          <span class="num">NO GATEKEEPERS</span>
-          <p>No algorithm decides what gets heard. No platform decides what gets made.</p>
-        </div>
-        <div class="why-cell">
-          <span class="num">OWNED INFRASTRUCTURE</span>
-          <p>The archive runs on its own terms — not rented from a corporation that can pull it tomorrow.</p>
-        </div>
-        <div class="why-cell">
-          <span class="num">THE STORY MATTERS</span>
-          <p>We document the struggle, the creation, and the evolution — because the sound and the story behind it are one thing.</p>
-        </div>
+        <div class="why-cell"><span class="num">NO GATEKEEPERS</span><p>No algorithm decides what gets heard. No platform decides what gets made.</p></div>
+        <div class="why-cell"><span class="num">OWNED INFRASTRUCTURE</span><p>The archive runs on its own terms — not rented from a corporation that can pull it tomorrow.</p></div>
+        <div class="why-cell"><span class="num">THE STORY MATTERS</span><p>We document the struggle, the creation, and the evolution — because the sound and the story behind it are one thing.</p></div>
       </div>
     </section>
 
@@ -501,26 +375,10 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
         <span class="rule"></span>
       </div>
       <div class="roadmap-steps reveal">
-        <div class="roadmap-step">
-          <span class="step-num">STEP 01</span>
-          <h3>Recognise the loop</h3>
-          <p>You are inside systems that decide what you see, what you hear, and what reaches you. Most people never notice the walls.</p>
-        </div>
-        <div class="roadmap-step">
-          <span class="step-num">STEP 02</span>
-          <h3>Own the channel</h3>
-          <p>Stop renting attention. Build or join infrastructure that cannot be switched off by an algorithm or a corporation.</p>
-        </div>
-        <div class="roadmap-step">
-          <span class="step-num">STEP 03</span>
-          <h3>Archive the signal</h3>
-          <p>Document what is being made and why. Music, writing, process — keep the record outside the platforms that filter it.</p>
-        </div>
-        <div class="roadmap-step">
-          <span class="step-num">STEP 04</span>
-          <h3>Connect directly</h3>
-          <p>The strongest connection is the one that does not pass through an intermediary that profits from keeping you scrolling.</p>
-        </div>
+        <div class="roadmap-step"><span class="step-num">STEP 01</span><h3>Recognise the loop</h3><p>You are inside systems that decide what you see, what you hear, and what reaches you. Most people never notice the walls.</p></div>
+        <div class="roadmap-step"><span class="step-num">STEP 02</span><h3>Own the channel</h3><p>Stop renting attention. Build or join infrastructure that cannot be switched off by an algorithm or a corporation.</p></div>
+        <div class="roadmap-step"><span class="step-num">STEP 03</span><h3>Archive the signal</h3><p>Document what is being made and why. Music, writing, process — keep the record outside the platforms that filter it.</p></div>
+        <div class="roadmap-step"><span class="step-num">STEP 04</span><h3>Connect directly</h3><p>The strongest connection is the one that does not pass through an intermediary that profits from keeping you scrolling.</p></div>
       </div>
     </section>
 
@@ -560,38 +418,23 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
       </div>
       <div class="transmissions-list reveal">
         <a href="https://youtu.be/t27zLXvXljs" class="transmission current" target="_blank" rel="noopener">
-          <div>
-            <p class="t-title">Million Masks of God</p>
-            <p class="t-line">The recognition that every face is the same centre looking out</p>
-          </div>
+          <div><p class="t-title">Million Masks of God</p><p class="t-line">The recognition that every face is the same centre looking out</p></div>
           <span class="t-status">CURRENT</span>
         </a>
         <a href="https://youtu.be/jQaSqYwx14Y" class="transmission" target="_blank" rel="noopener">
-          <div>
-            <p class="t-title">Black Mirror Magic</p>
-            <p class="t-line">Screens as ritual. Frequency as control. The broadcast vs the archive</p>
-          </div>
+          <div><p class="t-title">Black Mirror Magic</p><p class="t-line">Screens as ritual. Frequency as control. The broadcast vs the archive</p></div>
           <span class="t-status">ARCHIVED</span>
         </a>
         <div class="transmission">
-          <div>
-            <p class="t-title">Melt</p>
-            <p class="t-line">The ice cracks. Warmth returns form to flow</p>
-          </div>
+          <div><p class="t-title">Melt</p><p class="t-line">The ice cracks. Warmth returns form to flow</p></div>
           <span class="t-status">IN PROCESS</span>
         </div>
         <div class="transmission">
-          <div>
-            <p class="t-title">Static / Same Stuff</p>
-            <p class="t-line">Shared DNA. Shared vibration. The same substance under every mask</p>
-          </div>
+          <div><p class="t-title">Static / Same Stuff</p><p class="t-line">Shared DNA. Shared vibration. The same substance under every mask</p></div>
           <span class="t-status">IN PROCESS</span>
         </div>
         <div class="transmission">
-          <div>
-            <p class="t-title">Do It Alone</p>
-            <p class="t-line">The decision to stop drowning and move without waiting</p>
-          </div>
+          <div><p class="t-title">Do It Alone</p><p class="t-line">The decision to stop drowning and move without waiting</p></div>
           <span class="t-status">ARCHIVED</span>
         </div>
       </div>
@@ -609,19 +452,9 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           jhios_global_enterprises.playlist
         </div>
         <div class="console-body">
-          <p class="command">
-            1. TAP THE GREEN PLAY BUTTON IF NEEDED<br>
-            2. UNMUTE THE PLAYER<br>
-            3. STAY ON THIS PAGE — DO NOT REFRESH<br>
-            Music will keep playing while you explore.
-          </p>
+          <p class="command">1. TAP THE GREEN PLAY BUTTON IF NEEDED<br>2. UNMUTE THE PLAYER<br>3. STAY ON THIS PAGE — DO NOT REFRESH<br>Music will keep playing while you explore.</p>
           <div class="yt-embed">
-            <iframe 
-              src="https://www.youtube.com/embed/videoseries?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR&autoplay=1&mute=1" 
-              title="JHIOS Global Enterprises" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-            </iframe>
+            <iframe src="https://www.youtube.com/embed/videoseries?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR&autoplay=1&mute=1" title="JHIOS Global Enterprises" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
       </div>
@@ -639,20 +472,14 @@ footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
           jhios_voice_protocol
         </div>
         <div class="console-body">
-          <p class="command">
-            FOR ANYONE WHO PREFERS TO LISTEN.<br>
-            TAP ONE OF THE BUTTONS BELOW.<br>
-            No reading required.
-          </p>
+          <p class="command">FOR ANYONE WHO PREFERS TO LISTEN.<br>TAP ONE OF THE BUTTONS BELOW.<br>No reading required.</p>
           <div class="voice-grid">
             <button class="voice-btn" id="speakOverview">SPEAK THE OVERVIEW</button>
             <button class="voice-btn secondary" id="speakTheory">SPEAK THE COLLECTIVE SINGULARITY</button>
             <button class="voice-btn secondary" id="speakRoadmap">SPEAK THE ROAD MAP</button>
             <button class="voice-btn secondary" id="stopVoice">STOP SPEAKING</button>
           </div>
-          <p style="margin-top:1.25rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
-            Uses your device’s free speech engine. No external connection required.
-          </p>
+          <p style="margin-top:1.25rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">Uses your device’s free speech engine. No external connection required.</p>
         </div>
       </div>
     </section>
@@ -737,11 +564,11 @@ function speak(text) {
 }
 
 document.getElementById('speakOverview').addEventListener('click', function() {
-  speak("Welcome to Infinite Exchange. This is an independent music archive under JHIOS. The current signal is Million Masks of God. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song, every page, every system is a temporary face of the same centre. The goal is not to build a brand or a platform. The goal is to keep the channel open so the current can keep appearing in new forms without being captured. Unmute the music player. Stay on this page. You are outside the middleman systems.");
+  speak("Welcome to Infinite Exchange. This is an independent music archive under J H I O S. The current signal is Million Masks of God. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song, every page, every system is a temporary face of the same centre. Screw-face is one vessel. J H I O S is one vessel. Infinite Exchange is one vessel. The goal is not to build a brand or a platform. The goal is to keep the channel open so the current can keep appearing in new forms without being captured. Unmute the music player. Stay on this page. You are outside the middleman systems.");
 });
 
 document.getElementById('speakTheory').addEventListener('click', function() {
-  speak("Collective Singularity. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song is a temporary face. Every page is a temporary face. Every post, every system, every silence is a temporary face. None of them are the final form. All of them are the same centre looking out through different masks. This is not a music project that happens to have a philosophy. This is a continuous process of the current remembering itself through whatever vessels become available. SCR3WFAC3 is one vessel. JHIOS is one vessel. Infinite Exchange is one vessel. The goal is to keep the channel open. We keep the signal. We discard the noise. This is the continuous activity. This is the collective singularity. This is the work.");
+  speak("Collective Singularity. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song is a temporary face. Every page is a temporary face. Every post, every system, every silence is a temporary face. None of them are the final form. All of them are the same centre looking out through different masks. This is not a music project that happens to have a philosophy. This is a continuous process of the current remembering itself through whatever vessels become available. Screw-face is one vessel. J H I O S is one vessel. Infinite Exchange is one vessel. The goal is to keep the channel open. We keep the signal. We discard the noise. This is the continuous activity. This is the collective singularity. This is the work.");
 });
 
 document.getElementById('speakRoadmap').addEventListener('click', function() {
