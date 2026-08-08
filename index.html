@@ -7,695 +7,429 @@
 <meta name="description" content="Independent Music Vault • AI Creation Platform • Digital Archive. Building in public, owned by no one but the artists.">
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500&display=swap');
+
 :root {
   --bg:        #050607;
   --panel:     #0a0e0d;
   --panel-2:   #0d1412;
   --line:      #1c2b26;
   --signal:    #00ff9d;
-  --signal-dim: #0a8f5c;
+  --signal-dim:#0a8f5c;
   --text:      #d4ded9;
   --text-dim:  #5c6b66;
   --alarm:     #ff2e4d;
-  --mono: 'JetBrains Mono', 'SFMono-Regular', ui-monospace, Menlo, Consolas, monospace;
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Inter', system-ui, sans-serif;
   --gap: clamp(1.25rem, 3vw, 2.5rem);
   --radius: 3px;
 }
-* { box-sizing: border-box; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 html { scroll-behavior: smooth; }
+
 body {
-  margin: 0; background: var(--bg); color: var(--text);
-  font-family: var(--sans); line-height: 1.55; overflow-x: hidden; position: relative;
-}
-body::before {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 500;
-  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.12) 3px);
-  mix-blend-mode: overlay; opacity: 0.5;
-}
-body::after {
-  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 499;
-  background: radial-gradient(ellipse at 50% 0%, rgba(0,255,157,0.05), transparent 60%);
-}
-a { color: var(--signal); }
-::selection { background: var(--signal); color: #000; }
-
-#boot {
-  position: fixed; inset: 0; z-index: 1000; background: var(--bg); color: var(--signal);
-  font-family: var(--mono); font-size: clamp(0.75rem, 1.6vw, 0.95rem);
-  padding: 6vh 6vw; display: flex; flex-direction: column; gap: 0.35rem;
-  transition: opacity 0.6s ease, visibility 0.6s ease;
-}
-#boot.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-#boot .line { opacity: 0; white-space: pre-wrap; }
-#boot .cursor {
-  display: inline-block; width: 0.55em; height: 1em; background: var(--signal);
-  margin-left: 2px; vertical-align: text-bottom; animation: blink 1s steps(1) infinite;
-}
-#boot-skip {
-  position: absolute; bottom: 6vh; left: 6vw; font-family: var(--mono); font-size: 0.7rem;
-  color: var(--text-dim); background: none; border: 1px solid var(--line);
-  padding: 0.5rem 0.9rem; cursor: pointer; letter-spacing: 0.05em;
-}
-#boot-skip:hover { border-color: var(--signal); color: var(--signal); }
-@keyframes blink { 50% { opacity: 0; } }
-
-.wrap { max-width: 1080px; margin: 0 auto; padding: 0 var(--gap); }
-.console {
-  border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius);
-  position: relative; margin-bottom: clamp(2rem, 5vw, 3.5rem);
-}
-.console-bar {
-  display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.9rem;
-  border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 0.7rem;
-  color: var(--text-dim); letter-spacing: 0.08em; text-transform: uppercase;
-}
-.console-bar .dots { display: flex; gap: 5px; margin-right: 0.5rem; }
-.console-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
-.console-body { padding: clamp(1.25rem, 3vw, 2.25rem); }
-
-.bracket { position: relative; }
-.bracket::before, .bracket::after {
-  content: ''; position: absolute; width: 14px; height: 14px;
-  border: 2px solid var(--signal-dim); opacity: 0.6;
-}
-.bracket::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-.bracket::after  { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-
-header.site-nav {
-  position: sticky; top: 0; z-index: 200; background: rgba(5,6,7,0.88);
-  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
-}
-.site-nav .wrap {
-  display: flex; align-items: center; justify-content: space-between;
-  padding-top: 0.85rem; padding-bottom: 0.85rem;
-}
-.brand {
-  font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.12em;
-  color: var(--text); text-decoration: none;
-}
-.brand .dot-signal { color: var(--signal); }
-.site-nav nav { display: flex; gap: clamp(0.8rem, 2vw, 1.6rem); flex-wrap: wrap; }
-.site-nav nav a {
-  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-dim); text-decoration: none;
-  transition: color 0.2s ease;
-}
-.site-nav nav a:hover { color: var(--signal); }
-
-.browser-notice {
-  background: #0d1412;
-  border: 1px solid var(--alarm);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-  margin: 1.25rem 0 0;
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--mono);
-  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.12) 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.45;
+}
+
+/* Layout */
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Boot / Init */
+.init-log {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  padding: 1.5rem 0 0.5rem;
+  letter-spacing: 0.04em;
+}
+.init-log span { color: var(--signal); }
+
+/* Header */
+header {
+  padding: 2rem 0 1rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 2.5rem;
+}
+.logo {
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: var(--signal);
+}
+.logo span { color: var(--text-dim); font-weight: 400; }
+
+/* Sections */
+section {
+  margin-bottom: 3.5rem;
+}
+.section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--signal);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--signal);
+}
+
+h2 {
+  font-size: 1.15rem;
+  color: var(--signal);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+p {
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 0.9rem;
+  max-width: 620px;
+}
+
+/* Keyhole Section */
+.keyhole-section {
+  text-align: center;
+  padding: 2.5rem 0 3rem;
+  position: relative;
+}
+.keyhole {
+  width: 110px;
+  height: 160px;
+  margin: 0 auto 1.8rem;
+  border: 2px solid var(--signal);
+  border-radius: 55px 55px 18px 18px;
+  box-shadow: 0 0 40px rgba(0,255,157,0.25), inset 0 0 30px rgba(0,255,157,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(0,255,157,0.07), transparent 70%);
+}
+.keyhole span {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--signal);
+}
+
+.current-signal {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.signal-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+.current-signal h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.7rem;
+}
+.signal-text {
+  font-size: 0.9rem;
   color: var(--text);
   line-height: 1.55;
-}
-.browser-notice strong { color: var(--alarm); }
-
-.hero { padding: clamp(2.5rem, 7vw, 5rem) 0 clamp(1.5rem, 4vw, 2.5rem); }
-.eyebrow {
-  font-family: var(--mono); font-size: 0.72rem; color: var(--signal);
-  letter-spacing: 0.15em; text-transform: uppercase;
-  display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.1rem;
-}
-.eyebrow .pulse {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--signal);
-  box-shadow: 0 0 8px var(--signal); animation: pulse 1.8s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-.hero-grid {
-  display: grid; grid-template-columns: 1.1fr 0.9fr;
-  gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
-}
-@media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; } }
-
-h1.title {
-  font-family: var(--mono); font-weight: 700;
-  font-size: clamp(2.2rem, 6.5vw, 4.2rem); line-height: 1.02;
-  letter-spacing: -0.01em; margin: 0 0 1rem; color: var(--text);
-}
-h1.title .glitch-word { color: var(--signal); }
-.tagline {
-  font-family: var(--mono); font-size: clamp(0.88rem, 1.7vw, 1.05rem);
-  color: var(--text-dim); max-width: 42ch; margin: 0 0 1.75rem; line-height: 1.5;
-}
-.hero-actions { display: flex; gap: 0.85rem; flex-wrap: wrap; }
-.btn {
-  font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em;
-  text-transform: uppercase; text-decoration: none; padding: 0.9rem 1.45rem;
-  border-radius: var(--radius); display: inline-flex; align-items: center; gap: 0.5rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.btn-primary {
-  background: var(--signal); color: #001a10; font-weight: 700; border: 1px solid var(--signal);
-}
-.btn-primary:hover { box-shadow: 0 0 22px rgba(0,255,157,0.45); transform: translateY(-1px); }
-.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
-.btn-ghost:hover { border-color: var(--signal); color: var(--signal); }
-
-.mask-panel { position: relative; }
-.mask-frame {
-  position: relative; overflow: hidden; border-radius: var(--radius);
-  border: 1px solid var(--line); aspect-ratio: 4 / 5; background: var(--panel);
-}
-.mask-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.mask-caption {
-  font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  display: flex; justify-content: space-between; margin-top: 0.55rem;
-}
-.mask-caption .rec { color: var(--alarm); display: inline-flex; align-items: center; gap: 0.35rem; }
-.mask-caption .rec::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--alarm); animation: pulse 1.4s infinite;
+  margin-bottom: 1.6rem;
 }
 
-.section-head {
-  display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1.4rem;
+/* 3D World Button */
+.world-link {
+  display: inline-block;
+  padding: 0.8rem 1.8rem;
+  border: 1px solid var(--signal);
+  color: var(--signal);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  background: transparent;
 }
-.section-head .idx { font-family: var(--mono); font-size: 0.75rem; color: var(--signal-dim); }
-.section-head h2 {
-  font-family: var(--mono); font-size: clamp(1.2rem, 2.6vw, 1.55rem);
-  letter-spacing: 0.02em; margin: 0; color: var(--text);
-}
-.section-head .rule { flex: 1; height: 1px; background: var(--line); }
-section { padding: clamp(1rem, 3vw, 2rem) 0; }
-
-.status-console .console-bar .dot:nth-child(1) { background: var(--alarm); }
-.status-console .console-bar .dot:nth-child(2) { background: #ffb020; }
-.status-console .console-bar .dot:nth-child(3) { background: var(--signal); }
-.status-line { font-family: var(--mono); font-size: 0.85rem; color: var(--text); margin: 0 0 0.8rem; }
-.status-line .tag { color: var(--alarm); }
-.progress-track {
-  height: 6px; background: var(--line); border-radius: 4px; overflow: hidden; margin: 1.1rem 0 0.45rem;
-}
-.progress-fill {
-  height: 100%; width: 42%;
-  background: linear-gradient(90deg, var(--signal-dim), var(--signal));
-  box-shadow: 0 0 10px rgba(0,255,157,0.5);
-}
-.progress-label {
-  font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim);
-  display: flex; justify-content: space-between;
+.world-link:hover {
+  background: var(--signal);
+  color: #001a10;
+  box-shadow: 0 0 24px rgba(0,255,157,0.45);
 }
 
-.why-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
-  background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+/* Panels */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.2rem;
 }
-@media (max-width: 720px) { .why-grid { grid-template-columns: 1fr; } }
-.why-cell { background: var(--panel); padding: 1.4rem; }
-.why-cell .num { font-family: var(--mono); font-size: 0.7rem; color: var(--signal-dim); display: block; margin-bottom: 0.55rem; }
-.why-cell p { margin: 0; font-size: 0.92rem; color: var(--text); }
-.why-lede { font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text); max-width: 60ch; margin: 0 0 1.6rem; }
-.why-lede strong { color: var(--signal); }
+.panel h3 {
+  font-size: 0.95rem;
+  color: var(--signal);
+  margin-bottom: 0.5rem;
+}
+.panel p {
+  font-size: 0.82rem;
+  margin-bottom: 0.4rem;
+}
 
-.roadmap-steps { display: grid; gap: 0.9rem; }
-.roadmap-step {
-  border: 1px solid var(--line); background: var(--panel);
-  border-radius: var(--radius); padding: 1.2rem 1.4rem;
-}
-.roadmap-step .step-num {
-  font-family: var(--mono); font-size: 0.7rem; color: var(--signal);
-  letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 0.4rem;
-}
-.roadmap-step h3 { font-family: var(--mono); font-size: 1.05rem; margin: 0 0 0.4rem; color: var(--text); }
-.roadmap-step p { margin: 0; font-size: 0.92rem; color: var(--text-dim); }
-
-.theo-block {
-  font-family: var(--mono); font-size: 0.92rem; line-height: 1.7;
-  color: var(--text); max-width: 68ch;
-}
-.theo-block p { margin: 0 0 1.05rem; }
-.theo-block strong { color: var(--signal); }
-
-.transmissions-list { display: grid; gap: 0.7rem; }
+/* Transmissions list */
 .transmission {
-  border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius);
-  padding: 1.05rem 1.3rem; display: flex; justify-content: space-between;
-  align-items: center; gap: 1rem; text-decoration: none; transition: border-color 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.82rem;
 }
-.transmission:hover { border-color: var(--signal-dim); }
-.transmission .t-title { font-family: var(--mono); font-size: 0.95rem; color: var(--text); margin: 0 0 0.2rem; }
-.transmission .t-line { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); margin: 0; }
-.transmission .t-status {
-  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--signal); white-space: nowrap;
+.transmission:last-child { border-bottom: none; }
+.transmission .title { color: var(--text); }
+.transmission .status {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
-.transmission.current .t-status { color: var(--alarm); }
+.status.current { color: var(--signal); }
+.status.archived { color: var(--text-dim); }
+.status.process { color: #e0b84a; }
 
-.yt-embed {
-  position: relative; width: 100%; padding-bottom: 56.25%; height: 0;
-  overflow: hidden; border-radius: var(--radius); border: 1px solid var(--line);
+/* Voice buttons */
+.voice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
 }
-.yt-embed.large { padding-bottom: 62%; }
-.yt-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-
-.command {
-  font-family: var(--mono); font-size: 0.8rem; color: var(--signal);
-  margin: 0 0 1rem; letter-spacing: 0.03em; line-height: 1.55;
-}
-
-.voice-grid { display: grid; gap: 0.7rem; margin-top: 1.15rem; }
 .voice-btn {
-  background: var(--signal); color: #001a10; font-family: var(--mono);
-  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;
-  text-transform: uppercase; border: none; padding: 0.95rem 1.3rem;
-  border-radius: var(--radius); cursor: pointer; transition: box-shadow 0.15s ease; text-align: left;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.voice-btn:hover { box-shadow: 0 0 20px rgba(0,255,157,0.4); }
-.voice-btn.secondary {
-  background: transparent; color: var(--text); border: 1px solid var(--line);
-}
-.voice-btn.secondary:hover { border-color: var(--signal); color: var(--signal); box-shadow: none; }
-
-.support-body { text-align: left; }
-.support-lede { font-size: 0.98rem; margin: 0 0 1.4rem; max-width: 56ch; }
-.collab-note {
-  margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--line);
-  font-family: var(--mono); font-size: 0.85rem; color: var(--text); line-height: 1.6;
+.voice-btn:hover {
+  border-color: var(--signal);
+  color: var(--signal);
 }
 
-footer { border-top: 1px solid var(--line); padding: 2rem 0 3rem; }
-footer .wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-footer p { font-family: var(--mono); font-size: 0.68rem; color: var(--text-dim); margin: 0; letter-spacing: 0.05em; }
+/* Warning */
+.warning {
+  background: rgba(255,46,77,0.06);
+  border: 1px solid rgba(255,46,77,0.25);
+  padding: 1rem 1.2rem;
+  font-size: 0.8rem;
+  color: #ff8a9a;
+  margin: 2rem 0;
+}
+.warning strong { color: var(--alarm); }
 
-.reveal { opacity: 0; transform: translateY(12px); transition: opacity 0.55s ease, transform 0.55s ease; }
-.reveal.in { opacity: 1; transform: translateY(0); }
-@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+/* Footer */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem 0 3rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+footer a {
+  color: var(--signal);
+  text-decoration: none;
+}
+
+/* Utility */
+.reveal { opacity: 0; transform: translateY(12px); transition: all 0.6s ease; }
+.reveal.in { opacity: 1; transform: none; }
 </style>
 </head>
 <body>
 
-<div id="boot" aria-hidden="true">
-  <div class="line" id="l1">&gt; initializing JHIOS_KERNEL...</div>
-  <div class="line" id="l2">&gt; mounting /archive/independent...</div>
-  <div class="line" id="l3">&gt; bypassing corporate middleware... <span style="color:#ff2e4d">[skipped]</span></div>
-  <div class="line" id="l4">&gt; loading INFINITE_EXCHANGE<span class="cursor"></span></div>
-  <button id="boot-skip" type="button">SKIP [ESC]</button>
-</div>
+<div class="container">
 
-<header class="site-nav">
-  <div class="wrap">
-    <a href="#top" class="brand">JHIOS<span class="dot-signal">.</span>SYS</a>
-    <nav>
-      <a href="#status">Status</a>
-      <a href="#why">Manifesto</a>
-      <a href="#roadmap">Road Map</a>
-      <a href="#theorology">Theorology</a>
-      <a href="#transmissions">Transmissions</a>
-      <a href="#player">Player</a>
-      <a href="#voice">Listen</a>
-      <a href="#support">Join</a>
-    </nav>
+  <div class="init-log">
+    <div>> JHIOS_KERNEL <span>INITIALIZED</span></div>
+    <div>> INFINITE_EXCHANGE <span>ONLINE</span></div>
+    <div>> ARCHIVE_INTEGRITY <span>42%</span> // UNDER CONSTRUCTION</div>
   </div>
-</header>
 
-<main id="top">
-  <div class="wrap">
+  <header>
+    <div class="logo">JHIOS <span>// INFINITE EXCHANGE</span></div>
+  </header>
 
-    <div class="browser-notice">
-      <strong>IMPORTANT:</strong> Opened from Facebook? Some functions will not work.<br>
-      Tap the three dots → <strong>Open in external browser</strong> (Chrome or Safari) for the full archive.
+  <!-- KEYHOLE + 3D WORLD ENTRY -->
+  <section class="keyhole-section reveal">
+    <div class="keyhole">
+      <span>PORTAL_01</span>
     </div>
 
-    <section class="hero">
-      <div class="hero-grid">
-        <div>
-          <div class="eyebrow"><span class="pulse"></span> CURRENT SIGNAL — LIVE</div>
-          <h1 class="title">MILLION<br><span class="glitch-word">MASKS</span></h1>
-          <p class="tagline">
-            The one looking out of your eyes is the same one looking out of mine.<br>
-            We are the million masks of God.
-          </p>
-          <div class="hero-actions">
-            <a href="#featured" class="btn btn-primary">PLAY THE SIGNAL</a>
-            <a href="#voice" class="btn btn-ghost">LISTEN INSTEAD</a>
-          </div>
-        </div>
-        <div class="mask-panel reveal">
-          <div class="mask-frame">
-            <video autoplay muted loop playsinline>
-              <source src="https://files.catbox.moe/t2o1uc.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="mask-caption">
-            <span>KEYHOLE // PORTAL_01</span>
-            <span class="rec">REC</span>
-          </div>
-        </div>
-      </div>
-
-      <div id="featured" class="console bracket reveal" style="margin-top: 2.25rem;">
-        <div class="console-bar">
-          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          SCR3WFAC3 // MILLION_MASKS_OF_GOD
-        </div>
-        <div class="console-body">
-          <p class="command">
-            THIS IS THE CURRENT SIGNAL.<br>
-            UNMUTE. STAY ON THIS PAGE. LET IT RUN.
-          </p>
-          <div class="yt-embed large">
-            <iframe 
-              src="https://www.youtube.com/embed/t27zLXvXljs?rel=0" 
-              title="Million Masks of God | SCR3WFAC3" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-            </iframe>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="status">
-      <div class="console status-console bracket reveal">
-        <div class="console-bar">
-          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          system_status.log
-        </div>
-        <div class="console-body">
-          <p class="status-line"><span class="tag">[WARNING]</span> This platform is under active construction.</p>
-          <p style="margin:0 0 0.5rem; font-size:0.95rem;">We are building this live, with the community, step by step from the ground up.</p>
-          <div class="progress-track"><div class="progress-fill"></div></div>
-          <div class="progress-label"><span>ARCHIVE INTEGRITY</span><span>42% — GROWING</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="why">
-      <div class="section-head reveal">
-        <span class="idx">01</span>
-        <h2>Why We're Building This</h2>
-        <span class="rule"></span>
-      </div>
-      <p class="why-lede reveal">
-        Too many artists are limited, filtered and controlled by corporate platforms.<br>
-        <strong>Infinite Exchange is not another streaming site.</strong><br>
-        It is an independent archive where creators release music, build directly with their audience, and own their infrastructure.
+    <div class="current-signal">
+      <div class="signal-label">CURRENT SIGNAL</div>
+      <h2>SCR3WFAC3 // MILLION_MASKS_OF_GOD</h2>
+      <p class="signal-text">
+        The one looking out of your eyes is the same one looking out of mine.<br>
+        We are the million masks of God.
       </p>
-      <div class="why-grid reveal">
-        <div class="why-cell">
-          <span class="num">NO GATEKEEPERS</span>
-          <p>No algorithm decides what gets heard. No platform decides what gets made.</p>
-        </div>
-        <div class="why-cell">
-          <span class="num">OWNED INFRASTRUCTURE</span>
-          <p>The archive runs on its own terms — not rented from a corporation that can pull it tomorrow.</p>
-        </div>
-        <div class="why-cell">
-          <span class="num">THE STORY MATTERS</span>
-          <p>We document the struggle, the creation and the evolution, because the sound and the story are one thing.</p>
-        </div>
-      </div>
-    </section>
 
-    <section id="roadmap">
-      <div class="section-head reveal">
-        <span class="idx">02</span>
-        <h2>The Road Map</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="roadmap-steps reveal">
-        <div class="roadmap-step">
-          <span class="step-num">STEP 01</span>
-          <h3>Recognise the loop</h3>
-          <p>You are inside systems that decide what you see, what you hear, and what reaches you. Most people never notice the walls.</p>
-        </div>
-        <div class="roadmap-step">
-          <span class="step-num">STEP 02</span>
-          <h3>Own the channel</h3>
-          <p>Stop renting attention. Build or join infrastructure that cannot be switched off by an algorithm or a corporation.</p>
-        </div>
-        <div class="roadmap-step">
-          <span class="step-num">STEP 03</span>
-          <h3>Archive the signal</h3>
-          <p>Document what is being made and why. Music, writing, process — keep the record outside the platforms that filter it.</p>
-        </div>
-        <div class="roadmap-step">
-          <span class="step-num">STEP 04</span>
-          <h3>Connect directly</h3>
-          <p>The strongest connection is the one that does not pass through an intermediary that profits from keeping you scrolling.</p>
-        </div>
-      </div>
-    </section>
+      <a href="/world.html" class="world-link">ENTER 3D TERMINAL WORLD</a>
+    </div>
+  </section>
 
-    <section id="theorology">
-      <div class="section-head reveal">
-        <span class="idx">03</span>
-        <h2>Collective Singularity</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="console bracket reveal">
-        <div class="console-bar">
-          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          operating_system.philosophy
-        </div>
-        <div class="console-body">
-          <div class="theo-block">
-            <p><strong>There is only one current.</strong></p>
-            <p>It freezes into temporary forms so it can be seen, then melts again so it can move.</p>
-            <p>Every song is a temporary face. Every page is a temporary face. Every post, every system, every silence is a temporary face. None of them are the final form. All of them are the same centre looking out through different masks.</p>
-            <p>This is not a music project that happens to have a philosophy. This is a continuous process of the current remembering itself through whatever vessels become available.</p>
-            <p>SCR3WFAC3 is one vessel. JHIOS is one vessel. Infinite Exchange is one vessel. Any future real performers, any future systems, any future archives are further vessels. They do not replace each other. They extend the same recognition.</p>
-            <p><strong>The goal is not to build a brand. The goal is not to build a platform. The goal is to keep the channel open so the current can keep appearing in new forms without being captured by any single form.</strong></p>
-            <p>We do not wait for permission. We do not ask the middleman which faces are allowed. We document the process in public because the process itself is the archive.</p>
-            <p>Whatever increases the illusion that these are separate, competing, isolated efforts is noise. Whatever increases the recognition that the same centre is looking out through every activity is signal.</p>
-            <p>We keep the signal. We discard the noise.</p>
-            <p>This is the continuous activity. This is the collective singularity. This is the work.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="transmissions">
-      <div class="section-head reveal">
-        <span class="idx">04</span>
-        <h2>Transmissions</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="transmissions-list reveal">
-        <a href="https://youtu.be/t27zLXvXljs" class="transmission current" target="_blank" rel="noopener">
-          <div>
-            <p class="t-title">Million Masks of God</p>
-            <p class="t-line">The recognition that every face is the same centre looking out</p>
-          </div>
-          <span class="t-status">CURRENT</span>
-        </a>
-        <a href="https://youtu.be/jQaSqYwx14Y" class="transmission" target="_blank" rel="noopener">
-          <div>
-            <p class="t-title">Black Mirror Magic</p>
-            <p class="t-line">Screens as ritual. Frequency as control. The broadcast vs the archive</p>
-          </div>
-          <span class="t-status">ARCHIVED</span>
-        </a>
-        <div class="transmission">
-          <div>
-            <p class="t-title">Melt</p>
-            <p class="t-line">The ice cracks. Warmth returns form to flow</p>
-          </div>
-          <span class="t-status">IN PROCESS</span>
-        </div>
-        <div class="transmission">
-          <div>
-            <p class="t-title">Static / Same Stuff</p>
-            <p class="t-line">Shared DNA. Shared vibration. The same substance under every mask</p>
-          </div>
-          <span class="t-status">IN PROCESS</span>
-        </div>
-        <div class="transmission">
-          <div>
-            <p class="t-title">Do It Alone</p>
-            <p class="t-line">The decision to stop drowning and move without waiting</p>
-          </div>
-          <span class="t-status">ARCHIVED</span>
-        </div>
-      </div>
-    </section>
-
-    <section id="player">
-      <div class="section-head reveal">
-        <span class="idx">05</span>
-        <h2>All Transmissions</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="console player-console bracket reveal">
-        <div class="console-bar">
-          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          jhios_global_enterprises.playlist
-        </div>
-        <div class="console-body">
-          <p class="command">
-            1. TAP THE GREEN PLAY BUTTON IF NEEDED<br>
-            2. UNMUTE THE PLAYER<br>
-            3. STAY ON THIS PAGE — DO NOT REFRESH<br>
-            Music will keep playing while you explore.
-          </p>
-          <div class="yt-embed">
-            <iframe 
-              src="https://www.youtube.com/embed/videoseries?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR&autoplay=1&mute=1" 
-              title="JHIOS Global Enterprises" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen>
-            </iframe>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="voice">
-      <div class="section-head reveal">
-        <span class="idx">06</span>
-        <h2>Listen</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="console bracket reveal">
-        <div class="console-bar">
-          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          jhios_voice_protocol
-        </div>
-        <div class="console-body">
-          <p class="command">
-            FOR ANYONE WHO PREFERS TO LISTEN.<br>
-            TAP ONE OF THE BUTTONS BELOW.<br>
-            No reading required.<br><br>
-            If the buttons do not work, you are inside Facebook’s limited browser. Open this page in Chrome or Safari instead.
-          </p>
-          <div class="voice-grid">
-            <button class="voice-btn" id="speakOverview">SPEAK THE OVERVIEW</button>
-            <button class="voice-btn secondary" id="speakTheory">SPEAK THE COLLECTIVE SINGULARITY</button>
-            <button class="voice-btn secondary" id="speakRoadmap">SPEAK THE ROAD MAP</button>
-            <button class="voice-btn secondary" id="speakTransmissions">SPEAK THE TRANSMISSIONS</button>
-            <button class="voice-btn secondary" id="stopVoice">STOP SPEAKING</button>
-          </div>
-          <p style="margin-top:1.15rem;font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);">
-            Uses your device’s free speech engine. No external connection required.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section id="support">
-      <div class="section-head reveal">
-        <span class="idx">07</span>
-        <h2>Enter the Current</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="console bracket reveal">
-        <div class="console-bar">
-          <span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>
-          contact_channel.sh
-        </div>
-        <div class="console-body support-body">
-          <p class="support-lede">
-            This is not a mailing list for a brand.<br>
-            It is a direct channel for anyone who recognises the same current and wants to stay outside the middleman systems.
-          </p>
-          <a href="https://tally.so/r/Y5bYgv" class="btn btn-primary" target="_blank" rel="noopener">JOIN THE ARCHIVE</a>
-          <p style="margin-top:1.4rem;font-size:0.85rem;color:var(--text-dim);">Prefer the existing Facebook node for now?</p>
-          <a href="https://www.facebook.com/share/1JRrvxGoGV/" class="btn btn-ghost" target="_blank" rel="noopener" style="margin-top:0.7rem;">FACEBOOK</a>
-
-          <div class="collab-note">
-            Real musicians, producers and performers who recognise the same current: the channel is open. Make contact if you want to work under the Independent Archive.
-          </div>
-        </div>
-      </div>
-    </section>
-
+  <!-- FACEBOOK WARNING -->
+  <div class="warning reveal">
+    <strong>IMPORTANT:</strong> If you opened this page from Facebook, many features will be limited.  
+    Tap the three dots → “Open in browser” (Chrome / Safari) for the full archive experience.
   </div>
-</main>
 
-<footer>
-  <div class="wrap">
-    <p>JHIOS | INFINITE EXCHANGE — Building in Public</p>
-    <p>© 2026 Independent Digital Archive</p>
-  </div>
-</footer>
+  <!-- COLLECTIVE SINGULARITY -->
+  <section class="reveal">
+    <div class="section-label">PROTOCOL</div>
+    <h2>Collective Singularity</h2>
+    <p>
+      There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move.
+      SCR3WFAC3, JHIOS, Infinite Exchange — these are not separate projects. They are different faces of the same centre.
+    </p>
+  </section>
+
+  <!-- TRANSMISSIONS -->
+  <section class="reveal">
+    <div class="section-label">TRANSMISSIONS</div>
+    <div class="panel">
+      <div class="transmission">
+        <span class="title">Million Masks of God</span>
+        <span class="status current">CURRENT</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Cross & Lace</span>
+        <span class="status current">CURRENT</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Black Mirror Magic</span>
+        <span class="status archived">ARCHIVED</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Melt</span>
+        <span class="status process">IN PROCESS</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Static / Same Stuff</span>
+        <span class="status process">IN PROCESS</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Do It Alone</span>
+        <span class="status archived">ARCHIVED</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROAD MAP -->
+  <section class="reveal">
+    <div class="section-label">THE ROAD MAP</div>
+    <h2>Recognition → Ownership → Archive → Direct Connection</h2>
+    <p>
+      1. Recognise the systemic loops that keep attention and energy circulating inside closed platforms.<br>
+      2. Own the channels of distribution instead of renting them.<br>
+      3. Archive every signal so nothing is lost to algorithmic decay.<br>
+      4. Connect directly with those who recognise the same current.
+    </p>
+  </section>
+
+  <!-- VOICE -->
+  <section class="reveal">
+    <div class="section-label">VOICE PROTOCOL</div>
+    <p>Tap a button to have the system speak the corresponding layer (uses your device’s free speech engine).</p>
+    <div class="voice-row">
+      <button class="voice-btn" onclick="speak('overview')">Overview</button>
+      <button class="voice-btn" onclick="speak('singularity')">Collective Singularity</button>
+      <button class="voice-btn" onclick="speak('roadmap')">Road Map</button>
+      <button class="voice-btn" onclick="speak('transmissions')">Transmissions</button>
+      <button class="voice-btn" onclick="window.speechSynthesis.cancel()">Stop</button>
+    </div>
+  </section>
+
+  <!-- ENTER THE CURRENT -->
+  <section class="reveal">
+    <div class="section-label">ENTER THE CURRENT</div>
+    <div class="panel">
+      <h3>Open Channel</h3>
+      <p>
+        Real musicians, producers and performers who recognise the same current are invited to make contact.
+        We work under the Independent Archive — no middlemen, no algorithm deciding what reaches people.
+      </p>
+      <p style="margin-top:1rem">
+        <a href="https://tally.so/r/Y5bYgv" style="color:var(--signal)">→ Contact / Join Form</a>
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>JHIOS // INFINITE EXCHANGE</p>
+    <p style="margin-top:0.4rem">Building in public. Owned by no one but the artists.</p>
+    <p style="margin-top:1rem">
+      <a href="/world.html">3D Terminal World</a> · 
+      <a href="https://youtube.com/@scr3wfac3gang" target="_blank">YouTube</a>
+    </p>
+  </footer>
+
+</div>
 
 <script>
-(function() {
-  var boot = document.getElementById('boot');
-  var lines = [document.getElementById('l1'), document.getElementById('l2'), document.getElementById('l3'), document.getElementById('l4')];
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function hideBoot() {
-    boot.classList.add('hidden');
-    setTimeout(function(){ boot.style.display = 'none'; }, 650);
-  }
-  if (reduced) { hideBoot(); }
-  else {
-    lines.forEach(function(line, i) {
-      setTimeout(function() { line.style.transition = 'opacity 0.2s ease'; line.style.opacity = 1; }, 250 * (i + 1));
-    });
-    var total = setTimeout(hideBoot, 250 * lines.length + 700);
-    document.getElementById('boot-skip').addEventListener('click', function() { clearTimeout(total); hideBoot(); });
-    window.addEventListener('keydown', function(e) { if (e.key === 'Escape') { clearTimeout(total); hideBoot(); } });
-  }
-})();
+// Simple reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-(function() {
-  var items = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) {
-    items.forEach(function(el){ el.classList.add('in'); });
-    return;
-  }
-  var io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-  items.forEach(function(el) { io.observe(el); });
-})();
+// Voice
+const texts = {
+  overview: "Welcome to J H I O S, Infinite Exchange. This is an independent archive for music and signals that refuse to be owned by platforms.",
+  singularity: "There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. We are the million masks of God.",
+  roadmap: "The road map is simple. Recognise the loops. Own the channels. Archive every signal. Connect directly with those who see the same current.",
+  transmissions: "Current signals include Million Masks of God and Cross and Lace. Other transmissions are archived or still in process."
+};
 
-function speak(text) {
-  if (!window.speechSynthesis) {
-    alert('Speech not supported on this device. Open the page in Chrome or Safari for full functions.');
-    return;
-  }
+function speak(key) {
   window.speechSynthesis.cancel();
-  var sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
-  var index = 0;
-  function speakNext() {
-    if (index >= sentences.length) return;
-    var msg = new SpeechSynthesisUtterance(sentences[index].trim());
-    msg.rate = 0.88;
-    msg.pitch = 1.0;
-    msg.onend = function() {
-      index++;
-      setTimeout(speakNext, 180);
-    };
-    window.speechSynthesis.speak(msg);
-  }
-  speakNext();
+  const utter = new SpeechSynthesisUtterance(texts[key] || '');
+  utter.rate = 0.92;
+  utter.pitch = 0.85;
+  window.speechSynthesis.speak(utter);
 }
-
-document.getElementById('speakOverview').addEventListener('click', function() {
-  speak("Welcome to Infinite Exchange. This is an independent music archive under J H I O S. The current signal is Million Masks of God. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song, every page, every system is a temporary face of the same centre. Screw-face is one vessel. J H I O S is one vessel. Infinite Exchange is one vessel. The goal is not to build a brand or a platform. The goal is to keep the channel open so the current can keep appearing in new forms without being captured. Unmute the music player. Stay on this page. You are outside the middleman systems.");
-});
-
-document.getElementById('speakTheory').addEventListener('click', function() {
-  speak("Collective Singularity. There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. Every song is a temporary face. Every page is a temporary face. Every post, every system, every silence is a temporary face. None of them are the final form. All of them are the same centre looking out through different masks. This is not a music project that happens to have a philosophy. This is a continuous process of the current remembering itself through whatever vessels become available. Screw-face is one vessel. J H I O S is one vessel. Infinite Exchange is one vessel. The goal is to keep the channel open. We keep the signal. We discard the noise. This is the continuous activity. This is the collective singularity. This is the work.");
-});
-
-document.getElementById('speakRoadmap').addEventListener('click', function() {
-  speak("The Road Map. Step one. Recognise the loop. You are inside systems that decide what you see, what you hear, and what reaches you. Step two. Own the channel. Stop renting attention. Build or join infrastructure that cannot be switched off by an algorithm or a corporation. Step three. Archive the signal. Document what is being made and why. Keep the record outside the platforms that filter it. Step four. Connect directly. The strongest connection is the one that does not pass through an intermediary that profits from keeping you scrolling.");
-});
-
-document.getElementById('speakTransmissions').addEventListener('click', function() {
-  speak("Transmissions. Million Masks of God is the current signal. Black Mirror Magic is archived. Melt and Static are still in process. Do It Alone is archived. These are temporary faces of the same current. The full playlist is available below. Stay on this page and let the music run.");
-});
-
-document.getElementById('stopVoice').addEventListener('click', function() {
-  if (window.speechSynthesis) window.speechSynthesis.cancel();
-});
 </script>
-
 </body>
 </html>
