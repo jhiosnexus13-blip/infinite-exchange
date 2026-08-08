@@ -14,7 +14,6 @@
   --panel: #0a0e0d;
   --line: #1c2b26;
   --signal: #00ff9d;
-  --signal-dim: #0a8f5c;
   --text: #d4ded9;
   --text-dim: #5c6b66;
   --alarm: #ff2e4d;
@@ -39,10 +38,14 @@ body::before {
   background: repeating-linear-gradient(to bottom, transparent 0px, transparent 2px, rgba(0,0,0,0.12) 3px);
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.45;
+  opacity: 0.4;
 }
 
-.container { max-width: 920px; margin: 0 auto; padding: 0 1.25rem; }
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
 
 .init-log {
   font-size: 0.7rem;
@@ -57,7 +60,11 @@ header {
   border-bottom: 1px solid var(--line);
   margin-bottom: 2.5rem;
 }
-.logo { font-size: 1.1rem; letter-spacing: 0.15em; color: var(--signal); }
+.logo {
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: var(--signal);
+}
 .logo span { color: var(--text-dim); }
 
 section { margin-bottom: 3.2rem; }
@@ -74,23 +81,40 @@ section { margin-bottom: 3.2rem; }
 }
 .section-label::before {
   content: '';
-  width: 8px; height: 8px;
+  width: 8px;
+  height: 8px;
   background: var(--signal);
   border-radius: 50%;
   box-shadow: 0 0 8px var(--signal);
 }
 
-h2 { font-size: 1.15rem; color: var(--signal); margin-bottom: 0.8rem; }
-p { font-size: 0.88rem; margin-bottom: 0.9rem; max-width: 620px; }
+h2 {
+  font-size: 1.15rem;
+  color: var(--signal);
+  margin-bottom: 0.8rem;
+}
 
-.keyhole-section { text-align: center; padding: 2.5rem 0 3rem; }
+p {
+  font-size: 0.88rem;
+  margin-bottom: 0.9rem;
+  max-width: 620px;
+}
+
+/* Keyhole */
+.keyhole-section {
+  text-align: center;
+  padding: 2.5rem 0 3rem;
+}
 .keyhole {
-  width: 110px; height: 160px;
+  width: 110px;
+  height: 160px;
   margin: 0 auto 1.8rem;
   border: 2px solid var(--signal);
   border-radius: 55px 55px 18px 18px;
   box-shadow: 0 0 40px rgba(0,255,157,0.25), inset 0 0 30px rgba(0,255,157,0.08);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: radial-gradient(ellipse at center, rgba(0,255,157,0.07), transparent 70%);
 }
 .keyhole span {
@@ -101,16 +125,28 @@ p { font-size: 0.88rem; margin-bottom: 0.9rem; max-width: 620px; }
   color: var(--signal);
 }
 
-.signal-label { font-size: 0.65rem; letter-spacing: 0.15em; color: var(--text-dim); margin-bottom: 0.5rem; }
-.current-signal h2 { font-size: 1.25rem; margin-bottom: 0.7rem; }
-.signal-text { font-size: 0.9rem; line-height: 1.55; margin-bottom: 1.6rem; }
+.signal-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+.current-signal h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.7rem;
+}
+.signal-text {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin-bottom: 1.6rem;
+}
 
 .world-link {
   display: inline-block;
-  padding: 0.8rem 1.8rem;
+  padding: 0.85rem 1.9rem;
   border: 1px solid var(--signal);
   color: var(--signal);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   text-decoration: none;
@@ -122,6 +158,7 @@ p { font-size: 0.88rem; margin-bottom: 0.9rem; max-width: 620px; }
   box-shadow: 0 0 24px rgba(0,255,157,0.45);
 }
 
+/* Players */
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -129,13 +166,12 @@ p { font-size: 0.88rem; margin-bottom: 0.9rem; max-width: 620px; }
   padding: 1.4rem 1.5rem;
   margin-bottom: 1.2rem;
 }
-
 .player-wrap {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
-  margin: 1.2rem 0;
+  margin: 1rem 0 0.5rem;
   border: 1px solid var(--line);
 }
 .player-wrap iframe {
@@ -156,7 +192,12 @@ p { font-size: 0.88rem; margin-bottom: 0.9rem; max-width: 620px; }
 .status.archived { color: var(--text-dim); font-size: 0.7rem; }
 .status.process { color: #e0b84a; font-size: 0.7rem; }
 
-.voice-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+.voice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
 .voice-btn {
   padding: 0.55rem 1rem;
   border: 1px solid var(--line);
@@ -166,7 +207,10 @@ p { font-size: 0.88rem; margin-bottom: 0.9rem; max-width: 620px; }
   font-size: 0.7rem;
   cursor: pointer;
 }
-.voice-btn:hover { border-color: var(--signal); color: var(--signal); }
+.voice-btn:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
 
 .warning {
   background: rgba(255,46,77,0.06);
@@ -185,7 +229,10 @@ footer {
   color: var(--text-dim);
   text-align: center;
 }
-footer a { color: var(--signal); text-decoration: none; }
+footer a {
+  color: var(--signal);
+  text-decoration: none;
+}
 
 .reveal { opacity: 0; transform: translateY(12px); transition: all 0.6s ease; }
 .reveal.in { opacity: 1; transform: none; }
@@ -205,9 +252,11 @@ footer a { color: var(--signal); text-decoration: none; }
     <div class="logo">JHIOS <span>// INFINITE EXCHANGE</span></div>
   </header>
 
-  <!-- KEYHOLE + 3D WORLD -->
+  <!-- KEYHOLE + 3D WORLD ENTRY -->
   <section class="keyhole-section reveal">
-    <div class="keyhole"><span>PORTAL_01</span></div>
+    <div class="keyhole">
+      <span>PORTAL_01</span>
+    </div>
     <div class="current-signal">
       <div class="signal-label">CURRENT SIGNAL</div>
       <h2>SCR3WFAC3 // MILLION_MASKS_OF_GOD</h2>
@@ -230,14 +279,14 @@ footer a { color: var(--signal); text-decoration: none; }
     <h2>Current Transmissions</h2>
 
     <div class="panel">
-      <h3 style="color:var(--signal); margin-bottom:0.6rem;">Million Masks of God</h3>
+      <h3 style="color:var(--signal); margin-bottom:0.5rem;">Million Masks of God</h3>
       <div class="player-wrap">
         <iframe src="https://www.youtube.com/embed/t27zLXvXljs" title="Million Masks of God" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
 
     <div class="panel">
-      <h3 style="color:var(--signal); margin-bottom:0.6rem;">Cross & Lace</h3>
+      <h3 style="color:var(--signal); margin-bottom:0.5rem;">Cross & Lace</h3>
       <div class="player-wrap">
         <iframe src="https://www.youtube.com/embed/jQaSqYwx14Y" title="Cross & Lace" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
@@ -281,7 +330,9 @@ footer a { color: var(--signal); text-decoration: none; }
     <div class="panel">
       <h3 style="color:var(--signal)">Open Channel</h3>
       <p>Real musicians, producers and performers who recognise the same current are invited to make contact.</p>
-      <p style="margin-top:1rem"><a href="https://tally.so/r/Y5bYgv" style="color:var(--signal)">→ Contact / Join Form</a></p>
+      <p style="margin-top:1rem">
+        <a href="https://tally.so/r/Y5bYgv" style="color:var(--signal)">→ Contact / Join Form</a>
+      </p>
     </div>
   </section>
 
@@ -293,11 +344,14 @@ footer a { color: var(--signal); text-decoration: none; }
       <a href="https://youtube.com/@scr3wfac3gang" target="_blank">YouTube</a>
     </p>
   </footer>
+
 </div>
 
 <script>
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
@@ -309,7 +363,8 @@ const texts = {
 function speak(key) {
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(texts[key] || '');
-  utter.rate = 0.92; utter.pitch = 0.85;
+  utter.rate = 0.92;
+  utter.pitch = 0.85;
   window.speechSynthesis.speak(utter);
 }
 </script>
