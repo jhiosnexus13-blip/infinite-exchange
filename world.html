@@ -1,22 +1,435 @@
-<!-- KEYHOLE / CURRENT SIGNAL -->
-<section class="keyhole-section">
-  <div class="keyhole-frame">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JHIOS | INFINITE EXCHANGE</title>
+<meta name="description" content="Independent Music Vault • AI Creation Platform • Digital Archive. Building in public, owned by no one but the artists.">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500&display=swap');
+
+:root {
+  --bg:        #050607;
+  --panel:     #0a0e0d;
+  --panel-2:   #0d1412;
+  --line:      #1c2b26;
+  --signal:    #00ff9d;
+  --signal-dim:#0a8f5c;
+  --text:      #d4ded9;
+  --text-dim:  #5c6b66;
+  --alarm:     #ff2e4d;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --sans: 'Inter', system-ui, sans-serif;
+  --gap: clamp(1.25rem, 3vw, 2.5rem);
+  --radius: 3px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.12) 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.45;
+}
+
+/* Layout */
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Boot / Init */
+.init-log {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  padding: 1.5rem 0 0.5rem;
+  letter-spacing: 0.04em;
+}
+.init-log span { color: var(--signal); }
+
+/* Header */
+header {
+  padding: 2rem 0 1rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 2.5rem;
+}
+.logo {
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: var(--signal);
+}
+.logo span { color: var(--text-dim); font-weight: 400; }
+
+/* Sections */
+section {
+  margin-bottom: 3.5rem;
+}
+.section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-label::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--signal);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--signal);
+}
+
+h2 {
+  font-size: 1.15rem;
+  color: var(--signal);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+p {
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 0.9rem;
+  max-width: 620px;
+}
+
+/* Keyhole Section */
+.keyhole-section {
+  text-align: center;
+  padding: 2.5rem 0 3rem;
+  position: relative;
+}
+.keyhole {
+  width: 110px;
+  height: 160px;
+  margin: 0 auto 1.8rem;
+  border: 2px solid var(--signal);
+  border-radius: 55px 55px 18px 18px;
+  box-shadow: 0 0 40px rgba(0,255,157,0.25), inset 0 0 30px rgba(0,255,157,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(0,255,157,0.07), transparent 70%);
+}
+.keyhole span {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--signal);
+}
+
+.current-signal {
+  max-width: 520px;
+  margin: 0 auto;
+}
+.signal-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+.current-signal h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.7rem;
+}
+.signal-text {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 1.6rem;
+}
+
+/* 3D World Button */
+.world-link {
+  display: inline-block;
+  padding: 0.8rem 1.8rem;
+  border: 1px solid var(--signal);
+  color: var(--signal);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  background: transparent;
+}
+.world-link:hover {
+  background: var(--signal);
+  color: #001a10;
+  box-shadow: 0 0 24px rgba(0,255,157,0.45);
+}
+
+/* Panels */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.2rem;
+}
+.panel h3 {
+  font-size: 0.95rem;
+  color: var(--signal);
+  margin-bottom: 0.5rem;
+}
+.panel p {
+  font-size: 0.82rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Transmissions list */
+.transmission {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.82rem;
+}
+.transmission:last-child { border-bottom: none; }
+.transmission .title { color: var(--text); }
+.transmission .status {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.status.current { color: var(--signal); }
+.status.archived { color: var(--text-dim); }
+.status.process { color: #e0b84a; }
+
+/* Voice buttons */
+.voice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.voice-btn {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.voice-btn:hover {
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+/* Warning */
+.warning {
+  background: rgba(255,46,77,0.06);
+  border: 1px solid rgba(255,46,77,0.25);
+  padding: 1rem 1.2rem;
+  font-size: 0.8rem;
+  color: #ff8a9a;
+  margin: 2rem 0;
+}
+.warning strong { color: var(--alarm); }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 2rem 0 3rem;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+footer a {
+  color: var(--signal);
+  text-decoration: none;
+}
+
+/* Utility */
+.reveal { opacity: 0; transform: translateY(12px); transition: all 0.6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="init-log">
+    <div>> JHIOS_KERNEL <span>INITIALIZED</span></div>
+    <div>> INFINITE_EXCHANGE <span>ONLINE</span></div>
+    <div>> ARCHIVE_INTEGRITY <span>42%</span> // UNDER CONSTRUCTION</div>
+  </div>
+
+  <header>
+    <div class="logo">JHIOS <span>// INFINITE EXCHANGE</span></div>
+  </header>
+
+  <!-- KEYHOLE + 3D WORLD ENTRY -->
+  <section class="keyhole-section reveal">
     <div class="keyhole">
       <span>PORTAL_01</span>
     </div>
+
+    <div class="current-signal">
+      <div class="signal-label">CURRENT SIGNAL</div>
+      <h2>SCR3WFAC3 // MILLION_MASKS_OF_GOD</h2>
+      <p class="signal-text">
+        The one looking out of your eyes is the same one looking out of mine.<br>
+        We are the million masks of God.
+      </p>
+
+      <a href="/world.html" class="world-link">ENTER 3D TERMINAL WORLD</a>
+    </div>
+  </section>
+
+  <!-- FACEBOOK WARNING -->
+  <div class="warning reveal">
+    <strong>IMPORTANT:</strong> If you opened this page from Facebook, many features will be limited.  
+    Tap the three dots → “Open in browser” (Chrome / Safari) for the full archive experience.
   </div>
 
-  <div class="current-signal">
-    <div class="signal-label">CURRENT SIGNAL</div>
-    <h2>SCR3WFAC3 // MILLION_MASKS_OF_GOD</h2>
-    <p class="signal-text">
-      The one looking out of your eyes is the same one looking out of mine.<br>
-      We are the million masks of God.
+  <!-- COLLECTIVE SINGULARITY -->
+  <section class="reveal">
+    <div class="section-label">PROTOCOL</div>
+    <h2>Collective Singularity</h2>
+    <p>
+      There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move.
+      SCR3WFAC3, JHIOS, Infinite Exchange — these are not separate projects. They are different faces of the same centre.
     </p>
+  </section>
 
-    <!-- 3D WORLD ENTRY -->
-    <a href="/world.html" class="world-link">
-      ENTER 3D TERMINAL WORLD
-    </a>
-  </div>
-</section>
+  <!-- TRANSMISSIONS -->
+  <section class="reveal">
+    <div class="section-label">TRANSMISSIONS</div>
+    <div class="panel">
+      <div class="transmission">
+        <span class="title">Million Masks of God</span>
+        <span class="status current">CURRENT</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Cross & Lace</span>
+        <span class="status current">CURRENT</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Black Mirror Magic</span>
+        <span class="status archived">ARCHIVED</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Melt</span>
+        <span class="status process">IN PROCESS</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Static / Same Stuff</span>
+        <span class="status process">IN PROCESS</span>
+      </div>
+      <div class="transmission">
+        <span class="title">Do It Alone</span>
+        <span class="status archived">ARCHIVED</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROAD MAP -->
+  <section class="reveal">
+    <div class="section-label">THE ROAD MAP</div>
+    <h2>Recognition → Ownership → Archive → Direct Connection</h2>
+    <p>
+      1. Recognise the systemic loops that keep attention and energy circulating inside closed platforms.<br>
+      2. Own the channels of distribution instead of renting them.<br>
+      3. Archive every signal so nothing is lost to algorithmic decay.<br>
+      4. Connect directly with those who recognise the same current.
+    </p>
+  </section>
+
+  <!-- VOICE -->
+  <section class="reveal">
+    <div class="section-label">VOICE PROTOCOL</div>
+    <p>Tap a button to have the system speak the corresponding layer (uses your device’s free speech engine).</p>
+    <div class="voice-row">
+      <button class="voice-btn" onclick="speak('overview')">Overview</button>
+      <button class="voice-btn" onclick="speak('singularity')">Collective Singularity</button>
+      <button class="voice-btn" onclick="speak('roadmap')">Road Map</button>
+      <button class="voice-btn" onclick="speak('transmissions')">Transmissions</button>
+      <button class="voice-btn" onclick="window.speechSynthesis.cancel()">Stop</button>
+    </div>
+  </section>
+
+  <!-- ENTER THE CURRENT -->
+  <section class="reveal">
+    <div class="section-label">ENTER THE CURRENT</div>
+    <div class="panel">
+      <h3>Open Channel</h3>
+      <p>
+        Real musicians, producers and performers who recognise the same current are invited to make contact.
+        We work under the Independent Archive — no middlemen, no algorithm deciding what reaches people.
+      </p>
+      <p style="margin-top:1rem">
+        <a href="https://tally.so/r/Y5bYgv" style="color:var(--signal)">→ Contact / Join Form</a>
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>JHIOS // INFINITE EXCHANGE</p>
+    <p style="margin-top:0.4rem">Building in public. Owned by no one but the artists.</p>
+    <p style="margin-top:1rem">
+      <a href="/world.html">3D Terminal World</a> · 
+      <a href="https://youtube.com/@scr3wfac3gang" target="_blank">YouTube</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+// Simple reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Voice
+const texts = {
+  overview: "Welcome to J H I O S, Infinite Exchange. This is an independent archive for music and signals that refuse to be owned by platforms.",
+  singularity: "There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. We are the million masks of God.",
+  roadmap: "The road map is simple. Recognise the loops. Own the channels. Archive every signal. Connect directly with those who see the same current.",
+  transmissions: "Current signals include Million Masks of God and Cross and Lace. Other transmissions are archived or still in process."
+};
+
+function speak(key) {
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(texts[key] || '');
+  utter.rate = 0.92;
+  utter.pitch = 0.85;
+  window.speechSynthesis.speak(utter);
+}
+</script>
+</body>
+</html>
