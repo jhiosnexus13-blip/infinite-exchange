@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JHIOS | INFINITE EXCHANGE</title>
 <meta name="description" content="Independent Music Vault • AI Creation Platform • Digital Archive.">
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 :root {
@@ -39,6 +38,7 @@ p{font-size:.88rem;margin-bottom:.9rem;max-width:620px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:1.4rem 1.5rem;margin-bottom:1.2rem}
 .player-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:1rem 0 .5rem;border:1px solid var(--line)}
 .player-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%}
+.playlist-desc{font-size:.78rem;color:var(--text-dim);margin-bottom:.6rem;line-height:1.45}
 .transmission{display:flex;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.82rem}
 .transmission:last-child{border-bottom:none}
 .status.current{color:var(--signal);font-size:.7rem}
@@ -85,18 +85,65 @@ footer a{color:var(--signal);text-decoration:none}
   </div>
 
   <section class="reveal">
-    <div class="section-label">LISTEN</div>
-    <h2>Current Transmissions</h2>
+    <div class="section-label">CURRENT ACTIVITY</div>
+    <h2>Latest Signal</h2>
     <div class="panel">
-      <h3 style="color:var(--signal);margin-bottom:.5rem">Million Masks of God</h3>
+      <h3 style="color:var(--signal);margin-bottom:.5rem">GoldBot / Digital Asset Ops</h3>
+      <p class="playlist-desc" style="margin-bottom:1rem">
+        Zak’s trading platform build is moving in public. Research, testing, robustness work — no live trading authorised yet.
+      </p>
+      <p style="margin-bottom:1rem">
+        <a href="https://www.facebook.com/share/v/1BviMv5ECN/" target="_blank" rel="noopener" style="color:var(--signal)">
+          → View latest update on Facebook
+        </a>
+      </p>
+      <p style="font-size:.75rem;color:var(--text-dim)">
+        Also check GYP and personal pinned posts for the most recent transmissions outside the archive.
+      </p>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-label">PLAYLISTS</div>
+    <h2>Organised Bodies of Work</h2>
+
+    <div class="panel">
+      <h3 style="color:var(--signal);margin-bottom:.4rem">The Whole Collection / Archive</h3>
+      <p class="playlist-desc">Full SCR3WFAC3 archive. Every signal, every version, every transmission released under JHIOS.</p>
       <div class="player-wrap">
-        <iframe src="https://www.youtube.com/embed/t27zLXvXljs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
+
     <div class="panel">
-      <h3 style="color:var(--signal);margin-bottom:.5rem">Cross & Lace</h3>
+      <h3 style="color:var(--signal);margin-bottom:.4rem">SCR3WFAC3 Junkies</h3>
+      <p class="playlist-desc">Whatever You Think This Is, It Is But It Isn't. British guitar language reflected twenty years later.</p>
       <div class="player-wrap">
-        <iframe src="https://www.youtube.com/embed/jQaSqYwx14Y" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLcUv2VfLddnU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="color:var(--signal);margin-bottom:.4rem">Guitar &amp; Band</h3>
+      <p class="playlist-desc">The band-oriented, guitar-driven material. Live-room energy, sharp edges.</p>
+      <div class="player-wrap">
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLX0xQxf2L9F0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="color:var(--signal);margin-bottom:.4rem">Slow Crawl</h3>
+      <p class="playlist-desc">The heavy, dragging, low-tempo material. Slow pressure, long atmospheres.</p>
+      <div class="player-wrap">
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLcxJwHZmXjFc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="color:var(--signal);margin-bottom:.4rem">Sanctum</h3>
+      <p class="playlist-desc">Contained signals. Internal architecture. The quieter, more structured side of the system.</p>
+      <div class="player-wrap">
+        <iframe src="https://www.youtube.com/embed/videoseries?list=PLShwLT3316eA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
   </section>
@@ -111,7 +158,7 @@ footer a{color:var(--signal);text-decoration:none}
     <div class="section-label">TRANSMISSIONS</div>
     <div class="panel">
       <div class="transmission"><span>Million Masks of God</span><span class="status current">CURRENT</span></div>
-      <div class="transmission"><span>Cross & Lace</span><span class="status current">CURRENT</span></div>
+      <div class="transmission"><span>Cross &amp; Lace</span><span class="status current">CURRENT</span></div>
       <div class="transmission"><span>Black Mirror Magic</span><span class="status archived">ARCHIVED</span></div>
       <div class="transmission"><span>Melt</span><span class="status process">IN PROCESS</span></div>
       <div class="transmission"><span>Static / Same Stuff</span><span class="status process">IN PROCESS</span></div>
@@ -143,7 +190,7 @@ footer a{color:var(--signal);text-decoration:none}
     <p>JHIOS // INFINITE EXCHANGE</p>
     <p style="margin-top:.4rem">Building in public. Owned by no one but the artists.</p>
     <p style="margin-top:1rem">
-      <a href="world.html">3D Terminal World</a> · 
+      <a href="world.html">3D Terminal World</a> ·
       <a href="https://youtube.com/@scr3wfac3gang" target="_blank">YouTube</a>
     </p>
   </footer>
