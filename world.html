@@ -11,30 +11,74 @@ body{background:#050607;overflow:hidden;font-family:'JetBrains Mono',monospace;c
 #canvas{display:block;width:100vw;height:100vh}
 body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:10;opacity:.35}
 #ui{position:fixed;inset:0;pointer-events:none;z-index:20}
-#blocker{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;pointer-events:auto;background:radial-gradient(120% 90% at 50% 24%,rgba(0,255,157,.05) 0%,rgba(6,10,9,.65) 30%,#030405 68%,#020303 100%);transition:opacity 1.1s cubic-bezier(.4,0,.2,1),visibility 1.1s}
+#blocker{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;pointer-events:auto;background:radial-gradient(120% 90% at 50% 24%,rgba(0,255,157,.05) 0%,rgba(6,10,9,.65) 30%,#030405 68%,#020303 100%);transition:opacity 1s ease,visibility 1s}
 #blocker.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.card{position:relative;text-align:center;padding:2.5rem 2rem;max-width:460px;width:min(88vw,460px);border:1px solid rgba(0,255,157,.12);background:rgba(8,12,11,.45);backdrop-filter:blur(4px)}
-.card::before,.card::after{content:'';position:absolute;width:16px;height:16px;border:1px solid rgba(0,255,157,.5)}
+.card{position:relative;text-align:center;padding:2.4rem 1.9rem;max-width:440px;width:min(88vw,440px);border:1px solid rgba(0,255,157,.12);background:rgba(8,12,11,.5)}
+.card::before,.card::after{content:'';position:absolute;width:14px;height:14px;border:1px solid rgba(0,255,157,.5)}
 .card::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
 .card::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
-.eyebrow{font-size:.65rem;letter-spacing:.5em;opacity:.6;color:#00ff9d;margin-bottom:1rem;text-transform:uppercase}
-#blocker h1{font-size:clamp(1.7rem,6vw,2.6rem);font-weight:700;letter-spacing:.1em;line-height:1.05;color:#dcefe6;text-shadow:0 0 18px rgba(0,255,157,.22)}
-#blocker h1 em{display:block;font-style:normal;font-size:.34em;letter-spacing:.28em;margin-top:.8rem;opacity:.55;color:#5c6b66;text-transform:uppercase}
-.rule{width:56px;height:1px;background:#00ff9d;opacity:.35;margin:1.4rem auto}
-#blocker p.blurb{font-size:.74rem;color:#8fa39c;text-align:center;max-width:320px;line-height:1.8;margin:0 auto 1.7rem}
-#blocker p.blurb b{color:#00ff9d;font-weight:700}
-.btn{padding:.8rem 1.8rem;border:1px solid #00ff9d;background:transparent;color:#00ff9d;font-family:inherit;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.eyebrow{font-size:.62rem;letter-spacing:.45em;opacity:.6;color:#00ff9d;margin-bottom:.9rem;text-transform:uppercase}
+#blocker h1{font-size:clamp(1.6rem,5.5vw,2.4rem);font-weight:700;letter-spacing:.1em;color:#dcefe6;text-shadow:0 0 16px rgba(0,255,157,.2)}
+#blocker h1 em{display:block;font-style:normal;font-size:.34em;letter-spacing:.26em;margin-top:.7rem;opacity:.55;color:#5c6b66;text-transform:uppercase}
+.rule{width:50px;height:1px;background:#00ff9d;opacity:.35;margin:1.3rem auto}
+#blocker p.blurb{font-size:.72rem;color:#8fa39c;text-align:center;max-width:300px;line-height:1.75;margin:0 auto 1.6rem}
+#blocker p.blurb b{color:#00ff9d}
+.btn{padding:.75rem 1.7rem;border:1px solid #00ff9d;background:transparent;color:#00ff9d;font-family:inherit;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
 .btn:hover,.btn:active{background:#00ff9d;color:#001a10}
-#hud{position:absolute;bottom:0;left:0;right:0;padding:.55rem 1rem;background:rgba(5,6,7,.92);border-top:1px solid #1c2b26;font-size:.62rem;color:#5c6b66;display:flex;justify-content:space-between;gap:.5rem}
+#hud{position:absolute;bottom:0;left:0;right:0;padding:.5rem .9rem;background:rgba(5,6,7,.93);border-top:1px solid #1c2b26;font-size:.6rem;color:#5c6b66;display:flex;justify-content:space-between;gap:.4rem;z-index:25}
 #hud .live{color:#00ff9d}
-#crosshair{position:absolute;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:rgba(0,255,157,.55);box-shadow:0 0 6px rgba(0,255,157,.5)}
-.signal-panel{position:absolute;width:300px;background:rgba(8,12,11,.95);border:1px solid #1c2b26;padding:.75rem;font-size:.7rem;color:#d4ded9;pointer-events:auto;opacity:0;transform:scale(0.9);transition:opacity .35s,transform .35s;z-index:25}
-.signal-panel.visible{opacity:1;transform:scale(1)}
-.signal-panel h3{color:#00ff9d;font-size:.8rem;margin-bottom:.35rem;letter-spacing:.04em}
-.signal-panel p{font-size:.68rem;line-height:1.4;margin-bottom:.5rem;color:#a8b5b0}
-.signal-panel iframe{width:100%;height:160px;border:1px solid #1c2b26;background:#000}
-.signal-panel a{display:inline-block;margin-top:.35rem;color:#00ff9d;font-size:.65rem;text-decoration:none}
-#touch-left,#touch-right{position:absolute;top:0;bottom:50px;width:50%;z-index:15;display:none}
+#crosshair{position:absolute;top:50%;left:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(0,255,157,.55);box-shadow:0 0 5px rgba(0,255,157,.45)}
+
+/* Small panels attached to murals */
+.signal-panel{
+  position:absolute;
+  width:210px;
+  background:rgba(8,12,11,.97);
+  border:1px solid #1c2b26;
+  padding:.5rem;
+  font-size:.62rem;
+  color:#d4ded9;
+  opacity:0;
+  pointer-events:none;
+  z-index:22;
+  transition:opacity .28s;
+  transform:translateX(-50%);
+}
+.signal-panel.visible{opacity:1;pointer-events:auto}
+.signal-panel h3{color:#00ff9d;font-size:.72rem;margin-bottom:.3rem;letter-spacing:.03em}
+.signal-panel p{font-size:.62rem;line-height:1.35;margin-bottom:.4rem;color:#a8b5b0}
+.signal-panel iframe{width:100%;height:112px;border:1px solid #1c2b26;background:#000}
+.signal-panel a{display:inline-block;margin-top:.3rem;color:#00ff9d;font-size:.6rem;text-decoration:none}
+
+/* Visible virtual joysticks – never covered */
+#joy-left,#joy-right{
+  display:none;
+  position:fixed;
+  bottom:62px;
+  width:64px;
+  height:64px;
+  border:1px solid rgba(0,255,157,.45);
+  border-radius:50%;
+  z-index:30;
+  pointer-events:none;
+  background:rgba(0,255,157,.06);
+}
+#joy-left{left:18px}
+#joy-right{right:18px}
+#joy-left::after,#joy-right::after{
+  content:'';
+  position:absolute;
+  top:50%;left:50%;
+  width:18px;height:18px;
+  margin:-9px 0 0 -9px;
+  border-radius:50%;
+  background:rgba(0,255,157,.35);
+}
+@media (pointer:coarse){
+  #joy-left,#joy-right{display:block}
+}
+
+#touch-left,#touch-right{position:absolute;top:0;bottom:48px;width:50%;z-index:15;display:none}
 #touch-left{left:0}#touch-right{right:0}
 @media (pointer:coarse){#touch-left,#touch-right{display:block}}
 </style>
@@ -46,9 +90,9 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <h1>JHIOS<em>Terminal Library // 3D Layer</em></h1>
     <div class="rule"></div>
     <p class="blurb">
-      Walk the digital library. Floating screens hold the organised signals.<br><br>
+      Walk the digital library. Screens hold the organised signals.<br><br>
       <b>Desktop:</b> click → WASD + mouse<br>
-      <b>Mobile:</b> left side move · right side look
+      <b>Mobile:</b> left stick move · right stick look
     </p>
     <button class="btn" id="start-btn">ENTER THE CURRENT</button>
   </div>
@@ -63,37 +107,40 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
   </div>
 </div>
 
+<!-- Small attached panels -->
 <div id="panel-archive" class="signal-panel">
-  <h3>Whole Collection / Archive</h3>
-  <p>Full SCR3WFAC3 archive. Every signal released under JHIOS.</p>
+  <h3>Archive</h3>
+  <p>Full SCR3WFAC3 collection.</p>
   <iframe src="https://www.youtube.com/embed/videoseries?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR" allowfullscreen></iframe>
 </div>
 <div id="panel-junkies" class="signal-panel">
-  <h3>SCR3WFAC3 Junkies</h3>
-  <p>Whatever You Think This Is, It Is But It Isn't.</p>
+  <h3>Junkies</h3>
+  <p>It is. But it isn’t.</p>
   <iframe src="https://www.youtube.com/embed/videoseries?list=PLcUv2VfLddnU" allowfullscreen></iframe>
 </div>
 <div id="panel-guitar" class="signal-panel">
   <h3>Guitar &amp; Band</h3>
-  <p>Band-oriented, guitar-driven material.</p>
+  <p>Live-room edges.</p>
   <iframe src="https://www.youtube.com/embed/videoseries?list=PLX0xQxf2L9F0" allowfullscreen></iframe>
 </div>
 <div id="panel-slow" class="signal-panel">
   <h3>Slow Crawl</h3>
-  <p>Heavy, dragging, low-tempo pressure.</p>
+  <p>Low-tempo pressure.</p>
   <iframe src="https://www.youtube.com/embed/videoseries?list=PLcxJwHZmXjFc" allowfullscreen></iframe>
 </div>
 <div id="panel-sanctum" class="signal-panel">
   <h3>Sanctum</h3>
-  <p>Contained signals. Internal architecture.</p>
+  <p>Internal architecture.</p>
   <iframe src="https://www.youtube.com/embed/videoseries?list=PLShwLT3316eA" allowfullscreen></iframe>
 </div>
 <div id="panel-goldbot" class="signal-panel">
-  <h3>GoldBot / Current Activity</h3>
-  <p>Zak’s trading platform build — research &amp; testing in public.</p>
-  <a href="https://www.facebook.com/share/v/1BviMv5ECN/" target="_blank" rel="noopener">→ Open latest Facebook update</a>
+  <h3>GoldBot</h3>
+  <p>Trading platform build.</p>
+  <a href="https://www.facebook.com/share/v/1BviMv5ECN/" target="_blank" rel="noopener">→ Latest update</a>
 </div>
 
+<div id="joy-left"></div>
+<div id="joy-right"></div>
 <div id="touch-left"></div>
 <div id="touch-right"></div>
 
@@ -105,7 +152,7 @@ scene.background = new THREE.Color(0x030405);
 scene.fog = new THREE.FogExp2(0x050607, 0.018);
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 1.7, 14);
+camera.position.set(0, 1.7, 13);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -113,59 +160,59 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
 document.body.appendChild(renderer.domElement);
 renderer.domElement.id = 'canvas';
 
-scene.add(new THREE.AmbientLight(0x00ff9d, 0.14));
-const dir = new THREE.DirectionalLight(0x00ff9d, 0.28);
-dir.position.set(6, 16, 8);
+scene.add(new THREE.AmbientLight(0x00ff9d, 0.13));
+const dir = new THREE.DirectionalLight(0x00ff9d, 0.26);
+dir.position.set(5, 15, 7);
 scene.add(dir);
 
-const grid = new THREE.GridHelper(100, 80, 0x00ff9d, 0x0a2f22);
-grid.material.opacity = 0.16;
+const grid = new THREE.GridHelper(90, 70, 0x00ff9d, 0x0a2f22);
+grid.material.opacity = 0.15;
 grid.material.transparent = true;
 scene.add(grid);
 
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(100, 100),
+  new THREE.PlaneGeometry(90, 90),
   new THREE.MeshStandardMaterial({ color: 0x0c1210, roughness: 0.95 })
 );
 floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
-// Central nexus
+/* Nexus */
 const nexus = new THREE.Group();
-nexus.position.set(0, 2.4, -2);
+nexus.position.set(0, 2.3, -1.5);
 const nexusOuter = new THREE.LineSegments(
-  new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.8, 1)),
-  new THREE.LineBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.5 })
+  new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(1.6, 1)),
+  new THREE.LineBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.48 })
 );
 nexus.add(nexusOuter);
 const nexusCore = new THREE.Mesh(
-  new THREE.SphereGeometry(0.45, 18, 18),
+  new THREE.SphereGeometry(0.4, 16, 16),
   new THREE.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.9 })
 );
 nexus.add(nexusCore);
-const nexusLight = new THREE.PointLight(0x00ff9d, 1.3, 18, 2);
+const nexusLight = new THREE.PointLight(0x00ff9d, 1.2, 16, 2);
 nexus.add(nexusLight);
 scene.add(nexus);
 
-// Digital library screens – clustered close together
+/* Library screens – clustered */
 function createScreen(x, y, z, rotY, color) {
   const group = new THREE.Group();
   const frame = new THREE.Mesh(
-    new THREE.BoxGeometry(3.2, 2.1, 0.12),
-    new THREE.MeshStandardMaterial({ color: 0x0a0e0d, emissive: color, emissiveIntensity: 0.15, roughness: 0.55 })
+    new THREE.BoxGeometry(2.9, 1.9, 0.1),
+    new THREE.MeshStandardMaterial({ color: 0x0a0e0d, emissive: color, emissiveIntensity: 0.14, roughness: 0.55 })
   );
   group.add(frame);
   const edges = new THREE.LineSegments(
-    new THREE.EdgesGeometry(new THREE.BoxGeometry(3.2, 2.1, 0.12)),
-    new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.7 })
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(2.9, 1.9, 0.1)),
+    new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.65 })
   );
   group.add(edges);
-  const screen = new THREE.Mesh(
-    new THREE.PlaneGeometry(2.9, 1.8),
-    new THREE.MeshBasicMaterial({ color: 0x001a12, transparent: true, opacity: 0.85 })
+  const face = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.6, 1.6),
+    new THREE.MeshBasicMaterial({ color: 0x001a12, transparent: true, opacity: 0.82 })
   );
-  screen.position.z = 0.07;
-  group.add(screen);
+  face.position.z = 0.06;
+  group.add(face);
   group.position.set(x, y, z);
   group.rotation.y = rotY;
   scene.add(group);
@@ -173,31 +220,31 @@ function createScreen(x, y, z, rotY, color) {
 }
 
 const library = [
-  { mesh: createScreen(-6.5, 2.0, -8, 0.35, 0x00ff9d), id: 'panel-archive', label: 'ARCHIVE' },
-  { mesh: createScreen(-3.2, 2.0, -9.2, 0.15, 0x00ff9d), id: 'panel-junkies', label: 'JUNKIES' },
-  { mesh: createScreen(0, 2.0, -9.6, 0, 0x00ff9d), id: 'panel-guitar', label: 'GUITAR & BAND' },
-  { mesh: createScreen(3.2, 2.0, -9.2, -0.15, 0x00ff9d), id: 'panel-slow', label: 'SLOW CRAWL' },
-  { mesh: createScreen(6.5, 2.0, -8, -0.35, 0x00ff9d), id: 'panel-sanctum', label: 'SANCTUM' },
-  { mesh: createScreen(0, 2.0, 6, Math.PI, 0xe0b84a), id: 'panel-goldbot', label: 'GOLDBOT' }
+  { mesh: createScreen(-5.8, 1.95, -7.5, 0.32, 0x00ff9d), id: 'panel-archive', label: 'ARCHIVE' },
+  { mesh: createScreen(-2.9, 1.95, -8.5, 0.14, 0x00ff9d), id: 'panel-junkies', label: 'JUNKIES' },
+  { mesh: createScreen(0,    1.95, -8.9, 0,    0x00ff9d), id: 'panel-guitar', label: 'GUITAR & BAND' },
+  { mesh: createScreen(2.9,  1.95, -8.5, -0.14,0x00ff9d), id: 'panel-slow', label: 'SLOW CRAWL' },
+  { mesh: createScreen(5.8,  1.95, -7.5, -0.32,0x00ff9d), id: 'panel-sanctum', label: 'SANCTUM' },
+  { mesh: createScreen(0,    1.95, 5.5,  Math.PI, 0xe0b84a), id: 'panel-goldbot', label: 'GOLDBOT' }
 ];
 
-// Dust
-const dustCount = isMobile ? 140 : 360;
+/* Dust */
+const dustCount = isMobile ? 120 : 300;
 const dustGeo = new THREE.BufferGeometry();
 const dustPos = new Float32Array(dustCount * 3);
 for (let i = 0; i < dustCount * 3; i += 3) {
-  dustPos[i] = (Math.random() - 0.5) * 80;
-  dustPos[i+1] = Math.random() * 12 + 0.2;
-  dustPos[i+2] = (Math.random() - 0.5) * 80;
+  dustPos[i] = (Math.random() - 0.5) * 70;
+  dustPos[i+1] = Math.random() * 10 + 0.2;
+  dustPos[i+2] = (Math.random() - 0.5) * 70;
 }
 dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
 const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
-  color: 0x00ff9d, size: 0.28, transparent: true, opacity: 0.45,
+  color: 0x00ff9d, size: 0.25, transparent: true, opacity: 0.4,
   blending: THREE.AdditiveBlending, depthWrite: false
 }));
 scene.add(dust);
 
-// Controls
+/* Controls – non-inverted */
 let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
 let velocity = new THREE.Vector3();
 let direction = new THREE.Vector3();
@@ -213,8 +260,8 @@ function enterWorld(e) {
   isLocked = true;
   if (!isMobile) {
     try {
-      const canvas = document.getElementById('canvas');
-      if (canvas && canvas.requestPointerLock) canvas.requestPointerLock();
+      const c = document.getElementById('canvas');
+      if (c && c.requestPointerLock) c.requestPointerLock();
     } catch (err) {}
   }
 }
@@ -228,11 +275,12 @@ document.addEventListener('pointerlockchange', () => {
   }
 });
 
+/* Mouse look – standard FPS (mouse up = look up) */
 document.addEventListener('mousemove', e => {
   if (!isLocked) return;
-  controls.yaw -= e.movementX * 0.002;
-  controls.pitch -= e.movementY * 0.002;
-  controls.pitch = Math.max(-1.4, Math.min(1.4, controls.pitch));
+  controls.yaw   -= e.movementX * 0.0022;
+  controls.pitch -= e.movementY * 0.0022;   // non-inverted
+  controls.pitch = Math.max(-1.35, Math.min(1.35, controls.pitch));
 });
 
 document.addEventListener('keydown', e => {
@@ -249,9 +297,10 @@ document.addEventListener('keyup', e => {
   if (e.code === 'KeyD') moveRight = false;
 });
 
-// Mobile touch
+/* Mobile touch – left = move, right = look (non-inverted) */
 let touchMoving = false, touchLooking = false;
 let touchStart = {x:0,y:0}, lookStart = {x:0,y:0};
+
 document.getElementById('touch-left').addEventListener('touchstart', e => {
   e.preventDefault(); touchMoving = true;
   touchStart.x = e.touches[0].clientX; touchStart.y = e.touches[0].clientY;
@@ -261,13 +310,16 @@ document.getElementById('touch-left').addEventListener('touchmove', e => {
   if (!touchMoving) return;
   const dx = e.touches[0].clientX - touchStart.x;
   const dy = e.touches[0].clientY - touchStart.y;
-  moveForward = dy < -18; moveBackward = dy > 18;
-  moveLeft = dx < -18; moveRight = dx > 18;
+  moveForward  = dy < -16;
+  moveBackward = dy > 16;
+  moveLeft     = dx < -16;
+  moveRight    = dx > 16;
 }, {passive:false});
 document.getElementById('touch-left').addEventListener('touchend', () => {
   touchMoving = false;
   moveForward = moveBackward = moveLeft = moveRight = false;
 });
+
 document.getElementById('touch-right').addEventListener('touchstart', e => {
   e.preventDefault(); touchLooking = true;
   lookStart.x = e.touches[0].clientX; lookStart.y = e.touches[0].clientY;
@@ -277,33 +329,31 @@ document.getElementById('touch-right').addEventListener('touchmove', e => {
   if (!touchLooking) return;
   const dx = e.touches[0].clientX - lookStart.x;
   const dy = e.touches[0].clientY - lookStart.y;
-  controls.yaw -= dx * 0.005;
-  controls.pitch -= dy * 0.005;
-  controls.pitch = Math.max(-1.4, Math.min(1.4, controls.pitch));
-  lookStart.x = e.touches[0].clientX; lookStart.y = e.touches[0].clientY;
+  controls.yaw   -= dx * 0.005;   // non-inverted
+  controls.pitch -= dy * 0.005;   // finger up = look up
+  controls.pitch = Math.max(-1.35, Math.min(1.35, controls.pitch));
+  lookStart.x = e.touches[0].clientX;
+  lookStart.y = e.touches[0].clientY;
 }, {passive:false});
-document.getElementById('touch-right').addEventListener('touchend', () => touchLooking = false);
+document.getElementById('touch-right').addEventListener('touchend', () => { touchLooking = false; });
 
-// Proximity → show floating panel
+/* Proximity – small panel stuck near that mural only */
 const hudNearest = document.getElementById('hud-nearest');
 const panels = {
   'panel-archive': document.getElementById('panel-archive'),
   'panel-junkies': document.getElementById('panel-junkies'),
-  'panel-guitar': document.getElementById('panel-guitar'),
-  'panel-slow': document.getElementById('panel-slow'),
+  'panel-guitar':  document.getElementById('panel-guitar'),
+  'panel-slow':    document.getElementById('panel-slow'),
   'panel-sanctum': document.getElementById('panel-sanctum'),
   'panel-goldbot': document.getElementById('panel-goldbot')
 };
 
 function checkProximity() {
   let closest = null;
-  let minDist = 4.8;
+  let minDist = 4.2;
   library.forEach(item => {
     const dist = camera.position.distanceTo(item.mesh.position);
-    if (dist < minDist) {
-      minDist = dist;
-      closest = item;
-    }
+    if (dist < minDist) { minDist = dist; closest = item; }
   });
 
   Object.values(panels).forEach(p => p.classList.remove('visible'));
@@ -311,11 +361,11 @@ function checkProximity() {
   if (closest) {
     const panel = panels[closest.id];
     if (panel) {
-      panel.classList.add('visible');
-      // position panel roughly in view (simple screen space)
+      // Keep panel small and low so joysticks stay clear
       panel.style.left = '50%';
-      panel.style.top = '22%';
-      panel.style.transform = 'translateX(-50%) scale(1)';
+      panel.style.bottom = isMobile ? '140px' : '90px';
+      panel.style.top = 'auto';
+      panel.classList.add('visible');
     }
     hudNearest.textContent = '● ' + closest.label;
   } else {
@@ -338,23 +388,21 @@ function animate() {
   direction.z = Number(moveForward) - Number(moveBackward);
   direction.x = Number(moveRight) - Number(moveLeft);
   direction.normalize();
-  if (moveForward || moveBackward) velocity.z -= direction.z * 26.0 * delta;
-  if (moveLeft || moveRight) velocity.x -= direction.x * 26.0 * delta;
+  if (moveForward || moveBackward) velocity.z -= direction.z * 24.0 * delta;
+  if (moveLeft || moveRight)       velocity.x -= direction.x * 24.0 * delta;
 
   camera.position.x += (velocity.x * Math.cos(controls.yaw) + velocity.z * Math.sin(controls.yaw)) * delta;
   camera.position.z += (-velocity.x * Math.sin(controls.yaw) + velocity.z * Math.cos(controls.yaw)) * delta;
   camera.position.y = 1.7;
-  camera.position.x = Math.max(-38, Math.min(38, camera.position.x));
-  camera.position.z = Math.max(-38, Math.min(38, camera.position.z));
+  camera.position.x = Math.max(-35, Math.min(35, camera.position.x));
+  camera.position.z = Math.max(-35, Math.min(35, camera.position.z));
 
-  nexus.rotation.y = t * 0.14;
-  nexusCore.scale.setScalar(0.88 + Math.sin(t * 2.1) * 0.14);
-  nexusLight.intensity = 1.1 + Math.sin(t * 2.1) * 0.35;
+  nexus.rotation.y = t * 0.13;
+  nexusCore.scale.setScalar(0.9 + Math.sin(t * 2.0) * 0.12);
+  nexusLight.intensity = 1.05 + Math.sin(t * 2.0) * 0.3;
 
   const dPos = dust.geometry.attributes.position.array;
-  for (let i = 1; i < dPos.length; i += 3) {
-    dPos[i] += Math.sin(t + i) * 0.0025;
-  }
+  for (let i = 1; i < dPos.length; i += 3) dPos[i] += Math.sin(t + i) * 0.002;
   dust.geometry.attributes.position.needsUpdate = true;
 
   checkProximity();
