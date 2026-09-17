@@ -27,23 +27,21 @@ section{margin-bottom:3.2rem}
 .section-label::before{content:'';width:8px;height:8px;background:var(--signal);border-radius:50%;box-shadow:0 0 8px var(--signal)}
 h2{font-size:1.15rem;color:var(--signal);margin-bottom:.8rem}
 p{font-size:.88rem;margin-bottom:.9rem;max-width:620px}
-.keyhole-section{text-align:center;padding:2.5rem 0 3rem}
-.keyhole{width:110px;height:160px;margin:0 auto 1.8rem;border:2px solid var(--signal);border-radius:55px 55px 18px 18px;box-shadow:0 0 40px rgba(0,255,157,.25),inset 0 0 30px rgba(0,255,157,.08);display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,255,157,.07),transparent 70%)}
+.keyhole-section{text-align:center;padding:2.5rem 0 2rem}
+.keyhole{width:110px;height:160px;margin:0 auto 1.5rem;border:2px solid var(--signal);border-radius:55px 55px 18px 18px;box-shadow:0 0 40px rgba(0,255,157,.25),inset 0 0 30px rgba(0,255,157,.08);display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(0,255,157,.07),transparent 70%)}
 .keyhole span{writing-mode:vertical-rl;text-orientation:mixed;font-size:.65rem;letter-spacing:.2em;color:var(--signal)}
 .signal-label{font-size:.65rem;letter-spacing:.15em;color:var(--text-dim);margin-bottom:.5rem}
 .current-signal h2{font-size:1.25rem;margin-bottom:.7rem}
-.signal-text{font-size:.9rem;line-height:1.55;margin-bottom:1.6rem}
+.signal-text{font-size:.9rem;line-height:1.55;margin-bottom:1rem}
 .world-link{display:inline-block;padding:.85rem 1.9rem;border:1px solid var(--signal);color:var(--signal);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:all .25s ease}
 .world-link:hover{background:var(--signal);color:#001a10;box-shadow:0 0 24px rgba(0,255,157,.45)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:1.4rem 1.5rem;margin-bottom:1.2rem}
 .player-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;margin:1rem 0 .5rem;border:1px solid var(--line)}
 .player-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%}
 .playlist-desc{font-size:.78rem;color:var(--text-dim);margin-bottom:.6rem;line-height:1.45}
-.transmission{display:flex;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.82rem}
+.transmission{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--line);font-size:.82rem}
 .transmission:last-child{border-bottom:none}
 .status.current{color:var(--signal);font-size:.7rem}
-.status.archived{color:var(--text-dim);font-size:.7rem}
-.status.process{color:#e0b84a;font-size:.7rem}
 .voice-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
 .voice-btn{padding:.55rem 1rem;border:1px solid var(--line);background:transparent;color:var(--text-dim);font-family:var(--mono);font-size:.7rem;cursor:pointer}
 .voice-btn:hover{border-color:var(--signal);color:var(--signal)}
@@ -51,8 +49,29 @@ p{font-size:.88rem;margin-bottom:.9rem;max-width:620px}
 .warning strong{color:var(--alarm)}
 footer{border-top:1px solid var(--line);padding:2rem 0 3rem;font-size:.75rem;color:var(--text-dim);text-align:center}
 footer a{color:var(--signal);text-decoration:none}
-.reveal{opacity:0;transform:translateY(12px);transition:all .6s ease}
-.reveal.in{opacity:1;transform:none}
+
+/* Slow glitch load on scroll */
+.reveal{
+  opacity:0;
+  transform:translateY(18px) skewX(-0.6deg);
+  filter:blur(4px) contrast(1.2);
+  transition:opacity 1.1s ease, transform 1.1s ease, filter 1.1s ease;
+}
+.reveal.in{
+  opacity:1;
+  transform:none;
+  filter:none;
+}
+.reveal.glitching{
+  animation:glitchIn 0.7s steps(2,end) forwards;
+}
+@keyframes glitchIn{
+  0%{opacity:0;transform:translateY(14px) skewX(-2deg);filter:blur(3px) hue-rotate(40deg)}
+  20%{opacity:.4;transform:translateX(-3px) skewX(1deg);filter:blur(1px)}
+  40%{opacity:.7;transform:translateX(2px) skewX(-1deg);filter:none}
+  60%{opacity:.85;transform:translateX(-1px)}
+  100%{opacity:1;transform:none;filter:none}
+}
 </style>
 </head>
 <body>
@@ -68,13 +87,34 @@ footer a{color:var(--signal);text-decoration:none}
 
   <section class="keyhole-section reveal">
     <div class="keyhole"><span>PORTAL_01</span></div>
+
+    <div style="max-width:320px;margin:1.5rem auto 1.2rem;border:1px solid var(--line);overflow:hidden">
+      <video
+        src="https://files.catbox.moe/t2o1uc.mp4"
+        autoplay loop muted playsinline
+        style="width:100%;display:block"
+      ></video>
+    </div>
+
     <div class="current-signal">
       <div class="signal-label">CURRENT SIGNAL</div>
-      <h2>SCR3WFAC3 // MILLION_MASKS_OF_GOD</h2>
-      <p class="signal-text">
-        The one looking out of your eyes is the same one looking out of mine.<br>
-        We are the million masks of God.
-      </p>
+      <h2>SCR3WFAC3 // BLACK_MIRROR_MAGIC</h2>
+      <p class="signal-text">Livestream signal active. Keep the channel open.</p>
+    </div>
+
+    <div class="panel" style="max-width:640px;margin:1.2rem auto 0">
+      <h3 style="color:var(--signal);margin-bottom:.5rem">Black Mirror Magic Livestream</h3>
+      <div class="player-wrap">
+        <iframe
+          src="https://www.youtube.com/embed/jQaSqYwx14Y?autoplay=1&mute=0&rel=0"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+
+    <div style="margin-top:1.8rem">
       <a href="world.html" class="world-link">ENTER 3D TERMINAL WORLD</a>
     </div>
   </section>
@@ -156,13 +196,24 @@ footer a{color:var(--signal);text-decoration:none}
 
   <section class="reveal">
     <div class="section-label">TRANSMISSIONS</div>
+    <h2>Active Channels</h2>
     <div class="panel">
-      <div class="transmission"><span>Million Masks of God</span><span class="status current">CURRENT</span></div>
-      <div class="transmission"><span>Cross &amp; Lace</span><span class="status current">CURRENT</span></div>
-      <div class="transmission"><span>Black Mirror Magic</span><span class="status archived">ARCHIVED</span></div>
-      <div class="transmission"><span>Melt</span><span class="status process">IN PROCESS</span></div>
-      <div class="transmission"><span>Static / Same Stuff</span><span class="status process">IN PROCESS</span></div>
-      <div class="transmission"><span>Do It Alone</span><span class="status archived">ARCHIVED</span></div>
+      <div class="transmission">
+        <span>GoldBot / Digital Asset Ops</span>
+        <a href="https://www.facebook.com/share/v/1BviMv5ECN/" target="_blank" rel="noopener" style="color:var(--signal);font-size:.7rem">LATEST →</a>
+      </div>
+      <div class="transmission">
+        <span>TikTok</span>
+        <a href="https://www.tiktok.com/@scr3wfac33" target="_blank" rel="noopener" style="color:var(--signal);font-size:.7rem">@scr3wfac33 →</a>
+      </div>
+      <div class="transmission">
+        <span>YouTube</span>
+        <a href="https://youtube.com/@scr3wfac3gang" target="_blank" rel="noopener" style="color:var(--signal);font-size:.7rem">@scr3wfac3gang →</a>
+      </div>
+      <div class="transmission">
+        <span>GYP / Personal</span>
+        <span class="status current">PINNED SIGNALS</span>
+      </div>
     </div>
   </section>
 
@@ -197,14 +248,32 @@ footer a{color:var(--signal);text-decoration:none}
 </div>
 
 <script>
-const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});},{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-const texts={
-  overview:"Welcome to J H I O S, Infinite Exchange. This is an independent archive for music and signals that refuse to be owned by platforms.",
-  singularity:"There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. We are the million masks of God.",
-  roadmap:"The road map is simple. Recognise the loops. Own the channels. Archive every signal. Connect directly with those who see the same current."
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      // slight stagger + glitch class for slow load feel
+      setTimeout(() => {
+        e.target.classList.add('in', 'glitching');
+      }, 80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+const texts = {
+  overview: "Welcome to J H I O S, Infinite Exchange. This is an independent archive for music and signals that refuse to be owned by platforms.",
+  singularity: "There is only one current. It freezes into temporary forms so it can be seen, then melts again so it can move. We are the million masks of God.",
+  roadmap: "The road map is simple. Recognise the loops. Own the channels. Archive every signal. Connect directly with those who see the same current."
 };
-function speak(key){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(texts[key]||'');u.rate=.92;u.pitch=.85;window.speechSynthesis.speak(u);}
+function speak(key) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texts[key] || '');
+  u.rate = 0.92;
+  u.pitch = 0.85;
+  window.speechSynthesis.speak(u);
+}
 </script>
 </body>
 </html>
