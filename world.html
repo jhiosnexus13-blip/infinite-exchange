@@ -91,8 +91,8 @@ body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradie
     <div class="rule"></div>
     <p class="blurb">
       Walk the digital library. Screens hold the organised signals.<br><br>
-      <b>Desktop:</b> click → WASD + mouse<br>
-      <b>Mobile:</b> left stick move · right stick look
+      <b>Desktop:</b> WASD or arrows move · mouse look · space selects<br>
+      <b>Mobile:</b> left move · right look · tap selects
     </p>
     <button class="btn" id="start-btn">ENTER THE CURRENT</button>
   </div>
@@ -220,12 +220,12 @@ function createScreen(x, y, z, rotY, color) {
 }
 
 const library = [
-  { mesh: createScreen(-5.8, 1.95, -7.5, 0.32, 0x00ff9d), id: 'panel-archive', label: 'ARCHIVE' },
-  { mesh: createScreen(-2.9, 1.95, -8.5, 0.14, 0x00ff9d), id: 'panel-junkies', label: 'JUNKIES' },
-  { mesh: createScreen(0,    1.95, -8.9, 0,    0x00ff9d), id: 'panel-guitar', label: 'GUITAR & BAND' },
-  { mesh: createScreen(2.9,  1.95, -8.5, -0.14,0x00ff9d), id: 'panel-slow', label: 'SLOW CRAWL' },
-  { mesh: createScreen(5.8,  1.95, -7.5, -0.32,0x00ff9d), id: 'panel-sanctum', label: 'SANCTUM' },
-  { mesh: createScreen(0,    1.95, 5.5,  Math.PI, 0xe0b84a), id: 'panel-goldbot', label: 'GOLDBOT' }
+  { mesh: createScreen(-5.8, 1.95, -7.5, 0.32, 0x00ff9d), id: 'panel-archive', label: 'ARCHIVE', url: 'https://www.youtube.com/playlist?list=PLJnQDthx6PpmbwjpD0wzrsQwaz5t8qzsR' },
+  { mesh: createScreen(-2.9, 1.95, -8.5, 0.14, 0x00ff9d), id: 'panel-junkies', label: 'JUNKIES', url: 'https://www.youtube.com/playlist?list=PLcUv2VfLddnU' },
+  { mesh: createScreen(0,    1.95, -8.9, 0,    0x00ff9d), id: 'panel-guitar', label: 'GUITAR & BAND', url: 'https://www.youtube.com/playlist?list=PLX0xQxf2L9F0' },
+  { mesh: createScreen(2.9,  1.95, -8.5, -0.14,0x00ff9d), id: 'panel-slow', label: 'SLOW CRAWL', url: 'https://www.youtube.com/playlist?list=PLcxJwHZmXjFc' },
+  { mesh: createScreen(5.8,  1.95, -7.5, -0.32,0x00ff9d), id: 'panel-sanctum', label: 'SANCTUM', url: 'https://www.youtube.com/playlist?list=PLShwLT3316eA' },
+  { mesh: createScreen(0,    1.95, 5.5,  Math.PI, 0xe0b84a), id: 'panel-goldbot', label: 'GOLDBOT', url: 'https://www.facebook.com/permalink.php?story_fbid=pfbid0ZLeZHJDjp5NVFdyZDVBko5G8egFUCzg5AtKnaodkPpBHmwmRvebUJfKFArBkHoe1l&id=61578308143435' }
 ];
 
 /* Dust */
@@ -257,6 +257,7 @@ const startBtn = document.getElementById('start-btn');
 function enterWorld(e) {
   if (e) e.preventDefault();
   blocker.classList.add('hidden');
+  started = true;
   isLocked = true;
   if (!isMobile) {
     try {
@@ -268,10 +269,18 @@ function enterWorld(e) {
 startBtn.addEventListener('click', enterWorld);
 startBtn.addEventListener('touchend', enterWorld, { passive: false });
 
+let started = false;
 document.addEventListener('pointerlockchange', () => {
   if (!isMobile) {
     isLocked = !!document.pointerLockElement;
-    blocker.classList.toggle('hidden', isLocked);
+    if (!started) blocker.classList.toggle('hidden', isLocked);
+    else blocker.classList.add('hidden');
+  }
+});
+document.getElementById('canvas').addEventListener('click', () => {
+  if (started && !isMobile && !document.pointerLockElement) {
+    const c = document.getElementById('canvas');
+    if (c && c.requestPointerLock) c.requestPointerLock();
   }
 });
 
@@ -283,19 +292,23 @@ document.addEventListener('mousemove', e => {
   controls.pitch = Math.max(-1.35, Math.min(1.35, controls.pitch));
 });
 
+function setMove(code, on) {
+  // W / ArrowUp = forward. S / ArrowDown = back. A / ArrowLeft = left. D / ArrowRight = right.
+  if (code === 'KeyW' || code === 'ArrowUp') moveForward = on;
+  if (code === 'KeyS' || code === 'ArrowDown') moveBackward = on;
+  if (code === 'KeyA' || code === 'ArrowLeft') moveLeft = on;
+  if (code === 'KeyD' || code === 'ArrowRight') moveRight = on;
+}
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyW') moveForward = true;
-  if (e.code === 'KeyS') moveBackward = true;
-  if (e.code === 'KeyA') moveLeft = true;
-  if (e.code === 'KeyD') moveRight = true;
-  if ((e.code === 'Enter' || e.code === 'Space') && !blocker.classList.contains('hidden')) enterWorld(e);
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+  setMove(e.code, true);
+  if ((e.code === 'Enter') && !blocker.classList.contains('hidden')) enterWorld(e);
+  if (e.code === 'Space') {
+    if (!blocker.classList.contains('hidden')) enterWorld(e);
+    else selectNearest();
+  }
 });
-document.addEventListener('keyup', e => {
-  if (e.code === 'KeyW') moveForward = false;
-  if (e.code === 'KeyS') moveBackward = false;
-  if (e.code === 'KeyA') moveLeft = false;
-  if (e.code === 'KeyD') moveRight = false;
-});
+document.addEventListener('keyup', e => setMove(e.code, false));
 
 /* Mobile touch – left = move, right = look (non-inverted) */
 let touchMoving = false, touchLooking = false;
@@ -315,9 +328,13 @@ document.getElementById('touch-left').addEventListener('touchmove', e => {
   moveLeft     = dx < -16;
   moveRight    = dx > 16;
 }, {passive:false});
-document.getElementById('touch-left').addEventListener('touchend', () => {
+document.getElementById('touch-left').addEventListener('touchend', e => {
+  const tch = (e.changedTouches && e.changedTouches[0]) || {};
+  const dx = (tch.clientX || touchStart.x) - touchStart.x;
+  const dy = (tch.clientY || touchStart.y) - touchStart.y;
   touchMoving = false;
   moveForward = moveBackward = moveLeft = moveRight = false;
+  if (Math.hypot(dx, dy) < 14) selectNearest();
 });
 
 document.getElementById('touch-right').addEventListener('touchstart', e => {
@@ -335,7 +352,13 @@ document.getElementById('touch-right').addEventListener('touchmove', e => {
   lookStart.x = e.touches[0].clientX;
   lookStart.y = e.touches[0].clientY;
 }, {passive:false});
-document.getElementById('touch-right').addEventListener('touchend', () => { touchLooking = false; });
+document.getElementById('touch-right').addEventListener('touchend', e => {
+  const tch = (e.changedTouches && e.changedTouches[0]) || {};
+  const dx = (tch.clientX || lookStart.x) - lookStart.x;
+  const dy = (tch.clientY || lookStart.y) - lookStart.y;
+  touchLooking = false;
+  if (Math.hypot(dx, dy) < 14) selectNearest();
+});
 
 /* Proximity – small panel stuck near that mural only */
 const hudNearest = document.getElementById('hud-nearest');
@@ -348,6 +371,14 @@ const panels = {
   'panel-goldbot': document.getElementById('panel-goldbot')
 };
 
+let nearestItem = null;
+function selectNearest() {
+  if (!nearestItem || !nearestItem.url) return;
+  const panel = panels[nearestItem.id];
+  if (panel) panel.classList.add('visible');
+  if (document.pointerLockElement && document.exitPointerLock) document.exitPointerLock();
+  window.open(nearestItem.url, '_blank', 'noopener');
+}
 function checkProximity() {
   let closest = null;
   let minDist = 4.2;
@@ -358,16 +389,16 @@ function checkProximity() {
 
   Object.values(panels).forEach(p => p.classList.remove('visible'));
 
+  nearestItem = closest;
   if (closest) {
     const panel = panels[closest.id];
     if (panel) {
-      // Keep panel small and low so joysticks stay clear
       panel.style.left = '50%';
       panel.style.bottom = isMobile ? '140px' : '90px';
       panel.style.top = 'auto';
       panel.classList.add('visible');
     }
-    hudNearest.textContent = '● ' + closest.label;
+    hudNearest.textContent = '● ' + closest.label + ' · SELECT';
   } else {
     hudNearest.textContent = '● SCANNING';
   }
