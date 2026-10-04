@@ -29,3 +29,588 @@ a{ color:var(--signal); }
 button{ font-family:inherit; }
 
 /* ---------- nav ---------- */
+header.site-nav{
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  background:rgba(5,6,7,.88); backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+  transform:translateY(0); transition:transform .3s ease;
+}
+header.site-nav.nav-hide{ transform:translateY(-100%); }
+.site-nav .bar{ display:flex; align-items:center; justify-content:space-between; padding:.9rem clamp(1.25rem,3vw,2.5rem); max-width:1040px; margin:0 auto; }
+.brand{ font-size:.82rem; letter-spacing:.1em; color:var(--text); text-decoration:none; white-space:nowrap; }
+.brand .dot{ color:var(--signal); }
+.site-nav nav.links{ display:flex; gap:clamp(.9rem,2vw,1.6rem); }
+.site-nav nav.links a{
+  font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim);
+  text-decoration:none; transition:color .2s ease;
+}
+.site-nav nav.links a:hover{ color:var(--signal); }
+.hamburger{
+  display:none; background:none; border:1px solid var(--line); color:var(--text);
+  width:36px; height:36px; cursor:pointer; border-radius:var(--radius); font-size:1rem;
+}
+.mobile-menu{
+  display:none; position:fixed; inset:0 0 auto 0; top:56px; z-index:199;
+  background:rgba(5,6,7,.97); border-bottom:1px solid var(--line);
+  flex-direction:column; padding:1rem clamp(1.25rem,3vw,2.5rem) 1.5rem;
+}
+.mobile-menu.open{ display:flex; }
+.mobile-menu a{
+  font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text);
+  text-decoration:none; padding:.75rem 0; border-bottom:1px solid var(--line);
+}
+@media (max-width:720px){
+  .site-nav nav.links{ display:none; }
+  .hamburger{ display:flex; align-items:center; justify-content:center; }
+}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative; height:100vh; min-height:560px; overflow:hidden;
+  display:flex; align-items:flex-end;
+}
+.hero-bg{
+  position:fixed; inset:0; width:100%; height:100vh; object-fit:cover;
+  z-index:-2; will-change:transform, filter;
+  filter:saturate(.7) brightness(.55);
+  transform:scale(1);
+}
+.hero-veil{
+  position:fixed; inset:0; height:100vh; z-index:-1; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 0%, rgba(2,3,3,.55) 60%, rgba(2,3,3,.92) 100%);
+  transition:opacity .1s linear;
+}
+.hero-fg{
+  position:absolute; top:0; left:0; width:100%; height:100%;
+  object-fit:contain; pointer-events:none; z-index:1;
+  will-change:transform, opacity;
+}
+.hero-frame{
+  position:relative; z-index:2; width:100%; padding-bottom:clamp(2rem,6vh,3.5rem);
+}
+.hero-frame .wrap{
+  border:1px solid var(--line); background:rgba(8,12,11,.72); backdrop-filter:blur(3px);
+  border-radius:var(--radius); padding:clamp(1.25rem,3vw,2rem); max-width:640px; margin-left:clamp(1.25rem,3vw,2.5rem);
+}
+.init-log{ font-size:.68rem; color:var(--dim); line-height:1.7; margin-bottom:1rem; white-space:pre-wrap; }
+.init-log .ok{ color:var(--signal); }
+.hero-title{ font-size:clamp(1.6rem,5vw,2.6rem); font-weight:700; letter-spacing:.04em; line-height:1.08; margin-bottom:.6rem; }
+.hero-title .signal-text{ color:var(--signal); }
+.hero-line{ font-size:.8rem; color:var(--dim); margin-bottom:1.5rem; max-width:48ch; }
+.hero-actions{ display:flex; gap:.8rem; flex-wrap:wrap; margin-bottom:1.25rem; }
+.btn{
+  font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; text-decoration:none;
+  padding:.8rem 1.3rem; border-radius:var(--radius); display:inline-flex; align-items:center; gap:.5rem;
+  border:1px solid var(--line); background:transparent; color:var(--text); cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+.btn-primary{ background:var(--signal); color:#001a10; font-weight:700; border-color:var(--signal); }
+.btn-primary:hover{ box-shadow:0 0 20px rgba(0,255,157,.4); transform:translateY(-1px); }
+.btn-ghost:hover{ border-color:var(--signal); color:var(--signal); }
+.scroll-progress{ height:2px; background:var(--line); border-radius:2px; overflow:hidden; }
+.scroll-progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, #0a8f5c, var(--signal)); }
+
+@media (prefers-reduced-motion: reduce){
+  .hero-bg, .hero-fg{ transition:opacity .4s ease !important; transform:none !important; filter:none !important; }
+}
+
+/* ---------- section heads ---------- */
+section{ position:relative; padding:clamp(3rem,8vw,5.5rem) 0; background:var(--bg); }
+.section-head{ display:flex; align-items:baseline; gap:.75rem; margin-bottom:1.5rem; }
+.section-head .idx{ font-size:.75rem; color:#0a8f5c; }
+.section-head h2{ font-size:clamp(1.15rem,2.4vw,1.5rem); letter-spacing:.02em; }
+.section-head .rule{ flex:1; height:1px; background:var(--line); }
+
+/* ---------- status strip ---------- */
+.status-strip{ padding:clamp(2rem,5vw,3rem) 0; }
+.status-line{ font-size:.85rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+.status-line .alarm-tag{ color:var(--alarm); }
+.status-line .pct{ color:var(--signal); }
+.reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
+.reveal.in{ opacity:1; transform:translateY(0); }
+.stagger > *{ opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease; }
+.stagger.in > *{ opacity:1; transform:translateY(0); }
+.stagger.in > *:nth-child(1){ transition-delay:0ms; }
+.stagger.in > *:nth-child(2){ transition-delay:80ms; }
+.stagger.in > *:nth-child(3){ transition-delay:160ms; }
+.stagger.in > *:nth-child(4){ transition-delay:240ms; }
+@media (prefers-reduced-motion: reduce){
+  .reveal, .stagger > *{ opacity:1; transform:none; transition:none; }
+}
+
+/* ---------- signal section (tooltips) ---------- */
+.signal-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(1.5rem,4vw,3rem); align-items:center; }
+@media (max-width:820px){ .signal-grid{ grid-template-columns:1fr; } }
+.signal-copy p{ font-size:.92rem; color:var(--text); margin-bottom:1.25rem; max-width:56ch; }
+.signal-img{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; aspect-ratio:4/3; background:var(--panel); }
+.signal-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.tip-row{ display:flex; flex-wrap:wrap; gap:.6rem .9rem; margin-top:.5rem; }
+.tip{
+  position:relative; display:inline-flex; align-items:center; gap:.5rem;
+  border:1px solid var(--line); background:var(--panel); border-radius:20px;
+  padding:.45rem .9rem .45rem .7rem; font-size:.72rem; letter-spacing:.03em; color:var(--text);
+  cursor:pointer; user-select:none;
+}
+.tip:hover, .tip:focus-visible, .tip.pinned{ border-color:#0a8f5c; outline:none; }
+.tip .dot{ width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal); flex-shrink:0; }
+.tip-card{
+  position:absolute; bottom:calc(100% + 10px); left:0; z-index:50;
+  width:220px; border:1px solid var(--line); background:var(--panel); border-radius:var(--radius);
+  padding:.6rem; box-shadow:0 20px 40px rgba(0,0,0,.5);
+  opacity:0; visibility:hidden; transform:scale(.96);
+  transition:opacity .18s ease, transform .18s ease;
+  transform-style:preserve-3d; will-change:transform;
+}
+.tip-card.open{ opacity:1; visibility:visible; }
+.tip-card img{ width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:2px; display:block; }
+.tip-card .cap{ font-size:.62rem; color:var(--dim); letter-spacing:.05em; text-transform:uppercase; margin-top:.4rem; }
+
+/* ---------- browser notice ---------- */
+.notice-strip p{ font-size:.82rem; color:var(--dim); }
+.notice-strip a{ font-weight:700; }
+
+/* ---------- two-state ---------- */
+.state-toggle{ display:flex; gap:.5rem; margin-bottom:1.5rem; }
+.state-btn{
+  font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:.6rem 1.1rem;
+  border:1px solid var(--line); background:transparent; color:var(--dim); cursor:pointer; border-radius:var(--radius);
+  transition:border-color .2s ease, color .2s ease, background .2s ease;
+}
+.state-btn[aria-pressed="true"]{ border-color:var(--signal); color:var(--signal); background:rgba(0,255,157,.06); }
+.state-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,2.5rem); align-items:center; }
+@media (max-width:820px){ .state-grid{ grid-template-columns:1fr; } }
+.state-stage{ position:relative; aspect-ratio:4/3; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--panel); }
+.state-stage img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .4s ease; }
+.state-stage img.active{ opacity:1; }
+.state-copy p{ position:absolute; inset:0; opacity:0; transition:opacity .4s ease; font-size:.9rem; color:var(--text); max-width:46ch; }
+.state-copy{ position:relative; min-height:7em; }
+.state-copy p.active{ opacity:1; position:relative; }
+
+/* ---------- playlists ---------- */
+.playlist-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(1rem,2.5vw,1.5rem); }
+.playlist-card{
+  border:1px solid var(--line); background:var(--panel); border-radius:var(--radius); padding:1.25rem;
+  transition:border-color .2s ease, transform .2s ease;
+}
+.playlist-card:hover{ border-color:#0a8f5c; transform:translateY(-2px); }
+.playlist-card .tag{ font-size:.62rem; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:.5rem; }
+.playlist-card h3{ font-size:1rem; margin-bottom:.4rem; }
+.playlist-card p{ font-size:.78rem; color:var(--dim); }
+
+/* ---------- footer ---------- */
+footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; }
+footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
+footer p{ font-size:.66rem; color:var(--dim); letter-spacing:.05em; }
+footer .foot-links{ display:flex; gap:1rem; flex-wrap:wrap; }
+footer .foot-links a{ font-size:.66rem; color:var(--dim); text-decoration:none; letter-spacing:.05em; }
+footer .foot-links a:hover{ color:var(--signal); }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="site-nav" id="siteNav">
+  <div class="bar">
+    <a href="#top" class="brand">JHIOS <span class="dot">//</span> INFINITE EXCHANGE</a>
+    <nav class="links">
+      <a href="#portal">Portal</a>
+      <a href="#signal">Signal</a>
+      <a href="#archive">Archive</a>
+      <a href="#protocol">Protocol</a>
+      <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener">Join</a>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">☰</button>
+  </div>
+</header>
+<nav class="mobile-menu" id="mobileMenu">
+  <a href="#portal">Portal</a>
+  <a href="#signal">Signal</a>
+  <a href="#archive">Archive</a>
+  <a href="#protocol">Protocol</a>
+  <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener">Join</a>
+</nav>
+
+<main id="top">
+
+  <!-- ============ HERO / INTERACTION PREVIEW ============ -->
+  <section class="hero" id="portal">
+    <!-- swap source to change the background plate -->
+    <img class="hero-bg" id="heroBg" src="/assets/bg-portal.jpg" alt="" aria-hidden="true">
+    <div class="hero-veil" id="heroVeil"></div>
+    <!-- swap source to change the foreground plate (transparent PNG) -->
+    <img class="hero-fg" id="heroFg" src="/assets/fg-keyhole.png" alt="" aria-hidden="true">
+
+    <div class="hero-frame">
+      <div class="wrap">
+        <div class="init-log">&gt; initializing JHIOS_KERNEL...
+&gt; mounting /archive/independent...
+&gt; bypassing corporate middleware... <span class="ok">[skipped]</span>
+&gt; loading INFINITE_EXCHANGE</div>
+        <h1 class="hero-title">INFINITE <span class="signal-text">EXCHANGE</span></h1>
+        <p class="hero-line">Independent Music Vault / AI Creation Platform / Digital Archive</p>
+        <div class="hero-actions">
+          <a href="#archive" class="btn btn-primary">ENTER THE CURRENT</a>
+          <a href="/world" class="btn btn-ghost">OPEN 3D WORLD</a>
+        </div>
+        <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollFill"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATUS STRIP ============ -->
+  <section class="status-strip">
+    <div class="wrap">
+      <p class="status-line stagger" id="statusStagger">
+        <span><span class="alarm-tag">[STATUS]</span> ARCHIVE_INTEGRITY <span class="pct">42%</span> // UNDER CONSTRUCTION</span>
+        <span>— building this live, with the community, step by step.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SIGNAL ============ -->
+  <section id="signal">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="idx">01</span>
+        <h2>Why We're Building This</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="signal-grid">
+        <div class="signal-copy reveal">
+          <p>Infinite Exchange exists because too many artists are being limited, filtered, and controlled by corporate platforms. This is not just another streaming site. It is an independent archive and ecosystem where creators can release music, build directly with their audience, and own their infrastructure.</p>
+          <p>We document the journey — the struggle, the creation, and the evolution — because the story behind the sound matters.</p>
+
+          <div class="tip-row" id="tipRow">
+            <!-- tooltip chips: data-tip = label, data-img = image, data-cap = caption -->
+            <button class="tip" type="button" data-tip="SCR3WFAC3" data-img="/assets/tip-1.jpg" data-cap="Experimental electronic / dark future soundscapes.">
+              <span class="dot"></span>SCR3WFAC3
+            </button>
+            <button class="tip" type="button" data-tip="Luce Aether" data-img="/assets/tip-2.jpg" data-cap="Cinematic, ancestral and atmospheric compositions.">
+              <span class="dot"></span>Luce Aether
+            </button>
+            <button class="tip" type="button" data-tip="JHIOS Soundtracks" data-img="/assets/tip-3.jpg" data-cap="Custom business themes and AI-powered soundtrack creation.">
+              <span class="dot"></span>JHIOS Soundtracks
+            </button>
+          </div>
+        </div>
+        <div class="signal-img reveal">
+          <img src="/assets/tip-1.jpg" alt="SCR3WFAC3 identity">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BROWSER NOTICE ============ -->
+  <section class="notice-strip">
+    <div class="wrap">
+      <p class="reveal">[NOTICE] If a link opens inside the Facebook app, tap the menu and choose <a href="#" onclick="return false;">open in browser</a> — some pages won't load correctly in the in-app webview.</p>
+    </div>
+  </section>
+
+  <!-- ============ ARCHIVE / PROTOCOL — TWO-STATE ============ -->
+  <section id="archive">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="idx">02</span>
+        <h2 id="protocol">Archive // Protocol</h2>
+        <span class="rule"></span>
+      </div>
+
+      <div class="state-toggle reveal">
+        <button class="state-btn" id="btnStateA" type="button" aria-pressed="true">STATE_A // ARCHIVE</button>
+        <button class="state-btn" id="btnStateB" type="button" aria-pressed="false">STATE_B // PROTOCOL</button>
+      </div>
+
+      <div class="state-grid reveal">
+        <div class="state-stage">
+          <img id="imgStateA" class="active" src="/assets/state-a.jpg" alt="Archive state">
+          <img id="imgStateB" src="/assets/state-b.jpg" alt="Protocol state">
+        </div>
+        <div class="state-copy">
+          <p id="copyStateA" class="active">Catalogue Vault: SCR3WFAC3, Luce Aether, and JHIOS Soundtracks live here as a growing independent archive — every release, every draft, every version documented in the open.</p>
+          <p id="copyStateB">The protocol is the infrastructure underneath: no corporate middleman deciding what reaches you, no algorithm filtering the signal. Just the continuous activity, owned by the people making it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PLAYLISTS ============ -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="idx">03</span>
+        <h2>Playlists</h2>
+        <span class="rule"></span>
+      </div>
+      <div class="playlist-grid reveal">
+        <div class="playlist-card">
+          <span class="tag">Vault // 001</span>
+          <h3>Whole Collection</h3>
+          <p>Everything, in order.</p>
+        </div>
+        <div class="playlist-card">
+          <span class="tag">Vault // 002</span>
+          <h3>Junkies</h3>
+          <p>For the ones who already know.</p>
+        </div>
+        <div class="playlist-card">
+          <span class="tag">Vault // 003</span>
+          <h3>Guitar &amp; Band</h3>
+          <p>Live instrumentation, raw takes.</p>
+        </div>
+        <div class="playlist-card">
+          <span class="tag">Vault // 004</span>
+          <h3>Slow Crawl</h3>
+          <p>Low tempo, long attention.</p>
+        </div>
+        <div class="playlist-card">
+          <span class="tag">Vault // 005</span>
+          <h3>Sanctum</h3>
+          <p>Reflective, ancestral, atmospheric.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SUPPORT / LINKS ============ -->
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="idx">04</span>
+        <h2>Support the Archive</h2>
+        <span class="rule"></span>
+      </div>
+      <p class="reveal" style="font-size:.92rem; margin-bottom:1.5rem; max-width:56ch;">Direct support keeps this space alive and independent. Every listen, share, and message helps build infrastructure that no corporation can take away.</p>
+      <div class="hero-actions reveal">
+        <a href="https://youtube.com/@scr3wfac3gang" target="_blank" rel="noopener" class="btn btn-ghost">YOUTUBE</a>
+        <a href="https://www.tiktok.com/@scr3wfac33" target="_blank" rel="noopener" class="btn btn-ghost">TIKTOK</a>
+        <a href="https://www.facebook.com/permalink.php?story_fbid=pfbid0ZLeZHJDjp5NVFdyZDVBko5G8egFUCzg5AtKnaodkPpBHmwmRvebUJfKFArBkHoe1l&id=61578308143435" target="_blank" rel="noopener" class="btn btn-ghost">GOLDBOT</a>
+        <a href="https://www.facebook.com/share/v/1CGhyEnJoR/" target="_blank" rel="noopener" class="btn btn-ghost">PERSONAL PINNED</a>
+        <a href="https://youtu.be/jQaSqYwx14Y" target="_blank" rel="noopener" class="btn btn-ghost">BLACK MIRROR MAGIC</a>
+        <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener" class="btn btn-primary">JOIN</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>JHIOS | INFINITE EXCHANGE — Building in Public</p>
+    <div class="foot-links">
+      <a href="/world">3D World</a>
+      <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener">Join</a>
+      <a href="https://youtube.com/@scr3wfac3gang" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.tiktok.com/@scr3wfac33" target="_blank" rel="noopener">TikTok</a>
+    </div>
+    <p>© 2026 Independent Digital Archive</p>
+  </div>
+</footer>
+
+<script>
+// ---------- nav hide/show on scroll direction ----------
+(function(){
+  var nav = document.getElementById('siteNav');
+  var lastY = window.scrollY;
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var y = window.scrollY;
+      if (y > lastY && y > 80) nav.classList.add('nav-hide');
+      else nav.classList.remove('nav-hide');
+      lastY = y;
+      ticking = false;
+    });
+  }, { passive: true });
+})();
+
+// ---------- mobile hamburger ----------
+(function(){
+  var btn = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  btn.addEventListener('click', function(){
+    var open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){
+      menu.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+
+// ---------- hero scroll-driven plates ----------
+(function(){
+  var hero = document.querySelector('.hero');
+  var bg = document.getElementById('heroBg');
+  var fg = document.getElementById('heroFg');
+  var veil = document.getElementById('heroVeil');
+  var fill = document.getElementById('scrollFill');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function clamp01(v){ return Math.max(0, Math.min(1, v)); }
+
+  function update(){
+    var heroHeight = hero.offsetHeight;
+    var p = clamp01(window.scrollY / heroHeight); // 0..1 across hero height
+    fill.style.width = (p * 100).toFixed(1) + '%';
+
+    if (reduced) {
+      fg.style.opacity = (1 - p).toFixed(2);
+      bg.style.opacity = '1';
+      return;
+    }
+
+    // 0 - 40%: foreground recedes
+    var pf = clamp01(p / 0.4);
+    var fgScale = 1.05 - (0.33 * pf);   // 1.05 -> 0.72
+    var fgOpacity = 1 - pf;             // 1 -> 0
+    var fgY = -80 * pf;                 // 0 -> -80px
+    fg.style.transform = 'translateY(' + fgY + 'px) scale(' + fgScale + ')';
+    fg.style.opacity = fgOpacity.toFixed(2);
+
+    // 40 - 100%: background transforms, veil lifts
+    var pb = clamp01((p - 0.4) / 0.6);
+    var bgScale = 1 + (0.18 * pb);       // 1 -> 1.18
+    var bgSaturate = 0.7 + (0.5 * pb);   // 0.7 -> 1.2
+    var bgBrightness = 0.55 + (0.3 * pb);// 0.55 -> 0.85
+    bg.style.transform = 'scale(' + bgScale + ')';
+    bg.style.filter = 'saturate(' + bgSaturate.toFixed(2) + ') brightness(' + bgBrightness.toFixed(2) + ')';
+    veil.style.opacity = (1 - pb * 0.7).toFixed(2);
+  }
+
+  var ticking2 = false;
+  window.addEventListener('scroll', function(){
+    if (ticking2) return;
+    ticking2 = true;
+    requestAnimationFrame(function(){ update(); ticking2 = false; });
+  }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+// ---------- reveal on enter (fade up, stagger) ----------
+(function(){
+  var items = document.querySelectorAll('.reveal, .stagger');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(function(el){ el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  items.forEach(function(el){ io.observe(el); });
+})();
+
+// ---------- tooltip chips: 3D tilt card, keyboard + touch ----------
+(function(){
+  var tips = document.querySelectorAll('.tip');
+
+  tips.forEach(function(tip){
+    var card = document.createElement('div');
+    card.className = 'tip-card';
+    card.setAttribute('role', 'dialog');
+    card.innerHTML =
+      '<img src="' + tip.dataset.img + '" alt="' + tip.dataset.tip + '">' +
+      '<div class="cap">' + (tip.dataset.cap || '') + '</div>';
+    tip.appendChild(card);
+
+    var pinned = false;
+
+    function open(){ card.classList.add('open'); }
+    function close(){ card.classList.remove('open'); pinned = false; tip.classList.remove('pinned'); }
+
+    function tilt(e){
+      var rect = card.getBoundingClientRect();
+      var px = (e.clientX - rect.left) / rect.width;
+      var py = (e.clientY - rect.top) / rect.height;
+      var rx = (0.5 - py) * 16; // max ~8deg
+      var ry = (px - 0.5) * 16;
+      card.style.transform = 'scale(1) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+    }
+    function resetTilt(){ card.style.transform = 'scale(1)'; }
+
+    tip.addEventListener('mouseenter', open);
+    tip.addEventListener('mouseleave', function(){ if (!pinned) close(); resetTilt(); });
+    tip.addEventListener('mousemove', tilt);
+    tip.addEventListener('focus', open);
+    tip.addEventListener('blur', function(){ if (!pinned) close(); });
+
+    tip.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') { close(); tip.blur(); }
+    });
+
+    tip.addEventListener('click', function(e){
+      // touch/click acts as pin toggle
+      if (pinned) { close(); }
+      else {
+        pinned = true;
+        tip.classList.add('pinned');
+        open();
+      }
+      e.stopPropagation();
+    });
+  });
+
+  document.addEventListener('click', function(e){
+    if (!e.target.closest('.tip')) {
+      tips.forEach(function(tip){
+        tip.classList.remove('pinned');
+        var card = tip.querySelector('.tip-card');
+        if (card) card.classList.remove('open');
+      });
+    }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      tips.forEach(function(tip){
+        tip.classList.remove('pinned');
+        var card = tip.querySelector('.tip-card');
+        if (card) card.classList.remove('open');
+      });
+    }
+  });
+})();
+
+// ---------- two-state toggle, sessionStorage persisted ----------
+(function(){
+  var btnA = document.getElementById('btnStateA');
+  var btnB = document.getElementById('btnStateB');
+  var imgA = document.getElementById('imgStateA');
+  var imgB = document.getElementById('imgStateB');
+  var copyA = document.getElementById('copyStateA');
+  var copyB = document.getElementById('copyStateB');
+  var KEY = 'jhios_state';
+
+  function setState(state){
+    var isA = state === 'A';
+    btnA.setAttribute('aria-pressed', isA ? 'true' : 'false');
+    btnB.setAttribute('aria-pressed', isA ? 'false' : 'true');
+    imgA.classList.toggle('active', isA);
+    imgB.classList.toggle('active', !isA);
+    copyA.classList.toggle('active', isA);
+    copyB.classList.toggle('active', !isA);
+    try { sessionStorage.setItem(KEY, state); } catch(e) {}
+  }
+
+  btnA.addEventListener('click', function(){ setState('A'); });
+  btnB.addEventListener('click', function(){ setState('B'); });
+
+  var saved = 'A';
+  try { saved = sessionStorage.getItem(KEY) || 'A'; } catch(e) {}
+  setState(saved);
+})();
+</script>
+
+</body>
+</html>
