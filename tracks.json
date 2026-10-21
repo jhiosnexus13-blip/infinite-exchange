@@ -1,0 +1,5014 @@
+{
+ "generated": "2026-10-21",
+ "note": "Built from jhios-vault/vault.csv + catalogue-audit-2026-10-20.csv. Playback currently uses YouTube (youtube_url). Set audio_url (relative to AUDIO_BASE in config.js) per track to switch that track to self-hosted audio. Lanes only assigned where source data supports it.",
+ "tracks": [
+  {
+   "id": "learning-to-love-it",
+   "title": "Learning To Love It",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-05",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=uTrUX1b_hpU",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "grey-days",
+   "title": "Grey Days",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-09-17",
+   "duration_s": 185,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=bTZXoczHwWw",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "scr3wfac3-origin",
+   "title": "SCR3WFAC3 ORIGIN",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "NEWTOWN",
+   "release_date": "2026-08-15",
+   "duration_s": 206,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=ydbW_5dh1qQ",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "the-great-remembering",
+   "title": "The Great Remembering",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "The Great Remembering (single)",
+   "release_date": "2026-03-07",
+   "duration_s": 462,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=9iKA1vbKr1A",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "jhios-tunnel-chaser",
+   "title": "JHIOS Tunnel Chaser",
+   "artist": "SCR3WFAC3",
+   "lane": "Unsorted",
+   "album": "JHIOS Tunnel Chaser (single)",
+   "release_date": "2025-12-08",
+   "duration_s": 271,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=flOqOTEeYXA",
+   "tags": [
+    "vault",
+    "jhios-core"
+   ]
+  },
+  {
+   "id": "jhios-nhs-ghost",
+   "title": "JHIOS-ΠNHS_GHOST-",
+   "artist": "SCR3WFAC3",
+   "lane": "Unsorted",
+   "album": "TekRES: EVOLUTION1",
+   "release_date": "2025-05-07",
+   "duration_s": 225,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=Sf3VoeF5Vv8",
+   "tags": [
+    "vault",
+    "jhios-core"
+   ]
+  },
+  {
+   "id": "east-anglian-champions",
+   "title": "East Anglian Champions",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "East Anglian Champions (single)",
+   "release_date": "2025-04-19",
+   "duration_s": 153,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=uOgxQZX9ZeI",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "east-anglian",
+   "title": "East Anglian",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "East Anglian (single)",
+   "release_date": "2025-04-09",
+   "duration_s": 258,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=9AhP3BGd-tQ",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "jhios-made-me-do-it-mate",
+   "title": "JHIOS Made Me Do It Mate",
+   "artist": "SCR3WFAC3",
+   "lane": "Unsorted",
+   "album": "JHIOS Made Me Do It Mate (single)",
+   "release_date": "2025-02-25",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=KfMTtJ1WEOc",
+   "tags": [
+    "vault",
+    "jhios-core"
+   ]
+  },
+  {
+   "id": "from-new-york-city-to-yarmouth-town",
+   "title": "From New York City to Yarmouth Town",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "From New York City to Yarmouth Town (single)",
+   "release_date": "2025-02-15",
+   "duration_s": 124,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=jwWxIugElfw",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "wasn-t-here",
+   "title": "Wasn't Here",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-07",
+   "duration_s": 131,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=hQ9Ap43EJ_I",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "psychosis-shit",
+   "title": "Psychosis Shit",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-08",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=sxMfA2CXY2g",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "the-bad-guy",
+   "title": "The Bad Guy",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-08",
+   "duration_s": 206,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=B4hxuez9u0M",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "clarity-ft-luce-aether",
+   "title": "Clarity - Ft Luce Aether",
+   "artist": "SCR3WFAC3",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-10-08",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=O5X_mz3E2Ak",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "spacexbaby-house-remix",
+   "title": "SpaceXBaby (House Remix)",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-16",
+   "duration_s": 196,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=hOC0tnj0I4E",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "from-atoms-to-our-own-worlds-jhios-infinite-exchange",
+   "title": "From Atoms to Our Own Worlds | JHIOS: Infinite Exchange",
+   "artist": "JHIOS",
+   "lane": "Unsorted",
+   "album": "JHIOS: Infinite Exchange",
+   "release_date": "2026-10-16",
+   "duration_s": 216,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=m8ihnZ3kKG4",
+   "tags": [
+    "vault",
+    "jhios-core"
+   ]
+  },
+  {
+   "id": "clam",
+   "title": "CLAM",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-16",
+   "duration_s": 195,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=FfW0m4KVRDc",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "before-i-let-go",
+   "title": "Before I Let Go",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-17",
+   "duration_s": 193,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=iM91KuojjyA",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "40-pills-at-ill-bill-s-official-music-video",
+   "title": "40 Pills at iLL BiLL's (Official Music Video)",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-18",
+   "duration_s": 300,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=WvKHnTipTyg",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "40-pills-at-ill-bill-s-drum-and-bass-livestream",
+   "title": "40 Pills at iLL BiLL's (DRUM AND BASS LIVESTREAM)",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-18",
+   "duration_s": 324,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=VFFvRiNneGo",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "cern-versions-of-reality",
+   "title": "CERN: Versions Of Reality",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-10-19",
+   "duration_s": 265,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=lqzql_nY_CE",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "time-i-wasted-feat-luce-aether",
+   "title": "Time I Wasted (feat. Luce Aether)",
+   "artist": "SCR3WFAC3",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-28",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://www.youtube.com/watch?v=vpyd5loyPA4",
+   "tags": [
+    "vault"
+   ]
+  },
+  {
+   "id": "rob-boxes",
+   "title": "Rob Boxes",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-23",
+   "duration_s": 146,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/0SliMeELFIw",
+   "tags": [
+    "newtown-archive",
+    "shorts"
+   ]
+  },
+  {
+   "id": "kamukura-no-kotodama-ii-descent-of-the-kami",
+   "title": "Kamukura no Kotodama II – Descent of the Kami",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 244,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/0_mq2JRuT7o",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "seikilos-i-the-epitaph-flame-mongolian-seikilos",
+   "title": "Seikilosын Сургааль I – The Epitaph Flame (Mongolian Seikilos)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 438,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/0hHuLMgTKUA",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "operators-active-alice-asked-if-she-d-gone-mad",
+   "title": "Operators Active (Alice Asked If She'd Gone Mad)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-21",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/0hY_6_nfFLA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sav-ill-helper-tory-hell",
+   "title": "SAV-ILL HELPER Tory Hell",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-04",
+   "duration_s": 310,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/0kl367yyoRQ",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "see-you-on-the-other-side-cover",
+   "title": "See You on the Other Side (Cover)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-07-26",
+   "duration_s": 575,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/1Bc6_LX2eUg",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "pleasure-bitch-original-version",
+   "title": "Pleasure Bitch (Original Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-09",
+   "duration_s": 213,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/1xkNywyzlCc",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "jhios-surrounded-plot-lost",
+   "title": "JHIOS SURROUNDED (Plot Lost)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-03",
+   "duration_s": 298,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/1yOnB4gdt1E",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "newtowns-nameless-glitch-version",
+   "title": "Newtowns Nameless (Glitch Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-07-16",
+   "duration_s": 157,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/1ywBIMiVGfk",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "astral-reassurance",
+   "title": "Astral Reassurance",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 420,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/1zsNOPk7SYQ",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-12",
+   "title": "TekRES 12",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-22",
+   "duration_s": 192,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/2FMF6JggTko",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "replay-it-again-ft-luce-aether-4-track-mix",
+   "title": "Replay It Again - Ft Luce Aether (4 Track Mix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-09-29",
+   "duration_s": 793,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/2oM8SdRNWo4",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "videos"
+   ]
+  },
+  {
+   "id": "last-christmas-dnb-mix",
+   "title": "Last Christmas (DnB Mix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-12-19",
+   "duration_s": 285,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/3IZKVbHNw2k",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sys-chaos-prime",
+   "title": "SYS-∞CHAOS_PRIME-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 248,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4JC4xXsZHG0",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "torment",
+   "title": "Torment",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-05-16",
+   "duration_s": 155,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4N3Pcjccx7k",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-13",
+   "title": "TekRES 13",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-23",
+   "duration_s": 192,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4Pje0jBqq08",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "mad-world-dnb-remix",
+   "title": "Mad World (DnB Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-02-17",
+   "duration_s": 175,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4SAOsOU1dZY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "manhattan-shuffle-breakbeat-version",
+   "title": "Manhattan Shuffle (Breakbeat Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 252,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4X5k-P4qBIs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "two-red-bulls",
+   "title": "Two Red Bulls",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-04",
+   "duration_s": 377,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4ZIzF5IgkqU",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "who-seen-it",
+   "title": "Who Seen It",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-11-17",
+   "duration_s": 231,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/4xmk9h_DkRA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "blue-pill-red-pill",
+   "title": "Blue Pill Red Pill",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 201,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/5E6-dPJYTuQ",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "seikilos-iii-eternal-song",
+   "title": "Seikilosын Сургааль III – Eternal Song",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 464,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/5aXR-R5d4jw",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "miss-the-little-boy-v-2-feat-luce-aether",
+   "title": "Miss The Little Boy V.2 (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-08-08",
+   "duration_s": 480,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/5in8U168Qog",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "two-mad-bastards",
+   "title": "Two Mad Bastards",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-03",
+   "duration_s": 179,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/5zp_phSx4S4",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "fractured-fraternity",
+   "title": "Fractured Fraternity",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 256,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/6FzAYuRXpZM",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "khloi-boa-nagamatsu-feat-luce-aether-astral-garden-mix",
+   "title": "Khloi Boa Nagamatsu (feat. Luce Aether) (Astral Garden Mix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-06-16",
+   "duration_s": 215,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/6GQbxABkmaY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "i-got-gy-on-it-original-version",
+   "title": "I Got GY On It (Original Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-03-09",
+   "duration_s": 213,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/6O6UTQ2662s",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "asking-for-it",
+   "title": "Asking For It",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 194,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/74gRJT4l-C8",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "drillfac3",
+   "title": "DRILLFAC3",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-13",
+   "duration_s": 205,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/7Hezaqm6cqE",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "inner-orbit",
+   "title": "Inner Orbit",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 432,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/7SPVcya7Fu8",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "low-tide",
+   "title": "Low Tide",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 249,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/7aZEvH76Fe0",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "eastern-sunlight",
+   "title": "Eastern Sunlight",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-12-21",
+   "duration_s": 182,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/7mYqUCJqF2U",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "abwun-dbwashmaya-ii-kingdom-eternal",
+   "title": "Abwûn d’bwashmâya II – Kingdom Eternal",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 418,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/7zsG2zRk9w4",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "hate-my-self-original-version",
+   "title": "Hate My Self (Original Version)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-04-01",
+   "duration_s": 254,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/80qJxfd1OKI",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "red-light",
+   "title": "Red Light",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-06-09",
+   "duration_s": 147,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/89FAGdEBNKg",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sanctum-tek-remix",
+   "title": "Sanctum (Tek Remix)",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 458,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8BOpqsxlVq8",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "dunes-and-the-sand-trance-techno-version",
+   "title": "Dunes and the Sand (Trance Techno Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-10-03",
+   "duration_s": 311,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8Dpf3A39I1s",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "something-they-use",
+   "title": "Something They Use",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-05-08",
+   "duration_s": 258,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8QyATd2MnrU",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "healing-feat-luce-aether",
+   "title": "Healing (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-03-12",
+   "duration_s": 170,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8dNcqYi8oNc",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "silent-skies-the-unseen-war",
+   "title": "Silent Skies (The Unseen War)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-12-21",
+   "duration_s": 209,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8mPIczVj7K8",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ekh-survaljiin-duu-song-of-the-source-i-mongolian-invocation",
+   "title": "Ekh Survaljiin Duu – Song of the Source I (Mongolian Invocation)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 269,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8qIilSG4RZ8",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-4",
+   "title": "TekRES 4",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-26",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/9X6IClxSsfo",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-6",
+   "title": "TekRES 6",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-11",
+   "duration_s": 289,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/A4GVHPwCeiI",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "trap-town-rain",
+   "title": "Trap Town Rain",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 209,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/A8L_xPCZL3k",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "above-below-feat-luce-aether",
+   "title": "Above & Below (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/AMg5B1mJEZ0",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "enkis-waters-i-abzu-rising-sumerian",
+   "title": "Enki’s Waters I – Abzu Rising (Sumerian)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 328,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/AOtMBVMvZOI",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bottled-escape",
+   "title": "Bottled Escape",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-03-09",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ASMzXUk0BHY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sturdee-curse",
+   "title": "Sturdee Curse",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-04",
+   "duration_s": 234,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/AXTj8NXifH8",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sys-dolby-entropy",
+   "title": "SYS-ΣDOLBY_ENTROPY-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 259,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/AifI2GxIGbM",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "starlit-passage",
+   "title": "Starlit Passage",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 387,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/AnieJFdde_E",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "manhattan-shuffle-dub-dance-version",
+   "title": "Manhattan Shuffle (Dub Dance Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 263,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/B5_SRf0KAzQ",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "jacques-de-molay",
+   "title": "Jacques de Molay",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-03-16",
+   "duration_s": 370,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Beaa0xPj7jk",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "el-an-ra-quantum-sparks",
+   "title": "El An Ra (Quantum Sparks)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-09-30",
+   "duration_s": 310,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Boe7DhgevJg",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "manhattan-shuffle-bassline-version",
+   "title": "Manhattan Shuffle (Bassline Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 232,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/C4iRt1g6SFc",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "seperation-feat-luce-aether-luce-aether-version",
+   "title": "Seperation (feat. Luce Aether) (Luce Aether Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-23",
+   "duration_s": 166,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/CHbxQfpIla0",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "matrix-vibrations-feat-luce-aether",
+   "title": "Matrix Vibrations (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-04-01",
+   "duration_s": 305,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/CMJ5qPmeru8",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tricks-up-my-sleeve-knives-in-yours-feat-luce-aether",
+   "title": "Tricks Up My Sleeve, Knives In Yours (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-04-01",
+   "duration_s": 213,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/CU6BZ42p-Zo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bit-back",
+   "title": "Bit Back",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-03-16",
+   "duration_s": 164,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/CseqWnqU1Dg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-3",
+   "title": "TekRES 3",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-26",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DKBJ_4Uaa74",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "above-the-riddim-feat-nam3l3ss",
+   "title": "Above The Riddim (feat. NAM3L3SS)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-12",
+   "duration_s": 166,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DQrsA9qLGC4",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "after-the-singularity",
+   "title": "After The Singularity",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 216,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DRNuf03B1lA",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "mouseman",
+   "title": "Mouseman",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-19",
+   "duration_s": 208,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DW4tfsLLj38",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cheat-death-not-life-feat-luce-aether",
+   "title": "Cheat Death Not Life (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 252,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DeP6I0WpZNs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "step-feat-luce-aether",
+   "title": "Step (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-24",
+   "duration_s": 197,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Dh7Bx4LcVGs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "big-up-the-eastcoast",
+   "title": "Big Up The Eastcoast",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-20",
+   "duration_s": 298,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DjQwy8FwZoM",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "notes-taken-feat-luce-aether-aether-mix",
+   "title": "Notes Taken (feat. Luce Aether) (Aether Mix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-12-04",
+   "duration_s": 256,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DjlnQoqYMwY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "blood-on-the-seats",
+   "title": "Blood On The Seats",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-04-11",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/DrUhfqO6M2A",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "enkis-waters-ii-wisdom-of-ea",
+   "title": "Enki’s Waters II – Wisdom of Ea",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 262,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/E1MIZDZJ5pc",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "blood-on-the-seats-luce-aether-version",
+   "title": "Blood On The Seats (Luce Aether Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-04-12",
+   "duration_s": 189,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/EGycApqRSCg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "prblms-scr3w-r3mix",
+   "title": "PRBLMS (SCR3W R3MIX)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-02-17",
+   "duration_s": 196,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/EL_f_IkbwTM",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "blasting-signals",
+   "title": "Blasting Signals",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-14",
+   "duration_s": 265,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ENavNZy5bWA",
+   "tags": [
+    "videos"
+   ]
+  },
+  {
+   "id": "hate-my-self-extended-version",
+   "title": "Hate My Self (Extended Version)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-04-01",
+   "duration_s": 382,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/F-Zi76a3yM4",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-5-extended",
+   "title": "TekRES 5 (Extended)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-06",
+   "duration_s": 448,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/F8KdZoW4iVA",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "devils-echo",
+   "title": "Devils Echo",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-03-23",
+   "duration_s": 192,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/FV1GtDnqlHc",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "activate-protocol-feat-luce-aether",
+   "title": "Activate Protocol (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-04-18",
+   "duration_s": 231,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/FaXF4xkKpbQ",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "run-away",
+   "title": "Run Away",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-20",
+   "duration_s": 153,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Fgx3MWJaVk8",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "cats-medicines",
+   "title": "Cats Medicines",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-06",
+   "duration_s": 138,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Fneq3eoM03U",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "rabbit-holes-and-yellow-roads",
+   "title": "Rabbit Holes and Yellow Roads",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-04-16",
+   "duration_s": 479,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/FtmEzJt1okQ",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lewi-g",
+   "title": "Lewi G",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-11",
+   "duration_s": 212,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/G0d6lWpV31M",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-void-ascent",
+   "title": "TEKRES-ΛVOID_ASCENT-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 266,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/GIivNbut834",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "mad-world",
+   "title": "Mad World",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-06",
+   "duration_s": 230,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/GRWmAcmXoaI",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "put-me-out",
+   "title": "Put Me Out",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-05-09",
+   "duration_s": 268,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/GpwTYPz6O78",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nobody-owns-feat-luce-aether",
+   "title": "Nobody Owns (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-09-15",
+   "duration_s": 196,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/HC52KXzK2nA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "midnightnewtownmassacres-s1-ep1-crazyjoe-faze-miyake-take-of",
+   "title": "#MidnightNewtownMassacres [S1.EP1]: CrazyJoe - Faze Miyake Take Off Instrumental",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2012-09-25",
+   "duration_s": 175,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/HHyL9WWBMdU",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nobody-got-me-yet",
+   "title": "Nobody Got Me Yet",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 251,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/HuqzvVsQ9Ik",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "burn-babylon-men",
+   "title": "Burn Babylon Men",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-02-27",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/I4Qujo1Qdtc",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "velvet-violence",
+   "title": "Velvet Violence",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-08",
+   "duration_s": 202,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/IfE5r7c6_LA",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "la-la-la",
+   "title": "La La La",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-07-02",
+   "duration_s": 183,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Ikv_jViCbK8",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "30k-views-and-still-climbing",
+   "title": "30K+ views and still climbing. 🎭",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-10-09",
+   "duration_s": 15,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/KCOMUKMI6a0",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "burnt-out-not-gone-remix",
+   "title": "Burnt Out (Not Gone Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-10-03",
+   "duration_s": 269,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/KGSspqBfYXw",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "inside-me",
+   "title": "Inside Me",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-05-14",
+   "duration_s": 224,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/KbWynI4NHgw",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "what-have-i-done-club-deluxe-remix",
+   "title": "What Have I Done (Club Deluxe Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 210,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Kc5EKTRDVXo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bit-back-way-i-am-remix",
+   "title": "Bit Back (Way I Am Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-01",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Kj3Ix36LrIA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "j-marney-ft-sal-haze-suicide-love",
+   "title": "J.Marney ft Sal Haze - Suicide Love",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2018-05-24",
+   "duration_s": 180,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/KokJGAU84y0",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "seikilos-ii-the-riddle-of-death",
+   "title": "Seikilosын Сургааль II – The Riddle of Death",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 432,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Kppnu59lcEI",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tyrs-eir-iv-shield-and-fire",
+   "title": "Týrs Eiðr IV – Shield and Fire",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 347,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/L9XgTjxsyTo",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "buried-alive-in-silence-i-grow-louder-save-comment-show-one-",
+   "title": "Buried alive in silence, I grow louder. Save ⚡ Comment ⚡ Show one friend to wake one.",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-15",
+   "duration_s": 60,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Lh0AEt1QF0w",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "grow-like-plants",
+   "title": "Grow Like Plants",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-16",
+   "duration_s": 178,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/LnImN2NI_Pg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "darkest-parts",
+   "title": "Darkest Parts",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-08-01",
+   "duration_s": 228,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/M1Y40vjkIAA",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "videos"
+   ]
+  },
+  {
+   "id": "nothing-left-feat-luce-aether",
+   "title": "Nothing Left (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-07-21",
+   "duration_s": 396,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/MIpZS-l8NCM",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "so-sad-feat-luce-aether",
+   "title": "So Sad (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 298,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/MOI2VopNY-E",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "pleasure-bitch-feat-luce-aether-fried-phonk-remix",
+   "title": "Pleasure Bitch (feat. Luce Aether) (Fried Phonk Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-09",
+   "duration_s": 236,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/MbrpBAPRp6Y",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "mercury-dreamline",
+   "title": "Mercury Dreamline",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 249,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/MhjCmaGXft4",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-9",
+   "title": "TekRES 9",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-20",
+   "duration_s": 203,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/MlG00VYjDF0",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "echoes-of-orion",
+   "title": "Echoes Of Orion",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 434,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/NASYI-2_ZaE",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "all-over-the-target",
+   "title": "All Over The Target",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-23",
+   "duration_s": 180,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/NU8jTkwQkpw",
+   "tags": [
+    "newtown-archive",
+    "videos"
+   ]
+  },
+  {
+   "id": "ankh-djed-was-i-life-and-power-egyptian",
+   "title": "Ankh Djed Was I – Life and Power (Egyptian)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 435,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/NpXYZK71tQ8",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "khloi-boa-nagamatsu-feat-luce-aether-below-the-garden-mix",
+   "title": "Khloi Boa Nagamatsu (feat. Luce Aether) (Below the Garden Mix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-06-16",
+   "duration_s": 215,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/O6NCiwK6k0o",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "end-of-the-rules-feat-luce-aether-aether-mix",
+   "title": "End Of The Rules (feat. Luce Aether) (Aether Mix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-01-12",
+   "duration_s": 254,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/OBKaIa_7JLM",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cold-hearted-ways-feat-luce-aether-drum-and-bass-version",
+   "title": "Cold Hearted Ways (feat. Luce Aether) (Drum and Bass Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 326,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Oh6PbdurD6Y",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "solar-bloom",
+   "title": "Solar Bloom",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 391,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/OuzatMuCezY",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lonely-love-feat-luce-aether",
+   "title": "Lonely Love (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-06",
+   "duration_s": 236,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Ov9pEbOlmI4",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "crystal-clear-feat-luce-aether",
+   "title": "Crystal Clear (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-11-25",
+   "duration_s": 262,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/PQuM3XA43Uo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-5",
+   "title": "TekRES 5",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-05",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/PXNMynL7YM4",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cba-feat-luce-aether",
+   "title": "CBA (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 253,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/PiMQ5YPAON0",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "prayer-of-the-broken-feat-luce-aether",
+   "title": "Prayer Of The Broken (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 230,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Pk0GTSdKvqA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "pleasure-bitch-feat-luce-aether-fried-remix",
+   "title": "Pleasure Bitch (feat. Luce Aether) (Fried Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-09",
+   "duration_s": 277,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/PkIU3mIHeIg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "music-of-the-spheres",
+   "title": "Music Of The Spheres",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 301,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Pkys2sgqRU8",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "creep-in-the-dark-feat-luce-aether-drum-and-bass-remix",
+   "title": "Creep In the Dark (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 270,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Q0OLTbpKOlE",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "astronaut",
+   "title": "Astronaut",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-08-13",
+   "duration_s": 190,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Q1GdT-6F_zM",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "videos"
+   ]
+  },
+  {
+   "id": "the-choice-to-stay-feat-luce-aether-aether-mix",
+   "title": "The Choice To Stay (feat. Luce Aether) (Aether Mix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-01-18",
+   "duration_s": 288,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Q6ZiDpdsFzQ",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "silly-billy",
+   "title": "Silly Billy",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 297,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QAryUfIiFCg",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "newtown-s-freeze",
+   "title": "Newtown's Freeze",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-05",
+   "duration_s": 170,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QFmmENxClGU",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "what-have-i-done-garage-bassline-remix",
+   "title": "What Have I Done (Garage Bassline Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 197,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QObN00q89Fo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ekh-survaljiin-duu-song-of-the-source-ii-eternal-echo",
+   "title": "Ekh Survaljiin Duu – Song of the Source II Eternal Echo",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 226,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QTuD8naheF4",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "last-christmas",
+   "title": "Last Christmas",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-12-19",
+   "duration_s": 287,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QVpk-8XY5W0",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "zak",
+   "title": "ZAK",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-17",
+   "duration_s": 342,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QYkl96OVflg",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "explosions",
+   "title": "Explosions",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 159,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/QsfxBN2L6QA",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "to-the-moon-back",
+   "title": "To The Moon & Back",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-07-02",
+   "duration_s": 242,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/RYsNDgPjbF0",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "soft-suicide",
+   "title": "Soft Suicide",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-09-20",
+   "duration_s": 270,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Rjxa3sIkOA8",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lux-aeterna-flamma-arcana-ghost-remix",
+   "title": "Lux Aeterna, Flamma Arcana (Ghost Remix)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 287,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/RvbmH7xP0k4",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "brigh-an-latha-iii-shadows-depart",
+   "title": "Brìgh an Latha III – Shadows Depart",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 337,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/S350COScPTU",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "smells-like-devil-s-spirit",
+   "title": "Smells Like Devil's Spirit",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-11-23",
+   "duration_s": 201,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/SLv0J7hLJ5A",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "infinite-glow",
+   "title": "Infinite Glow",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-21",
+   "duration_s": 193,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/SNCsd0ZUaew",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "demons-calling",
+   "title": "Demons Calling",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-06-14",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/SQenKFX-1sY",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "j-marney-miss-the-little-boy-prod-by-blue-foundation-j-marne",
+   "title": "J.Marney - Miss The Little Boy - Prod By Blue Foundation & J.Marney",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2018-07-25",
+   "duration_s": 255,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/STyepaxiwMI",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "addiction-feat-luce-aether",
+   "title": "Addiction (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-08-26",
+   "duration_s": 212,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/SboBrsZQ0PA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "phantom-harmonics",
+   "title": "Phantom Harmonics",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 301,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/SeZ0VwLIQBg",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "abwun-dbwashmaya-i-heavens-breath-aramaic",
+   "title": "Abwûn d’bwashmâya I – Heaven’s Breath (Aramaic)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 382,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Sp4eEKDPV6Y",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "unleashed",
+   "title": "Unleashed",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 150,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/T1o8rlAqbi0",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cold-hearted-ways-techno-version",
+   "title": "Cold Hearted Ways (Techno Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 326,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/TDv9tfNb2pg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "when-the-strings-break",
+   "title": "When The Strings Break",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-07",
+   "duration_s": 213,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/TmP64KblBV4",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "evolution-eats-everything",
+   "title": "Evolution Eats Everything",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-14",
+   "duration_s": 209,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/U7MkjAE44Ak",
+   "tags": [
+    "videos"
+   ]
+  },
+  {
+   "id": "pavamana-mantra-ii-path-of-illusion",
+   "title": "Pavamāna Mantra II – Path of Illusion",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 398,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/UTTdPHTMLZc",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "newtowns-nameless-original-version",
+   "title": "Newtowns Nameless (Original Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-07-16",
+   "duration_s": 150,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/VIjoPlVMEMo",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "pressure-chamber",
+   "title": "Pressure Chamber",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-12",
+   "duration_s": 220,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/VNpuyjXzri8",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "spacexbaby",
+   "title": "SpaceXBaby",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-05-05",
+   "duration_s": 203,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/VOulC1ppAFg",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "love-s-a-revolution",
+   "title": "Love's A Revolution",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-04-28",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/VP1vzQEGuGU",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cold-hearted-ways-original-version",
+   "title": "Cold Hearted Ways (Original Version)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 308,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Vg5R-ZA6Dnc",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cross-lace",
+   "title": "Cross & Lace ✨",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-07",
+   "duration_s": 183,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Vvwv5zLsT88",
+   "tags": [
+    "videos"
+   ]
+  },
+  {
+   "id": "monster-or-messenger-flowers-to-blood-engineered-madness-his",
+   "title": "Monster or messenger? Flowers 🌼 to blood 🩸 Engineered madness ⚠️ History loops 🔁 Open your eyes 👀",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-15",
+   "duration_s": 57,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/WdsXOJ2xiUo",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "manhattan-shuffle-tribal-psy-trance-version",
+   "title": "Manhattan Shuffle (Tribal Psy-trance Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 278,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/WtBJmtZ4Vxg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "postle-s-poem",
+   "title": "Postle's Poem",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 363,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/X-r6huMUO14",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "something-lifting",
+   "title": "Something Lifting",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-02-03",
+   "duration_s": 176,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/X2vA8kAZJ10",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lux-aeterna-flamma-arcana",
+   "title": "Lux Aeterna, Flamma Arcana",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 215,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/X6ab5o-cjHM",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "exit-state-feat-luce-aether",
+   "title": "Exit State (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-01",
+   "duration_s": 332,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/XKrAHOeVHPE",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "no-one-above-feat-luce-aether",
+   "title": "No One Above (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-01-21",
+   "duration_s": 336,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/XRXEW8KLj5M",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cheat-death-not-life-feat-luce-aether-drum-and-bass-remix",
+   "title": "Cheat Death Not Life (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 263,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/XUUyajnTTMU",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "never-sturdee",
+   "title": "Never Sturdee",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-07",
+   "duration_s": 401,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/YSv6gBhE7rg",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lux-aeterna-flamma-arcana-aether-mix",
+   "title": "Lux Aeterna, Flamma Arcana (Aether Mix)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 287,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/YazYOCumjHg",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "my-life-s-good",
+   "title": "My Life's Good",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-09",
+   "duration_s": 142,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/YdPWTEUimYw",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "remember-what-you-are-feat-luce-aether-diamond-edition",
+   "title": "Remember What You Are (feat. Luce Aether) (Diamond Edition)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-02-16",
+   "duration_s": 340,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/YgpNIEy-pMw",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sunken-eyes-feat-luce-aether",
+   "title": "Sunken Eyes (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-08",
+   "duration_s": 234,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/YtQd-lZa4sY",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "seikilos-iv-dance-of-the-grave",
+   "title": "Seikilosын Сургааль IV – Dance of the Grave",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 447,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Yyevpv5pHlo",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "j-marney-ft-shadow-yarko-plug-walk-instrumental",
+   "title": "J.Marney ft Shadow - Yarko (Plug Walk Instrumental)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2018-12-02",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ZIiTwZmEbW0",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "demons-calling-drum-and-bass-remix",
+   "title": "Demons Calling (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-06-14",
+   "duration_s": 242,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Zh2-NkdIHgw",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ouroboros-extended-deep-house",
+   "title": "Ouroboros (Extended Deep House)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-07",
+   "duration_s": 443,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ZnG44G-zmQs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "jhios-we-ride-feat-luce-aether",
+   "title": "JHIOS We Ride (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-03-08",
+   "duration_s": 310,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/_-9UG6XI2k8",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-1",
+   "title": "TekRES 1",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-25",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/_1KwKIVjfH4",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "no-family-feat-luce-aether",
+   "title": "No Family (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-06-16",
+   "duration_s": 259,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/_CuCfyfNVFE",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tyrs-eir-iii-ragnars-call",
+   "title": "Týrs Eiðr III – Ragnar’s Call",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 378,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/_cnLmwaf7Rg",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "inferno-s-echo",
+   "title": "Inferno's Echo",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-22",
+   "duration_s": 202,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/_mCgf9anOdw",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "m7",
+   "title": "M7",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-11",
+   "duration_s": 239,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/_oLszPOQ298",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ouroboros",
+   "title": "Ouroboros",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 185,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/aFKRpWfEutc",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "manhattan-shuffle",
+   "title": "Manhattan Shuffle",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-15",
+   "duration_s": 234,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/aKXuKuuHN-E",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "subs-up-heads-down-above-the-riddim-save-add-to-playlist",
+   "title": "Subs up, heads down. Above The Riddim. Save ⚡ Add to playlist 🎧",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-15",
+   "duration_s": 26,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/a_4Et1QF6H8",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "brigh-an-latha-i-strength-of-the-day-gaelic",
+   "title": "Brìgh an Latha I – Strength of the Day (Gaelic)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 352,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/bNT0QFWiojs",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "when-the-moon-comes-up",
+   "title": "When The Moon Comes Up",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 161,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/br5xjUd8O9Y",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "can-after-can",
+   "title": "Can After Can",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-02-08",
+   "duration_s": 148,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/bxW7kEFU2uQ",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-7",
+   "title": "TekRES 7",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-20",
+   "duration_s": 197,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/c5rAadH-xrg",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "then-i-hear-it-solo-version",
+   "title": "Then I Hear It (SOLO Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-03-23",
+   "duration_s": 161,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/cAZfH107--s",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bubbles-bruv",
+   "title": "Bubbles Bruv",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-05-14",
+   "duration_s": 445,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/cRfYsFftfIg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "no-family-feat-luce-aether-drum-and-bass-remix",
+   "title": "No Family (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-06-16",
+   "duration_s": 271,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/cY2GQGH8Yok",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "built-for-this-feat-luce-aether-divine-lightbearer-version",
+   "title": "Built For This (feat. Luce Aether) (Divine Lightbearer Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-06-16",
+   "duration_s": 172,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/cgBSpFPvo48",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "penny-slots",
+   "title": "Penny Slots",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 219,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/cmaQYIbAeO8",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "dynamic-fracture",
+   "title": "Dynamic Fracture",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-05-10",
+   "duration_s": 217,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/czZ6-JBgIUQ",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "in-the-making-j-marney-get-it-myself-prod-by-russ",
+   "title": "In The Making - J.Marney - Get It Myself - Prod By Russ",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2017-10-05",
+   "duration_s": 233,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/d-9zhWzPnsg",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "void-geometry",
+   "title": "Void Geometry",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 268,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/d-sD9tD1IjQ",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nobody-got-me-yet-scr3wfac3-bladerunnerz-edit",
+   "title": "Nobody Got Me Yet - SCR3WFAC3 (BladeRunnerz Edit)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-04-12",
+   "duration_s": 198,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/d0w9PLwC3zc",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "j-marney-chip-bookey",
+   "title": "J.Marney - CHIP - Bookey",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2019-05-31",
+   "duration_s": 140,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/d9MhkVwgrZM",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "kill-me-one-day",
+   "title": "Kill Me One Day",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-09-30",
+   "duration_s": 325,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/dE8foCoDUG8",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "spacexbaby-drum-and-bass-remix",
+   "title": "SpaceXBaby (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-06-05",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/dSrl0fd2xHo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "i-never-asked-for-any-of-this",
+   "title": "I Never Asked (For Any of This)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-10-15",
+   "duration_s": 248,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/dgujk_v_eHs",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bad-choices",
+   "title": "Bad Choices",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-03-24",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/e8tS1Lpzwdk",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "evo-25125-loop-feat-luce-aether",
+   "title": "EVO-Ξ25125_LOOP- (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 235,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/eIGDSiS5cck",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "too-soon-feat-luce-aether",
+   "title": "Too Soon (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-09-17",
+   "duration_s": 255,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/eM28HL0msrE",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "drowning-feat-luce-aether-drum-and-bass-remix",
+   "title": "Drowning (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 290,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ewRMPKByJTM",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "j-marney-run-away-prod-by-bornhero-lyric-video",
+   "title": "J.Marney - Run Away - Prod By Bornhero  (LYRIC VIDEO)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2018-11-15",
+   "duration_s": 141,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/f72oh_2MmJ4",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "it-s-been-a-while-feat-luce-aether",
+   "title": "It's Been a While (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-04-09",
+   "duration_s": 169,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/fMXY48954aY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-10",
+   "title": "TekRES 10",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-20",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/fbJeVkkmSeQ",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "anhedonia-feat-luce-aether-drum-and-bass-remix",
+   "title": "Anhedonia (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 350,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ffrZzVpjN3Y",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "mask-on-mask-off",
+   "title": "Mask On Mask Off",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-03",
+   "duration_s": 208,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/fj3VHfEJX-U",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "signal-dirty-feat-luce-aether-original-version",
+   "title": "Signal Dirty (feat. Luce Aether) (Original Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-08",
+   "duration_s": 263,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/gF7otBdN0sc",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "up-down-the-coast-feat-luce-aether",
+   "title": "Up & Down The Coast (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-03-23",
+   "duration_s": 94,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/gcFBaHSCz0g",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tyrs-eir-ii-war-of-wires",
+   "title": "Týrs Eiðr II – War of Wires",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 328,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/gczFx61eJxo",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nothing-left-feat-luce-aether-cinematic-version",
+   "title": "Nothing Left (feat. Luce Aether) (Cinematic Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-09-16",
+   "duration_s": 246,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/hNpyoTG-AGI",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "asking-me-to-stay-feat-luce-aether",
+   "title": "Asking Me To Stay (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-14",
+   "duration_s": 189,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/hcDmUzDfwXU",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ouroboros-2",
+   "title": "Ouroboros",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-03",
+   "duration_s": 197,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/iBG6ZOgnNfs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-2",
+   "title": "TekRES 2",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-26",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/iFrszYYo1Nk",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "shattered-transcendence-feat-luce-aether-luce-aether-version",
+   "title": "Shattered Transcendence (feat. Luce Aether) (Luce Aether Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-06-02",
+   "duration_s": 182,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/iaZhF0W7CGs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "i-got-gy-on-it-bonus-bassline-version",
+   "title": "I Got GY On It (Bonus Bassline Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-03-09",
+   "duration_s": 322,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ifAmQMiB_Vo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "so-sad-feat-luce-aether-drum-and-bass-remix",
+   "title": "So Sad (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 311,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/istCRHyWQnA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "the-chaotic-orderist",
+   "title": "The Chaotic Orderist",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-16",
+   "duration_s": 189,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/j8mUwBgrynk",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-11",
+   "title": "TekRES 11",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-20",
+   "duration_s": 148,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/jF5G2RYUaWo",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "crashed-my-birds-car",
+   "title": "Crashed My Birds Car",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-06",
+   "duration_s": 196,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/jeL9qZL8Pvg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sanctum",
+   "title": "Sanctum",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 439,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/jms5HCGG0cs",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "fight-every-day",
+   "title": "Fight Every Day",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 234,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/kXEu72JgV3I",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "a-cell-to-rest",
+   "title": "A Cell To Rest",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-03-29",
+   "duration_s": 362,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/kYGu6FkYM2U",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nobody-got-me-yet-2",
+   "title": "Nobody Got Me Yet",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-03-05",
+   "duration_s": 194,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/llrkT3ltEbo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "drowning",
+   "title": "Drowning",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 272,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/lpppGwrNCwg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-infinite-exchange",
+   "title": "TEKRES-ΩINFINITE_EXCHANGE-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 190,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/lsC7NqOaA80",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "the-moon-vs-flamma-arcana-bonus-track",
+   "title": "The Moon vs Flamma Arcana (Bonus Track)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 264,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/lvvgCtZFFw4",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "the-13-faces-of-madness-feat-luce-aether-luce-aether-version",
+   "title": "The 13 Faces of Madness (feat. Luce Aether) (Luce Aether Version)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-02-05",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/m2-uO8wXXZM",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "run-away-dnb-remix",
+   "title": "Run Away (DnB Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-20",
+   "duration_s": 208,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/m5BDT5EmCdg",
+   "tags": [
+    "videos"
+   ]
+  },
+  {
+   "id": "it-s-been-a-while-feat-luce-aether-noir",
+   "title": "It's Been a While (feat. Luce Aether) (Noir)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-04-09",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/mZWfLy2inxk",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "days-in-a-plastic-bag",
+   "title": "Days In A Plastic Bag",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-03-01",
+   "duration_s": 236,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/n0Rmr-Mhpdo",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "do-it-alone",
+   "title": "Do It Alone",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-08-04",
+   "duration_s": 185,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/nKeFw7I0l5k",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "videos"
+   ]
+  },
+  {
+   "id": "shattered-glass-neon-lights",
+   "title": "Shattered Glass & Neon Lights",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-03-05",
+   "duration_s": 222,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/nKwY8YQE2Yg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lines-til-the-sun-lies-feat-luce-aether-drum-and-bass-remix",
+   "title": "Lines Til The Sun Lies (feat. Luce Aether) (Drum and Bass Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 266,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/nTWAo_iNG7k",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "sys-vinyl-resistance",
+   "title": "SYS-ΒVINYL_RESISTANCE-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 214,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/nibMgrR3XuU",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "every-ladder-needs-two-sides",
+   "title": "Every Ladder Needs Two Sides",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-02-11",
+   "duration_s": 381,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/njWku78dGsY",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "quiet-constellation",
+   "title": "Quiet Constellation",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 313,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/nz2XtKqtrFU",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "kamukura-no-kotodama-i-spirit-of-words-ainu-shinto",
+   "title": "Kamukura no Kotodama I – Spirit of Words (Ainu Shinto)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 288,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/oTjVwH_fBw0",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "twilight-alchemy",
+   "title": "Twilight Alchemy",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-02-22",
+   "duration_s": 199,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/oYY1MJE44rM",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation",
+   "title": "Pavamāna Mantra I – Om Asato Ma Sadgamaya (Sanskrit Invocation)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 438,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/oomiKTe397g",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "the-choice-to-stay",
+   "title": "The Choice To Stay",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-16",
+   "duration_s": 330,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/p8fx7kK-q8U",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "rockstar",
+   "title": "Rockstar",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 146,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/pFL-gEk9z9M",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "encoded-in-the-flame-feat-luce-aether",
+   "title": "Encoded In The Flame (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-08-26",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/pqcZassSwNs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "blood-on-the-mirror",
+   "title": "Blood On The Mirror",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-02-05",
+   "duration_s": 132,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/pt9z9nAFkDE",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "charlie-kirk-ed",
+   "title": "Charlie Kirk'ed",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-13",
+   "duration_s": 228,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ptu-8RrZGho",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nobody-got-me-yet-aether-mix",
+   "title": "Nobody Got Me Yet (Aether Mix)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 239,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/pwDj9GZ8Wzc",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "seperation",
+   "title": "Seperation",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-23",
+   "duration_s": 162,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/q3ec_tECu6s",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "astronaut-remix",
+   "title": "Astronaut Remix",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-13",
+   "duration_s": 220,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qAZzsZj95xE",
+   "tags": [
+    "videos"
+   ]
+  },
+  {
+   "id": "anhedonia-feat-luce-aether",
+   "title": "Anhedonia (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 326,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qDItbG-iHGI",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bad-habits-feat-luce-aether",
+   "title": "Bad Habits (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-02-16",
+   "duration_s": 183,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qIGyX0MWjXY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "3i-atlas-dark-forest-feat-luce-aether",
+   "title": "3I/ATLAS (Dark Forest) (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-12-19",
+   "duration_s": 780,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qTN-FTBxmRs",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "jhios-council-mainframe",
+   "title": "JHIOS-ΦCOUNCIL_MAINFRAME-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 227,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qU5_0nJNl2I",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "shattered-glass-neon-lights-punk-version",
+   "title": "Shattered Glass & Neon Lights (Punk Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-03-05",
+   "duration_s": 190,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qjCTem6vAwU",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "creep-in-the-dark-feat-luce-aether",
+   "title": "Creep In the Dark (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 263,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/qtNw2SFZWx4",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "night-raiders",
+   "title": "Night Raiders",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-19",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/r0GVHRoDxHc",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "cba-feat-luce-aether-club-deluxe-remix",
+   "title": "CBA (feat. Luce Aether) (Club Deluxe Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 258,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/r2wEb62D2xg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "priddy-green-eyez-feat-luce-aether",
+   "title": "Priddy Green Eyez (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-03-08",
+   "duration_s": 300,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/r8fuH0WXiIE",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "28-planets-later-rage-went-interstellar-28-mixes-later-dropp",
+   "title": "🚨 28 PLANETS LATER 🚨 Rage went interstellar 28 Mixes Later dropping soon full DnB breakbeat tribute.",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-07-16",
+   "duration_s": 110,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/rVDCmp2FSwE",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "system-breach-think-before-you-act",
+   "title": "System Breach (Think Before You Act)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-12-21",
+   "duration_s": 266,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/rcMhEuJwepU",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "aim-with-intent",
+   "title": "Aim With Intent",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-03-26",
+   "duration_s": 185,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/s1wxk9Y1Ngs",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "these-streets-done-nuttin-feat-luce-aether",
+   "title": "These Streets Done Nuttin (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-09-27",
+   "duration_s": 225,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/s9F5zDfzxk4",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "scr3wfac3-it-is-all-around-us",
+   "title": "SCR3WFAC3 – It Is All Around Us",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-02-12",
+   "duration_s": 479,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/sMNAzI32w_w",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "videos"
+   ]
+  },
+  {
+   "id": "subsonic-temple",
+   "title": "Subsonic Temple",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 318,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/sy8Hos1FTRs",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "hymn-of-the-fractured-feat-luce-aether-deep-house",
+   "title": "Hymn Of The Fractured (feat. Luce Aether) (Deep House)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 214,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/syyJrklk32o",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "million-masks",
+   "title": "Million Masks",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-08-07",
+   "duration_s": 301,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/t27zLXvXljs",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "videos"
+   ]
+  },
+  {
+   "id": "change-my-life",
+   "title": "Change My Life",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-02-03",
+   "duration_s": 238,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tDdmv66ul8A",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "astral-pressure-system",
+   "title": "Astral Pressure System",
+   "artist": "",
+   "lane": "Sanctum",
+   "album": "",
+   "release_date": "2026-03-20",
+   "duration_s": 281,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tIMNdp3_bUU",
+   "tags": [
+    "scr3wfac3-sanctum",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "crunch-time-feat-luce-aether",
+   "title": "Crunch Time (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-01-12",
+   "duration_s": 125,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tYXOoIzUDBU",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "brv1nscvn-propvgvndv-r3loop-dubpl8-resync",
+   "title": "BRV1NSCVN PROPVGVNDV R3LOOP DUBPL8 RESYNC",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-06",
+   "duration_s": 451,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tbVL1-3IB68",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ouroboros-aether-mix",
+   "title": "Ouroboros (Aether Mix)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 200,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tfAKFwrs4mI",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "luce-aether-s-train",
+   "title": "Luce Aether's Train",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-06-12",
+   "duration_s": 209,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tjbxCaXTUFU",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "hate-my-self-dnb-remix",
+   "title": "Hate My Self (DnB Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-01",
+   "duration_s": 263,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tpcz_VQjqak",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "done-it",
+   "title": "Done It",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-02",
+   "duration_s": 174,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tsNxaeegVd4",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "evo-subbas-crypto",
+   "title": "EVO-ΘSUBBAS_CRYPTO-",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 247,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/tz5BoWLxtRg",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "dunes-and-the-sand-drum-and-bass-version",
+   "title": "Dunes and the Sand (Drum and Bass Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-10-03",
+   "duration_s": 293,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/u2rdJQRU4is",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "something-lifting-same-room-new-angle-if-this-makes-sense-it",
+   "title": "something lifting 🌌 same room, new angle 👁️ if this makes sense, it’s already working ✨ #SCR3WFAC3",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-04-14",
+   "duration_s": 178,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/u8-RaGsh_d4",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "low-tide-aether-mix",
+   "title": "Low Tide (Aether Mix)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 243,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/uDr0K-23uNY",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "blood-on-the-seats-deep-house-version",
+   "title": "Blood On The Seats (Deep House Version)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-12",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/uGX0p9U6yrA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lewi-g-fr33-pvrty",
+   "title": "Lewi G (FR33 PVRTY)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-08-11",
+   "duration_s": 226,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/uPU8SErCWxA",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tyrs-eir-i-the-blood-oath-norse",
+   "title": "Týrs Eiðr I – The Blood Oath (Norse)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-09-26",
+   "duration_s": 284,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ufhhhgoPUWE",
+   "tags": [
+    "jhios-fr33-pvrty",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "lines-til-the-sun-lies-feat-luce-aether",
+   "title": "Lines Til The Sun Lies (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-05-04",
+   "duration_s": 247,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ukJ9sawjuFM",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "ouroboros-ghost-remix",
+   "title": "Ouroboros (Ghost Remix)",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-01-22",
+   "duration_s": 207,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/unqXY4s3C1I",
+   "tags": [
+    "scr3wfac3-junkies-whatever-you-think-this-is-it-is-but-it-is",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "bure-40hz-core-feat-luce-aether",
+   "title": "BURE-Ω40HZ_CORE- (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 198,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/vciZyEdp66o",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "uber-booked",
+   "title": "Uber Booked",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-08-03",
+   "duration_s": 143,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/wBKoTOKUUaU",
+   "tags": [
+    "shorts"
+   ]
+  },
+  {
+   "id": "low-light-feat-luce-aether",
+   "title": "Low Light (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-11-25",
+   "duration_s": 243,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/wnVijrMrpnw",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "conz-straight-realness-pt-1",
+   "title": "Conz - Straight Realness Pt 1",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2018-08-25",
+   "duration_s": 97,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/xETKqcPBQFY",
+   "tags": [
+    "newtown-archive",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-8",
+   "title": "TekRES 8",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-04-20",
+   "duration_s": 166,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/xOs_CQjMa_I",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "hench-in-the-head",
+   "title": "Hench In The Head",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-08-11",
+   "duration_s": 212,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/xf67cHiz-Uk",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "signal-dirty-feat-luce-aether-remix",
+   "title": "Signal Dirty (feat. Luce Aether) (Remix)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-04-08",
+   "duration_s": 240,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/xjyyASXylHo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "built-for-this-fatherless-fathers-day",
+   "title": "Built For This (Fatherless Father’s Day)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2025-06-16",
+   "duration_s": 178,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/xog30u-azfY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "black-mirror-magic",
+   "title": "Black Mirror Magic",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-08-08",
+   "duration_s": 254,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/xuhUqQP3CIo",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "too-big-to-sink",
+   "title": "Too Big To Sink",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2026-08-20",
+   "duration_s": 289,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/y3qZIVaGTaM",
+   "tags": [
+    "scr3wfac3-slow-crawl",
+    "videos"
+   ]
+  },
+  {
+   "id": "hate-my-self-extended-dnb-remix",
+   "title": "Hate My Self (Extended DnB Remix)",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-04-01",
+   "duration_s": 375,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/yE3fDNqHhQg",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "big-bunda",
+   "title": "Big Bunda",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-02-14",
+   "duration_s": 182,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/y_VeHVX-PRY",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "pharma-perverts",
+   "title": "Pharma & Perverts",
+   "artist": "",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "2025-05-22",
+   "duration_s": 122,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/yp3MlPDz_Ww",
+   "tags": [
+    "scr3wfac3-guitar-band",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "i-gotta-smoke-doobies-feat-luce-aether",
+   "title": "I Gotta Smoke Doobies (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2026-01-15",
+   "duration_s": 175,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/ypPZq9_EgnA",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "tekres-neural-override-feat-luce-aether",
+   "title": "TEKRES-ΨNEURAL_OVERRIDE- (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-08",
+   "duration_s": 368,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/z70mWt3ZO1A",
+   "tags": [
+    "jhios-tekres",
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "nightmare-pool",
+   "title": "Nightmare Pool",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "2026-01-28",
+   "duration_s": 297,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/z8kozRrZGuo",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "hymn-of-the-fractured-feat-luce-aether",
+   "title": "Hymn Of The Fractured (feat. Luce Aether)",
+   "artist": "",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "2025-05-03",
+   "duration_s": 170,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/zW-X7xHdRZk",
+   "tags": [
+    "playlist-only"
+   ]
+  },
+  {
+   "id": "down-and-dirty",
+   "title": "Down And Dirty",
+   "artist": "JHIOS Soundtracks",
+   "lane": "JHIOS Soundtracks",
+   "album": "DAM After Dark Vol. 1",
+   "release_date": "",
+   "duration_s": 258,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "",
+   "tags": [
+    "dam-after-dark",
+    "master",
+    "local-test-audio"
+   ],
+   "also_on": [
+    {
+     "label": "Ditto",
+     "url": "https://ditto.fm/dam-after-dark-vol-1"
+    }
+   ]
+  },
+  {
+   "id": "let-s-get-freaky",
+   "title": "Let's Get Freaky",
+   "artist": "JHIOS Soundtracks",
+   "lane": "JHIOS Soundtracks",
+   "album": "DAM After Dark Vol. 1",
+   "release_date": "",
+   "duration_s": 223,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "",
+   "tags": [
+    "dam-after-dark",
+    "master",
+    "local-test-audio"
+   ],
+   "also_on": [
+    {
+     "label": "Ditto",
+     "url": "https://ditto.fm/dam-after-dark-vol-1"
+    }
+   ]
+  },
+  {
+   "id": "make-it-drip",
+   "title": "Make It Drip",
+   "artist": "JHIOS Soundtracks",
+   "lane": "JHIOS Soundtracks",
+   "album": "DAM After Dark Vol. 1",
+   "release_date": "",
+   "duration_s": 234,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "",
+   "tags": [
+    "dam-after-dark",
+    "master",
+    "local-test-audio"
+   ],
+   "also_on": [
+    {
+     "label": "Ditto",
+     "url": "https://ditto.fm/dam-after-dark-vol-1"
+    }
+   ]
+  },
+  {
+   "id": "private-show",
+   "title": "Private Show",
+   "artist": "JHIOS Soundtracks",
+   "lane": "JHIOS Soundtracks",
+   "album": "DAM After Dark Vol. 1",
+   "release_date": "",
+   "duration_s": 234,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "",
+   "tags": [
+    "dam-after-dark",
+    "master",
+    "local-test-audio"
+   ],
+   "also_on": [
+    {
+     "label": "Ditto",
+     "url": "https://ditto.fm/dam-after-dark-vol-1"
+    }
+   ]
+  }
+ ]
+}
