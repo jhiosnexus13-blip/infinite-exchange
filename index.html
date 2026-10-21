@@ -1,616 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en"><head>
 <title>JHIOS | INFINITE EXCHANGE</title>
 <meta name="description" content="Independent Music Vault • AI Creation Platform • Digital Archive. Building in public, owned by no one but the artists.">
-<style>
-:root{
-  --bg:#050607; --panel:#0a0e0d; --line:#1c2b26; --signal:#00ff9d;
-  --text:#d4ded9; --dim:#5c6b66; --alarm:#ff2e4d; --radius:3px;
-  --mono:'JetBrains Mono','SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
-}
-@font-face{ font-family:'JetBrains Mono'; src: local('JetBrains Mono'); }
-*{ margin:0; padding:0; box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
-body{
-  background:var(--bg); color:var(--text); font-family:var(--mono);
-  line-height:1.55; overflow-x:hidden; position:relative;
-}
-body::after{
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:500;
-  background:repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,.12) 3px);
-  mix-blend-mode:overlay; opacity:.35;
-}
-a{ color:var(--signal); }
-::selection{ background:var(--signal); color:#000; }
-.wrap{ max-width:1040px; margin:0 auto; padding:0 clamp(1.25rem,3vw,2.5rem); }
-button{ font-family:inherit; }
+<link rel="canonical" href="https://infiniteexchange.online/">
+<meta property="og:title" content="JHIOS | INFINITE EXCHANGE"><meta property="og:url" content="https://infiniteexchange.online/">
+<meta property="og:description" content="Independent music vault and archive: SCR3WFAC3, Luce Aether, JHIOS Soundtracks.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050607">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:site_name" content="JHIOS // INFINITE EXCHANGE">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://infiniteexchange.online/og-image.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/config.js"></script>
+<script src="/assets/js/player.js" defer></script>
+</head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><nav class="bar" aria-label="Main">
+<a class="brand" href="/"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><use href="/assets/logo.svg#mark"/></svg>JHIOS // INFINITE EXCHANGE</a>
+<ul><li><a href="/#signal">Signal</a></li><li><a href="/#lanes">Lanes</a></li><li><a href="/vault">Vault</a></li><li><a href="/#soundtracks">Commission</a></li><li><a href="/world">3D World</a></li><li><a href="https://tally.so/r/Y5bYgv" rel="noopener">Join</a></li></ul>
+</nav></header>
 
-/* ---------- nav ---------- */
-header.site-nav{
-  position:fixed; top:0; left:0; right:0; z-index:200;
-  background:rgba(5,6,7,.88); backdrop-filter:blur(6px);
-  border-bottom:1px solid var(--line);
-  transform:translateY(0); transition:transform .3s ease;
-}
-header.site-nav.nav-hide{ transform:translateY(-100%); }
-.site-nav .bar{ display:flex; align-items:center; justify-content:space-between; padding:.9rem clamp(1.25rem,3vw,2.5rem); max-width:1040px; margin:0 auto; }
-.brand{ font-size:.82rem; letter-spacing:.1em; color:var(--text); text-decoration:none; white-space:nowrap; }
-.brand .dot{ color:var(--signal); }
-.site-nav nav.links{ display:flex; gap:clamp(.9rem,2vw,1.6rem); }
-.site-nav nav.links a{
-  font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim);
-  text-decoration:none; transition:color .2s ease;
-}
-.site-nav nav.links a:hover{ color:var(--signal); }
-.hamburger{
-  display:none; background:none; border:1px solid var(--line); color:var(--text);
-  width:36px; height:36px; cursor:pointer; border-radius:var(--radius); font-size:1rem;
-}
-.mobile-menu{
-  display:none; position:fixed; inset:0 0 auto 0; top:56px; z-index:199;
-  background:rgba(5,6,7,.97); border-bottom:1px solid var(--line);
-  flex-direction:column; padding:1rem clamp(1.25rem,3vw,2.5rem) 1.5rem;
-}
-.mobile-menu.open{ display:flex; }
-.mobile-menu a{
-  font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--text);
-  text-decoration:none; padding:.75rem 0; border-bottom:1px solid var(--line);
-}
-@media (max-width:720px){
-  .site-nav nav.links{ display:none; }
-  .hamburger{ display:flex; align-items:center; justify-content:center; }
-}
-
-/* ---------- hero ---------- */
-.hero{
-  position:relative; height:100vh; min-height:560px; overflow:hidden;
-  display:flex; align-items:flex-end;
-}
-.hero-bg{
-  position:fixed; inset:0; width:100%; height:100vh; object-fit:cover;
-  z-index:-2; will-change:transform, filter;
-  filter:saturate(.7) brightness(.55);
-  transform:scale(1);
-}
-.hero-veil{
-  position:fixed; inset:0; height:100vh; z-index:-1; pointer-events:none;
-  background:radial-gradient(ellipse at 50% 30%, rgba(0,0,0,0) 0%, rgba(2,3,3,.55) 60%, rgba(2,3,3,.92) 100%);
-  transition:opacity .1s linear;
-}
-.hero-fg{
-  position:absolute; top:0; left:0; width:100%; height:100%;
-  object-fit:contain; pointer-events:none; z-index:1;
-  will-change:transform, opacity;
-}
-.hero-frame{
-  position:relative; z-index:2; width:100%; padding-bottom:clamp(2rem,6vh,3.5rem);
-}
-.hero-frame .wrap{
-  border:1px solid var(--line); background:rgba(8,12,11,.72); backdrop-filter:blur(3px);
-  border-radius:var(--radius); padding:clamp(1.25rem,3vw,2rem); max-width:640px; margin-left:clamp(1.25rem,3vw,2.5rem);
-}
-.init-log{ font-size:.68rem; color:var(--dim); line-height:1.7; margin-bottom:1rem; white-space:pre-wrap; }
-.init-log .ok{ color:var(--signal); }
-.hero-title{ font-size:clamp(1.6rem,5vw,2.6rem); font-weight:700; letter-spacing:.04em; line-height:1.08; margin-bottom:.6rem; }
-.hero-title .signal-text{ color:var(--signal); }
-.hero-line{ font-size:.8rem; color:var(--dim); margin-bottom:1.5rem; max-width:48ch; }
-.hero-actions{ display:flex; gap:.8rem; flex-wrap:wrap; margin-bottom:1.25rem; }
-.btn{
-  font-size:.74rem; letter-spacing:.06em; text-transform:uppercase; text-decoration:none;
-  padding:.8rem 1.3rem; border-radius:var(--radius); display:inline-flex; align-items:center; gap:.5rem;
-  border:1px solid var(--line); background:transparent; color:var(--text); cursor:pointer;
-  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
-}
-.btn-primary{ background:var(--signal); color:#001a10; font-weight:700; border-color:var(--signal); }
-.btn-primary:hover{ box-shadow:0 0 20px rgba(0,255,157,.4); transform:translateY(-1px); }
-.btn-ghost:hover{ border-color:var(--signal); color:var(--signal); }
-.scroll-progress{ height:2px; background:var(--line); border-radius:2px; overflow:hidden; }
-.scroll-progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, #0a8f5c, var(--signal)); }
-
-@media (prefers-reduced-motion: reduce){
-  .hero-bg, .hero-fg{ transition:opacity .4s ease !important; transform:none !important; filter:none !important; }
-}
-
-/* ---------- section heads ---------- */
-section{ position:relative; padding:clamp(3rem,8vw,5.5rem) 0; background:var(--bg); }
-.section-head{ display:flex; align-items:baseline; gap:.75rem; margin-bottom:1.5rem; }
-.section-head .idx{ font-size:.75rem; color:#0a8f5c; }
-.section-head h2{ font-size:clamp(1.15rem,2.4vw,1.5rem); letter-spacing:.02em; }
-.section-head .rule{ flex:1; height:1px; background:var(--line); }
-
-/* ---------- status strip ---------- */
-.status-strip{ padding:clamp(2rem,5vw,3rem) 0; }
-.status-line{ font-size:.85rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
-.status-line .alarm-tag{ color:var(--alarm); }
-.status-line .pct{ color:var(--signal); }
-.reveal{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
-.reveal.in{ opacity:1; transform:translateY(0); }
-.stagger > *{ opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease; }
-.stagger.in > *{ opacity:1; transform:translateY(0); }
-.stagger.in > *:nth-child(1){ transition-delay:0ms; }
-.stagger.in > *:nth-child(2){ transition-delay:80ms; }
-.stagger.in > *:nth-child(3){ transition-delay:160ms; }
-.stagger.in > *:nth-child(4){ transition-delay:240ms; }
-@media (prefers-reduced-motion: reduce){
-  .reveal, .stagger > *{ opacity:1; transform:none; transition:none; }
-}
-
-/* ---------- signal section (tooltips) ---------- */
-.signal-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(1.5rem,4vw,3rem); align-items:center; }
-@media (max-width:820px){ .signal-grid{ grid-template-columns:1fr; } }
-.signal-copy p{ font-size:.92rem; color:var(--text); margin-bottom:1.25rem; max-width:56ch; }
-.signal-img{ border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; aspect-ratio:4/3; background:var(--panel); }
-.signal-img img{ width:100%; height:100%; object-fit:cover; display:block; }
-
-.tip-row{ display:flex; flex-wrap:wrap; gap:.6rem .9rem; margin-top:.5rem; }
-.tip{
-  position:relative; display:inline-flex; align-items:center; gap:.5rem;
-  border:1px solid var(--line); background:var(--panel); border-radius:20px;
-  padding:.45rem .9rem .45rem .7rem; font-size:.72rem; letter-spacing:.03em; color:var(--text);
-  cursor:pointer; user-select:none;
-}
-.tip:hover, .tip:focus-visible, .tip.pinned{ border-color:#0a8f5c; outline:none; }
-.tip .dot{ width:6px; height:6px; border-radius:50%; background:var(--signal); box-shadow:0 0 6px var(--signal); flex-shrink:0; }
-.tip-card{
-  position:absolute; bottom:calc(100% + 10px); left:0; z-index:50;
-  width:220px; border:1px solid var(--line); background:var(--panel); border-radius:var(--radius);
-  padding:.6rem; box-shadow:0 20px 40px rgba(0,0,0,.5);
-  opacity:0; visibility:hidden; transform:scale(.96);
-  transition:opacity .18s ease, transform .18s ease;
-  transform-style:preserve-3d; will-change:transform;
-}
-.tip-card.open{ opacity:1; visibility:visible; }
-.tip-card img{ width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:2px; display:block; }
-.tip-card .cap{ font-size:.62rem; color:var(--dim); letter-spacing:.05em; text-transform:uppercase; margin-top:.4rem; }
-
-/* ---------- browser notice ---------- */
-.notice-strip p{ font-size:.82rem; color:var(--dim); }
-.notice-strip a{ font-weight:700; }
-
-/* ---------- two-state ---------- */
-.state-toggle{ display:flex; gap:.5rem; margin-bottom:1.5rem; }
-.state-btn{
-  font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; padding:.6rem 1.1rem;
-  border:1px solid var(--line); background:transparent; color:var(--dim); cursor:pointer; border-radius:var(--radius);
-  transition:border-color .2s ease, color .2s ease, background .2s ease;
-}
-.state-btn[aria-pressed="true"]{ border-color:var(--signal); color:var(--signal); background:rgba(0,255,157,.06); }
-.state-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,2.5rem); align-items:center; }
-@media (max-width:820px){ .state-grid{ grid-template-columns:1fr; } }
-.state-stage{ position:relative; aspect-ratio:4/3; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:var(--panel); }
-.state-stage img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .4s ease; }
-.state-stage img.active{ opacity:1; }
-.state-copy p{ position:absolute; inset:0; opacity:0; transition:opacity .4s ease; font-size:.9rem; color:var(--text); max-width:46ch; }
-.state-copy{ position:relative; min-height:7em; }
-.state-copy p.active{ opacity:1; position:relative; }
-
-/* ---------- playlists ---------- */
-.playlist-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(1rem,2.5vw,1.5rem); }
-.playlist-card{
-  border:1px solid var(--line); background:var(--panel); border-radius:var(--radius); padding:1.25rem;
-  transition:border-color .2s ease, transform .2s ease;
-}
-.playlist-card:hover{ border-color:#0a8f5c; transform:translateY(-2px); }
-.playlist-card .tag{ font-size:.62rem; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; display:block; margin-bottom:.5rem; }
-.playlist-card h3{ font-size:1rem; margin-bottom:.4rem; }
-.playlist-card p{ font-size:.78rem; color:var(--dim); }
-
-/* ---------- footer ---------- */
-footer{ border-top:1px solid var(--line); padding:2rem 0 3rem; }
-footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
-footer p{ font-size:.66rem; color:var(--dim); letter-spacing:.05em; }
-footer .foot-links{ display:flex; gap:1rem; flex-wrap:wrap; }
-footer .foot-links a{ font-size:.66rem; color:var(--dim); text-decoration:none; letter-spacing:.05em; }
-footer .foot-links a:hover{ color:var(--signal); }
-</style>
-</head>
-<body>
-
-<!-- ============ NAV ============ -->
-<header class="site-nav" id="siteNav">
-  <div class="bar">
-    <a href="#top" class="brand">JHIOS <span class="dot">//</span> INFINITE EXCHANGE</a>
-    <nav class="links">
-      <a href="#portal">Portal</a>
-      <a href="#signal">Signal</a>
-      <a href="#archive">Archive</a>
-      <a href="#protocol">Protocol</a>
-      <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener">Join</a>
-    </nav>
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">☰</button>
-  </div>
-</header>
-<nav class="mobile-menu" id="mobileMenu">
-  <a href="#portal">Portal</a>
-  <a href="#signal">Signal</a>
-  <a href="#archive">Archive</a>
-  <a href="#protocol">Protocol</a>
-  <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener">Join</a>
-</nav>
-
-<main id="top">
-
-  <!-- ============ HERO / INTERACTION PREVIEW ============ -->
-  <section class="hero" id="portal">
-    <!-- swap source to change the background plate -->
-    <img class="hero-bg" id="heroBg" src="/assets/bg-portal.jpg" alt="" aria-hidden="true">
-    <div class="hero-veil" id="heroVeil"></div>
-    <!-- swap source to change the foreground plate (transparent PNG) -->
-    <img class="hero-fg" id="heroFg" src="/assets/fg-keyhole.png" alt="" aria-hidden="true">
-
-    <div class="hero-frame">
-      <div class="wrap">
-        <div class="init-log">&gt; initializing JHIOS_KERNEL...
+<main id="main">
+<section class="hero" id="portal" aria-labelledby="hero-title">
+ <div class="portal" aria-hidden="true"></div>
+ <svg class="keyhole" viewBox="0 0 60 100" aria-hidden="true"><circle cx="30" cy="30" r="22" fill="none" stroke="#00ff9d" stroke-width="2"/><path d="M20 45 L12 98 H48 L40 45" fill="none" stroke="#00ff9d" stroke-width="2"/></svg>
+ <div class="inner">
+  <pre class="boot" aria-hidden="true">&gt; initializing JHIOS_KERNEL...
 &gt; mounting /archive/independent...
-&gt; bypassing corporate middleware... <span class="ok">[skipped]</span>
-&gt; loading INFINITE_EXCHANGE</div>
-        <h1 class="hero-title">INFINITE <span class="signal-text">EXCHANGE</span></h1>
-        <p class="hero-line">Independent Music Vault / AI Creation Platform / Digital Archive</p>
-        <div class="hero-actions">
-          <a href="#archive" class="btn btn-primary">ENTER THE CURRENT</a>
-          <a href="/world" class="btn btn-ghost">OPEN 3D WORLD</a>
-        </div>
-        <div class="scroll-progress"><div class="scroll-progress-fill" id="scrollFill"></div></div>
-      </div>
-    </div>
-  </section>
+&gt; bypassing corporate middleware...
+&gt; loading INFINITE_EXCHANGE</pre>
+  <h1 id="hero-title"><span class="glitch" data-text="INFINITE">INFINITE</span><br><span class="glitch" data-text="EXCHANGE">EXCHANGE</span></h1>
+  <p class="tag">Independent Music Vault / AI Creation Platform / Digital Archive</p>
+  <a class="btn solid" href="/vault">ENTER THE VAULT</a> <a class="btn" href="/world">OPEN 3D WORLD</a>
+  <p class="tag">[STATUS] // UNDER CONSTRUCTION — building this live, with the community, step by step.</p>
+ </div>
+</section>
 
-  <!-- ============ STATUS STRIP ============ -->
-  <section class="status-strip">
-    <div class="wrap">
-      <p class="status-line stagger" id="statusStagger">
-        <span><span class="alarm-tag">[STATUS]</span> ARCHIVE_INTEGRITY <span class="pct">42%</span> // UNDER CONSTRUCTION</span>
-        <span>— building this live, with the community, step by step.</span>
-      </p>
-    </div>
-  </section>
+<section id="signal" aria-labelledby="signal-h"><div class="wrap">
+ <span class="num">01 // SIGNAL</span><h2 id="signal-h">Why We're Building This</h2>
+ <p class="hook"><span>The big platforms shut the door on AI-assisted music this year. 🚪</span><span>So JHIOS built its own. ♾️</span><span>Custom sound for real venues, shops and spaces. No gatekeepers.</span></p>
+ <p class="insight">Quick version: my old distributor stopped taking new releases, and Apple Music, Shazam and the Facebook, Instagram and TikTok music libraries won&#x27;t carry new AI-assisted tracks. Everything already out stays live, and we&#x27;re working to get new releases onto Spotify and a few other stores. Meanwhile JHIOS Soundtracks makes music straight for the businesses that use it, starting with DAM After Dark. Full story below 👇</p>
+ <details class="deep"><summary>READ THE FULL STORY</summary><div class="body"><p>JHIOS Soundtracks is an established business-facing branch of the wider JHIOS multimedia project, creating custom themes, background soundscapes and atmospheric audio for venues, shops and independent spaces.</p><p>Real talk on where things stand. This year the doors started closing. My old distributor stopped accepting new releases from me, and because I build with AI tools alongside my own writing and production, a lot of the big platforms (Apple Music, Shazam, YouTube Content ID, and the Facebook, Instagram and TikTok music libraries) won&#x27;t carry new AI-assisted music at all. Everything already out stays live, and we&#x27;re working to get new releases onto Spotify and a handful of other stores, but the old route of dropping a track everywhere at once is gone.</p><p>So JHIOS adapts. That&#x27;s exactly why Infinite Exchange exists: an independent home for the work that doesn&#x27;t need a gatekeeper&#x27;s permission. JHIOS Soundtracks delivers direct to the venues, shops and businesses we make it for, and the archive keeps growing on our own terms.</p><p>Operating under Joseph Hrabec&#x27;s independent Infinite Exchange ecosystem, built to bypass corporate streaming gatekeepers, JHIOS Soundtracks runs alongside its sibling JHIOS identities:</p><p>🎧 JHIOS Soundtracks: custom ambient themes, commercial background audio and concept scores. Releases include DAM After Dark and Shake Waffle &amp; Rolls.</p><p>💀 SCR3WFAC3: raw energy, aggressive underground electronic and dark future soundscapes. Featured heavily on the core JHIOS playlist.</p><p>🌙 Luce Aether: transcendent, cinematic, ancestral and deeply atmospheric compositions. Collaborates across the network on projects from &quot;Time I Wasted&quot; to &quot;Sanctum: The Astral Navigator&quot;.</p><p>♾️ Infinite Exchange: the parent independent archive and creator ecosystem being built as the official hub tracking the collective&#x27;s journey.</p><p>JHIOS // INFINITE EXCHANGE</p>
+ <p>Infinite Exchange exists because too many artists are being limited, filtered, and controlled by corporate platforms. This is not just another streaming site. It is an independent archive and ecosystem where creators can release music, build directly with their audience, and own their infrastructure.</p>
+ <p>We document the journey — the struggle, the creation, and the evolution — because the story behind the sound matters.</p></div></details>
+</div></section>
 
-  <!-- ============ SIGNAL ============ -->
-  <section id="signal">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="idx">01</span>
-        <h2>Why We're Building This</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="signal-grid">
-        <div class="signal-copy reveal">
-          <p>Infinite Exchange exists because too many artists are being limited, filtered, and controlled by corporate platforms. This is not just another streaming site. It is an independent archive and ecosystem where creators can release music, build directly with their audience, and own their infrastructure.</p>
-          <p>We document the journey — the struggle, the creation, and the evolution — because the story behind the sound matters.</p>
+<section class="notice-strip" aria-label="Notice"><div class="wrap"><p class="notice">[NOTICE] If a link opens inside the Facebook app, tap the menu and choose “open in browser” — some pages won't load correctly in the in-app webview.</p></div></section>
 
-          <div class="tip-row" id="tipRow">
-            <!-- tooltip chips: data-tip = label, data-img = image, data-cap = caption -->
-            <button class="tip" type="button" data-tip="SCR3WFAC3" data-img="/assets/tip-1.jpg" data-cap="Experimental electronic / dark future soundscapes.">
-              <span class="dot"></span>SCR3WFAC3
-            </button>
-            <button class="tip" type="button" data-tip="Luce Aether" data-img="/assets/tip-2.jpg" data-cap="Cinematic, ancestral and atmospheric compositions.">
-              <span class="dot"></span>Luce Aether
-            </button>
-            <button class="tip" type="button" data-tip="JHIOS Soundtracks" data-img="/assets/tip-3.jpg" data-cap="Custom business themes and AI-powered soundtrack creation.">
-              <span class="dot"></span>JHIOS Soundtracks
-            </button>
-          </div>
-        </div>
-        <div class="signal-img reveal">
-          <img src="/assets/tip-1.jpg" alt="SCR3WFAC3 identity">
-        </div>
-      </div>
-    </div>
-  </section>
+<section id="lanes" aria-labelledby="lanes-h"><div class="wrap">
+ <span class="num">02 // LANES</span><h2 id="lanes-h">Archive // Protocol</h2>
+ <p class="hook"><span>One archive. Several identities.</span><span>Every release, draft and version, documented in the open.</span><span>Pick a lane and press play.</span></p>
+ <p class="insight">Catalogue Vault: SCR3WFAC3, Luce Aether, and JHIOS Soundtracks live here as a growing independent archive — every release, every draft, every version documented in the open.</p>
+ <details class="deep"><summary>READ MORE: THE PROTOCOL</summary><div class="body">
+  <div class="states"><div class="state" role="img" aria-label="State A: Archive">STATE_A // ARCHIVE</div><div class="state b" role="img" aria-label="State B: Protocol">STATE_B // PROTOCOL</div></div>
+  <p>The protocol is the infrastructure underneath: no corporate middleman deciding what reaches you, no algorithm filtering the signal. Just the continuous activity, owned by the people making it.</p></div></details>
+ <div class="lanes">
+  <article class="card"><span class="k">LANE // 01</span><h3>💀 SCR3WFAC3</h3><p>Raw energy, aggressive underground electronic and dark future soundscapes.</p><button class="btn" type="button" data-lane="SCR3WFAC3">▶ PLAY LANE</button> <a class="btn ghost" href="/vault?lane=SCR3WFAC3">BROWSE</a></article>
+  <article class="card"><span class="k">LANE // 02</span><h3>🌙 Luce Aether</h3><p>Transcendent, cinematic, ancestral and deeply atmospheric compositions.</p><button class="btn" type="button" data-lane="Luce Aether">▶ PLAY LANE</button> <a class="btn ghost" href="/vault?lane=Luce%20Aether">BROWSE</a></article>
+  <article class="card"><span class="k">LANE // 03</span><h3>🎧 JHIOS Soundtracks</h3><p>Custom ambient themes, commercial background audio and concept scores. Releases include DAM After Dark and Shake Waffle &amp; Rolls.</p><a class="btn ghost" href="/vault?lane=JHIOS%20Soundtracks">BROWSE</a> <a class="btn ghost" href="#soundtracks">COMMISSION</a></article>
+  <article class="card"><span class="k">LANE // 04</span><h3>♾️ Sanctum: The Astral Navigator</h3><p>Reflective, ancestral, atmospheric. A Luce Aether collaboration.</p><button class="btn" type="button" data-lane="Sanctum">▶ PLAY LANE</button> <a class="btn ghost" href="/vault?lane=Sanctum">BROWSE</a></article>
+ </div>
+</div></section>
 
-  <!-- ============ BROWSER NOTICE ============ -->
-  <section class="notice-strip">
-    <div class="wrap">
-      <p class="reveal">[NOTICE] If a link opens inside the Facebook app, tap the menu and choose <a href="#" onclick="return false;">open in browser</a> — some pages won't load correctly in the in-app webview.</p>
-    </div>
-  </section>
+<section id="archive" aria-labelledby="pl-h"><div class="wrap">
+ <span class="num">03 // PLAYLISTS</span><h2 id="pl-h">Playlists</h2>
+ <p class="hook"><span>Five ways into the vault.</span><span>Everything in order, or one mood at a time.</span><span>Played on our own player.</span></p>
+ <p class="insight">The playlists below follow the archive's existing collections. Tap one to open it in the vault.</p>
+ <div class="lanes">
+  <a class="card" href="/vault"><span class="k">VAULT // 001</span><h3>Whole Collection</h3><p>Everything, in order.</p></a>
+  <a class="card" href="/vault?tag=junkies"><span class="k">VAULT // 002</span><h3>Junkies</h3><p>For the ones who already know.</p></a>
+  <a class="card" href="/vault?tag=guitar-band"><span class="k">VAULT // 003</span><h3>Guitar &amp; Band</h3><p>Live instrumentation, raw takes.</p></a>
+  <a class="card" href="/vault?tag=slow-crawl"><span class="k">VAULT // 004</span><h3>Slow Crawl</h3><p>Low tempo, long attention.</p></a>
+  <a class="card" href="/vault?lane=Sanctum"><span class="k">VAULT // 005</span><h3>Sanctum</h3><p>Reflective, ancestral, atmospheric.</p></a>
+ </div>
+</div></section>
 
-  <!-- ============ ARCHIVE / PROTOCOL — TWO-STATE ============ -->
-  <section id="archive">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="idx">02</span>
-        <h2 id="protocol">Archive // Protocol</h2>
-        <span class="rule"></span>
-      </div>
+<section id="soundtracks" aria-labelledby="st-h"><div class="wrap">
+ <span class="num">04 // JHIOS SOUNDTRACKS</span><h2 id="st-h">Commission custom sound</h2>
+ <p class="hook"><span>Custom sound for real venues, shops and spaces.</span><span>Made straight for the business that uses it.</span><span>Starting with DAM After Dark.</span></p>
+ <p class="insight">JHIOS Soundtracks creates custom themes, background soundscapes and atmospheric audio for venues, shops and independent spaces, delivered direct to the businesses we make it for.</p>
+ <details class="deep"><summary>READ MORE: HOW IT WORKS</summary><div class="body">
+  <p>Tell us about your space: what it is, when people are in it, and how you want it to feel. We'll come back to you to talk it through.</p>
+  <p>Releases so far include DAM After Dark and Shake Waffle &amp; Rolls.</p></div></details>
+ <p class="links"><a class="btn solid" href="https://tally.so/r/Y5bYgv" rel="noopener">GET IN TOUCH</a> <a class="btn ghost" href="/vault?lane=JHIOS%20Soundtracks">HEAR SOUNDTRACKS</a></p>
+</div></section>
 
-      <div class="state-toggle reveal">
-        <button class="state-btn" id="btnStateA" type="button" aria-pressed="true">STATE_A // ARCHIVE</button>
-        <button class="state-btn" id="btnStateB" type="button" aria-pressed="false">STATE_B // PROTOCOL</button>
-      </div>
-
-      <div class="state-grid reveal">
-        <div class="state-stage">
-          <img id="imgStateA" class="active" src="/assets/state-a.jpg" alt="Archive state">
-          <img id="imgStateB" src="/assets/state-b.jpg" alt="Protocol state">
-        </div>
-        <div class="state-copy">
-          <p id="copyStateA" class="active">Catalogue Vault: SCR3WFAC3, Luce Aether, and JHIOS Soundtracks live here as a growing independent archive — every release, every draft, every version documented in the open.</p>
-          <p id="copyStateB">The protocol is the infrastructure underneath: no corporate middleman deciding what reaches you, no algorithm filtering the signal. Just the continuous activity, owned by the people making it.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ PLAYLISTS ============ -->
-  <section>
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="idx">03</span>
-        <h2>Playlists</h2>
-        <span class="rule"></span>
-      </div>
-      <div class="playlist-grid reveal">
-        <div class="playlist-card">
-          <span class="tag">Vault // 001</span>
-          <h3>Whole Collection</h3>
-          <p>Everything, in order.</p>
-        </div>
-        <div class="playlist-card">
-          <span class="tag">Vault // 002</span>
-          <h3>Junkies</h3>
-          <p>For the ones who already know.</p>
-        </div>
-        <div class="playlist-card">
-          <span class="tag">Vault // 003</span>
-          <h3>Guitar &amp; Band</h3>
-          <p>Live instrumentation, raw takes.</p>
-        </div>
-        <div class="playlist-card">
-          <span class="tag">Vault // 004</span>
-          <h3>Slow Crawl</h3>
-          <p>Low tempo, long attention.</p>
-        </div>
-        <div class="playlist-card">
-          <span class="tag">Vault // 005</span>
-          <h3>Sanctum</h3>
-          <p>Reflective, ancestral, atmospheric.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ SUPPORT / LINKS ============ -->
-  <section>
-    <div class="wrap">
-      <div class="section-head reveal">
-        <span class="idx">04</span>
-        <h2>Support the Archive</h2>
-        <span class="rule"></span>
-      </div>
-      <p class="reveal" style="font-size:.92rem; margin-bottom:1.5rem; max-width:56ch;">Direct support keeps this space alive and independent. Every listen, share, and message helps build infrastructure that no corporation can take away.</p>
-      <div class="hero-actions reveal">
-        <a href="https://youtube.com/@scr3wfac3gang" target="_blank" rel="noopener" class="btn btn-ghost">YOUTUBE</a>
-        <a href="https://www.tiktok.com/@scr3wfac33" target="_blank" rel="noopener" class="btn btn-ghost">TIKTOK</a>
-        <a href="https://www.facebook.com/permalink.php?story_fbid=pfbid0ZLeZHJDjp5NVFdyZDVBko5G8egFUCzg5AtKnaodkPpBHmwmRvebUJfKFArBkHoe1l&id=61578308143435" target="_blank" rel="noopener" class="btn btn-ghost">GOLDBOT</a>
-        <a href="https://www.facebook.com/share/v/1CGhyEnJoR/" target="_blank" rel="noopener" class="btn btn-ghost">PERSONAL PINNED</a>
-        <a href="https://youtu.be/jQaSqYwx14Y" target="_blank" rel="noopener" class="btn btn-ghost">BLACK MIRROR MAGIC</a>
-        <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener" class="btn btn-primary">JOIN</a>
-      </div>
-    </div>
-  </section>
-
+<section aria-labelledby="sup-h"><div class="wrap">
+ <span class="num">05 // SUPPORT</span><h2 id="sup-h">Support the Archive</h2>
+ <p class="hook"><span>Every listen counts.</span><span>Every share counts.</span><span>Infrastructure no corporation can take away.</span></p>
+ <p class="insight">Direct support keeps this space alive and independent. Every listen, share, and message helps build infrastructure that no corporation can take away.</p>
+ <div class="links">
+  <a class="btn ghost" href="https://youtube.com/@scr3wfac3gang" rel="noopener">YOUTUBE</a>
+  <a class="btn ghost" href="https://www.tiktok.com/@scr3wfac33" rel="noopener">TIKTOK</a>
+  <a class="btn ghost" href="https://www.facebook.com/permalink.php?story_fbid=pfbid0ZLeZHJDjp5NVFdyZDVBko5G8egFUCzg5AtKnaodkPpBHmwmRvebUJfKFArBkHoe1l&amp;id=61578308143435" rel="noopener">GOLDBOT</a>
+  <a class="btn ghost" href="https://www.facebook.com/share/v/1CGhyEnJoR/" rel="noopener">PERSONAL PINNED</a>
+  <a class="btn ghost" href="https://youtu.be/jQaSqYwx14Y" rel="noopener">BLACK MIRROR MAGIC</a>
+  <a class="btn solid" href="https://tally.so/r/Y5bYgv" rel="noopener">JOIN</a>
+ </div>
+</div></section>
 </main>
+<footer><div class="wrap">JHIOS | INFINITE EXCHANGE — Building in Public · <a href="/vault">Vault</a> · <a href="/world">3D World</a> · <a href="https://tally.so/r/Y5bYgv" rel="noopener">Join</a> · <a href="https://youtube.com/@scr3wfac3gang" rel="noopener">YouTube</a> · <a href="https://www.tiktok.com/@scr3wfac33" rel="noopener">TikTok</a> · <a href="/privacy">Privacy</a><br>© 2026 Independent Digital Archive</div></footer>
 
-<footer>
-  <div class="wrap">
-    <p>JHIOS | INFINITE EXCHANGE — Building in Public</p>
-    <div class="foot-links">
-      <a href="/world">3D World</a>
-      <a href="https://tally.so/r/Y5bYgv" target="_blank" rel="noopener">Join</a>
-      <a href="https://youtube.com/@scr3wfac3gang" target="_blank" rel="noopener">YouTube</a>
-      <a href="https://www.tiktok.com/@scr3wfac33" target="_blank" rel="noopener">TikTok</a>
-    </div>
-    <p>© 2026 Independent Digital Archive</p>
-  </div>
-</footer>
-
-<script>
-// ---------- nav hide/show on scroll direction ----------
-(function(){
-  var nav = document.getElementById('siteNav');
-  var lastY = window.scrollY;
-  var ticking = false;
-  window.addEventListener('scroll', function(){
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function(){
-      var y = window.scrollY;
-      if (y > lastY && y > 80) nav.classList.add('nav-hide');
-      else nav.classList.remove('nav-hide');
-      lastY = y;
-      ticking = false;
-    });
-  }, { passive: true });
-})();
-
-// ---------- mobile hamburger ----------
-(function(){
-  var btn = document.getElementById('hamburger');
-  var menu = document.getElementById('mobileMenu');
-  btn.addEventListener('click', function(){
-    var open = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-  menu.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click', function(){
-      menu.classList.remove('open');
-      btn.setAttribute('aria-expanded', 'false');
-    });
-  });
-})();
-
-// ---------- hero scroll-driven plates ----------
-(function(){
-  var hero = document.querySelector('.hero');
-  var bg = document.getElementById('heroBg');
-  var fg = document.getElementById('heroFg');
-  var veil = document.getElementById('heroVeil');
-  var fill = document.getElementById('scrollFill');
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function clamp01(v){ return Math.max(0, Math.min(1, v)); }
-
-  function update(){
-    var heroHeight = hero.offsetHeight;
-    var p = clamp01(window.scrollY / heroHeight); // 0..1 across hero height
-    fill.style.width = (p * 100).toFixed(1) + '%';
-
-    if (reduced) {
-      fg.style.opacity = (1 - p).toFixed(2);
-      bg.style.opacity = '1';
-      return;
-    }
-
-    // 0 - 40%: foreground recedes
-    var pf = clamp01(p / 0.4);
-    var fgScale = 1.05 - (0.33 * pf);   // 1.05 -> 0.72
-    var fgOpacity = 1 - pf;             // 1 -> 0
-    var fgY = -80 * pf;                 // 0 -> -80px
-    fg.style.transform = 'translateY(' + fgY + 'px) scale(' + fgScale + ')';
-    fg.style.opacity = fgOpacity.toFixed(2);
-
-    // 40 - 100%: background transforms, veil lifts
-    var pb = clamp01((p - 0.4) / 0.6);
-    var bgScale = 1 + (0.18 * pb);       // 1 -> 1.18
-    var bgSaturate = 0.7 + (0.5 * pb);   // 0.7 -> 1.2
-    var bgBrightness = 0.55 + (0.3 * pb);// 0.55 -> 0.85
-    bg.style.transform = 'scale(' + bgScale + ')';
-    bg.style.filter = 'saturate(' + bgSaturate.toFixed(2) + ') brightness(' + bgBrightness.toFixed(2) + ')';
-    veil.style.opacity = (1 - pb * 0.7).toFixed(2);
-  }
-
-  var ticking2 = false;
-  window.addEventListener('scroll', function(){
-    if (ticking2) return;
-    ticking2 = true;
-    requestAnimationFrame(function(){ update(); ticking2 = false; });
-  }, { passive: true });
-  window.addEventListener('resize', update);
-  update();
-})();
-
-// ---------- reveal on enter (fade up, stagger) ----------
-(function(){
-  var items = document.querySelectorAll('.reveal, .stagger');
-  if (!('IntersectionObserver' in window)) {
-    items.forEach(function(el){ el.classList.add('in'); });
-    return;
-  }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
-  items.forEach(function(el){ io.observe(el); });
-})();
-
-// ---------- tooltip chips: 3D tilt card, keyboard + touch ----------
-(function(){
-  var tips = document.querySelectorAll('.tip');
-
-  tips.forEach(function(tip){
-    var card = document.createElement('div');
-    card.className = 'tip-card';
-    card.setAttribute('role', 'dialog');
-    card.innerHTML =
-      '<img src="' + tip.dataset.img + '" alt="' + tip.dataset.tip + '">' +
-      '<div class="cap">' + (tip.dataset.cap || '') + '</div>';
-    tip.appendChild(card);
-
-    var pinned = false;
-
-    function open(){ card.classList.add('open'); }
-    function close(){ card.classList.remove('open'); pinned = false; tip.classList.remove('pinned'); }
-
-    function tilt(e){
-      var rect = card.getBoundingClientRect();
-      var px = (e.clientX - rect.left) / rect.width;
-      var py = (e.clientY - rect.top) / rect.height;
-      var rx = (0.5 - py) * 16; // max ~8deg
-      var ry = (px - 0.5) * 16;
-      card.style.transform = 'scale(1) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
-    }
-    function resetTilt(){ card.style.transform = 'scale(1)'; }
-
-    tip.addEventListener('mouseenter', open);
-    tip.addEventListener('mouseleave', function(){ if (!pinned) close(); resetTilt(); });
-    tip.addEventListener('mousemove', tilt);
-    tip.addEventListener('focus', open);
-    tip.addEventListener('blur', function(){ if (!pinned) close(); });
-
-    tip.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') { close(); tip.blur(); }
-    });
-
-    tip.addEventListener('click', function(e){
-      // touch/click acts as pin toggle
-      if (pinned) { close(); }
-      else {
-        pinned = true;
-        tip.classList.add('pinned');
-        open();
-      }
-      e.stopPropagation();
-    });
-  });
-
-  document.addEventListener('click', function(e){
-    if (!e.target.closest('.tip')) {
-      tips.forEach(function(tip){
-        tip.classList.remove('pinned');
-        var card = tip.querySelector('.tip-card');
-        if (card) card.classList.remove('open');
-      });
-    }
-  });
-
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') {
-      tips.forEach(function(tip){
-        tip.classList.remove('pinned');
-        var card = tip.querySelector('.tip-card');
-        if (card) card.classList.remove('open');
-      });
-    }
-  });
-})();
-
-// ---------- two-state toggle, sessionStorage persisted ----------
-(function(){
-  var btnA = document.getElementById('btnStateA');
-  var btnB = document.getElementById('btnStateB');
-  var imgA = document.getElementById('imgStateA');
-  var imgB = document.getElementById('imgStateB');
-  var copyA = document.getElementById('copyStateA');
-  var copyB = document.getElementById('copyStateB');
-  var KEY = 'jhios_state';
-
-  function setState(state){
-    var isA = state === 'A';
-    btnA.setAttribute('aria-pressed', isA ? 'true' : 'false');
-    btnB.setAttribute('aria-pressed', isA ? 'false' : 'true');
-    imgA.classList.toggle('active', isA);
-    imgB.classList.toggle('active', !isA);
-    copyA.classList.toggle('active', isA);
-    copyB.classList.toggle('active', !isA);
-    try { sessionStorage.setItem(KEY, state); } catch(e) {}
-  }
-
-  btnA.addEventListener('click', function(){ setState('A'); });
-  btnB.addEventListener('click', function(){ setState('B'); });
-
-  var saved = 'A';
-  try { saved = sessionStorage.getItem(KEY) || 'A'; } catch(e) {}
-  setState(saved);
-})();
-</script>
-
-</body>
-</html>
+<script src="/assets/js/home.js" defer></script>
+</body></html>
