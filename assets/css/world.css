@@ -30,3 +30,13 @@ body.world footer{display:none}
 .hud{left:auto;right:.5rem;transform:none;align-items:flex-end;max-width:55vw}.hud #hint{display:none}}
 @media (max-width:640px){.pbody{max-height:calc(100dvh - 520px - env(safe-area-inset-bottom));min-height:140px}}
 @media (max-width:640px){body.world .ytbox{bottom:calc(var(--player-h) + 120px + env(safe-area-inset-bottom))}}
+/* Phase 1: minimap, approach card, credits */
+#minimap{position:fixed;z-index:22;top:calc(.5rem + env(safe-area-inset-top));right:calc(.5rem + env(safe-area-inset-right));width:150px;height:150px;pointer-events:none;border-radius:4px;opacity:.92}
+@media (min-width:641px){body.world.yt-on .ytbox{top:calc(150px + 1rem + env(safe-area-inset-top))}}
+.wcard{position:fixed;left:0;top:0;z-index:21;pointer-events:none;background:rgba(3,12,9,.88);border:1px solid var(--signal);box-shadow:0 0 18px rgba(0,255,157,.35);padding:.45rem .7rem;border-radius:4px;display:flex;flex-direction:column;gap:.15rem;text-align:center;max-width:260px;font-size:.75rem;letter-spacing:.06em;animation:wglitch 3s infinite steps(1)}
+.wcard[hidden]{display:none}.wcard b{font-size:.85rem}.wcard small{color:var(--text)}
+@keyframes wglitch{0%,96%{clip-path:none}97%{clip-path:inset(20% 0 40% 0);transform-origin:center}98%{clip-path:inset(60% 0 5% 0)}}
+.wcredits{position:fixed;z-index:5;left:.5rem;bottom:calc(var(--player-h) + .3rem + env(safe-area-inset-bottom));font-size:.55rem;color:var(--dim)}.wcredits a{color:var(--dim)}
+body.touch .wcredits{display:none}
+@media (max-width:640px){#minimap{width:96px;height:96px;top:calc(5.6rem + env(safe-area-inset-top))}.hud{max-width:calc(100vw - 7rem)}}
+@media (prefers-reduced-motion:reduce){.wcard{animation:none}}

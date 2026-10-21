@@ -1,0 +1,16 @@
+{
+ "attribution": "Coordinates © OpenStreetMap contributors (ODbL), via Nominatim search, 2026-10-22. Coastline / river polylines are hand-simplified approximations traced from the same OSM positions.",
+ "origin": { "name": "Marine Parade (world origin / spawn)", "lat": 52.6035, "lon": 1.7365 },
+ "landmarks": [
+  { "key": "britannia_pier", "name": "Britannia Pier", "lat": 52.6081748, "lon": 1.7395651, "type": "pier", "length_m": 250, "height_m": 14 },
+  { "key": "wellington_pier", "name": "Wellington Pier", "lat": 52.5993089, "lon": 1.7366743, "type": "pier", "length_m": 110, "height_m": 12 },
+  { "key": "nelsons_monument", "name": "Nelson's Monument (Norfolk Naval Pillar)", "lat": 52.5884393, "lon": 1.7335971, "type": "column", "height_m": 44 },
+  { "key": "pleasure_beach", "name": "Great Yarmouth Pleasure Beach (big wheel)", "lat": 52.5932831, "lon": 1.7359856, "type": "wheel", "height_m": 45 },
+  { "key": "minster", "name": "Great Yarmouth Minster (St Nicholas)", "lat": 52.6113670, "lon": 1.7273138, "type": "minster", "height_m": 32 },
+  { "key": "haven_bridge", "name": "Haven Bridge", "lat": 52.6065825, "lon": 1.7221957, "type": "bridge", "height_m": 6 },
+  { "key": "gorleston_harbour", "name": "Gorleston South Pier lighthouse / harbour mouth", "lat": 52.5721123, "lon": 1.7381010, "type": "lighthouse", "height_m": 18 }
+ ],
+ "seafront": { "name": "Marine Parade / Atlas seafront strip", "from": { "lat": 52.5935, "lon": 1.7350 }, "to": { "lat": 52.6125, "lon": 1.7372 } },
+ "coastline": [[52.625, 1.7392], [52.6082, 1.7378], [52.5993, 1.7356], [52.585, 1.7352], [52.5725, 1.7372], [52.560, 1.7350]],
+ "river_yare": [[52.6200, 1.7175], [52.6115, 1.7215], [52.6066, 1.7222], [52.5990, 1.7238], [52.5900, 1.7262], [52.5820, 1.7300], [52.5760, 1.7335], [52.5725, 1.7372]]
+}
