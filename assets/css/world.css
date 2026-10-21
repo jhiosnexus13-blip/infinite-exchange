@@ -29,3 +29,4 @@ body.world footer{display:none}
 @media (max-width:640px){body.world .ytbox{top:auto;bottom:calc(var(--player-h) + 150px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%)}
 .hud{left:auto;right:.5rem;transform:none;align-items:flex-end;max-width:55vw}.hud #hint{display:none}}
 @media (max-width:640px){.pbody{max-height:calc(100dvh - 520px - env(safe-area-inset-bottom));min-height:140px}}
+@media (max-width:640px){body.world .ytbox{bottom:calc(var(--player-h) + 120px + env(safe-area-inset-bottom))}}
