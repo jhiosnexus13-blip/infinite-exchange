@@ -30,14 +30,138 @@ function labelSprite(text, color = '#00ff9d') {
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false }));
   s.scale.set(16, 1.5, 1); return s;
 }
-const LANE_POS = { 'SCR3WFAC3': [-16, -6, 0xff2e4d], 'Luce Aether': [16, -6, 0xb48cff], 'JHIOS Soundtracks': [-16, 12, 0xffcc00], 'Sanctum': [16, 12, 0x00e5ff] };
-const clickables = [];
-for (const [lane, [x, z, col]] of Object.entries(LANE_POS)) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(2.4, 7, 2.4), new THREE.MeshStandardMaterial({ color: 0x0a0e0d, emissive: col, emissiveIntensity: 0.35, roughness: 0.4 }));
-  m.position.set(x, 3.5, z); m.userData.lane = lane; scene.add(m); clickables.push(m);
-  const edges = new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry), new THREE.LineBasicMaterial({ color: col })); m.add(edges);
-  const l = labelSprite(lane, '#' + col.toString(16).padStart(6, '0')); l.position.set(x, 8.2, z); scene.add(l);
-  const sub = labelSprite('tap to play', '#8a9a94'); sub.scale.set(10, 0.9, 1); sub.position.set(x, 7.3, z); scene.add(sub);
+/* ---------- procedural holographic lane objects (no external models) ---------- */
+const HOLO_V = `varying vec3 vN; varying vec3 vV; varying float vY;
+void main(){ vec4 wp = modelMatrix * vec4(position,1.0); vY = wp.y; vN = normalize(normalMatrix * normal);
+  vec4 mv = viewMatrix * wp; vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`;
+const HOLO_F = `uniform vec3 uColor; uniform float uTime; uniform float uPulse; varying vec3 vN; varying vec3 vV; varying float vY;
+void main(){ float fr = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.0);
+  float scan = 0.55 + 0.45 * step(0.5, fract(vY * 6.0 - uTime * 1.5));
+  float band = smoothstep(0.0, 0.15, fract(vY * 0.12 - uTime * 0.25)) * 0.6 + 0.4;
+  float flick = 0.85 + 0.15 * sin(uTime * 37.0 + vY * 3.0) * step(0.93, fract(sin(floor(uTime * 12.0)) * 43758.5));
+  float a = (0.12 + fr * 0.9) * scan * band * flick * (0.7 + uPulse);
+  gl_FragColor = vec4(uColor * (1.0 + uPulse * 0.8), clamp(a, 0.0, 1.0)); }`;
+const holoU = { uTime: { value: 0 } };
+function holoMat(col) {
+  return new THREE.ShaderMaterial({ vertexShader: HOLO_V, fragmentShader: HOLO_F, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uColor: { value: new THREE.Color(col) }, uTime: holoU.uTime, uPulse: { value: 0 } } });
+}
+function wireMat(col) { return new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }); }
+/* add a holo part: shader shell + additive edge lines */
+function part(obj, geo, x, y, z, rx = 0, ry = 0, rz = 0) {
+  const m = new THREE.Mesh(geo, obj.userData.holo); m.position.set(x, y, z); m.rotation.set(rx, ry, rz);
+  m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), obj.userData.wire)); obj.add(m); return m;
+}
+function newHolo(col) { const g = new THREE.Group(); g.userData.holo = holoMat(col); g.userData.wire = wireMat(col); return g; }
+
+function buildFigure(col, female) {
+  const g = newHolo(col), s = female ? 0.82 : 1;
+  const sh = female ? 0.55 : 0.95;                       // shoulder half-width
+  part(g, new THREE.SphereGeometry(0.42 * s, 12, 8), 0, 5.55 * s, 0);                       // head
+  part(g, new THREE.CylinderGeometry(0.14 * s, 0.16 * s, 0.35 * s, 6), 0, 5.05 * s, 0);       // neck
+  part(g, new THREE.CylinderGeometry(sh * s, (female ? 0.36 : 0.5) * s, 1.7 * s, 6), 0, 4.0 * s, 0); // torso (taper)
+  if (female) part(g, new THREE.CylinderGeometry(0.34 * s, 0.72 * s, 1.25 * s, 6), 0, 2.75 * s, 0);  // hips/skirt flare
+  else part(g, new THREE.CylinderGeometry(0.5 * s, 0.45 * s, 0.6 * s, 6), 0, 2.9 * s, 0);       // pelvis
+  for (const sgn of [-1, 1]) {
+    const arm = new THREE.CylinderGeometry((female ? 0.1 : 0.17) * s, (female ? 0.08 : 0.13) * s, 2.3 * s, 5);
+    part(g, arm, sgn * (sh + 0.12) * s, 3.75 * s, 0, 0, 0, sgn * 0.12);
+    part(g, new THREE.SphereGeometry((female ? 0.13 : 0.22) * s, 6, 4), sgn * (sh + 0.05) * s, 4.8 * s, 0); // shoulder
+    part(g, new THREE.CylinderGeometry((female ? 0.15 : 0.22) * s, (female ? 0.09 : 0.14) * s, 2.6 * s, 5), sgn * (female ? 0.22 : 0.3) * s, 1.3 * s, 0);
+  }
+  if (female) { // long hair: hood shell behind head down past shoulders
+    const hair = new THREE.CylinderGeometry(0.46 * s, 0.62 * s, 1.9 * s, 10, 1, true, Math.PI * 0.15, Math.PI * 1.7);
+    part(g, hair, 0, 4.9 * s, -0.06, 0, Math.PI, 0);
+    part(g, new THREE.SphereGeometry(0.47 * s, 10, 6, 0, Math.PI * 2, 0, Math.PI * 0.5), 0, 5.6 * s, -0.02);
+  }
+  return g;
+}
+function buildRobot(col) {
+  const g = newHolo(col), B = (w, h, d) => new THREE.BoxGeometry(w, h, d);
+  part(g, B(1.6, 1.3, 1.4), 0, 12.3, 0);                          // head
+  part(g, B(1.3, 0.25, 0.1), 0, 12.4, 0.72);                      // visor
+  part(g, new THREE.CylinderGeometry(0.04, 0.04, 1.2, 4), 0.5, 13.5, 0); part(g, new THREE.SphereGeometry(0.15, 6, 4), 0.5, 14.1, 0);
+  part(g, B(3.6, 3.2, 2.0), 0, 9.8, 0);                           // chest
+  part(g, new THREE.CylinderGeometry(0.5, 0.5, 0.12, 8), 0, 10.1, 1.02, Math.PI / 2);  // core
+  part(g, B(2.4, 1.4, 1.6), 0, 7.6, 0);                           // waist
+  for (const sgn of [-1, 1]) {
+    part(g, B(1.2, 1.0, 1.4), sgn * 2.45, 10.9, 0);               // pauldron
+    part(g, B(0.8, 2.6, 0.8), sgn * 2.45, 8.9, 0);                // upper arm
+    part(g, B(0.95, 2.4, 0.95), sgn * 2.45, 6.4, 0);              // forearm
+    part(g, B(0.8, 0.7, 0.6), sgn * 2.45, 4.9, 0);                // fist
+    part(g, B(1.0, 3.0, 1.1), sgn * 0.8, 5.3, 0);                 // thigh
+    part(g, B(1.15, 3.0, 1.25), sgn * 0.8, 2.0, 0);               // shin
+    part(g, B(1.3, 0.5, 1.9), sgn * 0.8, 0.25, 0.25);             // foot
+  }
+  return g;
+}
+function buildTurntable(col) {
+  const g = newHolo(col);
+  part(g, new THREE.BoxGeometry(5, 0.7, 4), 0, 1.6, 0);           // plinth
+  part(g, new THREE.CylinderGeometry(0.25, 0.25, 1.25, 6), 0, 0.62, 0); // pedestal
+  const vinyl = new THREE.Group(); vinyl.position.set(-0.5, 2.05, 0); g.add(vinyl);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.06, 32), g.userData.holo); vinyl.add(disc);
+  for (let r = 0.55; r < 1.7; r += 0.18) { // groove rings
+    const ring = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(Array.from({ length: 40 }, (_, i) => new THREE.Vector3(Math.cos(i / 40 * 6.283) * r, 0.04, Math.sin(i / 40 * 6.283) * r))), g.userData.wire);
+    vinyl.add(ring);
+  }
+  const lab = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 0.08, 12), g.userData.holo); lab.position.y = 0.02; vinyl.add(lab);
+  vinyl.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.1, 0.1, 3.2)), g.userData.wire)); // marker stripe shows spin
+  part(g, new THREE.CylinderGeometry(0.22, 0.28, 0.5, 8), 1.9, 2.2, -1.4);                 // tonearm pivot
+  part(g, new THREE.CylinderGeometry(0.05, 0.05, 2.6, 4), 1.2, 2.5, -0.4, 0, 0, Math.PI / 2).rotation.set(Math.PI / 2, 0, 0.62); // arm
+  part(g, new THREE.BoxGeometry(0.25, 0.15, 0.45), 0.45, 2.42, 0.6, 0, 0.6, 0);             // headshell
+  g.userData.spin = vinyl; return g;
+}
+function buildPlanet(col) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshStandardMaterial({ color: 0x062a33, emissive: col, emissiveIntensity: 0.25, roughness: 0.6, flatShading: true });
+  const sphere = new THREE.Mesh(new THREE.IcosahedronGeometry(2.3, 2), mat); sphere.position.y = 4.2; g.add(sphere);
+  const ringMat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.45, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
+  const ring = new THREE.Mesh(new THREE.RingGeometry(3.0, 4.4, 48, 1), ringMat); ring.rotation.set(-Math.PI / 2 + 0.45, 0, 0.2); sphere.add(ring);
+  const ring2 = new THREE.Mesh(new THREE.RingGeometry(4.6, 4.75, 48, 1), ringMat); ring2.rotation.copy(ring.rotation); sphere.add(ring2);
+  g.userData.holo = holoMat(col); const shell = new THREE.Mesh(new THREE.SphereGeometry(2.45, 20, 14), g.userData.holo); sphere.add(shell); // fresnel atmosphere
+  g.userData.solid = mat; g.userData.spin = sphere; return g;
+}
+function buildQuestion(col) {
+  const g = newHolo(col);
+  const curve = new THREE.CatmullRomCurve3([[-1.3, 6.3], [-1.1, 7.3], [0, 7.8], [1.2, 7.3], [1.4, 6.2], [0.6, 5.3], [0, 4.6], [0, 3.6]].map(([x, y]) => new THREE.Vector3(x, y, 0)));
+  part(g, new THREE.TubeGeometry(curve, 28, 0.4, 6, false), 0, 0, 0);
+  part(g, new THREE.SphereGeometry(0.5, 10, 8), 0, 2.4, 0);
+  return g;
+}
+const HOLO_OBJS = {
+  'SCR3WFAC3':         { pos: [-16, -6], col: 0xff2e4d, build: c => { const g = buildFigure(c, false); g.scale.setScalar(1.3); return g; }, h: 7.8 },
+  'Luce Aether':       { pos: [16, -6],  col: 0xb48cff, build: c => buildFigure(c, true), h: 5.1 },
+  'JHIOS Soundtracks': { pos: [-16, 12], col: 0xffcc00, build: buildTurntable, h: 3.2, w: 5.2 },
+  'Sanctum':           { pos: [18, 14],  col: 0x00e5ff, build: buildPlanet, h: 7, w: 6 },
+  'Unsorted':          { pos: [-30, 2],  col: 0x00ff9d, build: buildQuestion, h: 8.4, w: 3.4 },
+  'GoldBot':           { pos: [0, -24],  col: 0xffc94a, build: buildRobot, h: 14.3, w: 6.8, link: 'https://goldbot-digitalassetops.lovable.app/', label: 'GoldBot // Zak Denny', sub: 'tap to open' },
+};
+const clickables = [], holos = [];
+const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+for (const [lane, o] of Object.entries(HOLO_OBJS)) {
+  const [x, z] = o.pos, obj = o.build(o.col); obj.position.set(x, 0, z); obj.rotation.y = Math.random() * 6; scene.add(obj);
+  const w = o.w || 3.2, hit = new THREE.Mesh(new THREE.BoxGeometry(w, o.h, w), hitMat); // invisible but raycastable hit-box
+  hit.position.set(x, o.h / 2, z); if (o.link) hit.userData.link = o.link; else hit.userData.lane = lane; hit.userData.id = lane;
+  scene.add(hit); clickables.push(hit); holos.push({ lane, obj, pulse: 0 });
+  const hex = '#' + o.col.toString(16).padStart(6, '0');
+  const l = labelSprite(o.label || lane, hex); l.position.set(x, o.h + 1.2, z); scene.add(l);
+  const sub = labelSprite(o.sub || 'tap to play', '#8a9a94'); sub.scale.set(10, 0.9, 1); sub.position.set(x, o.h + 0.3, z); scene.add(sub);
+}
+let playingLane = null;
+const hookState = () => window.JX && JX.on('state', d => { playingLane = d && d.playing && d.track ? d.track.lane : null; });
+window.JX ? hookState() : addEventListener('DOMContentLoaded', hookState);
+function animateHolos(t, dt) {
+  holoU.uTime.value = t;
+  for (const h of holos) {
+    const on = h.lane === playingLane; h.pulse += ((on ? 1 : 0) - h.pulse) * Math.min(1, dt * 3);
+    const beat = h.pulse * (0.6 + 0.4 * Math.sin(t * 6));
+    const ud = h.obj.userData; if (ud.holo) ud.holo.uniforms.uPulse.value = beat; if (ud.wire) ud.wire.opacity = 0.45 + 0.5 * beat;
+    if (ud.solid) ud.solid.emissiveIntensity = 0.25 + 0.6 * beat;
+    if (reduced) continue;
+    if (ud.spin && h.lane === 'JHIOS Soundtracks') { ud.spin.rotation.y += dt * (on ? 3.5 : 0.5); h.obj.rotation.y += dt * 0.1; }
+    else if (ud.spin) { ud.spin.rotation.y += dt * 0.25; ud.spin.position.y = 4.2 + Math.sin(t * 0.8) * 0.25; }
+    else { h.obj.rotation.y += dt * 0.25; if (h.lane === 'Unsorted') h.obj.position.y = Math.sin(t * 1.2) * 0.4; }
+  }
 }
 
 /* ---------- holographic listener globe ---------- */
@@ -129,12 +253,13 @@ const setTouch = on => document.body.classList.toggle('touch', on);
 setTouch(matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window);
 addEventListener('pointerdown', e => { if (e.pointerType === 'touch') setTouch(true); }, { capture: true, passive: true });
 
-/* ---------- raycast: tap a monolith to play its lane ---------- */
+/* ---------- raycast: tap a hologram to play its lane (GoldBot opens its link) ---------- */
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   const r = canvas.getBoundingClientRect(); ndc.set((x - r.left) / r.width * 2 - 1, -(y - r.top) / r.height * 2 + 1);
   ray.setFromCamera(ndc, camera); const hit = ray.intersectObjects(clickables, false)[0];
-  if (hit) playLane(hit.object.userData.lane);
+  if (!hit) return; const u = hit.object.userData;
+  if (u.link) { window.__lastOpen = u.link; window.open(u.link, '_blank', 'noopener'); } else playLane(u.lane);
 }
 function playLane(lane) { if (!window.JX) return; JX.load().then(() => { JX.playLane(lane); selectLane(lane); openPanel(true); }); }
 
@@ -172,9 +297,10 @@ function tick() {
   player.pos.x = Math.max(-150, Math.min(150, player.pos.x)); player.pos.z = Math.max(-150, Math.min(150, player.pos.z));
   camera.position.copy(player.pos); camera.rotation.set(player.pitch, player.yaw, 0, 'YXZ');
   if (!reduced) { globe.rotation.y += dt * 0.12; ring.rotation.z += dt * 0.3; }
+  animateHolos(clock.elapsedTime, dt);
   renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(tick);
 document.addEventListener('visibilitychange', () => renderer.setAnimationLoop(document.hidden ? null : tick));
 /* test/debug hook (read-only snapshot) */
-window.__world = { face(lane) { const m = clickables.find(o => o.userData.lane === lane); player.pos.set(m.position.x, 1.7, m.position.z + 14); player.yaw = 0; player.pitch = 0.15; }, project(lane) { const m = clickables.find(o => o.userData.lane === lane); const v = m.position.clone().project(camera); const r = canvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; }, get state() { return { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch }; } };
+window.__world = { face(lane) { const m = clickables.find(o => o.userData.id === lane); player.pos.set(m.position.x, 1.7, m.position.z + 14); player.yaw = 0; player.pitch = 0.15; }, project(lane) { const m = clickables.find(o => o.userData.id === lane); const v = m.position.clone().project(camera); const r = canvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; }, get state() { return { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch }; } };
