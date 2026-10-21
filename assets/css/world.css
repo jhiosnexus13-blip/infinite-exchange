@@ -16,9 +16,9 @@ body.world::after{z-index:2}
 .ptracks li button{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);color:var(--text);padding:.5rem .2rem;font-size:.72rem;cursor:pointer;min-height:40px}
 .ptracks li button:disabled{color:var(--dim);cursor:not-allowed}
 .ptracks li button.cur{color:var(--signal)}
-.stick{position:fixed;z-index:25;width:120px;height:120px;border-radius:50%;border:1px solid rgba(0,255,157,.45);background:rgba(0,255,157,.06);display:none;touch-action:none;user-select:none;-webkit-user-select:none;bottom:calc(var(--player-h) + 1.2rem + env(safe-area-inset-bottom))}
+.stick{position:fixed;z-index:25;width:92px;height:92px;border-radius:50%;border:1px solid rgba(0,255,157,.45);background:rgba(0,255,157,.06);display:none;touch-action:none;user-select:none;-webkit-user-select:none;bottom:calc(var(--player-h) + 1.2rem + env(safe-area-inset-bottom))}
 .stick.left{left:calc(1rem + env(safe-area-inset-left))}.stick.right{right:calc(1rem + env(safe-area-inset-right))}
-.stick .knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(0,255,157,.35);border:1px solid var(--signal);pointer-events:none}
+.stick .knob{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(0,255,157,.35);border:1px solid var(--signal);pointer-events:none}
 .stick span{position:absolute;bottom:-1.2rem;left:0;right:0;text-align:center;font-size:.6rem;color:var(--dim);pointer-events:none}
 body.touch .stick{display:block}
 /* keep the YouTube mini-player (>=200x200, visible) out of the joysticks' way */

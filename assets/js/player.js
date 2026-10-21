@@ -66,7 +66,7 @@
   <div class="extra"><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
   const qbox = document.createElement('div'); qbox.className = 'queue'; qbox.hidden = true; qbox.setAttribute('aria-label', 'Queue');
   const ytbox = document.createElement('div'); ytbox.className = 'ytbox'; ytbox.hidden = true;
-  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Close video and stop">&times;</button>';
+  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Close video and stop">✕ CLOSE</button>';
   ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); try { yt.stop(); } catch (_) {} ytbox.hidden = true; document.body.classList.remove('yt-on'); window.dispatchEvent(new CustomEvent('jx:ytclose')); });
   const mount = () => { document.body.append(ytbox, qbox, bar); };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', mount) : mount();

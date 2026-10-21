@@ -99,3 +99,4 @@ body.yt-on .queue{right:calc(200px + 1.5rem)}
 @media (max-width:640px){body.yt-on .queue{right:.6rem;bottom:calc(var(--player-h) + 220px + env(safe-area-inset-bottom))}}
 
 .ytbox{position:fixed}.ytclose{position:absolute;top:4px;right:4px;z-index:3;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:rgba(0,0,0,.85);color:#fff;font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center;touch-action:manipulation}.ytclose:hover,.ytclose:focus-visible{background:#00ff9d;color:#000}
+.ytbox{overflow:visible}.ytbox .ytclose{top:-46px;right:0;width:auto;height:40px;padding:0 16px;border-radius:8px;font:700 15px/1 inherit;letter-spacing:.08em;background:#ff2d55;border-color:#ff2d55;color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.6)}

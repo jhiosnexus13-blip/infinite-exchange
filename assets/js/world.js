@@ -114,7 +114,7 @@ canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointerc
 
 function makeStick(el) {
   const knob = el.querySelector('.knob'), st = { x: 0, y: 0, id: null };
-  const R = 45;
+  const R = 34;
   const upd = e => { const r = el.getBoundingClientRect(); let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
     const d = Math.hypot(dx, dy); if (d > R) { dx *= R / d; dy *= R / d; }
     knob.style.transform = `translate(${dx}px,${dy}px)`; st.x = dx / R; st.y = -dy / R; }; // up = +y
