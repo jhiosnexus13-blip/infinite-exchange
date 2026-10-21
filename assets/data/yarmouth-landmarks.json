@@ -8,6 +8,7 @@
   { "key": "pleasure_beach", "name": "Great Yarmouth Pleasure Beach (big wheel)", "lat": 52.5932831, "lon": 1.7359856, "type": "wheel", "height_m": 45 },
   { "key": "minster", "name": "Great Yarmouth Minster (St Nicholas)", "lat": 52.6113670, "lon": 1.7273138, "type": "minster", "height_m": 32 },
   { "key": "haven_bridge", "name": "Haven Bridge", "lat": 52.6065825, "lon": 1.7221957, "type": "bridge", "height_m": 6 },
+  { "key": "tower_complex", "name": "Tower Complex / Arena (Marine Parade)", "lat": 52.6094, "lon": 1.7378, "type": "tower", "height_m": 36, "note": "approx.: OSM has no named node for the complex; placed beside OSM 'Tower Public Toilets', Marine Parade (52.6095826, 1.7381616), just north of Britannia Pier", "feature_track": "dont-this-remind-ya" },
   { "key": "gorleston_harbour", "name": "Gorleston South Pier lighthouse / harbour mouth", "lat": 52.5721123, "lon": 1.7381010, "type": "lighthouse", "height_m": 18 }
  ],
  "seafront": { "name": "Marine Parade / Atlas seafront strip", "from": { "lat": 52.5935, "lon": 1.7350 }, "to": { "lat": 52.6125, "lon": 1.7372 } },

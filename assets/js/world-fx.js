@@ -8,7 +8,7 @@
    (loaded lazily with GLTFLoader from the same three.js version); null = procedural. */
 export const MODELS = {
   britannia_pier: null, wellington_pier: null, nelsons_monument: null, pleasure_beach: null,
-  minster: null, haven_bridge: null, gorleston_harbour: null,
+  minster: null, haven_bridge: null, gorleston_harbour: null, tower_complex: null,
   'SCR3WFAC3': null, 'Luce Aether': null, 'JHIOS Soundtracks': null, 'Sanctum': null, 'Unsorted': null, 'GoldBot': null,
 };
 let T, S, CAM, P, H, CL, LBL, CV, LOW, RED, OBJS, getPlaying;
@@ -93,6 +93,12 @@ function skyline(D) {
       box(base, 9, ht * 0.35, 3.5, ry); box(base, 3, ht * 0.7, 3, ry);
       for (const [x, z] of [[-1.5, -1.5], [1.5, -1.5], [1.5, 1.5], [-1.5, 1.5]]) add(base.clone().add(new T.Vector3(x, ht * 0.7, z)), base.clone().setY(ht));
     } else if (L.type === 'bridge') { const a = warp(l.e - 60, l.n), b = warp(l.e + 60, l.n); a.y = b.y = 1.2; add(a, b); add(a.clone().setY(2.4), b.clone().setY(2.4)); for (let i = 0; i <= 6; i++) { const p = a.clone().lerp(b, i / 6); add(p.clone().setY(0), p.clone().setY(2.4)); } }
+    else if (L.type === 'tower') { // Tower Complex / Arena: wide low arena block + tall slim tower with a crown
+      box(base, 7, ht * 0.32, 4.5, ry); box(base.clone().setY(ht * 0.32), 5, ht * 0.12, 3.5, ry);
+      const tb = base.clone().add(new T.Vector3(Math.cos(ry) * 1.6, 0, -Math.sin(ry) * 1.6)); box(tb, 1.8, ht, 1.8, ry); box(tb.clone().setY(ht), 2.4, 1.2, 2.4, ry);
+      add(tb.clone().setY(ht + 1.2), tb.clone().setY(ht + 3.5));
+      if (L.feature_track) featureScreen(L, base, ht);
+    }
     else if (L.type === 'lighthouse') { box(base, 1.2, ht, 1.2, ry); box(base.clone().setY(ht), 1.6, 1.0, 1.6, ry); fx.beacon = base.clone().setY(ht + 0.5); }
   }
   // Marine Parade / Atlas seafront strip: buildings just inland of the coast
@@ -111,6 +117,25 @@ function skyline(D) {
   grp.add(new T.Line(new T.BufferGeometry().setFromPoints(coast.map(c => warp(c.e, c.n).setY(0.12))), new T.LineBasicMaterial({ color: 0x9dffe0, fog: false })));
   sea(coast);
   fx.mapLandmarks = Object.values(fx.landmarks);
+}
+/* ---------- featured hologram screen above a landmark (billboard, bobbing, tap = play via JX) ---------- */
+function featureScreen(L, base, ht) {
+  const W2 = 26, H2 = 19.5, y0 = ht + 6 + H2 / 2, grp = new T.Group(); grp.position.copy(base).setY(y0); S.add(grp);
+  const titleText = "Don't This Remind Ya";
+  const mat = new T.MeshBasicMaterial({ map: titleTex(titleText, '#00ff9d'), transparent: true, opacity: 0.95, side: T.DoubleSide, fog: false });
+  const scr = new T.Mesh(new T.PlaneGeometry(W2, H2), mat); grp.add(scr);
+  const frMat = new T.LineBasicMaterial({ color: 0x00ff9d, transparent: true, blending: T.AdditiveBlending, fog: false });
+  for (const k of [1, 1.03, 1.06]) { const f = new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(W2 * k, H2 * k)), frMat); grp.add(f); }
+  const glow = new T.Mesh(new T.PlaneGeometry(W2 * 1.25, H2 * 1.25), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.12, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
+  glow.position.z = -0.2; grp.add(glow);
+  const lab = LBL(titleText.toUpperCase(), '#00ff9d', 3.2); lab.position.set(0, H2 / 2 + 2.6, 0); grp.add(lab);
+  const sub = LBL('▶ TAP TO PLAY // SCR3WFAC3', '#b9ffe0', 1.6); sub.position.set(0, -H2 / 2 - 1.8, 0); grp.add(sub);
+  // beam down to the tower
+  const bg = new T.BufferGeometry().setFromPoints([new T.Vector3(0, -H2 / 2, 0), new T.Vector3(0, ht + 3.5 - y0, 0)]); grp.add(new T.Line(bg, frMat));
+  scr.userData = { track: L.feature_track, feature: true };
+  const hit = new T.Mesh(new T.PlaneGeometry(W2 * 1.1, H2 * 1.35), new T.MeshBasicMaterial({ visible: false, side: T.DoubleSide })); hit.userData = scr.userData; grp.add(hit); CL.push(hit);
+  loader().load('https://i.ytimg.com/vi/hN8QWPKuDvk/hqdefault.jpg', tex => { tex.colorSpace = T.SRGBColorSpace; mat.map.dispose(); mat.map = tex; mat.needsUpdate = true; fx.featureThumb = true; }, undefined, () => { fx.featureThumb = false; });
+  fx.feature = { grp, y0, frMat, glow, key: L.key, track: L.feature_track };
 }
 /* ---------- North Sea: big subdivided plane; fragments west of the (warped) coastline are discarded ---------- */
 function sea(coast) {
@@ -162,6 +187,11 @@ function drawMap() {
   g.fillStyle = 'rgba(0,160,200,.25)'; g.fillRect(s - 6 * dpr, 0, 6 * dpr, s); // sea is east
   g.strokeStyle = 'rgba(0,255,157,.35)'; g.beginPath(); g.arc(X(0), Z(-2), 4 * k, 0, 7); g.stroke(); // globe
   for (const h of H) { g.fillStyle = h.hex; g.beginPath(); g.arc(X(h.o.pos[0]), Z(h.o.pos[1]), (h.lane === getPlaying() ? 4.5 : 3) * dpr, 0, 7); g.fill(); }
+  if (fx.feature) { const fp = fx.feature.grp.position, dx = fp.x - P.pos.x, dz = fp.z - P.pos.z, dl = Math.hypot(dx, dz) || 1;
+    const mx = Math.abs(P.pos.x + dx) < 46 && Math.abs(P.pos.z + dz) < 46 ? X(fp.x) : X(Math.max(-44, Math.min(44, P.pos.x + dx / dl * 60)));
+    const mz = Math.abs(P.pos.x + dx) < 46 && Math.abs(P.pos.z + dz) < 46 ? Z(fp.z) : Z(Math.max(-44, Math.min(44, P.pos.z + dz / dl * 60)));
+    g.fillStyle = '#00ff9d'; g.fillRect(mx - 4 * dpr, mz - 3 * dpr, 8 * dpr, 6 * dpr); g.strokeStyle = '#fff'; g.strokeRect(mx - 4 * dpr, mz - 3 * dpr, 8 * dpr, 6 * dpr);
+    g.font = `${8 * dpr}px ui-monospace,monospace`; g.fillText('TOWER', Math.min(s - 30 * dpr, mx + 6 * dpr), mz + 3 * dpr); }
   const px = Math.max(-47, Math.min(47, P.pos.x)), pz = Math.max(-47, Math.min(47, P.pos.z));
   g.save(); g.translate(X(px), Z(pz)); g.rotate(-P.yaw); g.fillStyle = '#fff'; g.beginPath(); g.moveTo(0, -7 * dpr); g.lineTo(4.5 * dpr, 5 * dpr); g.lineTo(-4.5 * dpr, 5 * dpr); g.closePath(); g.fill(); g.restore();
   g.fillStyle = '#00ff9d'; g.font = `${9 * dpr}px ui-monospace,monospace`; g.fillText('N', s / 2 - 3 * dpr, 10 * dpr); g.fillText('SEA', s - 26 * dpr, s / 2);
@@ -247,6 +277,8 @@ export function updateWorldFX(t, dt) {
   if (fx.rain && !RED) { const { pos, spd, N } = fx.rain;
     for (let i = 0; i < N; i++) { let y = pos[i * 3 + 1] - spd[i] * dt; if (y < 0) { y = 30; pos[i * 3] = P.pos.x + (Math.random() - 0.5) * 80; pos[i * 3 + 2] = P.pos.z + (Math.random() - 0.5) * 80; } pos[i * 3 + 1] = y; }
     fx.rain.pts.geometry.attributes.position.needsUpdate = true; }
+  if (fx.feature) { const f = fx.feature; f.grp.position.y = f.y0 + (RED ? 0 : Math.sin(t * 0.8) * 1.2); f.grp.lookAt(CAM.position.x, f.grp.position.y, CAM.position.z);
+    const on = window.JX && JX.playing && JX.current && JX.current.id === f.track; f.frMat.opacity = on ? 0.6 + 0.4 * (window.__beat ? __beat() : 1) : 0.75 + 0.2 * Math.sin(t * 2); f.glow.material.opacity = on ? 0.25 : 0.12; }
   if (fx.wheel && !RED) fx.wheel.rotation.z += dt * 0.08;
   updateCard(); updateOrbits(t, dt); updateVolume(t);
   if (t - mapT > 0.1) { mapT = t; drawMap(); }
@@ -254,5 +286,6 @@ export function updateWorldFX(t, dt) {
 }
 export const worldDebug = {
   get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
+  featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
 };
