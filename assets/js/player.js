@@ -21,6 +21,7 @@
     stop() { this.el.pause(); this.el.removeAttribute('src'); this.el.load(); }
     seek(s) { this.el.currentTime = s; } get time() { return this.el.currentTime; } get duration() { return this.el.duration; }
     get playing() { return !this.el.paused; }
+    setVolume(v) { this.el.volume = Math.max(0, Math.min(1, v / 100)); }
   }
   let ytApi = null;
   const loadYT = () => ytApi || (ytApi = new Promise((res, rej) => {
@@ -41,13 +42,14 @@
             width: 200, height: 200, videoId: id, host: 'https://www.youtube-nocookie.com',
             playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
             events: {
-              onReady: () => { this.p.playVideo(); res(); },
+              onReady: () => { this.setVolume(this.vol ?? 100); this.p.playVideo(); res(); },
               onStateChange: e => { this.state = e.data; this.cb && this.cb({ 0: 'ended', 1: 'play', 2: 'pause' }[e.data] || 'state'); },
               onError: () => this.cb && this.cb('error')
             }
           });
         });
       } else this.p.loadVideoById(id);
+      this.setVolume(this.vol ?? 100);
       clearInterval(this.tick); this.tick = setInterval(() => this.cb && this.cb('timeupdate'), 500);
     }
     play() { this.p && this.p.playVideo(); } pause() { this.p && this.p.pauseVideo && this.p.pauseVideo(); }
@@ -56,6 +58,7 @@
     get time() { return this.p && this.p.getCurrentTime ? this.p.getCurrentTime() : 0; }
     get duration() { return this.p && this.p.getDuration ? this.p.getDuration() : NaN; }
     get playing() { return this.state === 1; }
+    setVolume(v) { this.vol = v; try { this.p && this.p.setVolume && this.p.setVolume(Math.round(v)); } catch (e) {} }
   }
 
   /* ---------- UI ---------- */
@@ -72,7 +75,7 @@
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', mount) : mount();
 
   const audio = new AudioSource(), yt = new YouTubeSource(ytbox);
-  let src = null, queue = [], idx = -1, tracks = [], seeking = false, counted = new Set(), playedS = 0, lastT = 0;
+  let volume = 100, src = null, queue = [], idx = -1, tracks = [], seeking = false, counted = new Set(), playedS = 0, lastT = 0;
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('jx-audio') : null;
   const tabId = Math.random().toString(36).slice(2);
   bc && (bc.onmessage = e => { if (e.data && e.data.playing && e.data.tab !== tabId && src && src.playing) src.pause(); });
@@ -167,6 +170,11 @@
     playLane(l) { const q = this.byLane(l), f = q.find(playable); if (f) this.play(f, q); else toast('No playable tracks in ' + l + ' yet'); },
     toggle, next, prev,
     get current() { return cur(); }, get playing() { return !!(src && src.playing); },
+    /* volume 0-100, applied to both YouTube and self-hosted audio (persists across track changes) */
+    setVolume(v) { v = Math.max(0, Math.min(100, +v || 0)); volume = v; audio.setVolume(v); yt.setVolume(v); },
+    get volume() { return volume; },
+    get time() { return src ? src.time || 0 : 0; },
+    get audioEl() { return src === audio ? audio.el : null; },
     on(e, f) { (listeners[e] = listeners[e] || []).push(f); }
   };
 })();
