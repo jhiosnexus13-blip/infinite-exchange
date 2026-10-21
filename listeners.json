@@ -1,0 +1,18 @@
+{
+ "demo": true,
+ "note": "EXAMPLE PLACEHOLDER DATA - NOT REAL LISTENERS. Served only when the Netlify Function (netlify/functions/listeners.mjs) is not running, e.g. on a plain static server. In production the function answers /listeners.json with real country-level counts.",
+ "countries": {
+  "GB": 50,
+  "US": 30,
+  "DE": 12,
+  "NL": 8,
+  "IE": 6,
+  "CA": 5,
+  "AU": 4,
+  "FR": 4,
+  "BR": 3,
+  "JP": 2,
+  "ZA": 2,
+  "IN": 2
+ }
+}

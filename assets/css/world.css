@@ -1,0 +1,32 @@
+body.world{overflow:hidden;height:100vh;height:100dvh;padding:0;overscroll-behavior:none}
+body.world::after{z-index:2}
+#scene{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;touch-action:none;outline:none}
+.hud{position:fixed;top:calc(.5rem + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:20;display:flex;flex-direction:column;align-items:center;gap:.2rem;font-size:.68rem;color:var(--dim);text-align:center;pointer-events:none;max-width:calc(100vw - 9rem)}
+.hud a{pointer-events:auto;color:var(--signal);text-decoration:none;letter-spacing:.1em}
+.demo{color:#000;background:#ffcc00;padding:.1rem .5rem;font-weight:700;letter-spacing:.1em}
+.wpanel{position:fixed;top:calc(.5rem + env(safe-area-inset-top));left:calc(.5rem + env(safe-area-inset-left));z-index:30;width:min(300px,calc(100vw - 1rem));pointer-events:none}
+.wpanel>*{pointer-events:auto}
+.ptoggle{background:rgba(8,12,11,.9);border:1px solid var(--signal);color:var(--signal);padding:.55rem .8rem;border-radius:var(--r);cursor:pointer;font-size:.75rem;letter-spacing:.1em;min-height:44px}
+.pbody{margin-top:.4rem;background:rgba(8,12,11,.92);border:1px solid var(--line);border-radius:var(--r);max-height:min(48vh,420px);display:flex;flex-direction:column}
+.pbody[hidden]{display:none}
+.ptabs{display:flex;flex-wrap:wrap;gap:.3rem;padding:.5rem;border-bottom:1px solid var(--line)}
+.ptabs button{background:transparent;border:1px solid var(--line);color:var(--text);font-size:.66rem;padding:.35rem .5rem;border-radius:99px;cursor:pointer;min-height:32px}
+.ptabs button[aria-selected=true]{background:var(--signal);color:#000;border-color:var(--signal)}
+.ptracks{list-style:none;overflow:auto;padding:.3rem .5rem}
+.ptracks li button{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--line);color:var(--text);padding:.5rem .2rem;font-size:.72rem;cursor:pointer;min-height:40px}
+.ptracks li button:disabled{color:var(--dim);cursor:not-allowed}
+.ptracks li button.cur{color:var(--signal)}
+.stick{position:fixed;z-index:25;width:92px;height:92px;border-radius:50%;border:1px solid rgba(0,255,157,.45);background:rgba(0,255,157,.06);display:none;touch-action:none;user-select:none;-webkit-user-select:none;bottom:calc(var(--player-h) + 1.2rem + env(safe-area-inset-bottom))}
+.stick.left{left:calc(1rem + env(safe-area-inset-left))}.stick.right{right:calc(1rem + env(safe-area-inset-right))}
+.stick .knob{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(0,255,157,.35);border:1px solid var(--signal);pointer-events:none}
+.stick span{position:absolute;bottom:-1.2rem;left:0;right:0;text-align:center;font-size:.6rem;color:var(--dim);pointer-events:none}
+body.touch .stick{display:block}
+/* keep the YouTube mini-player (>=200x200, visible) out of the joysticks' way */
+body.world .ytbox{top:calc(3.6rem + env(safe-area-inset-top));right:calc(.5rem + env(safe-area-inset-right));bottom:auto}
+body.world .queue{bottom:calc(var(--player-h) + 1rem + env(safe-area-inset-bottom));right:.5rem}
+body.world .player{z-index:40}
+body.world footer{display:none}
+@media (max-width:640px){body.world .ytbox{top:auto;bottom:calc(var(--player-h) + 150px + env(safe-area-inset-bottom));right:50%;transform:translateX(50%)}
+.hud{left:auto;right:.5rem;transform:none;align-items:flex-end;max-width:55vw}.hud #hint{display:none}}
+@media (max-width:640px){.pbody{max-height:calc(100dvh - 520px - env(safe-area-inset-bottom));min-height:140px}}
+@media (max-width:640px){body.world .ytbox{bottom:calc(var(--player-h) + 120px + env(safe-area-inset-bottom))}}
