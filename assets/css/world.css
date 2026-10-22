@@ -37,6 +37,6 @@ body.world footer{display:none}
 .wcard[hidden]{display:none}.wcard b{font-size:.85rem}.wcard small{color:var(--text)}
 @keyframes wglitch{0%,96%{clip-path:none}97%{clip-path:inset(20% 0 40% 0);transform-origin:center}98%{clip-path:inset(60% 0 5% 0)}}
 .wcredits{position:fixed;z-index:5;left:.5rem;bottom:calc(var(--player-h) + .3rem + env(safe-area-inset-bottom));font-size:.55rem;color:var(--dim)}.wcredits a{color:var(--dim)}
-body.touch .wcredits{display:none}
+body.touch .wcredits{font-size:.5rem;opacity:.8}
 @media (max-width:640px){#minimap{width:96px;height:96px;top:calc(5.6rem + env(safe-area-inset-top))}.hud{max-width:calc(100vw - 7rem)}}
 @media (prefers-reduced-motion:reduce){.wcard{animation:none}}

@@ -95,35 +95,73 @@ function skyline(D) {
     } else if (L.type === 'bridge') { const a = warp(l.e - 60, l.n), b = warp(l.e + 60, l.n); a.y = b.y = 1.2; add(a, b); add(a.clone().setY(2.4), b.clone().setY(2.4)); for (let i = 0; i <= 6; i++) { const p = a.clone().lerp(b, i / 6); add(p.clone().setY(0), p.clone().setY(2.4)); } }
     else if (L.type === 'lighthouse') { box(base, 1.2, ht, 1.2, ry); box(base.clone().setY(ht), 1.6, 1.0, 1.6, ry); fx.beacon = base.clone().setY(ht + 0.5); }
   }
-  // Marine Parade / Atlas seafront strip: buildings just inland of the coast
-  const f = local(D.seafront.from.lat, D.seafront.from.lon), t2 = local(D.seafront.to.lat, D.seafront.to.lon);
-  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  for (let n = f.n; n < t2.n; n += 55) { const e = coastE(n) - 35 - rnd() * 40, b = warp(e, n), h = (8 + rnd() * 18) * HS * 1.4; box(b, 2.2 + rnd() * 2, h, 2.5, yaw(b)); if (rnd() < 0.3) add(b.clone().setY(h), b.clone().setY(h + 1.5)); }
-  // generic town blocks between seafront and river
-  for (let i = 0; i < 70; i++) { const n = -2600 + rnd() * 3800, e = coastE(n) - 150 - rnd() * 650, b = warp(e, n); box(b, 2 + rnd() * 3, (6 + rnd() * 10) * HS, 2 + rnd() * 3, yaw(b)); }
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(segs, 3)); grp.add(new T.LineSegments(g, mat));
-  // River Yare (+ Bure) ribbon to the west
-  const riv = D.river_yare.map(([la, lo]) => W(la, lo).setY(0.08));
-  const rc = new T.CatmullRomCurve3(riv), rp = rc.getPoints(80);
-  grp.add(new T.Line(new T.BufferGeometry().setFromPoints(rp), new T.LineBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, fog: false })));
-  grp.add(new T.Line(new T.BufferGeometry().setFromPoints(rp.map(p => p.clone().add(new T.Vector3(0.9, 0, 0)))), new T.LineBasicMaterial({ color: 0x0088cc, transparent: true, opacity: 0.6, blending: T.AdditiveBlending, fog: false })));
-  // coastline glow
-  grp.add(new T.Line(new T.BufferGeometry().setFromPoints(coast.map(c => warp(c.e, c.n).setY(0.12))), new T.LineBasicMaterial({ color: 0x9dffe0, fog: false })));
-  sea(coast);
+  // real OSM geography (buildings, water, beach, roads, piers, coastline) pre-baked into yarmouth-geo.json
+  fetch('/assets/data/yarmouth-geo.json?v=30').then(r => r.json()).then(G => geo(G, grp)).catch(e => { console.warn('geo', e); sea(coast); });
   fx.mapLandmarks = Object.values(fx.landmarks);
+}
+
+/* ---------- OSM geography: everything goes through warp() so it shares the landmark/lane mapping ---------- */
+function geoMat(col, opts = {}) { // holographic fill with vertical glow, distance fade (own fog: scene fog would hide the ring)
+  return new T.ShaderMaterial({ transparent: true, depthWrite: !!opts.depth, side: T.DoubleSide, blending: opts.add ? T.AdditiveBlending : T.NormalBlending,
+    uniforms: { uC: { value: new T.Color(col) }, uA: { value: opts.a ?? 0.8 }, uTime: { value: 0 } },
+    vertexShader: `attribute float aV; varying float vV; varying float vD; varying float vY; void main(){ vV = aV; vY = position.y; vec4 mv = modelViewMatrix * vec4(position,1.0); vD = -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform vec3 uC; uniform float uA; uniform float uTime; varying float vV; varying float vD; varying float vY;
+      void main(){ float f = exp(-max(vD - 60.0, 0.0) * 0.0045); float top = smoothstep(0.82, 1.0, vV); float floors = step(0.9, fract(vY * 1.33)) * 0.35;
+        vec3 c = mix(vec3(0.0,0.05,0.04), uC, 0.18 + 0.5 * vV * vV + floors) + uC * top * 1.2;
+        gl_FragColor = vec4(mix(vec3(0.0,0.1,0.07), c, f), uA * (0.35 + 0.65 * f)); }` });
+}
+function geo(G, grp) {
+  const SEC = 24, sec = v => Math.min(SEC - 1, Math.floor((Math.atan2(v.z, v.x) + Math.PI) / (Math.PI * 2) * SEC));
+  const bins = Array.from({ length: SEC }, () => ({ p: [], v: [], e: [] }));
+  const flat = a => { const o = []; for (let i = 0; i < a.length; i += 2) o.push([a[i], a[i + 1]]); return o; };
+  const minA = LOW ? 70 : 25;
+  for (const [h0, c] of G.buildings) {
+    const pts = flat(c); let A = 0; for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; A += p[0] * q[1] - q[0] * p[1]; } A /= 2;
+    if (Math.abs(A) < minA) continue; if (A < 0) pts.reverse();
+    const h = (h0 || (Math.abs(A) > 900 ? 9 : 6)) * 0.7, W3 = pts.map(([e, n]) => warp(e, n)), B = bins[sec(W3[0])];
+    for (let i = 0; i < W3.length; i++) { const a = W3[i], b = W3[(i + 1) % W3.length];
+      B.p.push(a.x, 0, a.z, b.x, 0, b.z, b.x, h, b.z, a.x, 0, a.z, b.x, h, b.z, a.x, h, a.z); B.v.push(0, 0, 1, 0, 1, 1);
+      if (!LOW) B.e.push(a.x, h, a.z, b.x, h, b.z); }
+    const tri = T.ShapeUtils.triangulateShape(W3.map(v => new T.Vector2(v.x, v.z)), []);
+    for (const t of tri) for (const k of t) { B.p.push(W3[k].x, h, W3[k].z); B.v.push(1); }
+  }
+  const bm = geoMat(0x00ff9d, { a: 0.85, depth: true }), em = new T.LineBasicMaterial({ color: 0x7dffd0, transparent: true, opacity: 0.7, blending: T.AdditiveBlending, depthWrite: false, fog: false });
+  const city = new T.Group(); city.name = 'osm-buildings'; grp.add(city); let nb = 0;
+  for (const B of bins) { if (!B.p.length) continue; const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(B.p, 3)); g.setAttribute('aV', new T.Float32BufferAttribute(B.v, 1)); g.computeBoundingSphere();
+    city.add(new T.Mesh(g, bm)); nb += B.p.length / 3;
+    if (B.e.length) { const eg = new T.BufferGeometry(); eg.setAttribute('position', new T.Float32BufferAttribute(B.e, 3)); eg.computeBoundingSphere(); city.add(new T.LineSegments(eg, em)); } }
+  // flat polygons (water / beach)
+  const flatMesh = (polys, y, col, a) => { const p = [], v = [];
+    for (const c of polys) { const W3 = flat(c).map(([e, n]) => warp(e, n)); const tri = T.ShapeUtils.triangulateShape(W3.map(q => new T.Vector2(q.x, q.z)), []);
+      for (const t of tri) for (const k of t) { p.push(W3[k].x, y, W3[k].z); v.push(0.6); } }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(p, 3)); g.setAttribute('aV', new T.Float32BufferAttribute(v, 1));
+    const m = new T.Mesh(g, geoMat(col, { a, add: true })); m.renderOrder = -1; grp.add(m); return m; };
+  flatMesh(G.water, 0.06, 0x00b4ff, 0.55); flatMesh(G.beach, 0.04, 0x9fd86a, 0.25);
+  // polylines (roads by class, piers raised, coastline bright)
+  const lines = (list, y, col, op) => { const s = []; for (const c of list) { const W3 = flat(c).map(([e, n]) => warp(e, n)); for (let i = 0; i < W3.length - 1; i++) s.push(W3[i].x, y, W3[i].z, W3[i + 1].x, y, W3[i + 1].z); }
+    const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(s, 3)); const l = new T.LineSegments(g, new T.LineBasicMaterial({ color: col, transparent: true, opacity: op, blending: T.AdditiveBlending, depthWrite: false, fog: false })); grp.add(l); return l; };
+  lines(G.roads.filter(r => r[0] >= 2).map(r => r[1]), 0.1, 0xffc84a, 0.75); lines(G.roads.filter(r => r[0] < 2).map(r => r[1]), 0.09, 0xff7a3d, 0.45);
+  lines(G.piers.map(p => p[0]), 1.4, 0xb4fff0, 0.9); lines(G.coast, 0.12, 0x9dffe0, 0.95);
+  // seaward coastline profile (max east per northing bin) for the sea shader
+  const NB = 16, n0 = 5200, n1 = -4800, prof = Array.from({ length: NB }, (_, i) => ({ n: n0 + (n1 - n0) * i / (NB - 1), e: -1e9 }));
+  for (const c of G.coast) for (let i = 0; i < c.length; i += 2) { const k = Math.round((c[i + 1] - n0) / (n1 - n0) * (NB - 1)); if (k >= 0 && k < NB && c[i] > -1500) prof[k].e = Math.max(prof[k].e, c[i]); }
+  for (let i = 0; i < NB; i++) if (prof[i].e < -1e8) prof[i].e = (prof[i - 1] || prof[i + 1] || { e: 300 }).e > -1e8 ? (prof[i - 1] || prof[i + 1]).e : 300;
+  fx.coastE = n => { for (let i = 0; i < NB - 1; i++) { const a = prof[i], b = prof[i + 1]; if (n <= a.n && n >= b.n) return a.e + (b.e - a.e) * (n - a.n) / (b.n - a.n); } return prof[n > 0 ? 0 : NB - 1].e; };
+  sea(prof); fx.geo = { buildings: G.buildings.length, verts: nb, meshes: city.children.length };
 }
 /* ---------- North Sea: big subdivided plane; fragments west of the (warped) coastline are discarded ---------- */
 function sea(coast) {
   const seg = LOW ? 60 : 140, geo = new T.PlaneGeometry(900, 900, seg, seg); geo.rotateX(-Math.PI / 2);
-  const cn = coast.map(c => c.n), ce = coast.map(c => c.e);
+  const cs = coast.concat(Array(Math.max(0, 16 - coast.length)).fill(coast[coast.length - 1]).map((c, i) => ({ n: c.n - (i + 1), e: c.e }))).slice(0, 16), cn = cs.map(c => c.n), ce = cs.map(c => c.e);
   const m = new T.ShaderMaterial({ transparent: true, depthWrite: false, fog: false, side: T.DoubleSide,
     uniforms: { uTime: { value: 0 }, uR0: { value: R0 }, uS: { value: SCALE }, uN: { value: cn }, uE: { value: ce } },
     vertexShader: `uniform float uTime; varying vec3 vW; varying float vH;
       void main(){ vec3 p = position; vec4 w = modelMatrix * vec4(p,1.0);
         float h = sin(w.x * 0.08 + uTime * 0.9) * 0.35 + sin(w.z * 0.11 - uTime * 0.7) * 0.25 + sin((w.x + w.z) * 0.21 + uTime * 1.3) * 0.12;
         w.y += h - 0.3; vW = w.xyz; vH = h; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; uniform float uR0; uniform float uS; uniform float uN[6]; uniform float uE[6]; varying vec3 vW; varying float vH;
-      float coastE(float n){ for(int i=0;i<5;i++){ if(n <= uN[i] && n >= uN[i+1]) return mix(uE[i], uE[i+1], (n-uN[i])/(uN[i+1]-uN[i])); } return n > 0.0 ? uE[0] : uE[5]; }
+    fragmentShader: `uniform float uTime; uniform float uR0; uniform float uS; uniform float uN[16]; uniform float uE[16]; varying vec3 vW; varying float vH;
+      float coastE(float n){ for(int i=0;i<15;i++){ if(n <= uN[i] && n >= uN[i+1]) return mix(uE[i], uE[i+1], (n-uN[i])/(uN[i+1]-uN[i])); } return n > 0.0 ? uE[0] : uE[15]; }
       void main(){ float rr = length(vW.xz); if (rr < uR0) discard; float r = (rr - uR0) / uS; vec2 d = vW.xz / rr; float e = d.x * r, n = -d.y * r;
         float ce = coastE(n); if (e < ce) discard;
         float grid = step(0.94, fract(vW.x * 0.25)) + step(0.94, fract(vW.z * 0.25));
@@ -253,6 +291,6 @@ export function updateWorldFX(t, dt) {
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
-  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
+  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, geo: fx.geo, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
 };

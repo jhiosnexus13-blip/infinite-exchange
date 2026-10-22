@@ -348,7 +348,7 @@ window.JX ? bootPanel() : addEventListener('DOMContentLoaded', bootPanel);
 /* ---------- loop ---------- */
 function resize() { const w = innerWidth, h = innerHeight; renderer.setPixelRatio(capDPR()); renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
-import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=23';
+import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=30';
 buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, reduced, HOLO_OBJS, getPlaying: () => playingLane });
 const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
 const MOVE = 7, TURN = 1.8;
