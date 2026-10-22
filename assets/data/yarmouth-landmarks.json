@@ -39,7 +39,8 @@
    "lon": 1.7359856,
    "type": "wheel",
    "height_m": 45,
-   "song_match": "pleasure bitch"
+   "song_match": "pleasure bitch",
+   "crosscheck": "Cross-check (2026-10-22): OSM way 179321094 tourism=theme_park 'Pleasure Beach' (Nominatim) centroid 52.5932831,1.7359856, bbox 52.59123-52.59527 / 1.73541-1.73656, Wikidata Q3115993; postcodes.io NR30 3EH 52.594522,1.736190 (inside the park's postcode area)."
   },
   {
    "key": "minster",
@@ -65,7 +66,8 @@
    "type": "tower",
    "height_m": 36,
    "note": "Real location: 32 Marine Parade, Great Yarmouth NR30 2EN (SIA Group sale particulars 'The Tower Complex, 32 Marine Parade'; staycation.co.uk / ukpostcodecheck.com list 32 Marine Parade NR30 2EN; visitgreatyarmouth.co.uk 'ATM outside The Tower' and ents24 give NR30 2EW). Coords = postcodes.io NR30 2EN centroid 52.604471,1.736196 (NR30 2EW: 52.604497,1.736213); cross-checked with OSM Nominatim 'Oasis Tower, Marine Parade, NR30 2EN' at 52.6044981,1.7361511. Lies on Marine Parade ~410 m SOUTH of Britannia Pier and ~575 m NORTH of Wellington Pier, south of the Regent Road junction (Regent Road meets Marine Parade near Britannia Pier). Postcode data: Royal Mail/OS via postcodes.io (OGL).",
-   "feature_track": "dont-this-remind-ya"
+   "feature_track": "dont-this-remind-ya",
+   "crosscheck": "Cross-check (2026-10-22): postcodes.io NR30 2EN 52.604471,1.736196; OSM node 9817353238 'The Landmark' pub, Marine Parade NR30 2EN at 52.604604,1.736211 (Geofabrik extract)."
   },
   {
    "key": "gorleston_harbour",
@@ -82,7 +84,8 @@
    "lon": 1.7385399,
    "type": "waterways",
    "height_m": 6,
-   "source": "OSM way 175858676 (leisure park 'The Venetian Waterways', Newtown) via Nominatim lookup 2026-10-22; centroid. Runs alongside North Drive from ~52.612 to ~52.621."
+   "source": "OSM way 175858676 (leisure park 'The Venetian Waterways', Newtown) via Nominatim lookup 2026-10-22; centroid. Runs alongside North Drive from ~52.612 to ~52.621.",
+   "crosscheck": "Cross-check: OSM park bbox 52.61341-52.61809 / 1.73804-1.73899 (Nominatim lookup); postcodes.io NR30 1EQ (North Drive, south end) 52.612984,1.737483."
   },
   {
    "key": "iron_duke",
@@ -92,7 +95,8 @@
    "type": "pub",
    "height_m": 10,
    "song_match": "iron duke",
-   "source": "OSM way 232015022 'The Iron Duke', Jellicoe Road, Newtown, NR30 4HB via Nominatim 2026-10-22 (building on the North Drive / Jellicoe Road corner, north of the Waterways). Not present as amenity=pub in the Geofabrik extract, only as a named building."
+   "source": "OSM way 232015022 'The Iron Duke', Jellicoe Road, Newtown, NR30 4HB via Nominatim 2026-10-22 (building on the North Drive / Jellicoe Road corner, north of the Waterways). Not present as amenity=pub in the Geofabrik extract, only as a named building.",
+   "crosscheck": "Cross-check: postcodes.io NR30 4HB centroid 52.627300,1.737048 (~100 m SW of the OSM building, same block); OSM building bbox 52.62773-52.62796 / 1.73814-1.73850; Wikidata Q55457632. Order check: northernmost placed spot, east of The Avenues."
   },
   {
    "key": "the_avenues",
@@ -101,7 +105,8 @@
    "lon": 1.7336626,
    "type": "pub",
    "height_m": 9,
-   "source": "OSM node 601501713 amenity=pub 'The Avenues', Beatty Road, Newtown, NR30 4BW (Geofabrik Norfolk extract + Nominatim 2026-10-22)."
+   "source": "OSM node 601501713 amenity=pub 'The Avenues', Beatty Road, Newtown, NR30 4BW (Geofabrik Norfolk extract + Nominatim 2026-10-22).",
+   "crosscheck": "Cross-check: postcodes.io NR30 4BW centroid 52.624024,1.733695 (~90 m S of the OSM node, same street)."
   },
   {
    "key": "newtown_archive",
@@ -110,9 +115,11 @@
    "lon": 1.7335,
    "type": "archive",
    "height_m": 18,
-   "song_tag": "newtown-archive", "song_match": "newtown",
+   "song_tag": "newtown-archive",
+   "song_match": "newtown",
    "song_album": "NEWTOWN",
-   "source": "Placed in Newtown between Beaconsfield Road (OSM way 446516559, 52.61816,1.73415) and Salisbury Road (OSM way 253831712, 52.61983,1.73374) via Nominatim 2026-10-22. Fictional site object."
+   "source": "Placed in Newtown between Beaconsfield Road (OSM way 446516559, 52.61816,1.73415) and Salisbury Road (OSM way 253831712, 52.61983,1.73374) via Nominatim 2026-10-22. Fictional site object.",
+   "crosscheck": "Cross-check: postcodes.io NR30 4JP (Beaconsfield Rd) 52.618560,1.730968 and NR30 4LS (Salisbury Rd) 52.619970,1.736468; the spot lies between them."
   }
  ],
  "seafront": {
