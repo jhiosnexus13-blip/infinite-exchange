@@ -1,4 +1,4 @@
-/* JHIOS world v41 — live presence: anonymous heartbeat to /api/presence (Netlify Function + Blobs).
+/* JHIOS world v41/v43 — live presence + all-time visitors: anonymous heartbeat to /api/presence (Netlify Function + Blobs).
    Sends a random per-tab id + rounded world x/z + heading every 5 s (lite 8 s); shows "N here now" in the HUD and every other visitor
    as a glowing low-poly human silhouette (one InstancedMesh, never raycast), smoothly interpolated. Fails silently: no function, no counter. */
 export function initPresence(o) {
@@ -28,12 +28,22 @@ export function initPresence(o) {
   async function beat() { if (busy || document.hidden) return; busy = true;
     try { const r = await fetch('/api/presence', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ sid, x: Math.round(P.pos.x), z: Math.round(P.pos.z), h: Math.round(P.yaw * 10) / 10 }), cache: 'no-store' });
       if (!r.ok) throw new Error(r.status); const d = await r.json(); fails = 0; fx.presence.ok = true; apply(d); }
-    catch (e) { fails++; if (fails >= 2) { hud.hidden = true; fx.presence.ok = false; others.clear(); mesh.count = 0; } if (fails >= 6) { clearInterval(timer); timer = 0; } } // function unavailable (local preview etc.): stay quiet
+    catch (e) { fails++; if (fails >= 2) { fx.presence.ok = false; render(); others.clear(); mesh.count = 0; } if (fails >= 6) { clearInterval(timer); timer = 0; } } // function unavailable (local preview etc.): stay quiet
     finally { busy = false; } }
   function apply(d) { const now = performance.now(), list = Array.isArray(d.others) ? d.others.slice(0, MAX) : [];
     for (const [x, z, h = 0, tag] of list) { const k = String(tag ?? (x + ':' + z)); const v = others.get(k); if (v) { v.tx = x; v.tz = z; v.th = h; v.seen = now; } else others.set(k, { x, z, h, tx: x, tz: z, th: h, seen: now }); }
     for (const [k, v] of others) if (now - v.seen > EVERY * 2.5) others.delete(k);
-    const n = Math.min(MAX, d.count | 0); fx.presence.count = n; hud.hidden = false; hud.textContent = n === 0 ? '● just you here' : `● ${n} other${n === 1 ? '' : 's'} here now`; }
+    const n = Math.min(MAX, d.count | 0); fx.presence.count = n; hud.hidden = false; render(); }
+  // v43: all-time visitors (one count per browser, ever; production only; see netlify/functions/visitors.mjs)
+  let total = null; const fmt = n => n.toLocaleString('en-GB'), phone = matchMedia('(max-width:640px)').matches;
+  function render() { const n = fx.presence.count, live = fx.presence.ok ? (n === 0 ? (phone ? '● just you' : '● just you here') : `● ${n}${phone ? ' here' : ` other${n === 1 ? '' : 's'} here now`}`) : '';
+    const all = total == null ? '' : phone ? `${fmt(total)} all-time` : `${fmt(total)} visitor${total === 1 ? '' : 's'} all-time`;
+    hud.textContent = [live, all].filter(Boolean).join(' · '); hud.hidden = !hud.textContent; }
+  (async () => { try { let vid = localStorage.getItem('jx_vid'); if (!/^[a-z0-9]{12,32}$/.test(vid || '')) { vid = Array.from(crypto.getRandomValues(new Uint8Array(12)), b => (b % 36).toString(36)).join(''); localStorage.setItem('jx_vid', vid); }
+      const first = !localStorage.getItem('jx_counted');
+      const r = await fetch('/api/visitors', first ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ vid }), cache: 'no-store' } : { cache: 'no-store' });
+      if (!r.ok) return; const d = await r.json(); if (typeof d.total !== 'number') return; if (first && (d.counted === true || d.counted === false && !d.reason)) localStorage.setItem('jx_counted', '1');
+      total = d.total; fx.presence.total = total; render(); } catch (_) {} })(); // unavailable: stay hidden
   timer = setInterval(beat, EVERY); setTimeout(beat, 1500);
   document.addEventListener('visibilitychange', () => { if (!document.hidden && timer) beat(); });
   addEventListener('pagehide', () => { try { navigator.sendBeacon && navigator.sendBeacon('/api/presence', new Blob([JSON.stringify({ sid, x: 0, z: 0, bye: 1 })], { type: 'application/json' })); } catch (_) {} });
@@ -42,5 +52,5 @@ export function initPresence(o) {
     for (const v of others.values()) { if (i >= MAX) break; v.x += (v.tx - v.x) * k; v.z += (v.tz - v.z) * k; let dh = v.th - v.h; dh = Math.atan2(Math.sin(dh), Math.cos(dh)); v.h += dh * k;
       o3.position.set(v.x, 0, v.z); o3.rotation.set(0, v.h, 0); o3.updateMatrix(); mesh.setMatrixAt(i++, o3.matrix); }
     mesh.count = i; if (i) mesh.instanceMatrix.needsUpdate = true; }
-  return { update, api: { get info() { return { ok: fx.presence.ok, count: fx.presence.count, shown: mesh.count, sid }; }, _apply: apply } };
+  return { update, api: { get info() { return { ok: fx.presence.ok, count: fx.presence.count, total, text: hud.textContent, shown: mesh.count, sid }; }, _apply: apply } };
 }

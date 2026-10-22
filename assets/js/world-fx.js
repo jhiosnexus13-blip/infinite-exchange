@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=42'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=42' : '/assets/data/yarmouth-geo.json?v=42').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=43'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=43' : '/assets/data/yarmouth-geo.json?v=43').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=42').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=42'), j('/assets/data/newtown-extra.json?v=42')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=42').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
-      Promise.all([import('./world-pb.js?v=42'), j('/assets/data/pleasure-beach.json?v=42')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=43').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=43'), j('/assets/data/newtown-extra.json?v=43')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=43').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
+      Promise.all([import('./world-pb.js?v=43'), j('/assets/data/pleasure-beach.json?v=43')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=42').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=42').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=43').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=43').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -73,6 +73,7 @@ function makeShelter() {
   for (const sx of [-1, 1]) { B('w', 0.35, H, DEP, sx * (LEN / 2 - 0.18), 0, 0); // end walls
     for (const sz of [-1, 1]) B('w', 0.9, H, 0.3, sx * (LEN / 2 - 0.6), 0, sz * (DEP / 2 - 0.15)); // corner piers
     for (const sz of [-1, 1]) B('d', 0.06, 0.5, 0.5, sx * (LEN / 2 + 0.01), 1.55, sz * 0.75); } // small square windows in the end walls
+  for (const sx of [-1, 1]) { B('d', 0.37, 0.35, DEP + 0.02, sx * (LEN / 2 - 0.18), 0, 0); for (const sz of [-1, 1]) B('d', 0.92, 0.35, 0.32, sx * (LEN / 2 - 0.6), 0, sz * (DEP / 2 - 0.15)); } // black skirting band (Street View)
   B('w', LEN - 0.7, H, 0.22, 0, 0, 0);                                           // central spine wall (back-to-back)
   for (const sx of [-1, 0, 1]) for (const sz of [-1, 1]) B('d', 0.55, 0.45, 0.05, sx * 2.2, 1.55, sz * 0.115); // spine wall windows
   for (const sz of [-1, 1]) { B('s', LEN - 1.1, 0.12, 0.45, 0, 0.45, sz * 0.38); B('s', LEN - 1.1, 0.45, 0.1, 0, 0, sz * 0.55); } // benches both sides
@@ -128,7 +129,7 @@ function skyline(D, grp, noGeo) {
       const rim = new T.LineLoop(new T.BufferGeometry().setFromPoints(Array.from({ length: 48 }, (_, i) => new T.Vector3(Math.cos(i / 48 * 6.283) * r, Math.sin(i / 48 * 6.283) * r, 0))), mat);
       const sp = []; for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283; sp.push(0, 0, 0, Math.cos(a) * r, Math.sin(a) * r, 0); }
       const spg = new T.BufferGeometry(); spg.setAttribute('position', new T.Float32BufferAttribute(sp, 3));
-      const wheel = new T.Group(); wheel.add(rim, new T.LineSegments(spg, mat));
+      const wheel = new T.Group(); wheel.add(rim, new T.LineSegments(spg, mat)); wheel.userData.spin = true;
       for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283, gd = new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(0.7, 0.7, 0.7)), mat); gd.position.set(Math.cos(a) * r, Math.sin(a) * r, 0); wheel.add(gd); }
       wg.add(wheel); grp.add(wg); fx.wheel = wheel; fx.wheelGrp = wg;
       if (L.wheel_slots) wheelScreens(L, wheel, r);
@@ -141,6 +142,9 @@ function skyline(D, grp, noGeo) {
       box(base, 40, ht * 0.32, 26, ry); box(base.clone().setY(ht * 0.32), 30, ht * 0.12, 20, ry);
       const tb = base.clone().add(new T.Vector3(Math.cos(ry) * 9, 0, -Math.sin(ry) * 9)); box(tb, 9, ht, 9, ry); box(tb.clone().setY(ht), 12, 5, 12, ry);
       add(tb.clone().setY(ht + 5), tb.clone().setY(ht + 14));
+      // v43 (Street View 25 Marine Parade): ground-floor frontage signs on the prom (east) face, north to south
+      if (!LITE) for (const [t2, c2, dz] of [['JURASSIC JOURNEY', '#5fdc6a', -14], ['SUBWAY', '#3fbf4f', -6.5], ['THE BUDDHA CLUB', '#e8eef0', 1.5], ['THE TOWER · PUBLIC HOUSE', '#6f8cff', 11]]) {
+        const sg = LBL(t2, c2, 1.5); sg.position.copy(base).add(new T.Vector3(21, 4.4, dz)); grp.add(sg); }
       if (L.feature_track) featureScreen(L, base, ht);
     }
     else if (L.type === 'pub' && L.use_footprint) { fx.mapSpots.push({ pos: base, label: L.name.replace(/^The /, '').toUpperCase(), col: '#ffcc66' }); } // v42: the real OSM footprint is the pub (no stand-in model)
@@ -155,11 +159,15 @@ function skyline(D, grp, noGeo) {
       fx.mapSpots.push({ pos: base, label: 'WATERWAYS', col: '#00c8ff' });
     }
     else if (L.type === 'archive') archive(L, base, ht);
-    else if (L.type === 'police') { // low custody block + blue light bar
-      box(base, 46, ht, 30, ry); box(base.clone().setY(ht), 20, 2, 12, ry);
-      const lb = new T.Mesh(new T.BoxGeometry(8, 0.8, 1.2), new T.MeshBasicMaterial({ color: 0x3b7bff, fog: false })); lb.position.copy(base).setY(ht + 2.6); lb.rotation.y = ry; grp.add(lb); fx.policeBar = lb;
+    else if (L.type === 'police') { const pr = L.rot_y ?? ry; // low custody block + blue light bar
+      box(base, 58, ht, 34, pr); box(base.clone().setY(ht), 20, 2, 12, pr); // v43: rot_y 0.59 = the OSM footprint's long axis (~34° N of E), matches satellite
+      const lb = new T.Mesh(new T.BoxGeometry(8, 0.8, 1.2), new T.MeshBasicMaterial({ color: 0x3b7bff, fog: false })); lb.position.copy(base).setY(ht + 2.6); lb.rotation.y = pr; grp.add(lb); fx.policeBar = lb;
       fx.mapSpots.push({ pos: base, label: 'POLICE', col: '#5b8bff' }); }
-    else if (L.type === 'shelter') { safe('shelter', () => { const sh = makeShelter(); sh.position.copy(base); sh.rotation.y = L.rot_y ?? Math.PI / 2; grp.add(sh); }); } // v42: the real North Drive shelter (see makeShelter)
+    else if (L.type === 'shelter') { safe('shelter', () => { const sh = makeShelter(); sh.position.copy(base); sh.rotation.y = L.rot_y ?? Math.PI / 2; grp.add(sh);
+      // v43 (Street View 59 North Dr): red paved bus layby on the road side of the shelter + steel crash barrier between layby and carriageway
+      const lay = new T.Mesh(new T.PlaneGeometry(4.2, 26), new T.MeshBasicMaterial({ color: 0x7a2f2a, fog: false })); lay.rotation.x = -Math.PI / 2; lay.position.copy(base).add(new T.Vector3(-4.6, 0.06, 0)); lay.raycast = () => {}; grp.add(lay);
+      const bp = []; for (let z = -15; z <= 15; z += 2.5) bp.push(-7, 0, z, -7, 0.75, z); bp.push(-7, 0.7, -15, -7, 0.7, 15, -7, 0.5, -15, -7, 0.5, 15);
+      const bg = new T.BufferGeometry(); bg.setAttribute('position', new T.Float32BufferAttribute(bp, 3)); const bl = new T.LineSegments(bg, new T.LineBasicMaterial({ color: 0xcfd8dc, fog: false })); bl.position.copy(base); bl.raycast = () => {}; grp.add(bl); }); } // v42: the real North Drive shelter (see makeShelter)
     else if (L.type === 'harbour') { // harbour entrance: two pier-head beacons either side of the river mouth + a channel marker line
       for (const [dx, dz, c] of [[-14, 6, 0xff3b3b], [14, -6, 0x3bff6a]]) { const p = base.clone().add(new T.Vector3(dx, 0, dz)); box(p, 3, ht, 3, 0); box(p.clone().setY(ht), 4, 2, 4, 0);
         const lm = new T.Mesh(new T.SphereGeometry(1.2, 8, 6), new T.MeshBasicMaterial({ color: c, fog: false })); lm.position.copy(p).setY(ht + 3); grp.add(lm); }
@@ -321,7 +329,7 @@ function songCluster(L, base, ht) {
       .filter(t => window.JX.ytId(t.youtube_url) || t.audio_url);
     fx.clusterInfo = Object.assign(fx.clusterInfo || {}, { [L.key]: list.map(t => t.id) });
     if (!list.length) return;
-    const hex = L.type === 'archive' ? '#b48cff' : '#ff5fd2', col = new T.Color(hex), grp = new T.Group(); grp.position.copy(L.cluster_at ? W(L.cluster_at[0], L.cluster_at[1]) : base); S.add(grp);
+    const hex = L.type === 'archive' ? '#b48cff' : '#ff5fd2', col = new T.Color(hex), grp = new T.Group(); grp.position.copy(L.cluster_at ? W(L.cluster_at[0], L.cluster_at[1]) : base); grp.userData.orbit = true; S.add(grp);
     if (L.pint) { grp.add(neonPint()); ht = 0; } // giant glowing pint the screens orbit
     const n = list.length, perTier = Math.min(n, 10), rad = n === 1 ? 0 : n <= 3 ? 9 : Math.max(16, perTier * 2.6), W2 = 10, H2 = 5.6;
     const frMat = new T.LineBasicMaterial({ color: col, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, fog: false });
@@ -631,13 +639,16 @@ export function updateWorldFX(t, dt) {
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
+  sight(x, z, tx, ty, tz) { return sightClear(x, z, tx, ty, tz); },
   audit() { const V = [], C = window.__collide, wp = new T.Vector3(); if (!C) return ['no collision grid'];
-    const items = CL.filter(o => o.visible !== false).map(o => { o.getWorldPosition(wp); return { n: o.userData.title || o.userData.id || o.userData.track || o.name || 'obj', x: wp.x, y: wp.y, z: wp.z }; });
+    const items = CL.filter(o => o.visible !== false).map(o => { o.getWorldPosition(wp); return { n: o.userData.title || o.userData.id || o.userData.track || o.name || 'obj', x: wp.x, y: wp.y, z: wp.z, orb: o.parent && o.parent.userData.orbit ? o.parent.position : null, spin: (() => { for (let q = o.parent; q; q = q.parent) if (q.userData.spin) return true; return false; })() }; });
     for (const it of items) { const h = roofAt(it.x, it.z); if (h >= 0 && it.y < h + 1) V.push(`inside building: ${it.n} y=${it.y.toFixed(1)} roof=${h}`);
       let ok = false; for (let r = 0; r <= 10 && !ok; r += 2.5) for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283; if (!C(it.x + Math.cos(a) * r, it.z + Math.sin(a) * r)) { ok = true; break; } } if (!ok) V.push(`no open approach within 10 m: ${it.n}`); }
     if (C(PZ()[0], PZ()[1] + 22)) V.push('spawn blocked');
     for (const k of Object.keys(fx.landmarks)) { const L = fx.landmarks[k], [x, z, see] = landing(k); if (C(x, z, 0.8)) V.push(`landing inside building: ${k}`); if (!see) V.push(`no clear view from landing: ${k}`);
-      const near = items.filter(i => Math.hypot(i.x - L.pos.x, i.z - L.pos.z) < 60); for (const i of near) if (!sightClear(x, z, i.x, i.y, i.z)) V.push(`screen occluded from landing: ${k} -> ${i.n}`); }
+      const near = items.filter(i => Math.hypot(i.x - L.pos.x, i.z - L.pos.z) < 60); const seen = i => { if (i.spin || sightClear(x, z, i.x, i.y, i.z)) return true; // wheel gondolas sweep round: the hub view check above covers them if (!i.orb) return false; // orbiting ring: fine if it comes into view during the orbit
+        const dx = i.x - i.orb.x, dz = i.z - i.orb.z; let n = 0; for (let a = 1; a < 8; a++) { const c = Math.cos(a * 0.785), s2 = Math.sin(a * 0.785); if (sightClear(x, z, i.orb.x + dx * c - dz * s2, i.y, i.orb.z + dx * s2 + dz * c)) n++; } return n >= 4; };
+      for (const i of near) if (!seen(i)) V.push(`screen occluded from landing: ${k} -> ${i.n}`); }
     return { violations: V, items: items.length, replaced: fx.geo && fx.geo.replaced, roofs: fx.roofAt }; },
   get train() { return fx.train && fx.train.api; }, get gulls() { return fx.gulls && fx.gulls.info; }, get presence() { return fx.pres && fx.pres.api; }, get newtown() { return fx.newtownInfo; },
   openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },

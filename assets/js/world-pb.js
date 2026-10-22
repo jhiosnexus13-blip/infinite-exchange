@@ -33,6 +33,11 @@ export function initPB(o, D) {
     if (r.kind === 'arch') { // entrance arch + sign
       const ax = new T.Vector3(0, 0, 9); for (const s of [-1, 1]) wbox(0xff5fd2, c.clone().addScaledVector(ax, s), 1.4, 9, 1.4);
       const arc = []; for (let k = 0; k <= 16; k++) { const a = k / 16 * Math.PI; arc.push(c.clone().add(new T.Vector3(0, 9 + Math.sin(a) * 3.5, -Math.cos(a) * 9))); } for (let k = 0; k < 16; k++) seg(0xffcf5f, arc[k], arc[k + 1]);
+      // v43 (Street View 49 S Beach Parade): dark-green steel gates between the pillars, white railings along the frontage
+      for (let z = -8; z <= 8; z += 0.8) seg(0x2fb36a, c.clone().add(new T.Vector3(0, 0, z)), c.clone().add(new T.Vector3(0, 2.6, z)));
+      for (const y of [0.3, 1.3, 2.6]) seg(0x2fb36a, c.clone().add(new T.Vector3(0, y, -8)), c.clone().add(new T.Vector3(0, y, 8)));
+      for (const s2 of [-1, 1]) { for (const y of [0.5, 1.1]) seg(0xf4f8f8, c.clone().add(new T.Vector3(0, y, s2 * 9.7)), c.clone().add(new T.Vector3(0, y, s2 * 34)));
+        for (let z = 10; z <= 34; z += 2) seg(0xf4f8f8, c.clone().add(new T.Vector3(0, 0, s2 * z)), c.clone().add(new T.Vector3(0, 1.1, s2 * z))); }
       const sg = LBL('PLEASURE BEACH', '#ff5fd2', 3.2); sg.position.copy(c).setY(10.5); sg.userData.sign = true; root.add(sg); fx.pbSign = sg; }
     else if (r.kind === 'carousel') { const g = new T.Group(); g.position.copy(c); const rr = 7;
       g.add(new T.LineSegments(new T.EdgesGeometry(new T.CylinderGeometry(rr, rr, 0.6, 24)), M(0xffcf5f, 0.9)).translateY(0.6));
