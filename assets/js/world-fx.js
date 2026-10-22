@@ -26,9 +26,9 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=38'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=38' : '/assets/data/yarmouth-geo.json?v=38').catch(e => (console.warn('geo', e), null))])
-    .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=38').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=39'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=39' : '/assets/data/yarmouth-geo.json?v=39').catch(e => (console.warn('geo', e), null))])
+    .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
+      import('./world-env.js?v=39').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
 }
 
@@ -77,8 +77,8 @@ function skyline(D, grp, noGeo) {
   const coastE = fx.coastE || coastE0;
   for (const L of D.landmarks) {
     const l = local(L.lat, L.lon), base = warp(l.e, l.n), ht = (L.height_m || 10) * HS, ry = yaw(base);
-    const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label) tag.visible = false; tag.position.copy(base).setY(ht + (L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
-    fx.landmarks[L.key] = { pos: base, name: L.name };
+    const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label) tag.visible = false; tag.position.copy(base).setY(ht + (L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : L.type === 'wheel' ? 22 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
+    fx.landmarks[L.key] = { pos: base, name: L.name, fy: ht + 6 }; (fx.clear || (fx.clear = [[0, 0, PLAZA]])).push([base.x, base.z, L.type === 'tower' ? 30 : L.type === 'wheel' ? 26 : 12]); // approach radius never blocked by colliders
     if (L.song_match || L.song_tag || L.song_patterns) songCluster(L, base, ht);
     if (L.type === 'pier') { // deck from the coast out to sea (east), legs, pavilion at the head
       const ce = coastE(l.n), root = warp(ce, l.n), tip = warp(ce + L.length_m, l.n), N = 10;
@@ -93,7 +93,7 @@ function skyline(D, grp, noGeo) {
       const gl = new T.LineSegments(new T.EdgesGeometry(new T.IcosahedronGeometry(0.7, 0)), mat); gl.position.copy(base).setY(ht + 1.2); grp.add(gl);
       add(base.clone().setY(ht + 1.8), base.clone().setY(ht + 3.2)); add(base.clone().setY(ht + 2.6).add(new T.Vector3(0.7, 0, 0)), base.clone().setY(ht + 2.6).add(new T.Vector3(-0.7, 0, 0)));
     } else if (L.type === 'wheel') {
-      const r = ht / 2, wg = new T.Group(); wg.position.copy(base).setY(r + 1); wg.rotation.y = 0.35; // faces the promenade / spawn side
+      const r = ht / 2, wg = new T.Group(); wg.position.copy(base).setY(r + 12); wg.rotation.y = 0.35; // raised on a plinth: the lowest gondola screen clears the neighbouring Pleasure Beach roofs (v39 audit) // faces the promenade / spawn side
       const rim = new T.LineLoop(new T.BufferGeometry().setFromPoints(Array.from({ length: 48 }, (_, i) => new T.Vector3(Math.cos(i / 48 * 6.283) * r, Math.sin(i / 48 * 6.283) * r, 0))), mat);
       const sp = []; for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283; sp.push(0, 0, 0, Math.cos(a) * r, Math.sin(a) * r, 0); }
       const spg = new T.BufferGeometry(); spg.setAttribute('position', new T.Float32BufferAttribute(sp, 3));
@@ -162,7 +162,8 @@ function geoMat(col, opts = {}) { // holographic fill with vertical glow, distan
 /* ---------- building collision: 2D footprint test in the real-scale core (world x = east, z = -north) ---------- */
 const COLC = 32, COL = new Map();
 function inPoly(p, e, n) { let c = false; for (let i = 0, j = p.length - 1; i < p.length; j = i++) { const [xi, yi] = p[i], [xj, yj] = p[j]; if ((yi > n) !== (yj > n) && e < (xj - xi) * (n - yi) / (yj - yi) + xi) c = !c; } return c; }
-function collide(x, z, r = 0.5) { const e = x, n = -z; if (Math.hypot(e, n) > CORE - 40) return false; const l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); if (!l) return false;
+function roofAt(x, z) { const e = x, n = -z, l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); let h = -1; if (l) for (const b of l) if (inPoly(b.p, e, n)) h = Math.max(h, b.h); return h; }
+function collide(x, z, r = 0.5, raw) { const e = x, n = -z; if (!raw && fx.clear && fx.clear.some(([cx, cz, cr]) => (x - cx) ** 2 + (z - cz) ** 2 < cr * cr)) return false; if (Math.hypot(e, n) > CORE - 40) return false; const l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); if (!l) return false;
   for (const b of l) if (e > b.x0 - r && e < b.x1 + r && n > b.y0 - r && n < b.y1 + r && (inPoly(b.p, e, n) || inPoly(b.p, e + r, n) || inPoly(b.p, e - r, n) || inPoly(b.p, e, n + r) || inPoly(b.p, e, n - r))) return true; return false; }
 function geo(G, grp) {
   // Buildings: indexed per 320 m tile (16-bit indices, shared wall/roof vertices: 2 verts per footprint corner),
@@ -185,13 +186,14 @@ function geo(G, grp) {
     if (Math.abs(A) < minA) return; if (A < 0) pts.reverse();
     const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
     if (holes.some(([e, n, r]) => Math.hypot(cx - e, cy - n) < r)) return;
+    if (G.keepPts && G.keepPts.some(([e, n]) => inPoly(pts, e, n))) { fx.geo.replaced = (fx.geo.replaced || 0) + 1; return; } // the landmark's own model stands in for its OSM footprint
     const h = (h0 || (Math.abs(A) > 900 ? 9 : 6)) * HS, W3 = pts.map(([e, n]) => warp(e, n)), N = W3.length, t = tileFor(W3[0].x, W3[0].z, N * 2), b0 = t.n;
     for (const w of W3) { t.p.push(w.x, 0, w.z, w.x, h, w.z); t.v.push(0, 1); } t.n += N * 2;
     for (let i = 0; i < N; i++) { const j = (i + 1) % N, a = b0 + i * 2, b = b0 + j * 2; t.i.push(a, b, b + 1, a, b + 1, a + 1); if (EDGES) t.e.push(a + 1, b + 1); }
     const tri = T.ShapeUtils.triangulateShape(W3.map(v => new T.Vector2(v.x, v.z)), []); for (const q of tri) t.i.push(b0 + q[0] * 2 + 1, b0 + q[1] * 2 + 1, b0 + q[2] * 2 + 1);
     fx.geo.buildings++;
     if (Math.hypot(cx, cy) < CORE - 40) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; for (const [e, n] of pts) { x0 = Math.min(x0, e); x1 = Math.max(x1, e); y0 = Math.min(y0, n); y1 = Math.max(y1, n); }
-      const b = { p: pts, x0, x1, y0, y1 }; for (let i = Math.floor(x0 / COLC); i <= Math.floor(x1 / COLC); i++) for (let j = Math.floor(y0 / COLC); j <= Math.floor(y1 / COLC); j++) { const k = i + ':' + j; (COL.get(k) || COL.set(k, []).get(k)).push(b); } }
+      const b = { p: pts, x0, x1, y0, y1, h }; for (const k of G.keepScreen || []) if (inPoly(pts, k.e, k.n)) (fx.roofAt || (fx.roofAt = {}))[k.key] = h; for (let i = Math.floor(x0 / COLC); i <= Math.floor(x1 / COLC); i++) for (let j = Math.floor(y0 / COLC); j <= Math.floor(y1 / COLC); j++) { const k = i + ':' + j; (COL.get(k) || COL.set(k, []).get(k)).push(b); } }
   };
   let bi = 0; const BATCH = LITE ? 400 : 900;
   const step = () => { try { const end = Math.min(G.buildings.length, bi + BATCH); for (; bi < end; bi++) one(G.buildings[bi][0], G.buildings[bi][1]);
@@ -397,8 +399,17 @@ function seaEdge(n) { // exact seaward OSM coastline easting at northing n (max 
     if ((n - n0) * (n - n1) <= 0 && n0 !== n1) { const e = c[i] + (c[i + 2] - c[i]) * (n - n0) / (n1 - n0); if (e > -1500 && e > best) best = e; } }
   return best > -1e8 ? best : (fx.coastE ? fx.coastE(n) : 120); }
 function landX(x, z) { return Math.min(x, warp(seaEdge(-z), -z).x - 15); } // never land in the sea: stop 15 m inland of the coastline
+function openNear(x, z) { const C = window.__collide; if (!C || !C(x, z, 0.8)) return [x, z]; // nearest open ground (spiral), never inside a footprint
+  for (let r = 2; r < 80; r += 2) for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2, X = x + Math.cos(a) * r, Z = z + Math.sin(a) * r; if (!C(X, Z, 0.8) && landX(X, Z) === X) return [X, Z]; } return [x, z]; }
+const ray0 = () => fx.ray || (fx.ray = new T.Raycaster());
+function sightClear(x, z, tx, ty, tz) { if (!fx.chunks) return true; const o = new T.Vector3(x, 1.7, z), d = new T.Vector3(tx - x, ty - 1.7, tz - z), L = d.length(); d.normalize(); const rc = ray0(); rc.set(o, d); rc.far = L - 3;
+  const ms = fx.chunks.filter(c => Math.hypot(c.c.x - x, c.c.z - z) - c.r < L + 20).map(c => c.o[0]); return !rc.intersectObjects(ms, false).length; }
+function landing(k) { const L = fx.landmarks[k], t = L.pos, ty = L.fy || 10, C = window.__collide || (() => false);
+  for (const r of [55, 40, 70, 30, 90, 22]) for (let i = 0; i < 16; i++) { const a = Math.atan2(50, -25) + (i % 2 ? 1 : -1) * Math.ceil(i / 2) * Math.PI / 8, x = t.x + Math.cos(a) * r, z = t.z + Math.sin(a) * r;
+    if (x < MB.x0 + 5 || x > MB.x1 - 5 || z < MB.z0 + 5 || z > MB.z1 - 5 || landX(x, z) !== x || C(x, z, 0.8)) continue; if (sightClear(x, z, t.x, ty, t.z)) return [x, z, true]; }
+  const [x, z] = openNear(t.x - 25, t.z + 50); return [x, z, false]; }
 function teleport(x, z, face) {
-  x = Math.max(MB.x0 + 5, Math.min(MB.x1 - 5, x)); z = Math.max(MB.z0 + 5, Math.min(MB.z1 - 5, z)); x = landX(x, z);
+  x = Math.max(MB.x0 + 5, Math.min(MB.x1 - 5, x)); z = Math.max(MB.z0 + 5, Math.min(MB.z1 - 5, z)); x = landX(x, z); [x, z] = openNear(x, z);
   const M = fx.bm; M.fade.classList.remove('on'); void M.fade.offsetWidth; M.fade.classList.add('on');
   closeMap(); setTimeout(() => { P.pos.set(x, P.pos.y, z); if (face) { P.yaw = Math.atan2(-(face[0] - x), -(face[1] - z)); P.pitch = 0.12; } fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }, 180);
 }
@@ -406,7 +417,7 @@ function jumpTo(k) {
   if (k === 'plaza') return teleport(0, 22, [0, -6]);
   const L = fx.landmarks && fx.landmarks[k]; if (!L) return; const t = [L.pos.x, L.pos.z];
   // stand 55 m to the landward/south-west side and look at it (seafront spots: on the prom, facing out)
-  teleport(t[0] - 25, t[1] + 50, t);
+  const [x, z] = landing(k); teleport(x, z, t); // open ground with a clear view of it, preferring the landward/south-west side
 }
 /* ---------- North Sea: big subdivided plane; fragments west of the (warped) coastline are discarded ---------- */
 function sea(coast) {
@@ -571,6 +582,14 @@ export function updateWorldFX(t, dt) {
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
+  audit() { const V = [], C = window.__collide, wp = new T.Vector3(); if (!C) return ['no collision grid'];
+    const items = CL.filter(o => o.visible !== false).map(o => { o.getWorldPosition(wp); return { n: o.userData.title || o.userData.id || o.userData.track || o.name || 'obj', x: wp.x, y: wp.y, z: wp.z }; });
+    for (const it of items) { const h = roofAt(it.x, it.z); if (h >= 0 && it.y < h + 1) V.push(`inside building: ${it.n} y=${it.y.toFixed(1)} roof=${h}`);
+      let ok = false; for (let r = 0; r <= 10 && !ok; r += 2.5) for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283; if (!C(it.x + Math.cos(a) * r, it.z + Math.sin(a) * r)) { ok = true; break; } } if (!ok) V.push(`no open approach within 10 m: ${it.n}`); }
+    if (C(0, 22)) V.push('spawn blocked');
+    for (const k of Object.keys(fx.landmarks)) { const L = fx.landmarks[k], [x, z, see] = landing(k); if (C(x, z, 0.8)) V.push(`landing inside building: ${k}`); if (!see) V.push(`no clear view from landing: ${k}`);
+      const near = items.filter(i => Math.hypot(i.x - L.pos.x, i.z - L.pos.z) < 60); for (const i of near) if (!sightClear(x, z, i.x, i.y, i.z)) V.push(`screen occluded from landing: ${k} -> ${i.n}`); }
+    return { violations: V, items: items.length, replaced: fx.geo && fx.geo.replaced, roofs: fx.roofAt }; },
   openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },
   get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, env: fx.env && { day: +fx.env.state.day.toFixed(2), phase: +fx.env.state.phase.toFixed(3), wx: fx.env.state.wx, wxErr: fx.env.state.wxErr, rain: fx.env.state.rain, lamps: fx.env.state.lampInfo }, cols: COL.size, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, route2: fx.route2Info, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
