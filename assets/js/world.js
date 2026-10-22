@@ -12,14 +12,21 @@ const coarse = matchMedia('(pointer:coarse)').matches;
 /* low-quality fallback: reduced motion, ?lq=1, or a low-end device (few cores / little memory) */
 const LOW = reduced || /[?&]lq=1/.test(location.search) || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 3;
 document.body.classList.toggle('lq', LOW);
+/* LITE (v33): phones / tablets / low memory get the simplified OSM dataset, 1.5x pixel cap, shorter far plane. ?full=1 forces the full set, ?lite=1 forces lite. */
+const LITE = !/[?&]full=1/.test(location.search) && (/[?&]lite=1/.test(location.search) || (() => { try { return sessionStorage.getItem('jx-lite') === '1'; } catch (_) { return false; } })() || coarse || (navigator.deviceMemory || 8) <= 4 || Math.min(screen.width, screen.height) <= 820);
+const werr = m => { try { (window.__werr || console.error)(m); } catch (_) {} };
 const canvas = document.getElementById('scene');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: !LOW, powerPreference: 'high-performance' });
-const capDPR = () => Math.min(window.devicePixelRatio || 1, LOW ? 1 : coarse ? 1.5 : 2);
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: !LOW && !LITE, powerPreference: LITE ? 'default' : 'high-performance', failIfMajorPerformanceCaveat: false }); }
+catch (e) { werr('WebGL could not start: ' + (e && e.message || e) + ' (try closing other tabs, or Chrome > Settings > Hardware acceleration)'); throw e; }
+canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); window.__glLost = (window.__glLost || 0) + 1; werr('3D context lost (GPU reset #' + window.__glLost + '), restoring…'); }, false);
+canvas.addEventListener('webglcontextrestored', () => { werr('3D context restored'); setTimeout(() => window.__werr && window.__werr(''), 2500); if (window.__glLost >= 2) { try { sessionStorage.setItem('jx-lite', '1'); } catch (_) {} } }, false);
+const capDPR = () => Math.min(window.devicePixelRatio || 1, LOW ? 1 : (coarse || LITE) ? 1.5 : 2);
 renderer.setPixelRatio(capDPR());
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x050607);
 scene.fog = LOW ? null : new THREE.FogExp2(0x03100b, 0.011);
-const camera = new THREE.PerspectiveCamera(70, 1, 0.3, 6000);
+const camera = new THREE.PerspectiveCamera(70, 1, 0.5, LITE ? 3500 : 6000);
 const player = { pos: new THREE.Vector3(0, 1.7, 22), yaw: 0, pitch: 0 };
 
 /* ---------- world ---------- */
@@ -350,8 +357,15 @@ window.JX ? bootPanel() : addEventListener('DOMContentLoaded', bootPanel);
 /* ---------- loop ---------- */
 function resize() { const w = innerWidth, h = innerHeight; renderer.setPixelRatio(capDPR()); renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
-import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=32';
-buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+// rotation: Android reports the new size late, so re-layout now and again after the viewport settles
+const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 600); };
+addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
+/* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
+let updateWorldFX = () => {};
+import('./world-fx.js?v=33').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+    updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
+    Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
+  .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
 const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
 const MOVE = 7, TURN = 1.8;
 function tick() {
@@ -372,10 +386,11 @@ function tick() {
   animateHolos(clock.elapsedTime, dt);
   updateWorldFX(clock.elapsedTime, dt);
   renderer.render(scene, camera);
+  if (!window.__worldReady) { window.__worldReady = true; document.documentElement.dataset.world = 'ok'; }
 }
 renderer.setAnimationLoop(tick);
 document.addEventListener('visibilitychange', () => renderer.setAnimationLoop(document.hidden ? null : tick));
 /* test/debug hook (read-only snapshot) */
-window.__world = { face(lane) { const m = clickables.find(o => o.userData.id === lane); player.pos.set(m.position.x, 1.7, m.position.z + 14); player.yaw = 0; player.pitch = 0.15; }, project(lane) { const m = clickables.find(o => o.userData.id === lane); const v = m.position.clone().project(camera); const r = canvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; }, goto(x, z, yaw = 0, pitch = 0) { player.pos.set(x, 1.7, z); player.yaw = yaw; player.pitch = pitch; }, get low() { return LOW; }, get state() { return { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch }; } };
+window.__world = { face(lane) { const m = clickables.find(o => o.userData.id === lane); player.pos.set(m.position.x, 1.7, m.position.z + 14); player.yaw = 0; player.pitch = 0.15; }, project(lane) { const m = clickables.find(o => o.userData.id === lane); const v = m.position.clone().project(camera); const r = canvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; }, goto(x, z, yaw = 0, pitch = 0) { player.pos.set(x, 1.7, z); player.yaw = yaw; player.pitch = pitch; }, get low() { return LOW; }, get lite() { return LITE; }, get state() { return { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch }; } };
 
-Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(worldDebug));
+

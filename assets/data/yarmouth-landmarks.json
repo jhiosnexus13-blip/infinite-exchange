@@ -39,8 +39,16 @@
    "lon": 1.7359856,
    "type": "wheel",
    "height_m": 45,
-   "song_match": "pleasure bitch",
-   "crosscheck": "Cross-check (2026-10-22): OSM way 179321094 tourism=theme_park 'Pleasure Beach' (Nominatim) centroid 52.5932831,1.7359856, bbox 52.59123-52.59527 / 1.73541-1.73656, Wikidata Q3115993; postcodes.io NR30 3EH 52.594522,1.736190 (inside the park's postcode area)."
+   "crosscheck": "Cross-check (2026-10-22): OSM way 179321094 tourism=theme_park 'Pleasure Beach' (Nominatim) centroid 52.5932831,1.7359856, bbox 52.59123-52.59527 / 1.73541-1.73656, Wikidata Q3115993; postcodes.io NR30 3EH 52.594522,1.736190 (inside the park's postcode area).",
+   "wheel_slots": 5,
+   "wheel_track_ids": [
+    "pleasure-bitch-original-version",
+    "pleasure-bitch-feat-luce-aether-fried-phonk-remix",
+    "pleasure-bitch-feat-luce-aether-fried-remix",
+    null,
+    null
+   ],
+   "wheel_note": "Gondola screens on the big wheel. Joseph says there are 5 Pleasure Bitch tracks; only 3 are in tracks.json. To fill a slot, put the track id (from tracks.json) in place of a null."
   },
   {
    "key": "minster",
@@ -94,9 +102,13 @@
    "lon": 1.7383001,
    "type": "pub",
    "height_m": 10,
-   "song_match": "iron duke",
    "source": "OSM way 232015022 'The Iron Duke', Jellicoe Road, Newtown, NR30 4HB via Nominatim 2026-10-22 (building on the North Drive / Jellicoe Road corner, north of the Waterways). Not present as amenity=pub in the Geofabrik extract, only as a named building.",
-   "crosscheck": "Cross-check: postcodes.io NR30 4HB centroid 52.627300,1.737048 (~100 m SW of the OSM building, same block); OSM building bbox 52.62773-52.62796 / 1.73814-1.73850; Wikidata Q55457632. Order check: northernmost placed spot, east of The Avenues."
+   "crosscheck": "Cross-check: postcodes.io NR30 4HB centroid 52.627300,1.737048 (~100 m SW of the OSM building, same block); OSM building bbox 52.62773-52.62796 / 1.73814-1.73850; Wikidata Q55457632. Order check: northernmost placed spot, east of The Avenues.",
+   "song_patterns": [
+    "lee[\\s-]?t\\b",
+    "iron\\s*duke"
+   ],
+   "song_note": "Matches title, artist, album, feat. and tags case-insensitively ('Lee T', 'LeeT', 'Lee-T', 'Iron Duke'). As of 2026-10-22 no track in tracks.json matches."
   },
   {
    "key": "the_avenues",
@@ -110,16 +122,16 @@
   },
   {
    "key": "newtown_archive",
-   "name": "Newtown Archive",
-   "lat": 52.6192,
-   "lon": 1.7335,
+   "name": "Newtown Archive (Newtown Community Centre)",
+   "lat": 52.625267,
+   "lon": 1.735168,
    "type": "archive",
-   "height_m": 18,
+   "height_m": 14,
    "song_tag": "newtown-archive",
    "song_match": "newtown",
    "song_album": "NEWTOWN",
-   "source": "Placed in Newtown between Beaconsfield Road (OSM way 446516559, 52.61816,1.73415) and Salisbury Road (OSM way 253831712, 52.61983,1.73374) via Nominatim 2026-10-22. Fictional site object.",
-   "crosscheck": "Cross-check: postcodes.io NR30 4JP (Beaconsfield Rd) 52.618560,1.730968 and NR30 4LS (Salisbury Rd) 52.619970,1.736468; the spot lies between them."
+   "source": "Newtown Community Centre, Beatty Close, Great Yarmouth NR30 4BN. OSM way 733110190 amenity=community_centre (Geofabrik Norfolk extract 2026-10-22), centroid 52.625267,1.735168; joined on its north side to an OSM playground/park (way 733110189, centroid 52.625424,1.735141); ~110 m ENE of (behind) The Avenues pub, Beatty Road.",
+   "crosscheck": "postcodes.io NR30 4BN centroid 52.624675,1.734726 (~70 m SW, same block); great-yarmouth.gov.uk article 9593 and greatyarmouthonline.co.uk give 'Newtown Community Centre, Beatty Close, NR30 4BN'; place listing 'Newtown Youth and Community Centre' 52.625289,1.735241 (~5 m from the OSM centroid)."
   },
   {
    "key": "arc_cinema",
