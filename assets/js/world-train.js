@@ -6,7 +6,7 @@
 let T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV;
 const STOPS = [['north_drive', 'North Drive', 52.624514, 1.738397], ['britannia_pier', 'Britannia Pier', 52.6081748, 1.7395651], ['tower_complex', 'Tower Complex', 52.604471, 1.736196],
   ['wellington_pier', 'Wellington Pier', 52.5993089, 1.7366743], ['pleasure_beach', 'Pleasure Beach', 52.5937437, 1.7355419], ['harbour_mouth', 'Harbour Mouth', 52.57256, 1.73889]];
-const CARS = [[6.5, 0x00e5ff], [7.5, 0xff5fd2], [7.5, 0xffc84a], [7.5, 0x9d7dff]], GAP = 1.2, CW = 2.6, CH = 2.6;
+const CARS = [[4.6, 0x00e5ff], [6.2, 0xff5fd2], [6.2, 0xffc84a], [6.2, 0x9d7dff]], GAP = 1.0, CW = 2.3, CH = 2.6; // v42: engine + 3 open canopy carriages, like the real Golden Mile road train
 
 export function initTrain(o) {
   ({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV } = o); const G = o.G, ORG = o.ORG;
@@ -17,7 +17,9 @@ export function initTrain(o) {
   for (let i = 0; i < south.length; i++) { const k = south.findIndex((p, j) => j > i && p[0] === south[i][0] && p[1] === south[i][1]); if (k > 0) south.splice(i + 1, k - i); } // drop the Britannia Pier out-and-back spur
   const north = [[114, 2371], [112, 2123], [107, 1789]]; // North Drive (OSM) up to the seafront shelter
   const spur = []; if (G.harbour_spur) { const c = G.harbour_spur.coords; for (let i = 2; i < c.length; i += 2) spur.push([c[i], c[i + 1]]); }
-  const en = north.concat(south.reverse(), spur), path = en.map(([e, n]) => warp(e, n)), cum = [0];
+  let en = north.concat(south.reverse(), spur);
+  for (let it = 0; it < 3; it++) { const o2 = [en[0]]; for (let i = 0; i < en.length - 1; i++) { const a = en[i], b = en[i + 1]; o2.push([a[0] * 0.75 + b[0] * 0.25, a[1] * 0.75 + b[1] * 0.25], [a[0] * 0.25 + b[0] * 0.75, a[1] * 0.25 + b[1] * 0.75]); } o2.push(en[en.length - 1]); en = o2; } // v42: Chaikin-rounded corners (smooth ride)
+  const path = en.map(([e, n]) => warp(e, n)), cum = [0];
   for (let i = 1; i < path.length; i++) cum.push(cum[i - 1] + path[i].distanceTo(path[i - 1]));
   const L = cum[cum.length - 1];
   const at = (s, out) => { s = Math.max(0, Math.min(L, s)); let lo = 0, hi = cum.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (cum[m] <= s) lo = m; else hi = m; }
@@ -28,39 +30,50 @@ export function initTrain(o) {
   const tmp = {};
   const stops = STOPS.map(([k, name, lat, lon]) => { const q = loc(lat, lon), w = warp(q.e, q.n), [s] = project(w.x, w.z); at(s, tmp);
     // platform on the landward (west) side of the road
+    if (k === 'north_drive') { const dx = w.x - tmp.x, dz = w.z - tmp.z, l = Math.hypot(dx, dz) || 1; // the real seafront shelter IS this stop: board on its road side
+      return { k, name, s, x: w.x - dx / l * 4, z: w.z - dz / l * 4, rx: tmp.x, rz: tmp.z, nx: -dx / l, nz: -dz / l, real: true }; }
     let nx = -tmp.dz, nz = tmp.dx; if (nx > 0) { nx = -nx; nz = -nz; } const px = tmp.x + nx * 6, pz = tmp.z + nz * 6; return { k, name, s, x: px, z: pz, rx: tmp.x, rz: tmp.z, nx, nz }; }).sort((a, b) => a.s - b.s);
   // ---- stop shelters (one merged draw) + labels ----
   const sv = [], push = (a, b) => sv.push(a[0], a[1], a[2], b[0], b[1], b[2]);
   for (const st of stops) { const tx = -st.nz, tz = st.nx, c = (u, y, v) => [st.x + tx * u + st.nx * v, y, st.z + tz * u + st.nz * v];
-    for (const [u, v] of [[-3, -1.2], [3, -1.2], [-3, 1.2], [3, 1.2]]) push(c(u, 0, v), c(u, 3.2, v));
-    for (const y of [3.2, 3.5]) { push(c(-3.4, y, -1.6), c(3.4, y, -1.6)); push(c(-3.4, y, 1.6), c(3.4, y, 1.6)); push(c(-3.4, y, -1.6), c(-3.4, y, 1.6)); push(c(3.4, y, -1.6), c(3.4, y, 1.6)); }
+    if (!st.real) { for (const [u, v] of [[-3, -1.2], [3, -1.2], [-3, 1.2], [3, 1.2]]) push(c(u, 0, v), c(u, 3.2, v));
+    for (const y of [3.2, 3.5]) { push(c(-3.4, y, -1.6), c(3.4, y, -1.6)); push(c(-3.4, y, 1.6), c(3.4, y, 1.6)); push(c(-3.4, y, -1.6), c(-3.4, y, 1.6)); push(c(3.4, y, -1.6), c(3.4, y, 1.6)); } }
     for (let k = 0; k < 16; k++) { const a0 = k / 16 * 6.283, a1 = (k + 1) / 16 * 6.283; push([st.x + Math.cos(a0) * 5, 0.2, st.z + Math.sin(a0) * 5], [st.x + Math.cos(a1) * 5, 0.2, st.z + Math.sin(a1) * 5]); }
     const lab = LBL('🚂 ' + st.name.toUpperCase(), '#00e5ff', LITE ? 1.6 : 1.8); lab.position.set(st.x, 5.6, st.z); S.add(lab); }
   const sg = new T.BufferGeometry(); sg.setAttribute('position', new T.Float32BufferAttribute(sv, 3));
   const sMat = new T.LineBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.8, blending: T.AdditiveBlending, depthWrite: false, fog: false });
   const shel = new T.LineSegments(sg, sMat); shel.raycast = () => {}; S.add(shel);
-  // ---- train: 4 wire cars, one dynamic LineSegments with vertex colours ----
-  const EDGES = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]], PER = EDGES.length * 2 + 8; // + 4 extra lines (roof canopy / windows)
-  const NV = CARS.length * PER, tp = new Float32Array(NV * 3), tc = new Float32Array(NV * 3);
-  { let v = 0; for (const [, hex] of CARS) { const c = new T.Color(hex); for (let i = 0; i < PER; i++, v++) { tc[v * 3] = c.r; tc[v * 3 + 1] = c.g; tc[v * 3 + 2] = c.b; } } }
+  // ---- train (v42): engine + 3 open-sided carriages with canopy roofs, one dynamic LineSegments with vertex colours ----
+  const SEGS = 52, NV = CARS.length * SEGS * 2, tp = new Float32Array(NV * 3), tc = new Float32Array(NV * 3);
+  { let v = 0; for (const [, hex] of CARS) { const c = new T.Color(hex); for (let i = 0; i < SEGS * 2; i++, v++) { tc[v * 3] = c.r; tc[v * 3 + 1] = c.g; tc[v * 3 + 2] = c.b; } } }
   const tg = new T.BufferGeometry(); tg.setAttribute('position', new T.BufferAttribute(tp, 3)); tg.setAttribute('color', new T.BufferAttribute(tc, 3));
   const tMat = new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.95, blending: T.AdditiveBlending, depthWrite: false, fog: false });
   const train = new T.LineSegments(tg, tMat); train.frustumCulled = false; train.raycast = () => {}; S.add(train);
-  const hit = new T.Mesh(new T.BoxGeometry(CW + 2, CH + 2, 34), new T.MeshBasicMaterial({ visible: false })); S.add(hit);
+  const hit = new T.Mesh(new T.BoxGeometry(CW + 2, CH + 2, 30), new T.MeshBasicMaterial({ visible: false })); S.add(hit);
   const TLEN = CARS.reduce((a, c) => a + c[0] + GAP, 0);
   // ---- state ----
-  const st = { s: stops[0].s, dir: 1, v: 0, mode: 'dwell', wait: 4, riding: false, target: null, lastSet: null, rideSpeed: L / 36, idleSpeed: LITE ? 14 : 14 };
+  const st = { s: stops[0].s, dir: 1, v: 0, mode: 'dwell', wait: 4, riding: false, target: null, lastSet: null, rideSpeed: L / 48, idleSpeed: LITE ? 14 : 14 };
   const p0 = {}, p1 = {};
-  function drawTrain() { let v = 0; const hx = []; let s = st.s; // lead car at st.s, cars trail behind against the travel direction
-    for (let c = 0; c < CARS.length; c++) { const len = CARS[c][0]; const sF = s, sB = s - st.dir * len; at(sF, p0); at(sB, p1);
-      const fx_ = p0.x, fz = p0.z, bx = p1.x, bz = p1.z; let dx = fx_ - bx, dz = fz - bz; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l; const nx = -dz * CW / 2, nz = dx * CW / 2, y0 = 0.5, y1 = y0 + (c === 0 ? CH + 0.6 : CH);
-      const V = [[bx - nx, y0, bz - nz], [fx_ - nx, y0, fz - nz], [fx_ + nx, y0, fz + nz], [bx + nx, y0, bz + nz], [bx - nx, y1, bz - nz], [fx_ - nx, y1, fz - nz], [fx_ + nx, y1, fz + nz], [bx + nx, y1, bz + nz]];
-      for (const [a, b] of EDGES) { tp.set(V[a], v * 3); tp.set(V[b], v * 3 + 3); v += 2; }
-      const ym = y0 + 1.1, mid = (u, side, y) => [bx + (fx_ - bx) * u + side * nx, y, bz + (fz - bz) * u + side * nz];
-      for (const side of [-1, 1]) { tp.set(mid(0.05, side, ym), v * 3); tp.set(mid(0.95, side, ym), v * 3 + 3); v += 2; }
-      if (c === 0) { tp.set([fx_ - dx * 1.5, y1, fz - dz * 1.5], v * 3); tp.set([fx_ - dx * 1.5, y1 + 1.6, fz - dz * 1.5], v * 3 + 3); v += 2; tp.set(mid(0.5, 0, y1), v * 3); tp.set(mid(0.5, 0, y1 + 0.8), v * 3 + 3); v += 2; }
-      else { tp.set(mid(0.5, -1, y1), v * 3); tp.set(mid(0.5, 1, y1), v * 3 + 3); v += 2; tp.set(mid(0.2, 0, y1), v * 3); tp.set(mid(0.8, 0, y1), v * 3 + 3); v += 2; }
-      if (c === 0) hx.push((fx_ + bx) / 2, (fz + bz) / 2, dx, dz);
+  function drawTrain() { let v = 0, s = st.s; const hideOwn = st.riding; // riding: your own carriage is not drawn, so nothing frames the view
+    for (let c = 0; c < CARS.length; c++) { const len = CARS[c][0], sF = s, sB = s - st.dir * len; at(sF, p0); at(sB, p1);
+      const fx_ = p0.x, fz = p0.z, bx = p1.x, bz = p1.z; let dx = fx_ - bx, dz = fz - bz; const l = Math.hypot(dx, dz) || 1; dx /= l; dz /= l; const nx = -dz * CW / 2, nz = dx * CW / 2;
+      const P3 = (u, side, y) => [bx + (fx_ - bx) * u + side * nx, y, bz + (fz - bz) * u + side * nz], L2 = (a, b) => { if (v >= (c + 1) * SEGS * 2) return; tp.set(a, v * 3); tp.set(b, v * 3 + 3); v += 2; };
+      const start = c * SEGS * 2; v = start;
+      if (!(hideOwn && c === 1)) {
+        const wl = (u, side) => { for (let k = 0; k < 6; k++) { const a0 = k / 6 * 6.283, a1 = (k + 1) / 6 * 6.283, r = 0.38; L2([...P3(u + Math.cos(a0) * r / len, side * 1.02, 0.4 + Math.sin(a0) * r)], [...P3(u + Math.cos(a1) * r / len, side * 1.02, 0.4 + Math.sin(a1) * r)]); } };
+        if (c === 0) { // engine: low bonnet up front, small open cab with a roof behind it
+          for (const side of [-1, 1]) { L2(P3(0, side, 0.7), P3(1, side, 0.7)); L2(P3(0.45, side, 1.7), P3(1, side, 1.7)); L2(P3(1, side, 0.7), P3(1, side, 1.7)); L2(P3(0.45, side, 0.7), P3(0.45, side, 1.7));
+            L2(P3(0.05, side, 0.7), P3(0.05, side, 2.7)); L2(P3(0.42, side, 0.7), P3(0.42, side, 2.7)); wl(0.2, side); wl(0.8, side); }
+          for (const y of [0.7, 1.7]) L2(P3(1, -1, y), P3(1, 1, y)); L2(P3(0.45, -1, 1.7), P3(0.45, 1, 1.7)); L2(P3(1, -0.5, 1.2), P3(1, 0.5, 1.2)); // grille
+          for (const [a, b] of [[[0, -1.1, 2.75], [0.47, -1.1, 2.75]], [[0.47, -1.1, 2.75], [0.47, 1.1, 2.75]], [[0.47, 1.1, 2.75], [0, 1.1, 2.75]], [[0, 1.1, 2.75], [0, -1.1, 2.75]]]) L2(P3(...a), P3(...b));
+          L2(P3(0.72, 0, 1.7), P3(0.72, 0, 2.6)); } // funnel
+        else { // open carriage: floor, low sides, corner posts, canopy roof with a slight ridge, bench backs across
+          for (const side of [-1, 1]) { L2(P3(0, side, 0.75), P3(1, side, 0.75)); L2(P3(0, side, 1.25), P3(1, side, 1.25)); for (const u of [0.02, 0.5, 0.98]) L2(P3(u, side, 0.75), P3(u, side, 2.75)); wl(0.18, side); wl(0.82, side);
+            L2(P3(-0.03, side * 1.12, 2.8), P3(1.03, side * 1.12, 2.8)); L2(P3(-0.03, side * 1.12, 2.8), P3(-0.03, side * 0, 3.15)); L2(P3(1.03, side * 1.12, 2.8), P3(1.03, 0, 3.15)); }
+          L2(P3(-0.03, 0, 3.15), P3(1.03, 0, 3.15)); for (const u of [0, 1]) L2(P3(u, -1, 0.75), P3(u, 1, 0.75));
+          for (const u of [0.25, 0.5, 0.75]) { L2(P3(u, -1, 1.65), P3(u, 1, 1.65)); L2(P3(u, -1, 1.1), P3(u, 1, 1.1)); } }
+      }
+      for (; v < start + SEGS * 2; v += 2) { tp.set([0, -50, 0], v * 3); tp.set([0, -50, 0], v * 3 + 3); } // unused slots parked out of sight
       s = sB - st.dir * GAP; }
     tg.attributes.position.needsUpdate = true;
     at(st.s - st.dir * TLEN / 2, p1); hit.position.set(p1.x, 2, p1.z); hit.rotation.y = Math.atan2(p1.dx, p1.dz); }
@@ -94,14 +107,20 @@ export function initTrain(o) {
     if (!dest || dest === here && d < 45) dest = Math.abs(st.s - stops[0].s) > Math.abs(st.s - stops[stops.length - 1].s) ? stops[0] : stops[stops.length - 1];
     if (Math.abs(dest.s - st.s) < 2) return;
     st.riding = true; st.v = 0; setTarget(dest); st.s = st.s + 0; // lead car is where you sit
-    P.yaw = Math.atan2(-at(st.s, tmp).dx * st.dir, -tmp.dz * st.dir); P.pitch = -0.05; place(); fx.trainLog = (fx.trainLog || 0) + 1; }
+    P.yaw = Math.atan2(-at(st.s, tmp).dx * st.dir, -tmp.dz * st.dir); P.pitch = -0.04; camInit = false; place(); fx.trainLog = (fx.trainLog || 0) + 1; }
   function hopOff() { if (!st.riding) return; if (st.v < 2) return exitAt(null); // stopped: step off right here
     const next = st.dir > 0 ? stops.find(s => s.s > st.s + 5) : [...stops].reverse().find(s => s.s < st.s - 5); if (next) setTarget(next); else exitAt(null); st.hop = true; }
   function exitAt(s) { st.riding = false; st.hop = false; st.mode = 'dwell'; st.wait = 6; st.v = 0; let x, z;
     if (s) { x = s.x + s.nx * 3; z = s.z + s.nz * 3; } else { at(st.s, tmp); let nx = -tmp.dz, nz = tmp.dx; if (nx > 0) { nx = -nx; nz = -nz; } x = tmp.x + nx * 7; z = tmp.z + nz * 7; }
     [x, z] = openNear(x, z); P.pos.set(x, 1.7, z); P.pitch = 0; st.lastSet = null; fx.cullT = 0; }
   function walkTo(s) { const [x, z] = openNear(s.x + s.nx * 4, s.z + s.nz * 4); P.pos.set(x, 1.7, z); P.yaw = Math.atan2(-(s.rx - x), -(s.rz - z)); P.pitch = 0.05; fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }
-  function place() { at(st.s - st.dir * 2.5, tmp); P.pos.set(tmp.x, 3.4, tmp.z); st.lastSet = [tmp.x, tmp.z]; }
+  const seat = {}; let camInit = false;
+  function place(dt = 0, t = 0) { const sS = st.s - st.dir * (CARS[0][0] + GAP + 1.0); at(sS, tmp); // front bench of the first open carriage
+    const side = (-tmp.dz * st.dir) * 0 + 1, nx = -tmp.dz * st.dir, nz = tmp.dx * st.dir, sea = nx > 0 ? 1 : -1; // nudge 0.5 m toward the sea side of the bench
+    const tx = tmp.x + nx * 0.5 * sea, tz = tmp.z + nz * 0.5 * sea;
+    if (!camInit || !dt) { seat.x = tx; seat.z = tz; camInit = true; } else { const k = Math.min(1, dt * 10); seat.x += (tx - seat.x) * k; seat.z += (tz - seat.z) * k; }
+    const sway = RED ? 0 : Math.sin(t * 2.1) * 0.03 * Math.min(1, st.v / 20);
+    P.pos.set(seat.x, 2.2 + (RED ? 0 : Math.abs(Math.sin(t * 4.2)) * 0.02 * Math.min(1, st.v / 20)), seat.z); st.lastSet = [P.pos.x, P.pos.z]; st.sway = sway; }
   // tap the train (own raycast against the hidden hit box; nothing joins the clickables, so lane picks / jump map are untouched)
   const ray = new T.Raycaster(), ndc = new T.Vector2(); let down = null;
   CV.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
@@ -111,10 +130,10 @@ export function initTrain(o) {
   let uiT = 0, lastLabel = '';
   function update(t, dt) {
     if (st.riding && st.lastSet && Math.hypot(P.pos.x - st.lastSet[0], P.pos.z - st.lastSet[1]) > 4) { st.riding = false; st.hop = false; st.mode = 'dwell'; st.wait = 3; st.v = 0; P.pos.y = 1.7; st.lastSet = null; } // jumped away via the map
-    if (st.riding) { const rem = Math.abs(st.target.s - st.s), vmax = st.rideSpeed, acc = vmax / 3.5;
+    if (st.riding) { const rem = Math.abs(st.target.s - st.s), vmax = st.rideSpeed, acc = vmax / 6;
       st.v = Math.min(vmax, st.v + acc * dt, Math.sqrt(2 * acc * rem) + 1); st.s += st.dir * Math.min(rem, st.v * dt);
       if (rem - st.v * dt <= 0.05) { st.s = st.target.s; const s = st.target; drawTrain(); exitAt(s); }
-      else { place(); at(st.s, tmp); const want = Math.atan2(-tmp.dx * st.dir, -tmp.dz * st.dir); let d = want - P.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); P.yaw += d * Math.min(1, dt * 1.2); CAM.position.copy(P.pos); CAM.rotation.set(P.pitch, P.yaw, 0, 'YXZ'); } }
+      else { place(dt, t); at(st.s + st.dir * 12, p0); at(st.s - st.dir * 6, p1); const hx = (p0.x - p1.x), hz = (p0.z - p1.z), h0 = Math.atan2(-hx, -hz), seaBias = (-Math.sin(h0 + 0.2) > -Math.sin(h0 - 0.2) ? 0.2 : -0.2), want = h0 + seaBias; /* look ahead along the road, a little toward the sea */ let d = want - P.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); P.yaw += d * Math.min(1, dt * 2.0); CAM.position.copy(P.pos); CAM.rotation.set(P.pitch, P.yaw, st.sway || 0, 'YXZ'); } }
     else if (!RED) { // idle shuttle: end to end, dwelling at each stop
       if (st.mode === 'dwell') { st.wait -= dt; if (st.wait <= 0) { const i = stops.findIndex(s => Math.abs(s.s - st.s) < 1); let j = i + st.dir; if (j < 0 || j >= stops.length) { st.dir = -st.dir; j = i + st.dir; } if (i < 0) j = st.dir > 0 ? stops.findIndex(s => s.s > st.s) : stops.length - 1; st.target = stops[Math.max(0, Math.min(stops.length - 1, j))]; st.mode = 'run'; } }
       else { const rem = Math.abs(st.target.s - st.s), v = Math.min(st.idleSpeed, Math.sqrt(rem * 4) + 1); st.s += st.dir * Math.min(rem, v * dt); if (rem <= 0.05 + v * dt) { st.s = st.target.s; st.mode = 'dwell'; st.wait = 8; } } }

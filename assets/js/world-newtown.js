@@ -13,12 +13,13 @@ export function initNewtown(o, X) {
   const RC = X.racecourse; if (RC) { const post = LITE ? 30 : 14;
     for (const R of [...RC.outer, ...RC.inner]) { ring(0xe8fff6, R, 1.0); ring(0xe8fff6, R, 1.35);
       let acc = 0; for (let i = 0; i < R.length; i++) { const a = W(R[i]), b = W(R[(i + 1) % R.length]), L = a.distanceTo(b); for (let s = (post - acc % post) % post; s < L; s += post) { const q = a.clone().lerp(b, s / L); seg(0xe8fff6, q.clone().setY(0), q.clone().setY(1.35)); } acc += L; } }
-    const o0 = RC.outer[0], c = o0.reduce((s, p) => [s[0] + p[0] / o0.length, s[1] + p[1] / o0.length], [0, 0]);
-    label('GREAT YARMOUTH RACECOURSE', c, 34, '#7dffe0', 14);
+    // v42: label over the south straight (near the stand) instead of the vertex-average centre ~900 m up the course
+    const o0 = RC.outer[0], xs = o0.map(p => p[0]), ns = o0.map(p => p[1]), c = [(Math.min(...xs) + Math.max(...xs)) / 2, Math.min(...ns) + 260];
+    label('GREAT YARMOUTH RACECOURSE', c, 26, '#7dffe0', 12);
     if (RC.stand) { const R = RC.stand.ring; for (const y of [3, 6, 9, 10.5]) ring(0xffc84a, R, y); for (const p of R) seg(0xffc84a, W(p, 0), W(p, 10.5));
       const sc = R.reduce((s, p) => [s[0] + p[0] / R.length, s[1] + p[1] / R.length], [0, 0]); label('LORD NELSON STAND', sc, 14, '#ffc84a', 2);
       // jump spot: on the grass between the stand and the rail, facing the course
-      const dx = c[0] - sc[0], dn = c[1] - sc[1], dl = Math.hypot(dx, dn) || 1, j = [sc[0] + dx / dl * 45, sc[1] + dn / dl * 45], jw = W(j), cw = W(c);
+      const j = [sc[0] + 38, sc[1] + 6], jw = W(j), cw = W([c[0], c[1] + 120]); // v42: in front of the stand, looking NNE up the course at the label
       (fx.extraJumps || (fx.extraJumps = {})).racecourse = [jw.x, jw.z, [cw.x, cw.z]]; }
     (fx.mapSpots || (fx.mapSpots = [])).push({ pos: W(c), col: '#7dffe0', label: 'RACECOURSE' }); info.racecourse = { rings: RC.outer.length + RC.inner.length, centre: c }; }
   // ---- North Denes Road ----
