@@ -85,11 +85,33 @@
   },
   {
    "key": "gorleston_harbour",
-   "name": "Gorleston South Pier lighthouse / harbour mouth",
+   "name": "Gorleston Coastwatch",
    "lat": 52.5721123,
    "lon": 1.738101,
+   "type": "coastwatch",
+   "height_m": 6,
+   "osm": "node 2326738997 (South Pier)",
+   "source": "National Coastwatch Institution lookout on Gorleston South Pier (not a lighthouse); model from Geograph photos 1605191, 7675062, 1605195, 433470 (CC BY-SA 2.0), v58."
+  },
+  {
+   "key": "gorleston_lighthouse",
+   "name": "Gorleston Lighthouse",
+   "lat": 52.572122,
+   "lon": 1.732303,
    "type": "lighthouse",
-   "height_m": 18
+   "height_m": 21,
+   "osm": "way 223802990 'Gorleston (Range Rear) Lighthouse', Riverside Road",
+   "source": "Red-brick range rear light, built 1878; centroid of OSM way 223802990 (OSM API 2026-10-22); model from Commons/Geograph photos (CC BY-SA 2.0), v58."
+  },
+  {
+   "key": "herring_bridge",
+   "name": "Herring Bridge",
+   "lat": 52.592965,
+   "lon": 1.726055,
+   "type": "bascule_bridge",
+   "height_m": 8,
+   "osm": "way 1248888737 man_made=bridge, bridge:movable=bascule",
+   "source": "Great Yarmouth Third River Crossing (A1243), twin-leaf bascule over the River Yare, opened Feb 2024; centre of the OSM bridge outline (OSM API 2026-10-22); model from Geograph photos 7838775, 8073088, 8072838, 7838745, 8073076 (CC BY-SA 2.0), v58."
   },
   {
    "key": "venetian_waterways",
