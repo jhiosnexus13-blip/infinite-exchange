@@ -13,6 +13,7 @@ export function initStreets(o, X) {
   for (const b of (G && G.buildings) || []) { const f = b[1]; if (f[0] > bb[0] && f[0] < bb[2] && f[1] > bb[1] && f[1] < bb[3]) addBox(P(f)); }
   for (const f of X.buildings) addBox(P(f));
   const park = P(X.park.poly); addBox(park); for (const f of X.green_extra || []) addBox(P(f)); if (X.centre) addBox(P(X.centre.poly)); const TR = X.terrace; if (TR) { const hs = TR.houses; boxes.push([TR.front - TR.depth - 3, hs[0][0] - 1, TR.front + 4, hs[hs.length - 1][0] + TR.w + 1]); }
+  boxes.push([-217, 2325, -176, 2375]); // v56: The Avenue pub + forecourt (built below) keeps filler terraces off its plot
   const hit = (x, y) => boxes.some(q => x > q[0] && x < q[2] && y > q[1] && y < q[3]);
   const dseg = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l)); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); };
   const nearRoad = (p, skip) => roads.some(([n, R]) => n !== skip && R.some((a, i) => i < R.length - 1 && dseg(p, a, R[i + 1]) < 7));
@@ -51,6 +52,13 @@ export function initStreets(o, X) {
   for (let i = 0; i < tv.length; i += 24) { const R = []; for (let j = 0; j < 4; j++) R.push([0, 0]); } // (filler boxes below come from tv directly)
   if (terr) { const tg = geo(tv, ti); grp.add(new T.Mesh(tg, new T.MeshBasicMaterial({ color: 0x8a4e34, side: T.DoubleSide }))); }
   for (const f of X.buildings) { const R = P(f); if (R.length > 2) solid(R, 6.4); }
+  // v56: 'all brick buildings need to be solid too': the main-geo OSM footprints inside the Newtown streets area (drawn as translucent neon blocks
+  // by geo()) get the same solid brick skin at their own height (+0.3 so the brick roof caps the neon one); duplicates of X.buildings are skipped
+  { const seen = new Set(X.buildings.map(f => f[0] + ',' + f[1])); let nb = 0;
+    for (const b of (G && G.buildings) || []) { const f = b[1]; if (!(f[0] > bb[0] && f[0] < bb[2] && f[1] > bb[1] && f[1] < bb[3]) || seen.has(f[0] + ',' + f[1])) continue;
+      const R = P(f); if (R.length < 3) continue; let A = 0; for (let i = 0; i < R.length; i++) { const p = R[i], q = R[(i + 1) % R.length]; A += p[0] * q[1] - q[0] * p[1]; } A = Math.abs(A / 2);
+      solid(R, Math.max(6.4, (b[0] || (A > 900 ? 9 : 6)) + 0.3)); nb++; }
+    window.__brickSolid = nb; }
   // v54: the terrace Joseph pinned on Sturdee Ave: pink-render ends, red-brick middle pair with pointed front gables, grey roofs, low front walls, cordyline
   if (TR) { const M = c => new T.MeshBasicMaterial({ color: c }), put = (g, m, x, y, h) => { const o3 = new T.Mesh(g, m); const w = warp(x, y); o3.position.set(w.x, h, w.z); grp.add(o3); return o3; };
     const H = 5.6, D = TR.depth, fx0 = TR.front, cxh = fx0 - D / 2, grey = M(0x6b6f74);
@@ -99,6 +107,40 @@ export function initStreets(o, X) {
       add(rg, M(0x5a2e22), cxx, cyy, 3.2, Math.PI / 2);
       for (const dx of [-8, -3, 3, 8]) add(new T.BoxGeometry(1.4, 1.1, 0.1), M(0xdfe8f0), cxx + dx, y1 + 0.05, 1.8);
       const cl = LBL(X.centre.name, '#ffb08a', 1.6); const cw = warp(cxx, cyy); cl.position.set(cw.x, 8, cw.z); S.add(cl); } }
+  // v56: The Avenue pub, Beatty Road (OSM node 601501713 amenity=pub, e-192/n2359; OSM has no footprint, so a ~20x11 m block set back from Beatty Rd
+  // behind its forecourt car park, Beatty Close behind it). From Joseph's Street View: red-brick ground floor, black-and-white half-timbered upper
+  // floor with three steep front gables, dark tiled roof, two tall brick chimneys, single-storey brick wing on the right (south), low brick wall,
+  // red/white/blue striped forecourt fencing, bus shelter on the pavement. Solid, shared materials, timbers merged into one mesh.
+  { const M = c => new T.MeshBasicMaterial({ color: c }), brick = M(0x9c3b26), white = M(0xf1ede3), tile = M(0x33302f), black = M(0x161616);
+    const at = (e, n, y, m, g, ry = 0) => { const ms = new T.Mesh(g, m); const w = warp(e, n); ms.position.set(w.x, y, w.z); ms.rotation.y = ry; grp.add(ms); return ms; };
+    const B = (w, h, d) => new T.BoxGeometry(w, h, d); // w along e (world x), d along n (world -z)
+    const E0 = -195.5, E1 = -184.5, EC = (E0 + E1) / 2, N0 = 2340, N1 = 2360, NC = 2350, D = E1 - E0, Wn = N1 - N0;
+    at(EC, NC, 1.6, brick, B(D, 3.2, Wn));                                   // red-brick ground floor
+    at(EC, NC, 4.6, white, B(D, 2.8, Wn));                                   // rendered upper floor
+    const tri = (w, h, dep) => { const g = new T.ExtrudeGeometry(new T.Shape([new T.Vector2(-w / 2, 0), new T.Vector2(w / 2, 0), new T.Vector2(0, h)]), { depth: dep, bevelEnabled: false }); g.translate(0, 0, -dep / 2); return g; };
+    at(EC, NC, 6.0, tile, tri(D + 0.8, 3.6, Wn + 0.6));                      // main roof (ridge runs along the road)
+    const tim = []; const T1 = (w, h, d, e, n, y) => { const g = B(w, h, d); g.translate(warp(e, n).x, y, warp(e, n).z); tim.push(g); };
+    for (const y of [3.25, 4.6, 5.95]) T1(0.12, 0.22, Wn + 0.04, E0 - 0.04, NC, y);               // horizontal beams on the front
+    for (let n = N0 + 0.3; n <= N1 - 0.2; n += 1.15) T1(0.12, 2.8, 0.2, E0 - 0.04, n, 4.6);        // close studding
+    for (const gn of [N0 + 3.4, NC, N1 - 3.4]) { // three steep front gables, half-timbered
+      const gg = tri(5.8, 4.2, 2.4); gg.rotateY(Math.PI / 2); at(E0 + 0.9, gn, 6.0, white, gg);
+      const rf = tri(6.4, 4.6, 2.6); rf.rotateY(Math.PI / 2); at(E0 + 1.05, gn, 5.95, tile, rf).scale.set(1, 1, 1);
+      T1(0.12, 4.0, 0.18, E0 - 0.36, gn, 8.0); T1(0.12, 0.18, 4.6, E0 - 0.36, gn, 7.2);
+      for (const s2 of [-1, 1]) { const g = B(0.12, 0.18, 3.2); g.rotateX(s2 * Math.atan2(4.2, 2.9)); const w = warp(E0 - 0.36, gn + s2 * 1.45); g.translate(w.x, 8.0, w.z); tim.push(g); } }
+    { const pos = []; for (const g of tim) { const nb = g.toNonIndexed(); pos.push(...nb.attributes.position.array); nb.dispose(); g.dispose(); }
+      const tg = new T.BufferGeometry(); tg.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); grp.add(new T.Mesh(tg, black)); }
+    for (let n = N0 + 1.5; n < N1 - 1; n += 2.6) if (Math.abs(n - NC) > 1.2) at(E0 - 0.05, n, 1.7, M(0xd8e2ea), B(0.1, 1.3, 1.5)); // ground-floor windows
+    at(E0 - 0.05, NC, 1.2, black, B(0.12, 2.3, 1.6));                         // door
+    for (const n of [N0 + 2, N1 - 2]) at(EC + 2.5, n, 10.2, brick, B(1.1, 4.4, 1.3)); // two tall red-brick chimneys
+    at(-189, 2333.5, 1.7, brick, B(9, 3.4, 13)); at(-189, 2333.5, 3.5, tile, B(9.3, 0.25, 13.3)); // single-storey brick wing (right / south)
+    at(-204.5, 2350, 0.07, M(0x2f3236), B(17, 0.04, 44));                      // forecourt car park
+    at(-213.2, 2337, 0.4, brick, B(0.35, 0.8, 18)); at(-213.2, 2364, 0.4, brick, B(0.35, 0.8, 16)); // low brick wall (entrance gap)
+    { const cols = [M(0xc8202c), M(0xf4f4f4), M(0x1f3a93)], seg = new T.BoxGeometry(1, 0.9, 0.08); let k = 0;
+      for (const n of [2328, 2372]) for (let e = -212.5; e < -195.5; e += 1, k++) at(e, n, 0.45, cols[k % 3], seg); } // red/white/blue striped fencing
+    { const sm = M(0x2b2f33); at(-215.2, 2349, 2.45, sm, B(1.6, 0.12, 4)); for (const dn of [-1.9, 1.9]) at(-215.9, 2349 + dn, 1.2, sm, B(0.1, 2.4, 0.1));
+      at(-215.9, 2349, 1.3, new T.MeshBasicMaterial({ color: 0xbfe4ff, transparent: true, opacity: 0.35, depthWrite: false }), B(0.05, 2, 3.8)); } // bus shelter on the pavement
+    at(-211.5, 2366, 2, black, new T.CylinderGeometry(0.1, 0.1, 4, 6)); at(-211.5, 2366, 4, M(0x5a1e1e), B(0.12, 1.2, 1.8)); // pub sign
+    const ps = LBL('THE AVENUE', '#ffd27a', 1.4); const pw2 = warp(-211.5, 2366); ps.position.set(pw2.x, 5.4, pw2.z); S.add(ps); }
   const pl = LBL('NEWTOWN PARK', '#8dffa0', 2.4); pl.position.set(pw.x, 5, pw.z); S.add(pl);
   grp.traverse(m => { m.raycast = () => {}; });
   return window.__streets = { roads: roads.length, terraces: terr, park: [pw.x, pw.z] };
