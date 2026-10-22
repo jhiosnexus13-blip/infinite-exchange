@@ -156,15 +156,15 @@
    "crosscheck": "postcodes.io reverse lookup: nearest postcode NR31 6PL (Pier Plain / South Pier area, Gorleston) 52.571012,1.733835 at 383 m, on the Gorleston bank just inland of the South Pier; Nominatim 'Gorleston South Pier Lighthouse, South Beach Parade, Gorleston-on-Sea' matches the OSM node."
   },
   {
-   "key": "beatty_close_screen",
-   "name": "Above The Riddim (feat. NAM3L3SS)",
+   "key": "beatty-close-flat",
+   "name": "beatty-close-flat",
    "lat": 52.6247,
    "lon": 1.7345,
    "type": "screen",
    "height_m": 12,
    "song_tag": "beatty-close",
    "no_label": true,
-   "source": "Generic street-level point over the Newtown housing block behind The Avenues: centroid of OSM residential way 36883456 (Nominatim 2026-10-22), rounded to 4 decimals. Not tied to any single building."
+   "source": "Requested building is not mapped in OSM at this location (no building footprints or address points on this residential way in the Geofabrik extract / Nominatim, 2026-10-22), so the screens float over the street-level centroid of OSM residential way 36883456 (rounded to 4 decimals), inside the same housing block."
   }
  ],
  "seafront": {

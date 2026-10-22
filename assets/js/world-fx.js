@@ -261,14 +261,14 @@ function songCluster(L, base, ht) {
     fx.clusterInfo = Object.assign(fx.clusterInfo || {}, { [L.key]: list.map(t => t.id) });
     if (!list.length) return;
     const hex = L.type === 'archive' ? '#b48cff' : '#ff5fd2', col = new T.Color(hex), grp = new T.Group(); grp.position.copy(base); S.add(grp);
-    const n = list.length, perTier = Math.min(n, 10), rad = n === 1 ? 0 : Math.max(16, perTier * 2.6), W2 = 10, H2 = 5.6;
+    const n = list.length, perTier = Math.min(n, 10), rad = n === 1 ? 0 : n <= 3 ? 9 : Math.max(16, perTier * 2.6), W2 = 10, H2 = 5.6;
     const frMat = new T.LineBasicMaterial({ color: col, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, fog: false });
     list.forEach((t, i) => { const tier = Math.floor(i / perTier), a = (i % perTier) / perTier * Math.PI * 2 + tier * 0.3;
       const scr = new T.Mesh(new T.PlaneGeometry(W2, H2), new T.MeshBasicMaterial({ map: titleTex(t.title, hex), transparent: true, opacity: 0.95, side: T.DoubleSide, fog: false }));
       scr.position.set(Math.cos(a) * rad, ht + 8 + tier * (H2 + 2.5), Math.sin(a) * rad); scr.add(new T.LineSegments(new T.EdgesGeometry(scr.geometry), frMat));
       scr.userData = { track: t.id, feature: true, title: t.title, yt: window.JX.ytId(t.youtube_url), loaded: false };
       grp.add(scr); CL.push(scr); });
-    const lab = L.no_label ? LBL(list[0].title, hex, 2.6) : LBL(`${list.length} TRACK${list.length > 1 ? 'S' : ''} // TAP TO PLAY`, hex, 2.6); lab.position.set(0, ht + (L.no_label ? 15 : 4), 0); grp.add(lab);
+    const lab = L.no_label ? (n === 1 ? LBL(list[0].title, hex, 2.6) : new T.Group()) : LBL(`${list.length} TRACK${list.length > 1 ? 'S' : ''} // TAP TO PLAY`, hex, 2.6); lab.position.set(0, ht + (L.no_label ? 15 : 4), 0); grp.add(lab);
     fx.clusters.push({ grp, key: L.key, frMat });
   }).catch(e => console.warn('cluster', e));
   window.JX ? boot() : addEventListener('DOMContentLoaded', boot);
