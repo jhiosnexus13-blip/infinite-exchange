@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=48'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=48' : '/assets/data/yarmouth-geo.json?v=48').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=49'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=49' : '/assets/data/yarmouth-geo.json?v=49').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=48').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=48'), j('/assets/data/newtown-extra.json?v=48')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=48').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('dam sign', damSign); safe('food basket', foodBasket); 
-      Promise.all([import('./world-pb.js?v=48'), j('/assets/data/pleasure-beach.json?v=48')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=49').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=49'), j('/assets/data/newtown-extra.json?v=49')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=49').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('dam sign', damSign); safe('food basket', foodBasket); 
+      Promise.all([import('./world-pb.js?v=49'), j('/assets/data/pleasure-beach.json?v=49')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=48').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=48').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=49').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=49').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -174,7 +174,7 @@ function skyline(D, grp, noGeo) {
       add(base.clone().add(new T.Vector3(-14, 0.5, 6)), base.clone().add(new T.Vector3(14, 0.5, -6)));
       fx.mapSpots.push({ pos: base, label: 'HARBOUR', col: '#7fd4ff' }); }
     else if (L.type === 'cinema') { // Arc Cinema: block, marquee canopy and screen sign facing the prom (east)
-      box(base, 30, ht, 22, 0); box(base.clone().add(new T.Vector3(13, 4, 0)), 4, 0.8, 18, 0); box(base.clone().add(new T.Vector3(11.5, ht, 0)), 0.5, 5, 14, 0);
+      safe('arc', () => arcCinema());
       fx.mapSpots.push({ pos: base, label: 'ARC', col: '#ffcc66' }); }
     else if (L.type === 'lighthouse') { box(base, 1.2, ht, 1.2, ry); box(base.clone().setY(ht), 1.6, 1.0, 1.6, ry); fx.beacon = base.clone().setY(ht + 0.5); }
   }
@@ -344,14 +344,14 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=48').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=49').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
   const lab = LBL(DAM.label, '#ff5a6a', 1.8); lab.position.set(0, 4.6, 0.1); g.add(lab);
   // v47: sit ON TOP of the Fallen Angels block: caption just above its roof line, logo above that (waits for the collision grid / roof heights)
-  let tries = 0; const seat = () => { const h = roofAt(c.x, c.z); if (h < 0 && tries++ < 40) return setTimeout(seat, 250); const r = Math.max(h, 0);
-    lab.position.y = r + 1.6; sign.position.y = r + 2.8 + 6.5; fx.damRoof = r; if (window.__dam) window.__dam.roof = r; }; seat();
+  let tries = 0; const seat = () => { const h = roofAt(c.x, c.z); if (h < 0 && tries++ < 40) return setTimeout(seat, 250); const r = Math.max(h, 0, fx.faRoof || 0);
+    const up = Math.max(0, (fx.arcTop || 0) - r - 6); lab.position.y = r + 1.6 + up; sign.position.y = r + 2.8 + 6.5 + up; if (up && !fx.damMast) { const m = new T.LineSegments(new T.BufferGeometry().setFromPoints([new T.Vector3(-1.5, r, 0), new T.Vector3(-1.5, r + up + 1, 0), new T.Vector3(1.5, r, 0), new T.Vector3(1.5, r + up + 1, 0)]), new T.LineBasicMaterial({ color: 0xff5a6a, transparent: true, opacity: 0.6, blending: T.AdditiveBlending, depthWrite: false, fog: false })); m.raycast = () => {}; g.add(m); fx.damMast = m; } fx.damRoof = r; if (window.__dam) window.__dam.roof = r; }; seat();
   fx.dam = window.__dam = { pos: [c.x, c.z], url: DAM.url };
 }
 
@@ -379,6 +379,74 @@ function foodBasket() {
   hit.userData = { link: FOOD.url, title: FOOD.label, id: 'gynet-food-basket' }; g.add(hit); CL.push(hit);
   const lab = LBL(FOOD.label, '#ffcf8a', 1.2); lab.position.set(0, 5.4, 0); g.add(lab);
   fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url };
+}
+
+/* v48: Fallen Angels, 83 Marine Parade (OSM way 175855364), rebuilt from Joseph's Street View (52.60989,1.73770, hdg 226, Mar 2019):
+   2-storey Victorian yellow-brown brick corner building, round-arched windows, chimney, black railings, white rendered arched ground floor on the
+   NE (Marine Parade / Euston Rd roundabout) corner. Drawn just outside the OSM footprint so it hides the generic block; neon edges keep the style. */
+const FA_PTS = [[28, 696], [31, 699], [56, 697], [55, 671], [26, 673]], FA_H = 8.6;
+function fallenAngels() {
+  const P = FA_PTS.map(([e, n]) => warp(e, n)), cx = P.reduce((s, p) => s + p.x, 0) / P.length, cz = P.reduce((s, p) => s + p.z, 0) / P.length;
+  const Q = P.map(p => new T.Vector2(cx + (p.x - cx) * 1.012, cz + (p.z - cz) * 1.012)); // 1% outset over the generic footprint
+  const shape = new T.Shape(Q.map(q => new T.Vector2(q.x, -q.y)));
+  const ex = new T.ExtrudeGeometry(shape, { depth: FA_H, bevelEnabled: false }); ex.rotateX(-Math.PI / 2); // shape y = -z  ->  after rotation z = q.y
+  const g = new T.Group(); g.name = 'fallen-angels'; S.add(g);
+  const wall = new T.Mesh(ex, new T.MeshBasicMaterial({ color: 0x7a6236, fog: false })); g.add(wall);
+  const edge = (geo, col, op = 0.85) => { const l = new T.LineSegments(geo, new T.LineBasicMaterial({ color: col, transparent: true, opacity: op, blending: T.AdditiveBlending, depthWrite: false, fog: false })); g.add(l); return l; };
+  edge(new T.EdgesGeometry(ex, 20), 0xffc870);
+  const L = [], W2 = [], A = (a, b) => L.push(a.x, a.y, a.z, b.x, b.y, b.z);
+  const arch = (o, t, nrm, u, y0, w, h, out) => { const at = (du, dy) => new T.Vector3(o.x + t.x * (u + du) + nrm.x * out, y0 + dy, o.z + t.z * (u + du) + nrm.z * out);
+    A(at(-w / 2, 0), at(-w / 2, h - w / 2)); A(at(w / 2, 0), at(w / 2, h - w / 2)); A(at(-w / 2, 0), at(w / 2, 0));
+    for (let k = 0; k < 8; k++) { const a0 = Math.PI * k / 8, a1 = Math.PI * (k + 1) / 8; const p0 = at(-Math.cos(a0) * w / 2, h - w / 2 + Math.sin(a0) * w / 2), p1 = at(-Math.cos(a1) * w / 2, h - w / 2 + Math.sin(a1) * w / 2); A(p0, p1); } };
+  const NE = 2; // index of the (56,697) corner
+  for (let i = 0; i < Q.length; i++) { const a = Q[i], b = Q[(i + 1) % Q.length], len = a.distanceTo(b); if (len < 4) continue;
+    const t = new T.Vector3((b.x - a.x) / len, 0, (b.y - a.y) / len); let nrm = new T.Vector3(t.z, 0, -t.x); if ((a.x + b.x) / 2 + nrm.x - cx < (a.x + b.x) / 2 - cx === false && false) nrm.negate();
+    const mid = new T.Vector2((a.x + b.x) / 2 - cx, (a.y + b.y) / 2 - cz); if (mid.x * nrm.x + mid.y * nrm.z < 0) nrm.negate(); // outward
+    const o = new T.Vector3(a.x, 0, a.y), toNE = i === NE ? 0 : (i + 1) % Q.length === NE ? len : -1; // distance along this edge of the NE corner, if it ends there
+    const n = Math.max(1, Math.floor(len / 3.4));
+    for (let k = 0; k < n; k++) { const u = (k + 0.5) * len / n, nearNE = toNE >= 0 && Math.abs(u - toNE) < 10;
+      arch(o, t, nrm, u, 4.9, 1.2, 2.4, 0.12); // first-floor arched windows
+      if (nearNE) { // white rendered ground floor with arched openings
+        const wb = new T.Mesh(new T.BoxGeometry(len / n + 0.02, 3.8, 0.3), new T.MeshBasicMaterial({ color: 0xeef0ea, fog: false })); wb.position.set(o.x + t.x * u + nrm.x * 0.2, 1.9, o.z + t.z * u + nrm.z * 0.2); wb.rotation.y = Math.atan2(-t.z, t.x); wb.raycast = () => {}; g.add(wb);
+        arch(o, t, nrm, u, 0, 1.6, 3.2, 0.38); W2.push(u); }
+      else arch(o, t, nrm, u, 0.9, 1.1, 2.2, 0.12); }
+    if (toNE >= 0) for (let u = 0; u < len; u += 0.8) if (Math.abs(u - toNE) >= 10) { const p = new T.Vector3(o.x + t.x * u + nrm.x * 1.2, 0, o.z + t.z * u + nrm.z * 1.2); A(p, p.clone().setY(1.1)); } } // black-painted railings (drawn faint)
+  const lg = new T.BufferGeometry(); lg.setAttribute('position', new T.Float32BufferAttribute(L, 3)); edge(lg, 0xfff0c8, 0.7);
+  const ch = new T.Mesh(new T.BoxGeometry(1.6, 2.4, 1.0), new T.MeshBasicMaterial({ color: 0x6a5430, fog: false })); const c0 = warp(44, 690); ch.position.set(c0.x, FA_H + 1.2, c0.z); g.add(ch); edge(new T.EdgesGeometry(ch.geometry).translate(c0.x, FA_H + 1.2, c0.z), 0xffc870);
+  const cornice = new T.LineSegments(new T.EdgesGeometry(new T.ExtrudeGeometry(shape, { depth: 0.35, bevelEnabled: false }).rotateX(-Math.PI / 2).translate(0, 4.2, 0)), new T.LineBasicMaterial({ color: 0xffd890, transparent: true, opacity: 0.6, blending: T.AdditiveBlending, depthWrite: false, fog: false })); g.add(cornice);
+  g.traverse(o => { o.raycast = () => {}; }); fx.faRoof = FA_H;
+}
+
+/* v48: Arc Cinema (OSM way 958803579, footprint ~e21-55 / n618-673) rebuilt from Joseph's Street View (52.60872,1.73731, looking N up North Drive):
+   ornate cream Victorian block facing SOUTH down North Drive: central pediment/gable, flanking wings with window rows, vertical blue 'THE ARC' banner,
+   wide magenta ground-floor canopy 'FOR THE LOVE OF FILM'. Solid cream + neon edges. */
+function textTex(txt, fg, bg, w = 512, h = 64, vertical = false) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = bg; g.fillRect(0, 0, w, h); g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
+  if (vertical) { const ch = [...txt]; g.font = `900 ${Math.floor(w * 0.62)}px Arial, sans-serif`; ch.forEach((k, i) => g.fillText(k, w / 2, (i + 0.5) * h / ch.length)); }
+  else { g.font = `800 ${Math.floor(h * 0.56)}px Arial, sans-serif`; g.fillText(txt, w / 2, h / 2 + 2); }
+  const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; return t; }
+function arcCinema() {
+  const a = warp(21, 618), b = warp(55, 673), x0 = a.x, x1 = b.x, zS = a.z, zN = b.z, W = x1 - x0, D = zS - zN, cxm = (x0 + x1) / 2, H = 14;
+  const g = new T.Group(); g.name = 'arc-cinema'; S.add(g);
+  const cream = new T.MeshBasicMaterial({ color: 0xd9c9a3, fog: false }), dark = new T.MeshBasicMaterial({ color: 0x2a2620, fog: false });
+  const E = new T.LineBasicMaterial({ color: 0xfff1c8, transparent: true, opacity: 0.8, blending: T.AdditiveBlending, depthWrite: false, fog: false });
+  const solid = (geo, x, y, z, m = cream, edges = true) => { const ms = new T.Mesh(geo, m); ms.position.set(x, y, z); g.add(ms); if (edges) { const l = new T.LineSegments(new T.EdgesGeometry(geo), E); l.position.copy(ms.position); g.add(l); } return ms; };
+  solid(new T.BoxGeometry(W, H, D), cxm, H / 2, (zS + zN) / 2); // main block
+  const cw = 12; solid(new T.BoxGeometry(cw, 3, 1.2), cxm, H + 1.5, zS - 0.6); // raised centre bay
+  const tri = new T.Shape([new T.Vector2(-cw / 2 - 0.5, 0), new T.Vector2(cw / 2 + 0.5, 0), new T.Vector2(0, 5)]);
+  solid(new T.ExtrudeGeometry(tri, { depth: 1.2, bevelEnabled: false }), cxm, H + 3, zS - 1.2); // pediment
+  const Lw = []; const P = (x1_, y1, x2, y2, z) => Lw.push(x1_, y1, z, x2, y2, z);
+  for (const side of [-1, 1]) for (const y of [6.2, 10]) for (let k = 0; k < 4; k++) { const x = cxm + side * (cw / 2 + 1.6 + k * ((W / 2 - cw / 2 - 2.4) / 4)), z = zS + 0.06, w = 1.3, h = 2.4;
+    P(x - w / 2, y, x + w / 2, y, z); P(x - w / 2, y + h, x + w / 2, y + h, z); P(x - w / 2, y, x - w / 2, y + h, z); P(x + w / 2, y, x + w / 2, y + h, z); }
+  for (const y of [5.4, 13.2]) P(x0, y, x1, y, zS + 0.07); // string courses
+  const lg = new T.BufferGeometry(); lg.setAttribute('position', new T.Float32BufferAttribute(Lw, 3)); g.add(new T.LineSegments(lg, E));
+  const ban = new T.Mesh(new T.PlaneGeometry(2.6, 8), new T.MeshBasicMaterial({ map: textTex('THE ARC', '#ffffff', '#1d3f9a', 64, 512, true), fog: false })); ban.position.set(cxm, 9.8, zS + 0.12); g.add(ban); // vertical banner
+  const cnp = solid(new T.BoxGeometry(W * 0.62, 1.4, 2.8), cxm, 3.9, zS + 1.4, new T.MeshBasicMaterial({ color: 0x9a1f78, fog: false }));
+  const cl = new T.Mesh(new T.PlaneGeometry(W * 0.62 - 0.4, 1.2), new T.MeshBasicMaterial({ map: textTex('FOR THE LOVE OF FILM', '#ffffff', '#9a1f78', 768, 64), fog: false })); cl.position.set(cxm, 3.9, zS + 2.82); g.add(cl);
+  const glow = new T.Mesh(new T.PlaneGeometry(W * 0.62, 0.12), new T.MeshBasicMaterial({ color: 0xff4fd8, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, depthWrite: false, fog: false })); glow.position.set(cxm, 3.2, zS + 2.83); g.add(glow);
+  solid(new T.BoxGeometry(W * 0.5, 3, 0.2), cxm, 1.5, zS + 0.1, dark, false); // glazed entrance under the canopy
+  g.traverse(o => { o.raycast = () => {}; });
+  fx.arcTop = H + 18; // the DAM sign on Fallen Angels rides a mast above this so it clears the Arc from Marine Parade
 }
 /* ---------- song cluster: every matching track from tracks.json as a tappable floating screen over a landmark ---------- */
 fx.clusters = [];

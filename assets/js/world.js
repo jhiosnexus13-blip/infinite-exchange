@@ -434,7 +434,7 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=48').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=49').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
