@@ -29,7 +29,7 @@ export function buildEnvironment(o) {
   const j = u => fetch(u).then(r => r.json());
   Promise.all([j('/assets/data/yarmouth-landmarks.json?v=41'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=41' : '/assets/data/yarmouth-geo.json?v=41').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=41').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); if (G && G.golden_mile) import('./world-train.js?v=41').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
+      import('./world-env.js?v=41').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=41'), j('/assets/data/newtown-extra.json?v=41')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=41').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
       Promise.all([import('./world-pb.js?v=41'), j('/assets/data/pleasure-beach.json?v=41')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
   import('./world-presence.js?v=41').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
@@ -324,7 +324,7 @@ function archive(L, base, ht) {
 /* ---------- jump-on-map: full-screen overlay of the whole mapped area; tap = teleport, quick-jump list ---------- */
 const MB = { x0: -1600, x1: 700, z0: -3300, z1: 3400 }; // walkable bounds (mirrors the clamp in world.js)
 const JUMPS = [['plaza', 'Beach plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
-  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth'], ['police_investigation_centre', 'Police Investigation Centre']];
+  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth'], ['police_investigation_centre', 'Police Investigation Centre'], ['racecourse', 'Racecourse']];
 function bigMap() {
   const el = document.createElement('div'); el.id = 'wmap'; el.className = 'wmap'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Map of Great Yarmouth: tap to jump');
   el.innerHTML = `<canvas class="wmap-cv" aria-hidden="true"></canvas><div class="wmap-top"><span class="wmap-title">GREAT YARMOUTH // JUMP MAP</span><span class="wmap-hint">tap to jump · drag to pan · pinch / scroll to zoom</span></div>
@@ -419,6 +419,7 @@ function teleport(x, z, face) {
   closeMap(); setTimeout(() => { P.pos.set(x, P.pos.y, z); if (face) { P.yaw = Math.atan2(-(face[0] - x), -(face[1] - z)); P.pitch = 0.12; } fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }, 180);
 }
 function jumpTo(k) {
+  if (fx.extraJumps && fx.extraJumps[k]) { const [x, z, f] = fx.extraJumps[k]; return teleport(x, z, f); }
   if (k === 'plaza') { const [px, pz] = PZ(); return teleport(px, pz + 22, [px, pz - 6]); }
   const L = fx.landmarks && fx.landmarks[k]; if (!L) return; const t = [L.pos.x, L.pos.z];
   // stand 55 m to the landward/south-west side and look at it (seafront spots: on the prom, facing out)
@@ -583,6 +584,7 @@ export function updateWorldFX(t, dt) {
       if (u.yt && !u.loaded && d < 300 && cTex < 40) { u.loaded = true; cTex++; loader().load(`https://i.ytimg.com/vi/${u.yt}/mqdefault.jpg`, tex => { tex.colorSpace = T.SRGBColorSpace; m.material.map.dispose(); m.material.map = tex; m.material.needsUpdate = true; u.thumb = true; }, undefined, () => { u.thumbFailed = true; }); }
       if (window.JX && JX.current && JX.current.id === u.track) m.scale.setScalar(1.2 + 0.08 * Math.sin(t * 4)); else m.scale.setScalar(1); } }
   if (fx.pbUpd) { try { const pb = fx.landmarks && fx.landmarks.pleasure_beach; fx.pbUpd(t, dt, !RED && pb && Math.hypot(P.pos.x - pb.pos.x, P.pos.z - pb.pos.z) < 700); } catch (e) { worldErr('pleasure beach', e); fx.pbUpd = null; } }
+  if (fx.newtown && t - (fx.ntT || 0) > 1) { fx.ntT = t; try { fx.newtown.update(); } catch (e) { fx.newtown = null; } }
   if (fx.train) { try { fx.train.update(t, dt); } catch (e) { worldErr('seafront train', e); fx.train = null; } }
   if (fx.pres) { try { fx.pres.update(t, dt); } catch (e) { console.warn('presence', e); fx.pres = null; } }
   if (fx.gulls) { try { fx.gulls.update(t, dt, fx.env && fx.env.state ? fx.env.state.day : 0.5); } catch (e) { worldErr('gulls', e); fx.gulls = null; } }
@@ -600,7 +602,7 @@ export const worldDebug = {
     for (const k of Object.keys(fx.landmarks)) { const L = fx.landmarks[k], [x, z, see] = landing(k); if (C(x, z, 0.8)) V.push(`landing inside building: ${k}`); if (!see) V.push(`no clear view from landing: ${k}`);
       const near = items.filter(i => Math.hypot(i.x - L.pos.x, i.z - L.pos.z) < 60); for (const i of near) if (!sightClear(x, z, i.x, i.y, i.z)) V.push(`screen occluded from landing: ${k} -> ${i.n}`); }
     return { violations: V, items: items.length, replaced: fx.geo && fx.geo.replaced, roofs: fx.roofAt }; },
-  get train() { return fx.train && fx.train.api; }, get gulls() { return fx.gulls && fx.gulls.info; }, get presence() { return fx.pres && fx.pres.api; },
+  get train() { return fx.train && fx.train.api; }, get gulls() { return fx.gulls && fx.gulls.info; }, get presence() { return fx.pres && fx.pres.api; }, get newtown() { return fx.newtownInfo; },
   openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },
   get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, pb: fx.pbInfo, env: fx.env && { day: +fx.env.state.day.toFixed(2), phase: +fx.env.state.phase.toFixed(3), wx: fx.env.state.wx, wxErr: fx.env.state.wxErr, rain: fx.env.state.rain, lamps: fx.env.state.lampInfo }, cols: COL.size, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, route2: fx.route2Info, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
