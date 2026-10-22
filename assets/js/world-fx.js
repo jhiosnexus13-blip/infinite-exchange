@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=47'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=47' : '/assets/data/yarmouth-geo.json?v=47').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=48'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=48' : '/assets/data/yarmouth-geo.json?v=48').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=47').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=47'), j('/assets/data/newtown-extra.json?v=47')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=47').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('dam sign', damSign); 
-      Promise.all([import('./world-pb.js?v=47'), j('/assets/data/pleasure-beach.json?v=47')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=48').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=48'), j('/assets/data/newtown-extra.json?v=48')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=48').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('dam sign', damSign); safe('food basket', foodBasket); 
+      Promise.all([import('./world-pb.js?v=48'), j('/assets/data/pleasure-beach.json?v=48')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=47').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=47').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=48').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=48').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -344,7 +344,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=47').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=48').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -353,6 +353,32 @@ function damSign() {
   let tries = 0; const seat = () => { const h = roofAt(c.x, c.z); if (h < 0 && tries++ < 40) return setTimeout(seat, 250); const r = Math.max(h, 0);
     lab.position.y = r + 1.6; sign.position.y = r + 2.8 + 6.5; fx.damRoof = r; if (window.__dam) window.__dam.roof = r; }; seat();
   fx.dam = window.__dam = { pos: [c.x, c.z], url: DAM.url };
+}
+
+/* v48: GYnet 'Helping Hand' community food basket on Sturdee Avenue (Newtown). OSM/Nominatim have no house-number points on this street, so it stands
+   on the east kerb near the middle of the street (OSM way 36882994). Label is ONLY the project name; tap opens the GYnet Facebook group. */
+const FOOD = { lat: 52.62596, lon: 1.734628, url: 'https://www.facebook.com/groups/391524778452828/', label: 'GYnet · Helping Hand Food Basket' };
+function foodBasket() {
+  const c = W(FOOD.lat, FOOD.lon), g = new T.Group(); g.position.copy(c); S.add(g);
+  const A = (col, o = 0.9) => new T.MeshBasicMaterial({ color: col, transparent: true, opacity: o, blending: T.AdditiveBlending, depthWrite: false, fog: false });
+  const L = col => new T.LineBasicMaterial({ color: col, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, depthWrite: false, fog: false });
+  const seg = LITE ? 10 : 16;
+  const bk = new T.LineSegments(new T.EdgesGeometry(new T.CylinderGeometry(1.5, 1.1, 1.1, seg, 1, true)), L(0xffb347)); bk.position.y = 1.15; g.add(bk); // wicker basket
+  for (const y of [0.85, 1.15, 1.45]) { const r = new T.Mesh(new T.TorusGeometry(1.1 + (y - 0.6) * 0.36, 0.035, 4, seg), A(0xffb347, 0.8)); r.rotation.x = Math.PI / 2; r.position.y = y; g.add(r); }
+  const hd = new T.Mesh(new T.TorusGeometry(1.25, 0.06, 4, seg, Math.PI), A(0xffd27a, 0.9)); hd.position.y = 1.7; g.add(hd); // handle
+  const sp = new T.SphereGeometry(0.32, 8, 6);
+  for (const [x, z, col] of [[-0.6, 0.2, 0xff4b4b], [0.1, -0.5, 0x7dff6a], [0.55, 0.35, 0xffa51f], [-0.15, 0.6, 0xff4b4b]]) { const f = new T.Mesh(sp, A(col)); f.position.set(x, 1.8, z); g.add(f); } // fruit
+  const loaf = new T.Mesh(new T.CapsuleGeometry(0.28, 0.8, 3, 8), A(0xf2c27a)); loaf.rotation.z = Math.PI / 2; loaf.position.set(0.3, 1.95, -0.1); g.add(loaf); // bread
+  const tin = new T.CylinderGeometry(0.22, 0.22, 0.45, 10);
+  for (const [x, z] of [[-0.75, -0.45], [0.85, -0.2]]) { const tn = new T.Mesh(tin, A(0xbfe6ff, 0.8)); tn.position.set(x, 1.85, z); g.add(tn); } // tins
+  const hs = new T.Shape(); hs.moveTo(0, -0.9); hs.bezierCurveTo(-1.6, 0.2, -0.7, 1.3, 0, 0.55); hs.bezierCurveTo(0.7, 1.3, 1.6, 0.2, 0, -0.9);
+  const heart = new T.Mesh(new T.ShapeGeometry(hs, LITE ? 6 : 12), A(0xff5f8a, 0.85)); heart.position.y = 3.7; heart.userData.spin = true; g.add(heart); fx.foodHeart = heart; // helping-hand heart
+  const pole = new T.LineSegments(new T.BufferGeometry().setFromPoints([new T.Vector3(0, 2.2, 0), new T.Vector3(0, 2.8, 0)]), L(0xff5f8a)); g.add(pole);
+  g.traverse(o => { o.raycast = () => {}; });
+  const hit = new T.Mesh(new T.BoxGeometry(3.4, 4.6, 3.4), new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })); hit.position.y = 2.3;
+  hit.userData = { link: FOOD.url, title: FOOD.label, id: 'gynet-food-basket' }; g.add(hit); CL.push(hit);
+  const lab = LBL(FOOD.label, '#ffcf8a', 1.2); lab.position.set(0, 5.4, 0); g.add(lab);
+  fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url };
 }
 /* ---------- song cluster: every matching track from tracks.json as a tappable floating screen over a landmark ---------- */
 fx.clusters = [];
@@ -380,6 +406,7 @@ function songCluster(L, base, ht) {
 }
 let cTex = 0;
 function updateClusters(t, dt) {
+  if (fx.foodHeart && !RED) fx.foodHeart.rotation.y = t * 0.8;
   if (fx.damG) fx.damG.rotation.y = Math.atan2(CAM.position.x - fx.damG.position.x, CAM.position.z - fx.damG.position.z);
   for (const c of fx.clusters) { const p = c.grp.position, d = Math.hypot(P.pos.x - p.x, P.pos.z - p.z); c.grp.visible = d < (LOW ? 900 : 1600);
     if (!c.grp.visible) continue; if (!RED) c.grp.rotation.y += dt * (c.spin || 0.05);

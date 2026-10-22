@@ -42,14 +42,14 @@
             width: 200, height: 200, videoId: id, host: 'https://www.youtube-nocookie.com',
             playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
             events: {
-              onReady: () => { this.setVolume(this.vol ?? 100); this.p.playVideo(); res(); },
+              onReady: () => { this.setVolume(this.vol ?? 100); this.mute(!!this.muted); this.p.playVideo(); res(); },
               onStateChange: e => { this.state = e.data; this.cb && this.cb({ 0: 'ended', 1: 'play', 2: 'pause' }[e.data] || 'state'); },
               onError: () => this.cb && this.cb('error')
             }
           });
         });
       } else this.p.loadVideoById(id);
-      this.setVolume(this.vol ?? 100);
+      this.setVolume(this.vol ?? 100); this.mute(!!this.muted);
       clearInterval(this.tick); this.tick = setInterval(() => this.cb && this.cb('timeupdate'), 500);
     }
     play() { this.p && this.p.playVideo(); } pause() { this.p && this.p.pauseVideo && this.p.pauseVideo(); }
@@ -59,6 +59,8 @@
     get duration() { return this.p && this.p.getDuration ? this.p.getDuration() : NaN; }
     get playing() { return this.state === 1; }
     setVolume(v) { this.vol = v; try { this.p && this.p.setVolume && this.p.setVolume(Math.round(v)); } catch (e) {} }
+    mute(on) { this.muted = on; try { if (this.p && this.p.mute) on ? this.p.mute() : this.p.unMute(); } catch (e) {} }
+    get info() { try { return { vol: this.p && this.p.getVolume ? this.p.getVolume() : null, muted: this.p && this.p.isMuted ? this.p.isMuted() : null }; } catch (e) { return {}; } }
   }
 
   /* ---------- UI ---------- */
@@ -69,7 +71,7 @@
   <div class="extra"><button type="button" data-a="ytexp" class="ytonly" aria-label="Expand video">⤢</button><button type="button" data-a="ytstop" class="ytonly" aria-label="Stop and close video">✕</button><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
   const qbox = document.createElement('div'); qbox.className = 'queue'; qbox.hidden = true; qbox.setAttribute('aria-label', 'Queue');
   const ytbox = document.createElement('div'); ytbox.className = 'ytbox'; ytbox.hidden = true;
-  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Minimise video (keeps playing)">▾ MINIMISE</button><button type="button" class="ytexp" aria-label="Expand video">⤢</button>';
+  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Minimise video (keeps playing)">▾ MINIMISE</button><button type="button" class="ytexp" aria-label="Expand video">⤢</button><div class="ytvol"><button type="button" class="ytmute" aria-label="Mute video" aria-pressed="false">🔊</button><input type="range" min="0" max="100" step="1" value="100" aria-label="Video volume"><span class="ytvoln">100</span></div>';
   /* v41: closing the video panel only minimises it; the same iframe/player keeps playing (never moved in the DOM, never destroyed, stays visible as a mini
      player). The bottom bar gets expand + a separate ✕ stop. */
   /* v42: the docked mini player picks the first spot (200x200, safe-area aware) that overlaps none of the bottom-bar controls, joysticks or HUD buttons */
@@ -90,11 +92,20 @@
   ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); setMin(true); });
   ytbox.querySelector('.ytexp').addEventListener('click', e => { e.stopPropagation(); setMin(false); });
   ytbox.addEventListener('pointerdown', e => e.stopPropagation());
+  // v48: our own big volume slider + mute (YouTube's own slider is hidden at small sizes and ignored on iOS); remembered in localStorage
+  const vr = ytbox.querySelector('.ytvol input'), vn = ytbox.querySelector('.ytvoln'), vm = ytbox.querySelector('.ytmute');
+  const showVol = () => { const m = !!yt.muted, v = Math.round(yt.vol ?? 100); vr.value = v; vn.textContent = m ? 'muted' : v; vm.textContent = m || v === 0 ? '🔇' : v < 50 ? '🔉' : '🔊'; vm.setAttribute('aria-pressed', String(m)); vm.setAttribute('aria-label', m ? 'Unmute video' : 'Mute video'); };
+  const setYV = v => { v = Math.max(0, Math.min(100, Math.round(+v || 0))); volume = v; audio.setVolume(v); yt.setVolume(v); if (yt.muted && v > 0) yt.mute(false); try { localStorage.setItem('jx_vol', v); localStorage.setItem('jx_mute', yt.muted ? '1' : '0'); } catch (_) {} showVol(); };
+  vr.addEventListener('input', () => setYV(vr.value));
+  vm.addEventListener('click', e => { e.stopPropagation(); yt.mute(!yt.muted); try { localStorage.setItem('jx_mute', yt.muted ? '1' : '0'); } catch (_) {} showVol(); });
+  for (const ev of ['pointerdown', 'touchstart', 'wheel', 'keydown']) ytbox.querySelector('.ytvol').addEventListener(ev, e => e.stopPropagation(), { passive: true });
   const mount = () => { document.body.append(ytbox, qbox, bar); };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', mount) : mount();
 
   const audio = new AudioSource(), yt = new YouTubeSource(ytbox);
   let volume = 100, src = null, queue = [], idx = -1, tracks = [], seeking = false, counted = new Set(), playedS = 0, lastT = 0;
+  try { const sv = localStorage.getItem('jx_vol'); if (sv !== null && !isNaN(+sv)) { volume = Math.max(0, Math.min(100, +sv)); audio.setVolume(volume); yt.vol = volume; } yt.muted = localStorage.getItem('jx_mute') === '1'; } catch (_) {}
+  showVol(); window.__ytdbg = { get info() { return yt.info; }, set: setYV };
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('jx-audio') : null;
   const tabId = Math.random().toString(36).slice(2);
   bc && (bc.onmessage = e => { if (e.data && e.data.playing && e.data.tab !== tabId && src && src.playing) src.pause(); });
