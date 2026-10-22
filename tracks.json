@@ -288,7 +288,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=WvKHnTipTyg",
    "tags": [
-    "vault"
+    "vault",
+    "beatty-close"
    ]
   },
   {
@@ -303,7 +304,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=VFFvRiNneGo",
    "tags": [
-    "vault"
+    "vault",
+    "beatty-close"
    ]
   },
   {
@@ -5138,6 +5140,21 @@
    "youtube_url": "https://youtu.be/h9ABzAHk628",
    "tags": [
     "harbour-mouth"
+   ]
+  },
+  {
+   "id": "40-pills-at-bills",
+   "title": "40 Pills at Bills",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/3AM1UzB3IZM",
+   "tags": [
+    "beatty-close"
    ]
   }
  ]
