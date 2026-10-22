@@ -12,7 +12,7 @@ export function initStreets(o, X) {
   const bb = [Math.min(...xs) - 80, Math.min(...ys) - 80, Math.max(...xs) + 80, Math.max(...ys) + 80];
   for (const b of (G && G.buildings) || []) { const f = b[1]; if (f[0] > bb[0] && f[0] < bb[2] && f[1] > bb[1] && f[1] < bb[3]) addBox(P(f)); }
   for (const f of X.buildings) addBox(P(f));
-  const park = P(X.park.poly); addBox(park); for (const f of X.green_extra || []) addBox(P(f)); if (X.centre) addBox(P(X.centre.poly));
+  const park = P(X.park.poly); addBox(park); for (const f of X.green_extra || []) addBox(P(f)); if (X.centre) addBox(P(X.centre.poly)); const TR = X.terrace; if (TR) { const hs = TR.houses; boxes.push([TR.front - TR.depth - 3, hs[0][0] - 1, TR.front + 4, hs[hs.length - 1][0] + TR.w + 1]); }
   const hit = (x, y) => boxes.some(q => x > q[0] && x < q[2] && y > q[1] && y < q[3]);
   const dseg = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l)); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); };
   const nearRoad = (p, skip) => roads.some(([n, R]) => n !== skip && R.some((a, i) => i < R.length - 1 && dseg(p, a, R[i + 1]) < 7));
@@ -51,6 +51,19 @@ export function initStreets(o, X) {
   for (let i = 0; i < tv.length; i += 24) { const R = []; for (let j = 0; j < 4; j++) R.push([0, 0]); } // (filler boxes below come from tv directly)
   if (terr) { const tg = geo(tv, ti); grp.add(new T.Mesh(tg, new T.MeshBasicMaterial({ color: 0x8a4e34, side: T.DoubleSide }))); }
   for (const f of X.buildings) { const R = P(f); if (R.length > 2) solid(R, 6.4); }
+  // v54: the terrace Joseph pinned on Sturdee Ave: pink-render ends, red-brick middle pair with pointed front gables, grey roofs, low front walls, cordyline
+  if (TR) { const M = c => new T.MeshBasicMaterial({ color: c }), put = (g, m, x, y, h) => { const o3 = new T.Mesh(g, m); const w = warp(x, y); o3.position.set(w.x, h, w.z); grp.add(o3); return o3; };
+    const H = 5.6, D = TR.depth, fx0 = TR.front, cxh = fx0 - D / 2, grey = M(0x6b6f74);
+    for (const [y0, k] of TR.houses) { const cy = y0 + TR.w / 2;
+      put(new T.BoxGeometry(D, H, TR.w), M(k === 'r' ? 0x9c3b26 : 0xe6c3bd), cxh, cy, H / 2);
+      const rs = new T.Shape([new T.Vector2(-D / 2 - 0.3, 0), new T.Vector2(D / 2 + 0.3, 0), new T.Vector2(0, 2.4)]), rg = new T.ExtrudeGeometry(rs, { depth: TR.w, bevelEnabled: false }); rg.translate(0, 0, -TR.w / 2); put(rg, grey, cxh, cy, H);
+      if (k === 'r') { const gs = new T.Shape([new T.Vector2(-TR.w / 2 + 0.2, 0), new T.Vector2(TR.w / 2 - 0.2, 0), new T.Vector2(0, 2.6)]), gg = new T.ExtrudeGeometry(gs, { depth: 2.2, bevelEnabled: false }); gg.rotateY(Math.PI / 2); gg.translate(-2.2, 0, 0); put(gg, M(0x9c3b26), fx0 + 0.01, cy, H).rotation.y = 0;
+        put(new T.BoxGeometry(0.15, 0.25, TR.w - 0.2), M(0xffffff), fx0 + 0.05, cy, H + 0.05); }
+      for (const [dy, h] of [[-1.3, 1.6], [1.3, 1.6], [-1.3, 4.1], [1.3, 4.1]]) put(new T.BoxGeometry(0.1, 1.1, 1.2), M(0xe8eef4), fx0 + 0.06, cy + dy, h);
+      put(new T.BoxGeometry(0.4, 0.9, TR.w), M(0x8a4a33), fx0 + 4.2, cy, 0.45); // low brick front wall
+      put(new T.BoxGeometry(0.7, 1.1, 0.7), M(0x2c6a34), fx0 + 4.9, cy + 1.6, 0.55); } // wheelie bin
+    const [px, py] = TR.palm; put(new T.CylinderGeometry(0.18, 0.25, 2.4, 6), M(0x6b5130), px, py, 1.2);
+    for (let i = 0; i < (LITE ? 8 : 16); i++) { const a = i / (LITE ? 8 : 16) * Math.PI * 2, lf = put(new T.ConeGeometry(0.12, 2.2, 4), M(0x3f8a3a), px + Math.cos(a) * 0.6, py + Math.sin(a) * 0.6, 3.0); lf.rotation.set(Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9); } }
   for (let k = 0; k < tv.length; k += 24) { const kk = fv.length / 3; for (const j of [12, 15, 18, 21]) fv.push(tv[k + j], TH + 0.05, tv[k + j + 2]); fi.push(kk, kk + 1, kk + 2, kk, kk + 2, kk + 3); } // filler roofs
   if (wv.length) grp.add(new T.Mesh(geo(wv, wi), new T.MeshBasicMaterial({ color: 0x7e4630, side: T.DoubleSide })));
   if (fv.length) grp.add(new T.Mesh(geo(fv, fi), new T.MeshBasicMaterial({ color: 0x4e3226, side: T.DoubleSide })));
