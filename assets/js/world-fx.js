@@ -22,10 +22,10 @@ const fx = { t: 0 };
 
 export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o);
-  sky(); rain(); paths(); minimap(); cards(); orbitScreens(); proximity();
+  sky(); rain(); paths(); minimap(); bigMap(); cards(); orbitScreens(); proximity();
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=31'), j('/assets/data/yarmouth-geo.json?v=31').catch(e => (console.warn('geo', e), null))])
-    .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G) { G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 40 : 0]; }); geo(G, grp); } skyline(D, grp, !G); }).catch(e => console.warn('skyline', e));
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=32'), j('/assets/data/yarmouth-geo.json?v=32').catch(e => (console.warn('geo', e), null))])
+    .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G) { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 40 : 0]; }); geo(G, grp); } skyline(D, grp, !G); }).catch(e => console.warn('skyline', e));
   swapModels();
 }
 
@@ -261,6 +261,99 @@ function archive(L, base, ht) {
   core.position.copy(base).setY(ht * 0.35); fx.skyline.add(core); fx.archiveCore = core;
   fx.mapSpots.push({ pos: base, label: 'ARCHIVE', col: '#b48cff' });
 }
+
+/* ---------- jump-on-map: full-screen overlay of the whole mapped area; tap = teleport, quick-jump list ---------- */
+const MB = { x0: -1600, x1: 700, z0: -3300, z1: 3400 }; // walkable bounds (mirrors the clamp in world.js)
+const JUMPS = [['plaza', 'Plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
+  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues']];
+function bigMap() {
+  const el = document.createElement('div'); el.id = 'wmap'; el.className = 'wmap'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Map of Great Yarmouth: tap to jump');
+  el.innerHTML = `<canvas class="wmap-cv" aria-hidden="true"></canvas><div class="wmap-top"><span class="wmap-title">GREAT YARMOUTH // JUMP MAP</span><span class="wmap-hint">tap to jump · drag to pan · pinch / scroll to zoom</span></div>
+    <button type="button" class="wmap-close" aria-label="Close map">✕</button><nav class="wmap-jumps" aria-label="Quick jumps">${JUMPS.map(([k, n]) => `<button type="button" data-jump="${k}">${n}</button>`).join('')}</nav>
+    <small class="wmap-credit">© OpenStreetMap contributors</small>`;
+  document.body.appendChild(el); const fade = document.createElement('div'); fade.className = 'wfade'; document.body.appendChild(fade);
+  const cv = el.querySelector('canvas'), M = fx.bm = { el, cv, fade, open: false, s: 0.1, cx: 0, cz: 0 };
+  // nothing inside the overlay may reach the 3D canvas, the joysticks or the window key handlers
+  for (const ev of ['pointerdown', 'pointerup', 'pointermove', 'click', 'touchstart', 'touchmove', 'touchend', 'wheel', 'contextmenu']) el.addEventListener(ev, e => e.stopPropagation(), { passive: ev !== 'wheel' && ev !== 'contextmenu' && ev !== 'touchmove' });
+  el.addEventListener('touchmove', e => e.preventDefault(), { passive: false }); el.addEventListener('contextmenu', e => e.preventDefault());
+  fx.map.style.pointerEvents = 'auto'; fx.map.style.cursor = 'pointer'; fx.map.setAttribute('role', 'button'); fx.map.setAttribute('aria-label', 'Open jump map'); fx.map.removeAttribute('aria-hidden');
+  fx.map.addEventListener('pointerdown', e => e.stopPropagation()); fx.map.addEventListener('click', e => { e.stopPropagation(); openMap(); });
+  el.querySelector('.wmap-close').addEventListener('click', () => closeMap());
+  el.querySelector('.wmap-jumps').addEventListener('click', e => { const b = e.target.closest('[data-jump]'); if (b) jumpTo(b.dataset.jump); });
+  addEventListener('keydown', e => { if (M.open && (e.key === 'Escape' || e.key === 'm' || e.key === 'M')) { e.preventDefault(); e.stopImmediatePropagation(); closeMap(); }
+    else if (M.open) e.stopImmediatePropagation(); else if ((e.key === 'm' || e.key === 'M') && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement && document.activeElement.tagName)) { e.preventDefault(); openMap(); } }, { capture: true });
+  addEventListener('keyup', e => { if (M.open) e.stopImmediatePropagation(); }, { capture: true });
+  // pan / pinch / tap
+  const pts = new Map(); let tap = null, pinch = null;
+  cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pts.size === 1) tap = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 }; else { tap = null; const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a[0] - b[0], a[1] - b[1]), s: M.s }; } });
+  cv.addEventListener('pointermove', e => { const p = pts.get(e.pointerId); if (!p) return; const dx = e.clientX - p[0], dy = e.clientY - p[1]; p[0] = e.clientX; p[1] = e.clientY;
+    if (pts.size === 1) { M.cx -= dx / M.s; M.cz -= dy / M.s; if (tap) tap.moved += Math.abs(dx) + Math.abs(dy); drawBig(); }
+    else if (pinch && pts.size === 2) { const [a, b] = [...pts.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); zoomAt((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, pinch.s * d / pinch.d / M.s); } });
+  const up = e => { if (!pts.has(e.pointerId)) return; pts.delete(e.pointerId); if (pts.size < 2) pinch = null;
+    if (tap && pts.size === 0 && tap.moved < 10 && performance.now() - tap.t < 600) { const [x, z] = toWorld(e.clientX, e.clientY); teleport(x, z, null); } if (pts.size === 0) tap = null; };
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', e => { pts.delete(e.pointerId); tap = null; pinch = null; });
+  cv.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0015)); }, { passive: false });
+  addEventListener('resize', () => { if (M.open) { sizeBig(); drawBig(); } });
+}
+const toWorld = (sx, sy) => { const M = fx.bm, r = M.cv.getBoundingClientRect(); return [M.cx + (sx - r.left - r.width / 2) / M.s, M.cz + (sy - r.top - r.height / 2) / M.s]; };
+function zoomAt(sx, sy, f) { const M = fx.bm, [wx, wz] = toWorld(sx, sy), r = M.cv.getBoundingClientRect(); M.s = Math.max(M.fit * 0.8, Math.min(6, M.s * f));
+  M.cx = wx - (sx - r.left - r.width / 2) / M.s; M.cz = wz - (sy - r.top - r.height / 2) / M.s; drawBig(); }
+function sizeBig() { const M = fx.bm, dpr = Math.min(2, devicePixelRatio || 1), w = innerWidth, h = innerHeight; M.cv.width = Math.round(w * dpr); M.cv.height = Math.round(h * dpr); M.dpr = dpr;
+  M.fit = Math.min(w / (MB.x1 - MB.x0), h / (MB.z1 - MB.z0)) * 0.95; }
+function bakeBig() { // whole area pre-rendered once into an offscreen bitmap (0.6 px per metre)
+  const G = fx.G, K = 0.6, c = document.createElement('canvas'); c.width = Math.round((MB.x1 - MB.x0) * K); c.height = Math.round((MB.z1 - MB.z0) * K);
+  const g = c.getContext('2d'), X = x => (x - MB.x0) * K, Z = z => (z - MB.z0) * K; g.fillStyle = '#020a08'; g.fillRect(0, 0, c.width, c.height);
+  if (!G) { fx.bm.bake = c; return; }
+  const poly = (a, fill, stroke) => { g.beginPath(); for (let i = 0; i < a.length; i += 2) { const v = warp(a[i], a[i + 1]); i ? g.lineTo(X(v.x), Z(v.z)) : g.moveTo(X(v.x), Z(v.z)); } g.closePath(); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.strokeStyle = stroke; g.stroke(); } };
+  const line = (a, col, w) => { g.beginPath(); for (let i = 0; i < a.length; i += 2) { const v = warp(a[i], a[i + 1]); i ? g.lineTo(X(v.x), Z(v.z)) : g.moveTo(X(v.x), Z(v.z)); } g.strokeStyle = col; g.lineWidth = w; g.stroke(); };
+  // sea: everything east of the seaward coast profile
+  g.fillStyle = '#04202c'; g.beginPath(); g.moveTo(c.width, 0); for (let z = MB.z0; z <= MB.z1; z += 50) g.lineTo(X(fx.coastE(-z)), Z(z)); g.lineTo(c.width, c.height); g.closePath(); g.fill();
+  for (const w of G.beach) poly(w, 'rgba(160,216,106,.18)'); for (const w of G.water) poly(w, '#06364a', 'rgba(0,180,255,.5)');
+  g.lineWidth = 1; for (const [, a] of G.roads) line(a, 'rgba(255,140,60,.45)', 1.6);
+  g.lineWidth = 0.6; for (const [, a] of G.buildings) poly(a, 'rgba(0,255,157,.28)', 'rgba(0,255,157,.55)');
+  for (const a of G.coast) line(a, '#9dffe0', 1.5); for (const [a] of G.piers) line(a, '#b4fff0', 2.5);
+  if (G.golden_mile) { g.shadowColor = '#ffc84a'; g.shadowBlur = 8; line(G.golden_mile.coords, '#ffc84a', 5); g.shadowBlur = 0; }
+  fx.bm.bake = c; fx.bm.K = K;
+}
+function drawBig() {
+  const M = fx.bm; if (!M.open) return; const g = M.cv.getContext('2d'), d = M.dpr, W = M.cv.width, H = M.cv.height;
+  M.cx = Math.max(MB.x0, Math.min(MB.x1, M.cx)); M.cz = Math.max(MB.z0, Math.min(MB.z1, M.cz));
+  g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#010605'; g.fillRect(0, 0, W, H);
+  const S = M.s * d, X = x => W / 2 + (x - M.cx) * S, Z = z => H / 2 + (z - M.cz) * S;
+  g.imageSmoothingEnabled = true; g.drawImage(M.bake, X(MB.x0), Z(MB.z0), (MB.x1 - MB.x0) * S, (MB.z1 - MB.z0) * S);
+  g.strokeStyle = 'rgba(0,255,157,.35)'; g.setLineDash([6 * d, 6 * d]); g.strokeRect(X(MB.x0), Z(MB.z0), (MB.x1 - MB.x0) * S, (MB.z1 - MB.z0) * S); g.setLineDash([]);
+  g.font = `600 ${12 * d}px ui-monospace,monospace`; g.textBaseline = 'middle';
+  const lm = fx.landmarks || {};
+  for (const [k, v] of Object.entries(lm)) { const x = X(v.pos.x), y = Z(v.pos.z), j = JUMPS.some(q => q[0] === k);
+    g.fillStyle = j ? '#ffcc4a' : '#5dffc0'; g.beginPath(); g.arc(x, y, (j ? 5 : 3.5) * d, 0, 7); g.fill(); g.strokeStyle = '#000'; g.lineWidth = 2 * d; g.stroke();
+    const t = v.name.split(' (')[0]; g.lineWidth = 3 * d; g.strokeStyle = 'rgba(0,0,0,.8)'; g.strokeText(t, x + 8 * d, y); g.fillText(t, x + 8 * d, y); }
+  g.fillStyle = '#00ff9d'; g.beginPath(); g.arc(X(0), Z(0), 6 * d, 0, 7); g.fill(); g.fillText('PLAZA', X(0) + 9 * d, Z(0) + 12 * d);
+  // you are here
+  const px = X(P.pos.x), pz = Z(P.pos.z); g.save(); g.translate(px, pz); g.rotate(-P.yaw); g.fillStyle = '#fff'; g.shadowColor = '#00ff9d'; g.shadowBlur = 12 * d;
+  g.beginPath(); g.moveTo(0, -13 * d); g.lineTo(8 * d, 9 * d); g.lineTo(0, 4 * d); g.lineTo(-8 * d, 9 * d); g.closePath(); g.fill(); g.restore();
+  g.fillStyle = '#fff'; g.strokeStyle = '#000'; g.lineWidth = 3 * d; g.strokeText('YOU ARE HERE', px + 14 * d, pz - 12 * d); g.fillText('YOU ARE HERE', px + 14 * d, pz - 12 * d);
+  g.fillStyle = '#00ff9d'; g.font = `600 ${14 * d}px ui-monospace,monospace`; g.fillText('N ↑', 14 * d, H - 20 * d);
+}
+function openMap() { const M = fx.bm; if (M.open) return; dispatchEvent(new Event('blur')); /* releases held keys */ M.el.hidden = false; M.open = true; window.__mapOpen = true; sizeBig();
+  if (!M.bake) bakeBig(); M.s = Math.max(M.fit, Math.min(6, M.fit * 2.2)); M.cx = P.pos.x; M.cz = P.pos.z; drawBig(); M.el.querySelector('.wmap-close').focus({ preventScroll: true }); }
+function closeMap() { const M = fx.bm; if (!M.open) return; M.el.hidden = true; M.open = false; setTimeout(() => { window.__mapOpen = false; }, 350); /* swallow the trailing ghost click */ fx.map.focus && CV.focus && CV.focus({ preventScroll: true }); }
+function seaEdge(n) { // exact seaward OSM coastline easting at northing n (max over crossing segments), falls back to the coarse profile
+  let best = -1e9; for (const c of (fx.G && fx.G.coast) || []) for (let i = 0; i < c.length - 2; i += 2) { const n0 = c[i + 1], n1 = c[i + 3];
+    if ((n - n0) * (n - n1) <= 0 && n0 !== n1) { const e = c[i] + (c[i + 2] - c[i]) * (n - n0) / (n1 - n0); if (e > -1500 && e > best) best = e; } }
+  return best > -1e8 ? best : (fx.coastE ? fx.coastE(n) : 120); }
+function landX(x, z) { return Math.min(x, warp(seaEdge(-z), -z).x - 15); } // never land in the sea: stop 15 m inland of the coastline
+function teleport(x, z, face) {
+  x = Math.max(MB.x0 + 5, Math.min(MB.x1 - 5, x)); z = Math.max(MB.z0 + 5, Math.min(MB.z1 - 5, z)); x = landX(x, z);
+  const M = fx.bm; M.fade.classList.remove('on'); void M.fade.offsetWidth; M.fade.classList.add('on');
+  closeMap(); setTimeout(() => { P.pos.set(x, P.pos.y, z); if (face) { P.yaw = Math.atan2(-(face[0] - x), -(face[1] - z)); P.pitch = 0.12; } fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }, 180);
+}
+function jumpTo(k) {
+  if (k === 'plaza') return teleport(0, 22, [0, -6]);
+  const L = fx.landmarks && fx.landmarks[k]; if (!L) return; const t = [L.pos.x, L.pos.z];
+  // stand 55 m to the landward/south-west side and look at it (seafront spots: on the prom, facing out)
+  teleport(t[0] - 25, t[1] + 50, t);
+}
 /* ---------- North Sea: big subdivided plane; fragments west of the (warped) coastline are discarded ---------- */
 function sea(coast) {
   const seg = LOW ? 80 : 160, geo = new T.PlaneGeometry(7000, 9000, seg, seg); geo.rotateX(-Math.PI / 2);
@@ -415,7 +508,8 @@ export function updateWorldFX(t, dt) {
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
-  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, geo: fx.geo, clusters: fx.clusterInfo, route: fx.routeInfo, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
+  openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },
+  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, clusters: fx.clusterInfo, route: fx.routeInfo, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
 };

@@ -320,6 +320,7 @@ addEventListener('pointerdown', e => { if (e.pointerType === 'touch') setTouch(t
 /* ---------- raycast: tap a hologram to play its lane (GoldBot opens its link) ---------- */
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
+  if (window.__mapOpen) return;
   const r = canvas.getBoundingClientRect(); ndc.set((x - r.left) / r.width * 2 - 1, -(y - r.top) / r.height * 2 + 1);
   ray.setFromCamera(ndc, camera); const hits = ray.intersectObjects(clickables, false).filter(h => h.object.visible !== false && (!h.object.parent || h.object.parent.visible !== false));
   const hit = hits.find(h => h.object.userData.feature) || hits.find(h => h.object.userData.track) || hits[0]; // the giant featured skyline screen wins, then album-art screens, then hit-boxes // album-art screens win over the big hit-boxes
@@ -349,7 +350,7 @@ window.JX ? bootPanel() : addEventListener('DOMContentLoaded', bootPanel);
 /* ---------- loop ---------- */
 function resize() { const w = innerWidth, h = innerHeight; renderer.setPixelRatio(capDPR()); renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
-import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=31';
+import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=32';
 buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, reduced, HOLO_OBJS, getPlaying: () => playingLane });
 const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
 const MOVE = 7, TURN = 1.8;
@@ -357,12 +358,13 @@ function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   let mv = (keys.has('f') ? 1 : 0) - (keys.has('b') ? 1 : 0) + stickL.y;
   let st = (keys.has('sr') ? 1 : 0) - (keys.has('sl') ? 1 : 0) + stickL.x;
-  const turn = (keys.has('tr') ? 1 : 0) - (keys.has('tl') ? 1 : 0) + stickR.x;
+  const turn = window.__mapOpen ? 0 : ((keys.has('tr') ? 1 : 0) - (keys.has('tl') ? 1 : 0) + stickR.x);
   player.yaw -= turn * TURN * dt;              // positive turn = turn right
-  player.pitch += stickR.y * TURN * 0.7 * dt;  // stick up = look up
+  if (!window.__mapOpen) player.pitch += stickR.y * TURN * 0.7 * dt;  // stick up = look up
   player.pitch = Math.max(-1.3, Math.min(1.3, player.pitch));
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)); right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   const SPD = MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x, player.pos.z) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
+  if (window.__mapOpen) { mv = 0; st = 0; } // jump map overlay is up: no walking under it
   player.pos.addScaledVector(fwd, mv * SPD * dt).addScaledVector(right, st * SPD * dt);
   player.pos.x = Math.max(-1600, Math.min(700, player.pos.x)); player.pos.z = Math.max(-3300, Math.min(3400, player.pos.z)); // real-scale Great Yarmouth: Breydon side to the piers, Caister road to Gorleston
   camera.position.copy(player.pos); camera.rotation.set(player.pitch, player.yaw, 0, 'YXZ');
