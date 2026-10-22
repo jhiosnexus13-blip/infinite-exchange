@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=58'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=58' : '/assets/data/yarmouth-geo.json?v=58').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=59'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=59' : '/assets/data/yarmouth-geo.json?v=59').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=58').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=58'), j('/assets/data/newtown-extra.json?v=58')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=58').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=58'), j('/assets/data/newtown-streets.json?v=58')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
-      Promise.all([import('./world-pb.js?v=58'), j('/assets/data/pleasure-beach.json?v=58')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=59').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=59'), j('/assets/data/newtown-extra.json?v=59')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=59').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=59'), j('/assets/data/newtown-streets.json?v=59')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=59'), j('/assets/data/pleasure-beach.json?v=59')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=58').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=58').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=59').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=59').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -272,7 +272,7 @@ function geo(G, grp) {
   if (G.golden_mile) goldenMile(G.golden_mile, grp);
   if (G.harbour_spur) goldenMile(G.harbour_spur, grp, true);
   sea(prof);
-  import('./world-river.js?v=58').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
+  import('./world-river.js?v=59').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
 }
 
 /* ---------- Golden Mile: the main explorable route, a glowing gold ribbon on the real OSM road centreline ---------- */
@@ -348,7 +348,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=58').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=59').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -405,7 +405,7 @@ function foodBasket() {
   const halo = new T.Mesh(new T.SphereGeometry(3.2, 12, 8), A(0xffb347, 0.12)); halo.position.y = 2; g.add(halo); fx.foodBeam = beam; fx.foodHalo = halo;
   beam.raycast = halo.raycast = plinth.raycast = () => {};
   lab.scale.multiplyScalar(1.3);
-  fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url, bank: FOOD.bank };
+  fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url, bank: FOOD.bank }; window.__foodPopup = foodCard; // v59: same popup the basket tap opens (tests / controller)
 }
 
 /* v57: Waterways North Drive entrance (~26 North Dr, the southern section's road-side gate, on the park's west edge ~1.73804, about 120 m north of
@@ -652,10 +652,23 @@ function drawBig() {
   g.beginPath(); g.moveTo(0, -13 * d); g.lineTo(8 * d, 9 * d); g.lineTo(0, 4 * d); g.lineTo(-8 * d, 9 * d); g.closePath(); g.fill(); g.restore();
   g.fillStyle = '#fff'; g.strokeStyle = '#000'; g.lineWidth = 3 * d; g.strokeText('YOU ARE HERE', px + 14 * d, pz - 12 * d); g.fillText('YOU ARE HERE', px + 14 * d, pz - 12 * d);
   g.fillStyle = '#00ff9d'; g.font = `600 ${14 * d}px ui-monospace,monospace`; g.fillText('N ↑', 14 * d, H - 20 * d);
+  if (M.gp) { const cx = W / 2, cy = H / 2; g.strokeStyle = '#ffe14a'; g.lineWidth = 2.5 * d; g.beginPath(); g.arc(cx, cy, 14 * d, 0, 7); g.moveTo(cx - 24 * d, cy); g.lineTo(cx - 8 * d, cy); g.moveTo(cx + 8 * d, cy); g.lineTo(cx + 24 * d, cy); g.moveTo(cx, cy - 24 * d); g.lineTo(cx, cy - 8 * d); g.moveTo(cx, cy + 8 * d); g.lineTo(cx, cy + 24 * d); g.stroke(); // v59: controller cursor (A = jump here)
+    const t = (M.gpLabel ? M.gpLabel + ' · ' : '') + 'Ⓐ/✕ jump here'; g.font = `700 ${13 * d}px ui-monospace,monospace`; g.lineWidth = 4 * d; g.strokeStyle = '#000'; g.strokeText(t, cx + 20 * d, cy + 28 * d); g.fillStyle = '#ffe14a'; g.fillText(t, cx + 20 * d, cy + 28 * d); }
 }
 function openMap() { const M = fx.bm; if (M.open) return; dispatchEvent(new Event('blur')); /* releases held keys */ M.el.hidden = false; M.open = true; window.__mapOpen = true; sizeBig();
   if (!M.bake) bakeBig(); M.s = Math.max(M.fit, Math.min(6, M.fit * 2.2)); M.cx = P.pos.x; M.cz = P.pos.z; drawBig(); M.el.querySelector('.wmap-close').focus({ preventScroll: true }); }
 function closeMap() { const M = fx.bm; if (!M.open) return; M.el.hidden = true; M.open = false; setTimeout(() => { window.__mapOpen = false; }, 350); /* swallow the trailing ghost click */ fx.map.focus && CV.focus && CV.focus({ preventScroll: true }); }
+/* v59: map API for the gamepad / window manager (world-ui.js): pan, zoom, pins, a centre cursor and the same tap-to-jump as a click */
+window.__mapApi = {
+  get open() { return !!(fx.bm && fx.bm.open); }, openMap() { openMap(); }, closeMap() { closeMap(); },
+  pan(dx, dy) { const M = fx.bm; if (!M || !M.open) return; M.cx += dx / M.s; M.cz += dy / M.s; drawBig(); },
+  zoom(f) { const M = fx.bm; if (!M || !M.open) return; const r = M.cv.getBoundingClientRect(); zoomAt(r.left + r.width / 2, r.top + r.height / 2, f); },
+  pins() { const M = fx.bm; if (!M) return []; return Object.entries(fx.landmarks || {}).map(([k, v]) => ({ k, name: v.name.split(' (')[0], x: v.pos.x, z: v.pos.z, sx: (v.pos.x - M.cx) * M.s, sy: (v.pos.z - M.cz) * M.s })); },
+  centreOn(x, z) { const M = fx.bm; if (!M || !M.open) return; M.cx = x; M.cz = z; drawBig(); },
+  setCursor(on, label) { const M = fx.bm; if (!M) return; M.gp = on; M.gpLabel = label || ''; drawBig(); },
+  tapCentre() { const M = fx.bm; if (!M || !M.open) return; teleport(M.cx, M.cz, null); },
+  get state() { const M = fx.bm; return M ? { cx: M.cx, cz: M.cz, s: M.s } : null; }, set state(v) { const M = fx.bm; if (M && v) { M.cx = v.cx; M.cz = v.cz; M.s = v.s; drawBig(); } },
+};
 function seaEdge(n) { // exact seaward OSM coastline easting at northing n (max over crossing segments), falls back to the coarse profile
   let best = -1e9; for (const c of (fx.G && fx.G.coast) || []) for (let i = 0; i < c.length - 2; i += 2) { const n0 = c[i + 1], n1 = c[i + 3];
     if ((n - n0) * (n - n1) <= 0 && n0 !== n1) { const e = c[i] + (c[i + 2] - c[i]) * (n - n0) / (n1 - n0); if (e > -1500 && e > best) best = e; } }
