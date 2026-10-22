@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=46'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=46' : '/assets/data/yarmouth-geo.json?v=46').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=47'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=47' : '/assets/data/yarmouth-geo.json?v=47').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=46').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=46'), j('/assets/data/newtown-extra.json?v=46')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=46').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('dam sign', damSign); 
-      Promise.all([import('./world-pb.js?v=46'), j('/assets/data/pleasure-beach.json?v=46')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=47').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=47'), j('/assets/data/newtown-extra.json?v=47')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=47').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('dam sign', damSign); 
+      Promise.all([import('./world-pb.js?v=47'), j('/assets/data/pleasure-beach.json?v=47')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=46').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=46').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=47').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=47').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -337,19 +337,21 @@ function neonPint() {
 
 /* v45: DAM After Dark sign on the Marine Parade (west) face of Fallen Angels (roof-mounted, faces the viewer), east side of the Golden Mile, 83 Marine Parade (OSM way 175855364, next to the Arc Cinema).
    Logo texture (512 px jpeg as data URL text, black background -> additive so only the neon shows), pulses with the shared beat uniform; tap opens their TikTok. */
-const DAM = { lat: 52.609616, lon: 1.736850, url: 'https://www.tiktok.com/@damafterdark.ent', label: 'DAM After Dark on TikTok' };
+const DAM = { lat: 52.609697, lon: 1.736920, url: 'https://www.tiktok.com/@damafterdark.ent', label: 'DAM After Dark on TikTok' };
 function damSign() {
-  const c = W(DAM.lat, DAM.lon), g = new T.Group(); g.position.copy(c); S.add(g); fx.damG = g; // v46: on the road-facing (west) front of the Fallen Angels / Arc Cinema block at their junction, turned to face the viewer, so it reads from the road in either direction
+  const c = W(DAM.lat, DAM.lon), g = new T.Group(); g.position.copy(c); S.add(g); fx.damG = g; // v47: on the roof of Fallen Angels at its road-facing (west) edge, turned to face the viewer, so it reads from the road in either direction
   const mat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, fog: false,
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=46').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
-  const sign = new T.Mesh(new T.PlaneGeometry(15, 15), mat); sign.position.y = 13; g.add(sign);
+  fetch('/assets/img/dam-after-dark.b64.txt?v=47').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
-  const fr = new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(15.6, 15.6)), new T.LineBasicMaterial({ color: 0xff2a3a, transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
-  fr.position.y = 13; fr.raycast = () => {}; g.add(fr);
+  // v47: no frame box (tap area = the logo plane itself)
   const lab = LBL(DAM.label, '#ff5a6a', 1.8); lab.position.set(0, 4.6, 0.1); g.add(lab);
+  // v47: sit ON TOP of the Fallen Angels block: caption just above its roof line, logo above that (waits for the collision grid / roof heights)
+  let tries = 0; const seat = () => { const h = roofAt(c.x, c.z); if (h < 0 && tries++ < 40) return setTimeout(seat, 250); const r = Math.max(h, 0);
+    lab.position.y = r + 1.6; sign.position.y = r + 2.8 + 6.5; fx.damRoof = r; if (window.__dam) window.__dam.roof = r; }; seat();
   fx.dam = window.__dam = { pos: [c.x, c.z], url: DAM.url };
 }
 /* ---------- song cluster: every matching track from tracks.json as a tappable floating screen over a landmark ---------- */
