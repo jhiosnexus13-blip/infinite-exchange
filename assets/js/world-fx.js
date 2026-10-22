@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=49'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=49' : '/assets/data/yarmouth-geo.json?v=49').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=50'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=50' : '/assets/data/yarmouth-geo.json?v=50').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=49').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=49'), j('/assets/data/newtown-extra.json?v=49')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=49').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('dam sign', damSign); safe('food basket', foodBasket); 
-      Promise.all([import('./world-pb.js?v=49'), j('/assets/data/pleasure-beach.json?v=49')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=50').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=50'), j('/assets/data/newtown-extra.json?v=50')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=50').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=50'), j('/assets/data/newtown-streets.json?v=50')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=50'), j('/assets/data/pleasure-beach.json?v=50')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=49').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=49').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=50').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=50').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -344,7 +344,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=49').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=50').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -378,6 +378,13 @@ function foodBasket() {
   const hit = new T.Mesh(new T.BoxGeometry(3.4, 4.6, 3.4), new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })); hit.position.y = 2.3;
   hit.userData = { link: FOOD.url, title: FOOD.label, id: 'gynet-food-basket' }; g.add(hit); CL.push(hit);
   const lab = LBL(FOOD.label, '#ffcf8a', 1.2); lab.position.set(0, 5.4, 0); g.add(lab);
+  // v50: the standout of Newtown: raised on a glowing plinth with a soft beacon beam and halo visible from the surrounding streets
+  g.position.y = 1.6; g.scale.setScalar(1.25);
+  const plinth = new T.Mesh(new T.CylinderGeometry(2, 2.3, 1.6, seg), A(0xffb347, 0.35)); plinth.position.y = -0.8 / 1.25; g.add(plinth);
+  const beam = new T.Mesh(new T.CylinderGeometry(0.5, 1.6, 46, seg, 1, true), A(0xffa53a, 0.34)); beam.position.y = 26; g.add(beam);
+  const halo = new T.Mesh(new T.SphereGeometry(3.2, 12, 8), A(0xffb347, 0.12)); halo.position.y = 2; g.add(halo); fx.foodBeam = beam; fx.foodHalo = halo;
+  beam.raycast = halo.raycast = plinth.raycast = () => {};
+  lab.scale.multiplyScalar(1.3);
   fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url };
 }
 
@@ -475,6 +482,7 @@ function songCluster(L, base, ht) {
 let cTex = 0;
 function updateClusters(t, dt) {
   if (fx.foodHeart && !RED) fx.foodHeart.rotation.y = t * 0.8;
+  if (fx.foodBeam && !RED) { const k = 0.5 + 0.5 * Math.sin(t * 1.6); fx.foodBeam.material.opacity = 0.26 + 0.14 * k; fx.foodHalo.scale.setScalar(1 + 0.12 * k); }
   if (fx.damG) fx.damG.rotation.y = Math.atan2(CAM.position.x - fx.damG.position.x, CAM.position.z - fx.damG.position.z);
   for (const c of fx.clusters) { const p = c.grp.position, d = Math.hypot(P.pos.x - p.x, P.pos.z - p.z); c.grp.visible = d < (LOW ? 900 : 1600);
     if (!c.grp.visible) continue; if (!RED) c.grp.rotation.y += dt * (c.spin || 0.05);
