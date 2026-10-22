@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=43'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=43' : '/assets/data/yarmouth-geo.json?v=43').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=44'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=44' : '/assets/data/yarmouth-geo.json?v=44').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=43').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=43'), j('/assets/data/newtown-extra.json?v=43')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=43').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
-      Promise.all([import('./world-pb.js?v=43'), j('/assets/data/pleasure-beach.json?v=43')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=44').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=44'), j('/assets/data/newtown-extra.json?v=44')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=44').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
+      Promise.all([import('./world-pb.js?v=44'), j('/assets/data/pleasure-beach.json?v=44')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=43').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=43').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=44').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=44').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -240,11 +240,12 @@ function geo(G, grp) {
       for (const t of tri) for (const k of t) { p.push(W3[k].x, y, W3[k].z); v.push(0.6); } }
     const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(p, 3)); g.setAttribute('aV', new T.Float32BufferAttribute(v, 1));
     const m = new T.Mesh(g, geoMat(col, { a, add: true })); m.renderOrder = -1; grp.add(m); return m; };
-  flatMesh(G.water, 0.06, 0x00b4ff, 0.55); flatMesh(G.beach, 0.04, 0x9fd86a, 0.25);
+  flatMesh(G.water, 0.06, 0x00b4ff, 0.55); flatMesh(G.beach, 0.04, 0xffcf5a, 0.3); // v44: sand = golden
+  if (G.green && G.green.length) flatMesh(G.green, 0.03, 0x3dff7a, 0.22); // v44: OSM grass / parks / pitches / golf / racecourse turf = green
   // polylines (roads by class, piers raised, coastline bright)
   const lines = (list, y, col, op) => { const s = []; for (const c of list) { const W3 = flat(c).map(([e, n]) => warp(e, n)); for (let i = 0; i < W3.length - 1; i++) s.push(W3[i].x, y, W3[i].z, W3[i + 1].x, y, W3[i + 1].z); }
     const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(s, 3)); const l = new T.LineSegments(g, new T.LineBasicMaterial({ color: col, transparent: true, opacity: op, blending: T.AdditiveBlending, depthWrite: false, fog: false })); grp.add(l); return l; };
-  lines(G.roads.filter(r => r[0] >= 2).map(r => r[1]), 0.1, 0xffc84a, 0.75); lines(G.roads.filter(r => r[0] < 2).map(r => r[1]), 0.09, 0xff7a3d, 0.45);
+  lines(G.roads.filter(r => r[0] >= 2).map(r => r[1]), 0.1, 0xc4ccd4, 0.7); lines(G.roads.filter(r => r[0] < 2).map(r => r[1]), 0.09, 0x9aa3ad, 0.5); // v44: all roads grey (the Golden Mile keeps its own look)
   lines(G.piers.map(p => p[0]), 1.4, 0xb4fff0, 0.9); lines(G.coast, 0.12, 0x9dffe0, 0.95);
   // seaward coastline profile (max east per northing bin) for the sea shader
   const NB = 16, n0 = 5600, n1 = -4800, prof = Array.from({ length: NB }, (_, i) => ({ n: n0 + (n1 - n0) * i / (NB - 1), e: -1e9 }));
@@ -412,8 +413,8 @@ function bakeBig() { // whole area pre-rendered once into an offscreen bitmap (0
   const line = (a, col, w) => { g.beginPath(); for (let i = 0; i < a.length; i += 2) { const v = warp(a[i], a[i + 1]); i ? g.lineTo(X(v.x), Z(v.z)) : g.moveTo(X(v.x), Z(v.z)); } g.strokeStyle = col; g.lineWidth = w; g.stroke(); };
   // sea: everything east of the seaward coast profile
   g.fillStyle = '#04202c'; g.beginPath(); g.moveTo(c.width, 0); for (let z = MB.z0; z <= MB.z1; z += 50) g.lineTo(X(fx.coastE(-z)), Z(z)); g.lineTo(c.width, c.height); g.closePath(); g.fill();
-  for (const w of G.beach) poly(w, 'rgba(160,216,106,.18)'); for (const w of G.water) poly(w, '#06364a', 'rgba(0,180,255,.5)');
-  g.lineWidth = 1; for (const [, a] of G.roads) line(a, 'rgba(255,140,60,.45)', 1.6);
+  if (G.green) for (const w of G.green) poly(w, 'rgba(61,255,122,.14)'); for (const w of G.beach) poly(w, 'rgba(255,207,90,.22)'); for (const w of G.water) poly(w, '#06364a', 'rgba(0,180,255,.5)');
+  g.lineWidth = 1; for (const [, a] of G.roads) line(a, 'rgba(180,190,200,.45)', 1.6);
   g.lineWidth = 0.6; for (const [, a] of G.buildings) poly(a, 'rgba(0,255,157,.28)', 'rgba(0,255,157,.55)');
   for (const a of G.coast) line(a, '#9dffe0', 1.5); for (const [a] of G.piers) line(a, '#b4fff0', 2.5);
   if (G.harbour_spur) line(G.harbour_spur.coords, 'rgba(255,200,74,.7)', 3);

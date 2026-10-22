@@ -25,7 +25,7 @@ export function initNewtown(o, X) {
   // ---- North Denes Road ----
   const ND = X.north_denes_road; if (ND) { const R = ND.road.map(p => W(p)); let lampN = 0, acc = 0; const LS = LITE ? 60 : 30;
     for (let i = 0; i < R.length - 1; i++) { const a = R[i], b = R[i + 1], d = b.clone().sub(a), L = d.length(); if (!L) continue; const n = new T.Vector3(-d.z, 0, d.x).normalize();
-      for (const off of [4.2, -4.2]) seg(0xbfeee0, a.clone().addScaledVector(n, off).setY(0.18), b.clone().addScaledVector(n, off).setY(0.18)); // kerbs
+      for (const off of [4.2, -4.2]) seg(0xc4ccd4, a.clone().addScaledVector(n, off).setY(0.18), b.clone().addScaledVector(n, off).setY(0.18)); // kerbs
       if (!LITE) for (const off of [6.8, -6.8]) seg(0x5fa894, a.clone().addScaledVector(n, off).setY(0.12), b.clone().addScaledVector(n, off).setY(0.12)); // pavement back edge
       for (let s = (LS - acc % LS) % LS; s < L; s += LS) { const side = lampN++ % 2 ? 1 : -1, q = a.clone().addScaledVector(d, s / L).addScaledVector(n, side * 5.2);
         seg(0xffd27a, q.clone().setY(0), q.clone().setY(6)); seg(0xffd27a, q.clone().setY(6), q.clone().addScaledVector(n, -side * 1.4).setY(6)); }
@@ -37,7 +37,7 @@ export function initNewtown(o, X) {
     for (const p of ND.pois) label(p.name.toUpperCase(), p.at, 7, '#ff9de6', 1.2);
     label('NORTH DENES ROAD', ND.road[Math.floor(ND.road.length / 2)], 9, '#bfeee0', 1.6); info.ndr = { lamps: lampN, junctions: ND.junctions.length, pois: ND.pois.length }; }
   // ---- Beatty Close (street label only) ----
-  const BC = X.beatty_close; if (BC) { for (const R of BC.roads) ring(0xbfeee0, R, 0.15, false); label('BEATTY CLOSE', BC.label_at, 5, '#bfeee0', 1.1); info.beatty = { blocks: BC.blocks.length }; }
+  const BC = X.beatty_close; if (BC) { for (const R of BC.roads) ring(0xc4ccd4, R, 0.15, false); label('BEATTY CLOSE', BC.label_at, 5, '#bfeee0', 1.1); info.beatty = { blocks: BC.blocks.length }; }
   for (const [hex, s] of buckets) { const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(s, 3));
     const m = new T.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.75, blending: T.AdditiveBlending, depthWrite: false, fog: false }); m.userData.op = 0.75; mats.push(m);
     const l = new T.LineSegments(g, m); l.raycast = () => {}; S.add(l); }
