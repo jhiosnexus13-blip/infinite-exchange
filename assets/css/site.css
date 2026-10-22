@@ -123,3 +123,7 @@ body.yt-on .queue{right:calc(200px + 1.5rem)}
 @media (max-height:520px){.ytbox:not(.min){width:min(300px,calc(100vw - 1.2rem))!important}.ytbox:not(.min) iframe,.ytbox:not(.min)>.ytmount{height:calc(min(300px,100vw - 1.2rem) * .5625)!important}}
 .ytbox>div.ytvol{width:auto!important;height:auto!important;display:flex}
 @media (max-height:520px){.ytbox:not(.min){top:calc(.4rem + env(safe-area-inset-top))!important;bottom:auto!important;width:240px!important;padding-top:47px!important;z-index:62}.ytbox:not(.min) iframe,.ytbox:not(.min)>.ytmount{height:135px!important}.ytbox .ytvol{padding:.15rem .5rem .25rem}.ytbox .ytvol button{flex-basis:40px;height:40px}.ytbox .ytvol input{height:40px}}
+
+/* v55: closed video panel stays alive (audio continues) but is invisible and untouchable */
+.ytbox.closed{opacity:0!important;pointer-events:none!important;z-index:-1!important;left:0!important;top:0!important;right:auto!important;bottom:auto!important;transform:none!important}
+body.yt-closed .player [data-a=ytstop]{display:none!important}
