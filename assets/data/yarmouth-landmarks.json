@@ -43,12 +43,12 @@
    "wheel_slots": 5,
    "wheel_track_ids": [
     "pleasure-bitch-original-version",
-    "pleasure-bitch-feat-luce-aether-fried-phonk-remix",
     "pleasure-bitch-feat-luce-aether-fried-remix",
-    null,
-    null
+    "pleasure-bitch-feat-luce-aether-break-remix",
+    "pleasure-bitch-feat-luce-aether-fried-phonk-remix",
+    "pleasure-bitch-feat-luce-aether-fried-again-remix"
    ],
-   "wheel_note": "Gondola screens on the big wheel. Joseph says there are 5 Pleasure Bitch tracks; only 3 are in tracks.json. To fill a slot, put the track id (from tracks.json) in place of a null."
+   "wheel_note": "Playlist order of YouTube album 'Pleasure Bitch' (OLAK5uy_n3DSg7qRtAZBLzCoLpG0fwgFY0X6r-gjg), titles via YouTube oEmbed 2026-10-22. Add more ids to add gondolas."
   },
   {
    "key": "minster",
@@ -108,7 +108,8 @@
     "lee[\\s-]?t\\b",
     "iron\\s*duke"
    ],
-   "song_note": "Matches title, artist, album, feat. and tags case-insensitively ('Lee T', 'LeeT', 'Lee-T', 'Iron Duke'). As of 2026-10-22 no track in tracks.json matches."
+   "song_note": "Tracks tagged 'iron-duke' plus any title/artist/album/tag matching Lee T / Iron Duke.",
+   "song_tag": "iron-duke"
   },
   {
    "key": "the_avenues",

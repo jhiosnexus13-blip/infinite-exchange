@@ -26,7 +26,7 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=33'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=33' : '/assets/data/yarmouth-geo.json?v=33').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=34'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=34' : '/assets/data/yarmouth-geo.json?v=34').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); }); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
 }
@@ -232,7 +232,7 @@ function featureScreen(L, base, ht) {
 /* ---------- Pleasure Beach big wheel: one tappable gondola screen per slot, rotating with the rim but kept upright ---------- */
 function wheelScreens(L, wheel, r) {
   const boot = () => window.JX.load().then(() => {
-    const ids = (L.wheel_track_ids || []).slice(0, L.wheel_slots); while (ids.length < L.wheel_slots) ids.push(null);
+    const ids = (L.wheel_track_ids || []).slice(); while (ids.length < (L.wheel_slots || 0)) ids.push(null); // more ids than slots = more gondolas
     fx.wheelInfo = ids.map(id => id && (window.JX.tracks.find(t => t.id === id) ? id : `missing:${id}`));
     fx.gondolas = ids.map((id, k) => { const t = id && window.JX.tracks.find(x => x.id === id), a = k / ids.length * Math.PI * 2 + Math.PI / 2, hex = t ? '#ff5fd2' : '#3a5a50';
       const m = new T.Mesh(new T.PlaneGeometry(9, 5.06), new T.MeshBasicMaterial({ map: titleTex(t ? t.title : 'SLOT ' + (k + 1) + ' // EMPTY', hex), transparent: true, opacity: t ? 0.95 : 0.45, side: T.DoubleSide, fog: false }));
