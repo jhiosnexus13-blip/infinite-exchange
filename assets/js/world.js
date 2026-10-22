@@ -362,7 +362,7 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=37').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=38').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
@@ -379,7 +379,9 @@ function tick() {
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)); right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   const SPD = MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x, player.pos.z) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
   if (window.__mapOpen) { mv = 0; st = 0; } // jump map overlay is up: no walking under it
-  player.pos.addScaledVector(fwd, mv * SPD * dt).addScaledVector(right, st * SPD * dt);
+  { const dx = (fwd.x * mv + right.x * st) * SPD * dt, dz = (fwd.z * mv + right.z * st) * SPD * dt, C = window.__collide, px = player.pos.x, pz = player.pos.z;
+    if (C && (dx || dz) && !C(px, pz)) { if (!C(px + dx, pz + dz)) player.pos.x += dx, player.pos.z += dz; else if (!C(px + dx, pz)) player.pos.x += dx; else if (!C(px, pz + dz)) player.pos.z += dz; } // slide along walls; already inside (after a jump) = free to walk out
+    else { player.pos.x += dx; player.pos.z += dz; } }
   player.pos.x = Math.max(-1600, Math.min(700, player.pos.x)); player.pos.z = Math.max(-3300, Math.min(3400, player.pos.z)); // real-scale Great Yarmouth: Breydon side to the piers, Caister road to Gorleston
   camera.position.copy(player.pos); camera.rotation.set(player.pitch, player.yaw, 0, 'YXZ');
   if (!reduced) { globe.rotation.y += dt * 0.12; ring.rotation.z += dt * 0.3; }
@@ -391,6 +393,6 @@ function tick() {
 renderer.setAnimationLoop(tick);
 document.addEventListener('visibilitychange', () => renderer.setAnimationLoop(document.hidden ? null : tick));
 /* test/debug hook (read-only snapshot) */
-window.__world = { face(lane) { const m = clickables.find(o => o.userData.id === lane); player.pos.set(m.position.x, 1.7, m.position.z + 14); player.yaw = 0; player.pitch = 0.15; }, project(lane) { const m = clickables.find(o => o.userData.id === lane); const v = m.position.clone().project(camera); const r = canvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; }, goto(x, z, yaw = 0, pitch = 0) { player.pos.set(x, 1.7, z); player.yaw = yaw; player.pitch = pitch; }, get low() { return LOW; }, get lite() { return LITE; }, get state() { return { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch }; } };
+window.__world = { get player() { return player; }, face(lane) { const m = clickables.find(o => o.userData.id === lane); player.pos.set(m.position.x, 1.7, m.position.z + 14); player.yaw = 0; player.pitch = 0.15; }, project(lane) { const m = clickables.find(o => o.userData.id === lane); const v = m.position.clone().project(camera); const r = canvas.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; }, goto(x, z, yaw = 0, pitch = 0) { player.pos.set(x, 1.7, z); player.yaw = yaw; player.pitch = pitch; }, get low() { return LOW; }, get lite() { return LITE; }, get state() { return { x: player.pos.x, z: player.pos.z, yaw: player.yaw, pitch: player.pitch }; } };
 
 

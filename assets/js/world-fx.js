@@ -26,21 +26,23 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=37'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=37' : '/assets/data/yarmouth-geo.json?v=37').catch(e => (console.warn('geo', e), null))])
-    .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); }); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=38'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=38' : '/assets/data/yarmouth-geo.json?v=38').catch(e => (console.warn('geo', e), null))])
+    .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
+      import('./world-env.js?v=38').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
 function sky() {
-  const m = new T.ShaderMaterial({ side: T.BackSide, depthWrite: false, fog: false, uniforms: { uTime: { value: 0 } },
+  const m = new T.ShaderMaterial({ side: T.BackSide, depthWrite: false, fog: false, uniforms: { uTime: { value: 0 }, uDay: { value: 0 }, uGloom: { value: 0 } },
     vertexShader: `varying vec3 vP; void main(){ vP = normalize(position); vec4 p = projectionMatrix * modelViewMatrix * vec4(position,1.0); gl_Position = p.xyww; }`,
-    fragmentShader: `uniform float uTime; varying vec3 vP;
+    fragmentShader: `uniform float uTime; uniform float uDay; uniform float uGloom; varying vec3 vP;
       void main(){ float h = clamp(vP.y, -0.2, 1.0); float s = 0.5 + 0.5 * sin(uTime * 0.05);
         vec3 hor = mix(vec3(0.0,0.16,0.10), vec3(0.05,0.04,0.16), s); vec3 zen = mix(vec3(0.0,0.015,0.02), vec3(0.02,0.0,0.04), 1.0 - s);
         vec3 c = mix(hor, zen, pow(max(h,0.0), 0.45));
         c += vec3(0.0,0.5,0.3) * 0.05 * step(0.92, fract(vP.y * 140.0 - uTime * 0.3)) * (1.0 - h);
         float east = smoothstep(0.6, 1.0, vP.x) * (1.0 - h) * 0.25; c += vec3(0.0,0.25,0.3) * east;
+        vec3 dayC = mix(mix(vec3(0.55,0.72,0.82), vec3(0.16,0.38,0.62), pow(max(h,0.0),0.6)), vec3(0.42,0.47,0.5), uGloom); c = mix(c, dayC, uDay * 0.85);
         gl_FragColor = vec4(c, 1.0); }` });
   const sp = new T.Mesh(new T.SphereGeometry(800, 32, 16), m); sp.renderOrder = -10; sp.frustumCulled = false; S.add(sp); fx.sky = m; fx.skyMesh = sp;
 }
@@ -68,7 +70,7 @@ function skyline(D, grp, noGeo) {
     [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => add(v[i], v[j]));
   };
   fx.landmarks = {}; fx.mapSpots = [];
-  const mat = new T.LineBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false, fog: false });
+  const mat = new T.LineBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false, fog: false }); fx.lmMat = mat;
   const yaw = v => Math.atan2(v.x, v.z); // facing angle of a world point from origin
   const coast = D.coastline.map(([la, lo]) => local(la, lo));
   const coastE0 = n => { for (let i = 0; i < coast.length - 1; i++) { const a = coast[i], b = coast[i + 1]; if (n <= a.n && n >= b.n) return a.e + (b.e - a.e) * (n - a.n) / (b.n - a.n); } return coast[n > 0 ? 0 : coast.length - 1].e; };
@@ -157,6 +159,11 @@ function geoMat(col, opts = {}) { // holographic fill with vertical glow, distan
         vec3 c = mix(vec3(0.0,0.03,0.03), uC, 0.06 + 0.22 * vV * vV + floors) + uC * top * 0.9;
         gl_FragColor = vec4(mix(vec3(0.0,0.1,0.07), c, f), uA * (0.35 + 0.65 * f)); }` });
 }
+/* ---------- building collision: 2D footprint test in the real-scale core (world x = east, z = -north) ---------- */
+const COLC = 32, COL = new Map();
+function inPoly(p, e, n) { let c = false; for (let i = 0, j = p.length - 1; i < p.length; j = i++) { const [xi, yi] = p[i], [xj, yj] = p[j]; if ((yi > n) !== (yj > n) && e < (xj - xi) * (n - yi) / (yj - yi) + xi) c = !c; } return c; }
+function collide(x, z, r = 0.5) { const e = x, n = -z; if (Math.hypot(e, n) > CORE - 40) return false; const l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); if (!l) return false;
+  for (const b of l) if (e > b.x0 - r && e < b.x1 + r && n > b.y0 - r && n < b.y1 + r && (inPoly(b.p, e, n) || inPoly(b.p, e + r, n) || inPoly(b.p, e - r, n) || inPoly(b.p, e, n + r) || inPoly(b.p, e, n - r))) return true; return false; }
 function geo(G, grp) {
   // Buildings: indexed per 320 m tile (16-bit indices, shared wall/roof vertices: 2 verts per footprint corner),
   // built in time-sliced batches so a slow phone never blocks the main thread for long.
@@ -183,12 +190,14 @@ function geo(G, grp) {
     for (let i = 0; i < N; i++) { const j = (i + 1) % N, a = b0 + i * 2, b = b0 + j * 2; t.i.push(a, b, b + 1, a, b + 1, a + 1); if (EDGES) t.e.push(a + 1, b + 1); }
     const tri = T.ShapeUtils.triangulateShape(W3.map(v => new T.Vector2(v.x, v.z)), []); for (const q of tri) t.i.push(b0 + q[0] * 2 + 1, b0 + q[1] * 2 + 1, b0 + q[2] * 2 + 1);
     fx.geo.buildings++;
+    if (Math.hypot(cx, cy) < CORE - 40) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; for (const [e, n] of pts) { x0 = Math.min(x0, e); x1 = Math.max(x1, e); y0 = Math.min(y0, n); y1 = Math.max(y1, n); }
+      const b = { p: pts, x0, x1, y0, y1 }; for (let i = Math.floor(x0 / COLC); i <= Math.floor(x1 / COLC); i++) for (let j = Math.floor(y0 / COLC); j <= Math.floor(y1 / COLC); j++) { const k = i + ':' + j; (COL.get(k) || COL.set(k, []).get(k)).push(b); } }
   };
   let bi = 0; const BATCH = LITE ? 400 : 900;
   const step = () => { try { const end = Math.min(G.buildings.length, bi + BATCH); for (; bi < end; bi++) one(G.buildings[bi][0], G.buildings[bi][1]);
       if (bi < G.buildings.length) return setTimeout(step, 0); for (const t of [...tiles.values()]) flush(t); fx.geo.done = true; }
     catch (e) { worldErr('buildings', e); } };
-  step();
+  step(); window.__collide = collide;
   // flat polygons (water / beach)
   const flatMesh = (polys, y, col, a) => { const p = [], v = [];
     for (const c of polys) { const W3 = flat(c).map(([e, n]) => warp(e, n)); const tri = T.ShapeUtils.triangulateShape(W3.map(q => new T.Vector2(q.x, q.z)), []);
@@ -219,10 +228,10 @@ function goldenMile(R, grp, spur) {
     if (i) acc += pts[i].distanceTo(pts[i - 1]); pos.push(pts[i].x + nx, 0.14, pts[i].z + nz, pts[i].x - nx, 0.14, pts[i].z - nz); uv.push(0, acc / 12, 1, acc / 12);
     if (i) { const k = i * 2; idx.push(k - 2, k - 1, k, k - 1, k + 1, k); } }
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
-  fx.goldMat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, uniforms: { uTime: { value: 0 } },
+  fx.goldMat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, uniforms: { uTime: { value: 0 }, uGlow: { value: 1 } },
     vertexShader: `varying vec2 vU; varying float vD; void main(){ vU = uv; vec4 mv = modelViewMatrix * vec4(position,1.0); vD = -mv.z; gl_Position = projectionMatrix * mv; }`,
-    fragmentShader: `uniform float uTime; varying vec2 vU; varying float vD; void main(){ float x = abs(vU.x - 0.5); float side = step(0.4, x); float dash = step(0.55, fract(vU.y - uTime * 0.6)) * step(x, 0.12);
-      float f = exp(-max(vD - 200.0, 0.0) * 0.002); gl_FragColor = vec4(vec3(1.0,0.75,0.2), (0.12 + 0.7 * side + 0.5 * dash) * f); }` });
+    fragmentShader: `uniform float uTime; uniform float uGlow; varying vec2 vU; varying float vD; void main(){ float x = abs(vU.x - 0.5); float side = step(0.4, x); float dash = step(0.55, fract(vU.y - uTime * 0.6)) * step(x, 0.12);
+      float f = exp(-max(vD - 200.0, 0.0) * 0.002); gl_FragColor = vec4(vec3(1.0,0.75,0.2), min(1.0, (0.12 + 0.7 * side + 0.5 * dash) * f * uGlow)); }` });
   const m = new T.Mesh(g, fx.goldMat); m.renderOrder = 1; grp.add(m);
   if (spur) { fx.route2 = pts.map(p => [p.x, p.z]); fx.route2Info = { streets: R.streets, length_m: R.length_m }; return; }
   const lab = LBL('GOLDEN MILE', '#ffcc4a', 3); lab.position.copy(pts[0]).setY(6); grp.add(lab);
@@ -404,10 +413,10 @@ function sea(coast) {
   const seg = LOW ? 80 : 160, geo = new T.PlaneGeometry(7000, 9000, seg, seg); geo.rotateX(-Math.PI / 2);
   const cs = coast.concat(Array(Math.max(0, 16 - coast.length)).fill(coast[coast.length - 1]).map((c, i) => ({ n: c.n - (i + 1), e: c.e }))).slice(0, 16), cn = cs.map(c => c.n), ce = cs.map(c => c.e);
   const m = new T.ShaderMaterial({ transparent: true, depthWrite: false, fog: false, side: T.DoubleSide,
-    uniforms: { uTime: { value: 0 }, uC: { value: CORE }, uK: { value: FAR }, uN: { value: cn }, uE: { value: ce } },
-    vertexShader: `uniform float uTime; varying vec3 vW; varying float vH;
+    uniforms: { uTime: { value: 0 }, uAmp: { value: 1 }, uC: { value: CORE }, uK: { value: FAR }, uN: { value: cn }, uE: { value: ce } },
+    vertexShader: `uniform float uTime; uniform float uAmp; varying vec3 vW; varying float vH;
       void main(){ vec3 p = position; vec4 w = modelMatrix * vec4(p,1.0);
-        float h = sin(w.x * 0.08 + uTime * 0.9) * 0.35 + sin(w.z * 0.11 - uTime * 0.7) * 0.25 + sin((w.x + w.z) * 0.21 + uTime * 1.3) * 0.12;
+        float h = sin(w.x * 0.08 + uTime * 0.9) * 0.35 + sin(w.z * 0.11 - uTime * 0.7) * 0.25 + sin((w.x + w.z) * 0.21 + uTime * 1.3) * 0.12; h *= uAmp;
         w.y += h - 0.3; vW = w.xyz; vH = h; gl_Position = projectionMatrix * viewMatrix * w; }`,
     fragmentShader: `uniform float uTime; uniform float uC; uniform float uK; uniform float uN[16]; uniform float uE[16]; varying vec3 vW; varying float vH;
       float coastE(float n){ for(int i=0;i<15;i++){ if(n <= uN[i] && n >= uN[i+1]) return mix(uE[i], uE[i+1], (n-uN[i])/(uN[i+1]-uN[i])); } return n > 0.0 ? uE[0] : uE[15]; }
@@ -556,13 +565,14 @@ export function updateWorldFX(t, dt) {
       m.position.set(Math.cos(a0) * fx.wheelR - 3.6 * sn, Math.sin(a0) * fx.wheelR - 3.6 * cs, 0.6); m.rotation.z = -th;
       if (u.yt && !u.loaded && d < 300 && cTex < 40) { u.loaded = true; cTex++; loader().load(`https://i.ytimg.com/vi/${u.yt}/mqdefault.jpg`, tex => { tex.colorSpace = T.SRGBColorSpace; m.material.map.dispose(); m.material.map = tex; m.material.needsUpdate = true; u.thumb = true; }, undefined, () => { u.thumbFailed = true; }); }
       if (window.JX && JX.current && JX.current.id === u.track) m.scale.setScalar(1.2 + 0.08 * Math.sin(t * 4)); else m.scale.setScalar(1); } }
+  if (fx.env) { try { fx.env.update(t, dt); } catch (e) { worldErr('env', e); fx.env = null; } }
   updateCard(); updateOrbits(t, dt); updateVolume(t);
   if (t - mapT > 0.1) { mapT = t; drawMap(); }
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
   openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },
-  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, route2: fx.route2Info, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
+  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, env: fx.env && { day: +fx.env.state.day.toFixed(2), phase: +fx.env.state.phase.toFixed(3), wx: fx.env.state.wx, wxErr: fx.env.state.wxErr, rain: fx.env.state.rain, lamps: fx.env.state.lampInfo }, cols: COL.size, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, route2: fx.route2Info, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
 };
