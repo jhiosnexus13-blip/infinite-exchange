@@ -189,7 +189,8 @@
    "height_m": 10,
    "song_tag": "pic",
    "source": "OSM way 210113579 amenity=police 'Police Investigation Centre' (Nominatim 2026-10-22: road A47, Southtown, NR31 0NA; bbox 52.59706-52.59765 / 1.71632-1.71733). It fronts the A47 about 300 m east of Gapton Hall Road (OSM way 1197050813, 52.59602,1.71242).",
-   "crosscheck": "postcodes.io NR31 0NA centroid 52.594999,1.718182 (~280 m S, same postcode as the OSM building's address)."
+   "crosscheck": "postcodes.io NR31 0NA centroid 52.594999,1.718182 (~280 m S, same postcode as the OSM building's address).",
+   "rot_y": 0.59
   },
   {
    "key": "seafront_shelter",

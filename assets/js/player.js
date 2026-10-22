@@ -145,7 +145,7 @@
     }
   }
   function renderQueue() {
-    qbox.innerHTML = '<h3>Queue</h3><ol>' + queue.map((t, i) => `<li class="${i === idx ? 'cur' : ''}"><span>${esc(t.title)}</span><button type="button" data-i="${i}" aria-label="Play ${esc(t.title)}">▶</button></li>`).join('') + '</ol>';
+    qbox.innerHTML = '<h3>Queue</h3><ol>' + queue.map((t, i) => `<li class="${i === idx ? 'cur' : ''}"><span>${esc(t.title)}</span><button type="button" data-i="${i}" aria-label="Play ${esc(t.title)}">▶</button></li>`).join('') + '</ol>' + (C.KOFI_URL ? `<a class="kofi" href="${esc(C.KOFI_URL)}" target="_blank" rel="noopener" title="${esc(C.KOFI_LABEL || '')}" aria-label="${esc(C.KOFI_LABEL || 'Support on Ko-fi')}">☕ Support on Ko-fi</a>` : '');
   }
   qbox.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) go(+b.dataset.i); });
 

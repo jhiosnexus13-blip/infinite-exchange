@@ -11,6 +11,7 @@
 .wwel .note{margin:.7rem 0 0;font-size:.68rem;color:#7fa99a}.wwel-go{display:block;width:100%;min-height:54px;margin:.9rem 0 .5rem;border:2px solid #00ff9d;border-radius:28px;background:#00ff9d;color:#001a10;font:700 1rem ui-monospace,monospace;letter-spacing:.1em;cursor:pointer}
 .wwel-go:hover,.wwel-go:focus-visible{background:#fff;outline:none}.wwel label{display:flex;gap:.45rem;align-items:center;font-size:.72rem;color:#9cc;cursor:pointer;min-height:32px}.wwel input{width:18px;height:18px;accent-color:#00ff9d}
 .whelp{position:fixed;z-index:31;top:calc(3.3rem + env(safe-area-inset-top));left:calc(.5rem + env(safe-area-inset-left));width:44px;height:44px;border-radius:50%;border:1px solid #00ff9d;background:rgba(0,0,0,.7);color:#00ff9d;font:700 1.1rem ui-monospace,monospace;cursor:pointer}
+.wwel-kofi{display:block;margin:.7rem auto 0;width:max-content;font-size:.75rem;color:#9adfc4;opacity:.8;text-decoration:none;border-bottom:1px dotted currentColor}.wwel-kofi:hover,.wwel-kofi:focus-visible{opacity:1;color:#00ff9d}
 .whelp:hover,.whelp:focus-visible{background:#00ff9d;color:#000;outline:none}
 .whelp.docked{position:static;pointer-events:auto;flex:0 0 auto}
 #hint{transition:opacity .8s}#hint.gone{opacity:0}.hud>*{background:rgba(1,8,6,.72);padding:.1rem .45rem;border-radius:8px}`;
@@ -31,7 +32,7 @@ ${li('🎧', 'Headphones recommended.')}
 ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite ? '' : ' If it runs slowly, add <b>?lite=1</b> to the address for a lighter version.'}`) : ''}
 </ul><p class="note">Some live features, like seeing other visitors (and voice chat, coming soon), work best on Wi-Fi for now; mobile data may not connect.</p>
 <p class="note">Work in progress: more local artists are on the way.</p>
-<button type="button" class="wwel-go">ENTER THE WORLD</button><label><input type="checkbox" class="wwel-off"> Don't show this again</label></div>`;
+<button type="button" class="wwel-go">ENTER THE WORLD</button><label><input type="checkbox" class="wwel-off"> Don't show this again</label>${(window.JHIOS_CONFIG || {}).KOFI_URL ? `<a class="wwel-kofi" href="${JHIOS_CONFIG.KOFI_URL}" target="_blank" rel="noopener" title="${JHIOS_CONFIG.KOFI_LABEL}" aria-label="${JHIOS_CONFIG.KOFI_LABEL}">☕ Support on Ko-fi</a>` : ''}</div>`;
   const help = document.createElement('button'); help.type = 'button'; help.className = 'whelp'; help.textContent = '?'; help.setAttribute('aria-label', 'How to use the world'); help.title = 'Help';
   let off = false; try { off = localStorage.getItem(KEY) === '1'; } catch (_) {}
   const unlock = () => { try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { const c = window.__jxAC || (window.__jxAC = new AC()); c.resume && c.resume(); const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } } catch (_) {} };

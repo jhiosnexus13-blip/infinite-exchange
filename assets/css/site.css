@@ -86,6 +86,7 @@ footer{padding:2rem 0 3rem;color:var(--dim);font-size:.75rem}footer a{color:var(
 .player .extra{display:flex;gap:.3rem}
 .queue{position:fixed;right:clamp(.6rem,2vw,1.5rem);bottom:calc(var(--player-h) + 1.2rem + env(safe-area-inset-bottom));z-index:61;width:min(360px,calc(100vw - 1.2rem));max-height:50vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:.6rem}
 .queue[hidden]{display:none}.queue ol{list-style:none}.queue li{display:flex;justify-content:space-between;gap:.5rem;padding:.35rem 0;border-bottom:1px solid var(--line);font-size:.75rem}
+.queue .kofi{display:block;margin:.6rem auto .1rem;width:max-content;font-size:.72rem;color:var(--muted,#9adfc4);text-decoration:none;border-bottom:1px dotted currentColor;opacity:.85}.queue .kofi:hover,.queue .kofi:focus-visible{opacity:1;color:var(--accent,#00ff9d)}
 .queue li.cur{color:var(--signal)}.queue li button{background:none;border:none;color:var(--dim);cursor:pointer}
 .toast{position:fixed;left:50%;bottom:calc(var(--player-h) + 1.5rem);transform:translateX(-50%);background:var(--panel);border:1px solid var(--alarm);padding:.5rem 1rem;font-size:.75rem;z-index:70}
 @media (max-width:640px){.states{grid-template-columns:1fr}.player{grid-template-columns:auto 1fr}.player .extra{display:none}.tr{grid-template-columns:2.4rem 1fr}.tr .meta{display:none}}
