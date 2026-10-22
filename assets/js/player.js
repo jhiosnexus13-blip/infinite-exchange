@@ -34,7 +34,7 @@
   class YouTubeSource {
     constructor(box) { this.box = box; this.p = null; this.state = -1; }
     async load(t) {
-      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on');
+      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min'); document.body.classList.remove('yt-min'); for (const k of ['top', 'left', 'right', 'bottom']) this.box.style.removeProperty(k); // a new screen replaces the track and shows the panel again
       await loadYT();
       if (!this.p) {
         await new Promise(res => {
@@ -42,14 +42,14 @@
             width: 200, height: 200, videoId: id, host: 'https://www.youtube-nocookie.com',
             playerVars: { autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1, origin: location.origin },
             events: {
-              onReady: () => { this.setVolume(this.vol ?? 100); this.p.playVideo(); res(); },
+              onReady: () => { this.setVolume(this.vol ?? 100); this.mute(!!this.muted); this.p.playVideo(); res(); },
               onStateChange: e => { this.state = e.data; this.cb && this.cb({ 0: 'ended', 1: 'play', 2: 'pause' }[e.data] || 'state'); },
               onError: () => this.cb && this.cb('error')
             }
           });
         });
       } else this.p.loadVideoById(id);
-      this.setVolume(this.vol ?? 100);
+      this.setVolume(this.vol ?? 100); this.mute(!!this.muted);
       clearInterval(this.tick); this.tick = setInterval(() => this.cb && this.cb('timeupdate'), 500);
     }
     play() { this.p && this.p.playVideo(); } pause() { this.p && this.p.pauseVideo && this.p.pauseVideo(); }
@@ -59,6 +59,8 @@
     get duration() { return this.p && this.p.getDuration ? this.p.getDuration() : NaN; }
     get playing() { return this.state === 1; }
     setVolume(v) { this.vol = v; try { this.p && this.p.setVolume && this.p.setVolume(Math.round(v)); } catch (e) {} }
+    mute(on) { this.muted = on; try { if (this.p && this.p.mute) on ? this.p.mute() : this.p.unMute(); } catch (e) {} }
+    get info() { try { return { vol: this.p && this.p.getVolume ? this.p.getVolume() : null, muted: this.p && this.p.isMuted ? this.p.isMuted() : null }; } catch (e) { return {}; } }
   }
 
   /* ---------- UI ---------- */
@@ -66,16 +68,44 @@
   bar.className = 'player'; bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Audio player');
   bar.innerHTML = `<div class="ctl"><button type="button" data-a="prev" aria-label="Previous track">⏮</button><button type="button" class="main" data-a="toggle" aria-label="Play">▶</button><button type="button" data-a="next" aria-label="Next track">⏭</button></div>
   <div class="now"><b class="pt">Nothing playing</b><input type="range" min="0" max="1000" value="0" aria-label="Seek" class="seek"><div class="time"><small class="cur">0:00</small><small class="src"></small><small class="dur">0:00</small></div></div>
-  <div class="extra"><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
+  <div class="extra"><button type="button" data-a="ytexp" class="ytonly" aria-label="Expand video">⤢</button><button type="button" data-a="ytstop" class="ytonly" aria-label="Stop and close video">✕</button><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
   const qbox = document.createElement('div'); qbox.className = 'queue'; qbox.hidden = true; qbox.setAttribute('aria-label', 'Queue');
   const ytbox = document.createElement('div'); ytbox.className = 'ytbox'; ytbox.hidden = true;
-  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Close video and stop">✕ CLOSE</button>';
-  ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); try { yt.stop(); } catch (_) {} ytbox.hidden = true; document.body.classList.remove('yt-on'); window.dispatchEvent(new CustomEvent('jx:ytclose')); });
+  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Minimise video (keeps playing)">▾ MINIMISE</button><button type="button" class="ytexp" aria-label="Expand video">⤢</button><div class="ytvol"><button type="button" class="ytmute" aria-label="Mute video" aria-pressed="false">🔊</button><input type="range" min="0" max="100" step="1" value="100" aria-label="Video volume"><span class="ytvoln">100</span></div>';
+  /* v41: closing the video panel only minimises it; the same iframe/player keeps playing (never moved in the DOM, never destroyed, stays visible as a mini
+     player). The bottom bar gets expand + a separate ✕ stop. */
+  /* v42: the docked mini player picks the first spot (200x200, safe-area aware) that overlaps none of the bottom-bar controls, joysticks or HUD buttons */
+  const MINI = 202, AVOID = '.player button,.player .now,.stick,.wtrain button,#minimap,.whelp,#ptoggle,.wpresence,.hud a,.wcard,.wtrain-menu:not([hidden])';
+  function placeMini() { if (!ytbox.classList.contains('min')) { for (const k of ['top', 'left', 'right', 'bottom']) ytbox.style.removeProperty(k); return; }
+    const W = innerWidth, H = innerHeight, br = bar.getBoundingClientRect(), barTop = br.height ? br.top : H, m = 8;
+    const sa = k => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sa' + k)) || 0;
+    const L = m + sa('l'), R = W - m - sa('r') - MINI, T0 = m + sa('t'), B = barTop - m - MINI;
+    const boxes = [...document.querySelectorAll(AVOID)].filter(e => e.offsetParent !== null || getComputedStyle(e).position === 'fixed').map(e => e.getBoundingClientRect()).filter(r => r.width && r.height);
+    const free = (x, y) => x >= 0 && y >= 0 && x + MINI <= W && y + MINI <= barTop - 2 && !boxes.some(r => x < r.right + 4 && x + MINI > r.left - 4 && y < r.bottom + 4 && y + MINI > r.top - 4);
+    const cand = []; for (let y = B; y >= T0; y -= 8) { cand.push([L, y], [R, y]); for (let x = L + 16; x < R; x += 16) cand.push([x, y]); }
+    const [x, y] = cand.find(([x, y]) => free(x, y)) || [L, Math.max(T0, B)];
+    ytbox.style.setProperty('left', x + 'px', 'important'); ytbox.style.setProperty('top', y + 'px', 'important'); ytbox.style.setProperty('right', 'auto', 'important'); ytbox.style.setProperty('bottom', 'auto', 'important'); }
+  const setMin = on => { ytbox.classList.toggle('min', on); document.body.classList.toggle('yt-min', on); bar.classList.toggle('yt-mini', on); requestAnimationFrame(placeMini); setTimeout(placeMini, 300); };
+  addEventListener('resize', () => setTimeout(placeMini, 120)); addEventListener('orientationchange', () => setTimeout(placeMini, 400));
+  setInterval(() => { if (ytbox.classList.contains('min')) placeMini(); }, 1500); // HUD bits (train buttons, presence counter) come and go
+  const stopYT = () => { try { yt.stop(); } catch (_) {} if (src === yt) src = null; setMin(false); ytbox.hidden = true; document.body.classList.remove('yt-on'); bar.classList.remove('has-yt'); window.dispatchEvent(new CustomEvent('jx:ytclose')); render(); };
+  ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); setMin(true); });
+  ytbox.querySelector('.ytexp').addEventListener('click', e => { e.stopPropagation(); setMin(false); });
+  ytbox.addEventListener('pointerdown', e => e.stopPropagation());
+  // v48: our own big volume slider + mute (YouTube's own slider is hidden at small sizes and ignored on iOS); remembered in localStorage
+  const vr = ytbox.querySelector('.ytvol input'), vn = ytbox.querySelector('.ytvoln'), vm = ytbox.querySelector('.ytmute');
+  const showVol = () => { const m = !!yt.muted, v = Math.round(yt.vol ?? 100); vr.value = v; vn.textContent = m ? 'muted' : v; vm.textContent = m || v === 0 ? '🔇' : v < 50 ? '🔉' : '🔊'; vm.setAttribute('aria-pressed', String(m)); vm.setAttribute('aria-label', m ? 'Unmute video' : 'Mute video'); };
+  const setYV = v => { v = Math.max(0, Math.min(100, Math.round(+v || 0))); volume = v; audio.setVolume(v); yt.setVolume(v); if (yt.muted && v > 0) yt.mute(false); try { localStorage.setItem('jx_vol', v); localStorage.setItem('jx_mute', yt.muted ? '1' : '0'); } catch (_) {} showVol(); };
+  vr.addEventListener('input', () => setYV(vr.value));
+  vm.addEventListener('click', e => { e.stopPropagation(); yt.mute(!yt.muted); try { localStorage.setItem('jx_mute', yt.muted ? '1' : '0'); } catch (_) {} showVol(); });
+  for (const ev of ['pointerdown', 'touchstart', 'wheel', 'keydown']) ytbox.querySelector('.ytvol').addEventListener(ev, e => e.stopPropagation(), { passive: true });
   const mount = () => { document.body.append(ytbox, qbox, bar); };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', mount) : mount();
 
   const audio = new AudioSource(), yt = new YouTubeSource(ytbox);
   let volume = 100, src = null, queue = [], idx = -1, tracks = [], seeking = false, counted = new Set(), playedS = 0, lastT = 0;
+  try { const sv = localStorage.getItem('jx_vol'); if (sv !== null && !isNaN(+sv)) { volume = Math.max(0, Math.min(100, +sv)); audio.setVolume(volume); yt.vol = volume; } yt.muted = localStorage.getItem('jx_mute') === '1'; } catch (_) {}
+  showVol(); window.__ytdbg = { get info() { return yt.info; }, set: setYV };
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('jx-audio') : null;
   const tabId = Math.random().toString(36).slice(2);
   bc && (bc.onmessage = e => { if (e.data && e.data.playing && e.data.tab !== tabId && src && src.playing) src.pause(); });
@@ -112,6 +142,7 @@
     q('.pt').textContent = t ? t.title + (t.artist ? ' — ' + t.artist : '') : 'Nothing playing';
     const tg = q('[data-a=toggle]'); tg.textContent = playing ? '⏸' : '▶'; tg.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     q('.src').textContent = t ? (src === yt ? 'via YouTube' : 'self-hosted') : '';
+    bar.classList.toggle('has-yt', src === yt && !ytbox.hidden);
     const d = src ? src.duration : NaN, tm = src ? src.time : 0;
     q('.cur').textContent = fmt(tm); q('.dur').textContent = fmt(isFinite(d) ? d : (t && t.duration_s));
     if (!seeking) q('.seek').value = isFinite(d) && d > 0 ? Math.round(tm / d * 1000) : 0;
@@ -125,7 +156,7 @@
     }
   }
   function renderQueue() {
-    qbox.innerHTML = '<h3>Queue</h3><ol>' + queue.map((t, i) => `<li class="${i === idx ? 'cur' : ''}"><span>${esc(t.title)}</span><button type="button" data-i="${i}" aria-label="Play ${esc(t.title)}">▶</button></li>`).join('') + '</ol>';
+    qbox.innerHTML = '<h3>Queue</h3><ol>' + queue.map((t, i) => `<li class="${i === idx ? 'cur' : ''}"><span>${esc(t.title)}</span><button type="button" data-i="${i}" aria-label="Play ${esc(t.title)}">▶</button></li>`).join('') + '</ol>' + (C.KOFI_URL ? `<a class="kofi" href="${esc(C.KOFI_URL)}" target="_blank" rel="noopener" title="${esc(C.KOFI_LABEL || '')}" aria-label="${esc(C.KOFI_LABEL || 'Support on Ko-fi')}">☕ Support on Ko-fi</a>` : '');
   }
   qbox.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) go(+b.dataset.i); });
 
@@ -144,6 +175,7 @@
 
   bar.addEventListener('click', e => {
     const a = e.target.closest('button')?.dataset.a; if (!a) return;
+    if (a === 'ytexp') { setMin(!ytbox.classList.contains('min')); return; } if (a === 'ytstop') { stopYT(); return; }
     if (a === 'toggle') toggle(); if (a === 'next') next(); if (a === 'prev') prev();
     if (a === 'queue') { qbox.hidden = !qbox.hidden; e.target.setAttribute('aria-expanded', String(!qbox.hidden)); render(); }
   });
