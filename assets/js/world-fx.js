@@ -9,7 +9,7 @@
 export const MODELS = {
   britannia_pier: null, wellington_pier: null, nelsons_monument: null, pleasure_beach: null,
   minster: null, haven_bridge: null, gorleston_harbour: null, tower_complex: null,
-  venetian_waterways: null, iron_duke: null, the_avenues: null, newtown_archive: null,
+  venetian_waterways: null, iron_duke: null, the_avenues: null, newtown_archive: null, arc_cinema: null,
   'SCR3WFAC3': null, 'Luce Aether': null, 'JHIOS Soundtracks': null, 'Sanctum': null, 'Unsorted': null, 'GoldBot': null,
 };
 let T, S, CAM, P, H, CL, LBL, CV, LOW, RED, OBJS, getPlaying;
@@ -118,6 +118,9 @@ function skyline(D, grp, noGeo) {
       fx.mapSpots.push({ pos: base, label: 'WATERWAYS', col: '#00c8ff' });
     }
     else if (L.type === 'archive') archive(L, base, ht);
+    else if (L.type === 'cinema') { // Arc Cinema: block, marquee canopy and screen sign facing the prom (east)
+      box(base, 30, ht, 22, 0); box(base.clone().add(new T.Vector3(13, 4, 0)), 4, 0.8, 18, 0); box(base.clone().add(new T.Vector3(11.5, ht, 0)), 0.5, 5, 14, 0);
+      fx.mapSpots.push({ pos: base, label: 'ARC', col: '#ffcc66' }); }
     else if (L.type === 'lighthouse') { box(base, 1.2, ht, 1.2, ry); box(base.clone().setY(ht), 1.6, 1.0, 1.6, ry); fx.beacon = base.clone().setY(ht + 0.5); }
   }
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(segs, 3)); grp.add(new T.LineSegments(g, mat));
@@ -176,9 +179,26 @@ function geo(G, grp) {
   for (const c of G.coast) for (let i = 0; i < c.length; i += 2) { const k = Math.round((c[i + 1] - n0) / (n1 - n0) * (NB - 1)); if (k >= 0 && k < NB && c[i] > -1500) prof[k].e = Math.max(prof[k].e, c[i]); }
   for (let i = 0; i < NB; i++) if (prof[i].e < -1e8) prof[i].e = (prof[i - 1] || prof[i + 1] || { e: 300 }).e > -1e8 ? (prof[i - 1] || prof[i + 1]).e : 300;
   fx.coastE = n => { for (let i = 0; i < NB - 1; i++) { const a = prof[i], b = prof[i + 1]; if (n <= a.n && n >= b.n) return a.e + (b.e - a.e) * (n - a.n) / (b.n - a.n); } return prof[n > 0 ? 0 : NB - 1].e; };
+  if (G.golden_mile) goldenMile(G.golden_mile, grp);
   sea(prof); fx.geo = { buildings: G.buildings.length, verts: nb, meshes: city.children.length };
 }
 
+/* ---------- Golden Mile: the main explorable route, a glowing gold ribbon on the real OSM road centreline ---------- */
+function goldenMile(R, grp) {
+  const pts = []; for (let i = 0; i < R.coords.length; i += 2) pts.push(warp(R.coords[i], R.coords[i + 1]));
+  const pos = [], uv = [], idx = [], HW = 3.5; let acc = 0;
+  for (let i = 0; i < pts.length; i++) { const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)], dx = b.x - a.x, dz = b.z - a.z, l = Math.hypot(dx, dz) || 1, nx = -dz / l * HW, nz = dx / l * HW;
+    if (i) acc += pts[i].distanceTo(pts[i - 1]); pos.push(pts[i].x + nx, 0.14, pts[i].z + nz, pts[i].x - nx, 0.14, pts[i].z - nz); uv.push(0, acc / 12, 1, acc / 12);
+    if (i) { const k = i * 2; idx.push(k - 2, k - 1, k, k - 1, k + 1, k); } }
+  const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new T.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
+  fx.goldMat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, uniforms: { uTime: { value: 0 } },
+    vertexShader: `varying vec2 vU; varying float vD; void main(){ vU = uv; vec4 mv = modelViewMatrix * vec4(position,1.0); vD = -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform float uTime; varying vec2 vU; varying float vD; void main(){ float x = abs(vU.x - 0.5); float side = step(0.4, x); float dash = step(0.55, fract(vU.y - uTime * 0.6)) * step(x, 0.12);
+      float f = exp(-max(vD - 200.0, 0.0) * 0.002); gl_FragColor = vec4(vec3(1.0,0.75,0.2), (0.12 + 0.7 * side + 0.5 * dash) * f); }` });
+  const m = new T.Mesh(g, fx.goldMat); m.renderOrder = 1; grp.add(m);
+  const lab = LBL('GOLDEN MILE', '#ffcc4a', 3); lab.position.copy(pts[0]).setY(6); grp.add(lab);
+  fx.route = pts.map(p => [p.x, p.z]); fx.routeInfo = { streets: R.streets, length_m: R.length_m, points: pts.length };
+}
 /* ---------- featured hologram screen above a landmark (billboard, bobbing, tap = play via JX) ---------- */
 function featureScreen(L, base, ht) {
   const W2 = 26, H2 = 19.5, y0 = ht + 6 + H2 / 2, grp = new T.Group(); grp.position.copy(base).setY(y0); S.add(grp);
@@ -291,6 +311,7 @@ function drawMap() {
   for (let i = -2; i <= 2; i++) { const q = s / 2 + i * s / 5; g.beginPath(); g.moveTo(q, 0); g.lineTo(q, s); g.moveTo(0, q); g.lineTo(s, q); g.stroke(); }
   g.fillStyle = 'rgba(0,160,200,.25)'; g.fillRect(s - 6 * dpr, 0, 6 * dpr, s); // sea is east
   g.strokeStyle = 'rgba(0,255,157,.35)'; g.beginPath(); g.arc(X(0), Z(-2), 4 * k, 0, 7); g.stroke(); // globe
+  if (fx.route) { g.strokeStyle = '#ffc84a'; g.lineWidth = 2.5 * dpr; g.beginPath(); fx.route.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); g.lineWidth = 1; }
   for (const h of H) { g.fillStyle = h.hex; g.beginPath(); g.arc(X(h.o.pos[0]), Z(h.o.pos[1]), (h.lane === getPlaying() ? 4.5 : 3) * dpr, 0, 7); g.fill(); }
   g.font = `${8 * dpr}px ui-monospace,monospace`; // real-map spots: drawn in place when on the map, else pinned to the edge in their direction
   for (const sp of fx.mapSpots || []) { let mx = X(sp.pos.x), mz = Z(sp.pos.z); const inside = mx > 4 && mx < s - 4 && mz > 4 && mz < s - 4;
@@ -377,7 +398,7 @@ async function swapModels() {
 
 let mapT = 0;
 export function updateWorldFX(t, dt) {
-  if (fx.sky) fx.sky.uniforms.uTime.value = t; if (fx.sea) fx.sea.uniforms.uTime.value = RED ? 0 : t; if (fx.pathMat) fx.pathMat.uniforms.uTime.value = RED ? 0 : t;
+  if (fx.sky) fx.sky.uniforms.uTime.value = t; if (fx.sea) fx.sea.uniforms.uTime.value = RED ? 0 : t; if (fx.pathMat) fx.pathMat.uniforms.uTime.value = RED ? 0 : t; if (fx.goldMat) fx.goldMat.uniforms.uTime.value = RED ? 0 : t;
   if (fx.rain && !RED) { const { pos, spd, N } = fx.rain;
     for (let i = 0; i < N; i++) { let y = pos[i * 3 + 1] - spd[i] * dt; if (y < 0) { y = 30; pos[i * 3] = P.pos.x + (Math.random() - 0.5) * 80; pos[i * 3 + 2] = P.pos.z + (Math.random() - 0.5) * 80; } pos[i * 3 + 1] = y; }
     fx.rain.pts.geometry.attributes.position.needsUpdate = true; }
@@ -394,7 +415,7 @@ export function updateWorldFX(t, dt) {
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
-  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, geo: fx.geo, clusters: fx.clusterInfo, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
+  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, geo: fx.geo, clusters: fx.clusterInfo, route: fx.routeInfo, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
 };

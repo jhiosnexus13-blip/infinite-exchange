@@ -120,6 +120,16 @@
    "song_album": "NEWTOWN",
    "source": "Placed in Newtown between Beaconsfield Road (OSM way 446516559, 52.61816,1.73415) and Salisbury Road (OSM way 253831712, 52.61983,1.73374) via Nominatim 2026-10-22. Fictional site object.",
    "crosscheck": "Cross-check: postcodes.io NR30 4JP (Beaconsfield Rd) 52.618560,1.730968 and NR30 4LS (Salisbury Rd) 52.619970,1.736468; the spot lies between them."
+  },
+  {
+   "key": "arc_cinema",
+   "name": "Arc Cinema",
+   "lat": 52.6093399,
+   "lon": 1.7370726,
+   "type": "cinema",
+   "height_m": 14,
+   "source": "OSM way 958803579 'Arc Cinema', Marine Parade, NR30 2DL (Nominatim 2026-10-22; operator Arc Cinemas, Wikidata Q31677248, website greatyarmouth.arccinema.co.uk).",
+   "crosscheck": "postcodes.io NR30 2DL 52.607896,1.737685 (postcode area spans the Britannia Pier / Marine Parade frontage, ~160 m S of the building). Lies just NORTH of Britannia Pier (52.60817). Note: the OSM way carries old tags disused:amenity=cinema, end_date=2019-02-07 (probably from the previous Hollywood cinema) alongside operator=Arc Cinemas."
   }
  ],
  "seafront": {
