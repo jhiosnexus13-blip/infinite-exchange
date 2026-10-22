@@ -11,5 +11,8 @@ window.JHIOS_CONFIG = {
   /* A play is only counted after this many seconds of actual playback. */
   COUNT_AFTER_S: 30,
   LANES: ["SCR3WFAC3", "Luce Aether", "JHIOS Soundtracks", "Sanctum", "Unsorted"],
-  COMMISSION_FORM: "https://tally.so/r/Y5bYgv"
+  COMMISSION_FORM: "https://tally.so/r/Y5bYgv",
+  /* Tip link (welcome screen + player queue menu). Swap here for a JHIOS Ko-fi later. */
+  KOFI_URL: "https://ko-fi.com/greatyarmouthperjurygyp",
+  KOFI_LABEL: "Support Great Yarmouth Perjury (GYP) on Ko-fi"
 };
