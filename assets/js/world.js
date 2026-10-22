@@ -106,6 +106,60 @@ function buildFigure(col, female) {
   }
   return g;
 }
+/* v41: the SCR3WFAC3 figure, styled on the real mask (turnaround refs): matte black human-face mask over a black balaclava, gold wire X over each eye
+   and a curved wire across the mouth, silver screws at angles, one amber glowing eye; black turtleneck, black joggers with cuffs, white trainers.
+   Solid near-black parts with the lane-red neon edge rim; all gold wire in one LineSegments, all screws in one, so it stays cheap on phones. */
+export function makeScr3wfac3Figure(col = 0xff2e4d) {
+  const g = newHolo(col), V = (x, y, z) => new THREE.Vector3(x, y, z);
+  const blk = new THREE.MeshBasicMaterial({ color: 0x0a0a0c }), mask = new THREE.MeshBasicMaterial({ color: 0x141417 }), cuffM = new THREE.MeshBasicMaterial({ color: 0x1c1c20 }), shoeM = new THREE.MeshBasicMaterial({ color: 0xe9ecef });
+  const rim = g.userData.wire, shoeRim = new THREE.LineBasicMaterial({ color: 0x9fe8ff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+  const P = (geo, mat, x, y, z, rx = 0, ry = 0, rz = 0, sx = 1, sy = 1, sz = 1, edge = rim) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.scale.set(sx, sy, sz); if (edge) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 30), edge)); (cur || g).add(m); return m; };
+  let cur = null; const pivot = (name, x, y, z) => { const q = new THREE.Group(); q.name = name; q.position.set(x, y, z); g.add(q); return q; };
+  const limbs = g.userData.limbs = {}; // separable pivots (armL/armR at the shoulders, legL/legR at the hips) so this can be rigged for walking later
+  // athletic ~180 cm build (figure is scaled up as a statue by the lane config)
+  P(new THREE.SphereGeometry(0.44, 10, 8), blk, 0, 5.55, -0.04, 0, 0, 0, 1, 1.12, 1);                       // balaclava / hood
+  P(new THREE.SphereGeometry(0.4, 10, 8, -Math.PI * 0.42, Math.PI * 0.84, 0.12 * Math.PI, 0.72 * Math.PI), mask, 0, 5.52, 0.1, 0, 0, 0, 0.98, 1.22, 0.9, null); // mask: front shell
+  P(new THREE.ConeGeometry(0.07, 0.22, 4), mask, 0, 5.5, 0.47, 0.35, Math.PI / 4, 0, 1, 1, 0.8, null);        // nose
+  P(new THREE.BoxGeometry(0.2, 0.045, 0.06), mask, 0, 5.3, 0.44, 0, 0, 0, 1, 1, 1, null);                       // lips
+  const shell = new THREE.Mesh(new THREE.SphereGeometry(0.47, 10, 8), g.userData.holo); shell.position.set(0, 5.55, -0.02); shell.scale.set(1, 1.12, 1); g.add(shell); // faint lane-red holo rim around the head
+  P(new THREE.CylinderGeometry(0.24, 0.27, 0.42, 8), blk, 0, 5.0, 0);                                            // turtleneck roll collar
+  P(new THREE.CylinderGeometry(0.92, 0.52, 1.75, 8), blk, 0, 4.0, 0);                                            // sweatshirt torso (V-taper)
+  P(new THREE.CylinderGeometry(0.52, 0.48, 0.55, 8), blk, 0, 2.9, 0);                                            // waistband / hips
+  for (const sg of [-1, 1]) { const side = sg < 0 ? 'R' : 'L'; // figure faces +z, so -x is its right
+    P(new THREE.SphereGeometry(0.24, 6, 4), blk, sg * 0.98, 4.78, 0);
+    cur = limbs['arm' + side] = pivot('arm' + side, sg * 0.98, 4.78, 0);
+    P(new THREE.CylinderGeometry(0.18, 0.14, 2.2, 6), blk, sg * 0.1, -1.06, 0, 0, 0, sg * 0.12);                 // sleeve
+    P(new THREE.SphereGeometry(0.13, 6, 4), mask, sg * 0.24, -2.23, 0, 0, 0, 0, 1, 1, 1, null);                   // gloved hand
+    cur = limbs['leg' + side] = pivot('leg' + side, sg * 0.3, 2.65, 0);
+    P(new THREE.CylinderGeometry(0.23, 0.15, 2.3, 6), blk, 0, -1.15, 0);                                    // jogger leg
+    P(new THREE.CylinderGeometry(0.15, 0.15, 0.16, 6), cuffM, 0, -2.29, 0);                                // jogger cuff
+    P(new THREE.BoxGeometry(0.34, 0.26, 0.74), shoeM, 0, -2.51, 0.1, 0, 0, 0, 1, 1, 1, shoeRim);           // white trainer
+    P(new THREE.BoxGeometry(0.36, 0.08, 0.78), shoeM, 0, -2.61, 0.11, 0, 0, 0, 1, 1, 1, null);             // chunky sole
+    cur = null;
+  }
+  // gold wires: an X of curved wire over each eye + one curve across the mouth (on the mask surface, z ~ face front)
+  const gold = [], curve = (pts, n = 8) => { const c = new THREE.CatmullRomCurve3(pts).getPoints(n); for (let i = 0; i < c.length - 1; i++) gold.push(c[i].x, c[i].y, c[i].z, c[i + 1].x, c[i + 1].y, c[i + 1].z); };
+  for (const sg of [-1, 1]) { const ex = sg * 0.17;
+    curve([V(ex - sg * 0.13, 5.84, 0.38), V(ex, 5.66, 0.47), V(ex + sg * 0.16, 5.42, 0.38)]);
+    curve([V(ex + sg * 0.15, 5.86, 0.36), V(ex + sg * 0.02, 5.66, 0.47), V(ex - sg * 0.12, 5.44, 0.42)]); }
+  curve([V(-0.2, 5.36, 0.4), V(0, 5.26, 0.47), V(0.2, 5.36, 0.4)]);
+  const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(gold, 3));
+  g.add(new THREE.LineSegments(gg, new THREE.LineBasicMaterial({ color: 0xe0b24a, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false })));
+  // silver screws sticking out at angles: forehead, temples, cheeks, chin
+  const scr = [], S2 = [[-0.12, 5.98, 0.3, -0.2, 1, 0.3], [0.04, 6.0, 0.3, 0.1, 1, 0.2], [0.2, 5.95, 0.28, 0.6, 0.8, 0.2], [-0.37, 5.7, 0.2, -1, 0.1, 0.2], [0.38, 5.74, 0.2, 1, 0.15, 0.1],
+    [-0.36, 5.4, 0.22, -1, -0.15, 0.3], [0.37, 5.42, 0.22, 1, -0.1, 0.25], [-0.13, 5.5, 0.44, 0.3, 0.1, 1], [-0.12, 5.12, 0.36, -0.5, -0.8, 0.4]];
+  for (const [x, y, z, dx, dy, dz] of S2) { const d = V(dx, dy, dz).normalize().multiplyScalar(0.2); scr.push(x, y, z, x + d.x, y + d.y, z + d.z, x + d.x * 0.5 - 0.02, y + d.y * 0.5, z + d.z * 0.5, x + d.x * 0.5 + 0.02, y + d.y * 0.5, z + d.z * 0.5); }
+  const sgeo = new THREE.BufferGeometry(); sgeo.setAttribute('position', new THREE.Float32BufferAttribute(scr, 3));
+  g.add(new THREE.LineSegments(sgeo, new THREE.LineBasicMaterial({ color: 0xdfe6ee, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false })));
+  // eyes: dark left socket, amber glowing right eye (viewer's right, as on the real mask) with a soft halo
+  P(new THREE.SphereGeometry(0.05, 6, 4), blk, -0.16, 5.66, 0.43, 0, 0, 0, 1.4, 0.8, 0.6, null);
+  const amber = new THREE.MeshBasicMaterial({ color: 0xffa424, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+  const eye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 6), amber); eye.position.set(0.16, 5.66, 0.44); eye.scale.set(1.4, 0.8, 0.6); g.add(eye);
+  const hc = document.createElement('canvas'); hc.width = hc.height = 64; const hg = hc.getContext('2d'), gr = hg.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,170,40,1)'); gr.addColorStop(1, 'rgba(255,120,0,0)'); hg.fillStyle = gr; hg.fillRect(0, 0, 64, 64);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(hc), color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); halo.position.set(0.16, 5.66, 0.5); halo.scale.setScalar(0.45); g.add(halo);
+  g.userData.amber = { mat: amber, halo }; g.traverse(o => { o.raycast = () => {}; }); // decorative only: taps go to the lane hit-box / screens
+  return g;
+}
 function buildRobot(col) {
   const g = newHolo(col), B = (w, h, d) => new THREE.BoxGeometry(w, h, d);
   part(g, B(1.6, 1.3, 1.4), 0, 12.3, 0);                          // head
@@ -165,7 +219,7 @@ function buildQuestion(col) {
   return g;
 }
 const HOLO_OBJS = {
-  'SCR3WFAC3':         { pos: [-16, -6], col: 0xff2e4d, build: c => { const g = buildFigure(c, false); g.scale.setScalar(1.3); return g; }, h: 7.8 },
+  'SCR3WFAC3':         { pos: [-16, -6], col: 0xff2e4d, build: c => { const g = makeScr3wfac3Figure(c); g.scale.setScalar(1.3); return g; }, h: 7.8 },
   'Luce Aether':       { pos: [16, -6],  col: 0xb48cff, build: c => buildFigure(c, true), h: 5.1 },
   'JHIOS Soundtracks': { pos: [-16, 12], col: 0xffcc00, build: buildTurntable, h: 3.2, w: 5.2 },
   'Sanctum':           { pos: [18, 14],  col: 0x00e5ff, build: buildPlanet, h: 7, w: 6 },
@@ -216,6 +270,7 @@ function animateHolos(t, dt) {
     const sc = h.base || (h.base = h.obj.scale.x); h.obj.scale.setScalar(sc * (1 + (on ? 0.05 * beatV : 0)));
     h.obj.position.x = h.o.pos[0] + (on && beatV > 0.8 && !reduced ? (Math.random() - 0.5) * 0.25 : 0); // glitch jitter on the beat
     if (ud.eyes) { const f = Math.random() < 0.08 ? 0.2 : 1; ud.eyes.forEach((e, i) => { e.scale.x = f * (1 + (on ? beatV : 0)); e.position.x = (i ? 1 : -1) * 0.15 * 1 + (Math.random() < 0.05 ? (Math.random() - 0.5) * 0.15 : 0); }); ud.eyeMat.opacity = 0.6 + 0.4 * Math.max(beatV * h.pulse, Math.random() < 0.9 ? 1 : 0); }
+    if (ud.amber) { const f = reduced ? 1 : (Math.random() < 0.04 ? 0.35 : 1), k = 0.75 + 0.25 * Math.min(1, beat); ud.amber.mat.opacity = f * k; ud.amber.halo.material.opacity = f * (0.45 + 0.5 * Math.min(1, beat)) * (window.__nightGlow || 1); }
     if (ud.strands && !reduced) for (const l of ud.strands) { const a = l.geometry.attributes.position, b = l.userData.base;
       for (let k = 0; k < b.length; k++) a.setXYZ(k, b[k].x + Math.sin(t * 1.6 + l.userData.ph + k * 0.6) * 0.05 * k, b[k].y, b[k].z - Math.sin(t * 1.1 + k * 0.5 + l.userData.ph) * 0.06 * k); a.needsUpdate = true; }
     if (ud.trails && !reduced) for (const l of ud.trails) { const a = l.geometry.attributes.position, n = l.userData.n, k = l.userData.k;
@@ -362,7 +417,7 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=40').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=41').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
