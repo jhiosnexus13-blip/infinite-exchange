@@ -9,7 +9,7 @@
 export const MODELS = {
   britannia_pier: null, wellington_pier: null, nelsons_monument: null, pleasure_beach: null,
   minster: null, haven_bridge: null, gorleston_harbour: null, tower_complex: null,
-  venetian_waterways: null, iron_duke: null, the_avenues: null, newtown_archive: null, arc_cinema: null,
+  venetian_waterways: null, iron_duke: null, the_avenues: null, newtown_archive: null, arc_cinema: null, harbour_mouth: null,
   'SCR3WFAC3': null, 'Luce Aether': null, 'JHIOS Soundtracks': null, 'Sanctum': null, 'Unsorted': null, 'GoldBot': null,
 };
 let T, S, CAM, P, H, CL, LBL, CV, LOW, RED, OBJS, getPlaying, LITE = false;
@@ -26,7 +26,7 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=34'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=34' : '/assets/data/yarmouth-geo.json?v=34').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=35'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=35' : '/assets/data/yarmouth-geo.json?v=35').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); }); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
 }
@@ -75,7 +75,7 @@ function skyline(D, grp, noGeo) {
   const coastE = fx.coastE || coastE0;
   for (const L of D.landmarks) {
     const l = local(L.lat, L.lon), base = warp(l.e, l.n), ht = (L.height_m || 10) * HS, ry = yaw(base);
-    const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); tag.position.copy(base).setY(ht + (L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
+    const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label) tag.visible = false; tag.position.copy(base).setY(ht + (L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
     fx.landmarks[L.key] = { pos: base, name: L.name };
     if (L.song_match || L.song_tag || L.song_patterns) songCluster(L, base, ht);
     if (L.type === 'pier') { // deck from the coast out to sea (east), legs, pavilion at the head
@@ -121,6 +121,11 @@ function skyline(D, grp, noGeo) {
       fx.mapSpots.push({ pos: base, label: 'WATERWAYS', col: '#00c8ff' });
     }
     else if (L.type === 'archive') archive(L, base, ht);
+    else if (L.type === 'harbour') { // harbour entrance: two pier-head beacons either side of the river mouth + a channel marker line
+      for (const [dx, dz, c] of [[-14, 6, 0xff3b3b], [14, -6, 0x3bff6a]]) { const p = base.clone().add(new T.Vector3(dx, 0, dz)); box(p, 3, ht, 3, 0); box(p.clone().setY(ht), 4, 2, 4, 0);
+        const lm = new T.Mesh(new T.SphereGeometry(1.2, 8, 6), new T.MeshBasicMaterial({ color: c, fog: false })); lm.position.copy(p).setY(ht + 3); grp.add(lm); }
+      add(base.clone().add(new T.Vector3(-14, 0.5, 6)), base.clone().add(new T.Vector3(14, 0.5, -6)));
+      fx.mapSpots.push({ pos: base, label: 'HARBOUR', col: '#7fd4ff' }); }
     else if (L.type === 'cinema') { // Arc Cinema: block, marquee canopy and screen sign facing the prom (east)
       box(base, 30, ht, 22, 0); box(base.clone().add(new T.Vector3(13, 4, 0)), 4, 0.8, 18, 0); box(base.clone().add(new T.Vector3(11.5, ht, 0)), 0.5, 5, 14, 0);
       fx.mapSpots.push({ pos: base, label: 'ARC', col: '#ffcc66' }); }
@@ -191,11 +196,12 @@ function geo(G, grp) {
   for (let i = 0; i < NB; i++) if (prof[i].e < -1e8) prof[i].e = (prof[i - 1] || prof[i + 1] || { e: 300 }).e > -1e8 ? (prof[i - 1] || prof[i + 1]).e : 300;
   fx.coastE = n => { for (let i = 0; i < NB - 1; i++) { const a = prof[i], b = prof[i + 1]; if (n <= a.n && n >= b.n) return a.e + (b.e - a.e) * (n - a.n) / (b.n - a.n); } return prof[n > 0 ? 0 : NB - 1].e; };
   if (G.golden_mile) goldenMile(G.golden_mile, grp);
+  if (G.harbour_spur) goldenMile(G.harbour_spur, grp, true);
   sea(prof);
 }
 
 /* ---------- Golden Mile: the main explorable route, a glowing gold ribbon on the real OSM road centreline ---------- */
-function goldenMile(R, grp) {
+function goldenMile(R, grp, spur) {
   const pts = []; for (let i = 0; i < R.coords.length; i += 2) pts.push(warp(R.coords[i], R.coords[i + 1]));
   const pos = [], uv = [], idx = [], HW = 3.5; let acc = 0;
   for (let i = 0; i < pts.length; i++) { const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)], dx = b.x - a.x, dz = b.z - a.z, l = Math.hypot(dx, dz) || 1, nx = -dz / l * HW, nz = dx / l * HW;
@@ -207,6 +213,7 @@ function goldenMile(R, grp) {
     fragmentShader: `uniform float uTime; varying vec2 vU; varying float vD; void main(){ float x = abs(vU.x - 0.5); float side = step(0.4, x); float dash = step(0.55, fract(vU.y - uTime * 0.6)) * step(x, 0.12);
       float f = exp(-max(vD - 200.0, 0.0) * 0.002); gl_FragColor = vec4(vec3(1.0,0.75,0.2), (0.12 + 0.7 * side + 0.5 * dash) * f); }` });
   const m = new T.Mesh(g, fx.goldMat); m.renderOrder = 1; grp.add(m);
+  if (spur) { fx.route2 = pts.map(p => [p.x, p.z]); fx.route2Info = { streets: R.streets, length_m: R.length_m }; return; }
   const lab = LBL('GOLDEN MILE', '#ffcc4a', 3); lab.position.copy(pts[0]).setY(6); grp.add(lab);
   fx.route = pts.map(p => [p.x, p.z]); fx.routeInfo = { streets: R.streets, length_m: R.length_m, points: pts.length };
 }
@@ -254,14 +261,14 @@ function songCluster(L, base, ht) {
     fx.clusterInfo = Object.assign(fx.clusterInfo || {}, { [L.key]: list.map(t => t.id) });
     if (!list.length) return;
     const hex = L.type === 'archive' ? '#b48cff' : '#ff5fd2', col = new T.Color(hex), grp = new T.Group(); grp.position.copy(base); S.add(grp);
-    const n = list.length, perTier = Math.min(n, 10), rad = Math.max(16, perTier * 2.6), W2 = 10, H2 = 5.6;
+    const n = list.length, perTier = Math.min(n, 10), rad = n === 1 ? 0 : Math.max(16, perTier * 2.6), W2 = 10, H2 = 5.6;
     const frMat = new T.LineBasicMaterial({ color: col, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, fog: false });
     list.forEach((t, i) => { const tier = Math.floor(i / perTier), a = (i % perTier) / perTier * Math.PI * 2 + tier * 0.3;
       const scr = new T.Mesh(new T.PlaneGeometry(W2, H2), new T.MeshBasicMaterial({ map: titleTex(t.title, hex), transparent: true, opacity: 0.95, side: T.DoubleSide, fog: false }));
       scr.position.set(Math.cos(a) * rad, ht + 8 + tier * (H2 + 2.5), Math.sin(a) * rad); scr.add(new T.LineSegments(new T.EdgesGeometry(scr.geometry), frMat));
       scr.userData = { track: t.id, feature: true, title: t.title, yt: window.JX.ytId(t.youtube_url), loaded: false };
       grp.add(scr); CL.push(scr); });
-    const lab = LBL(`${list.length} TRACK${list.length > 1 ? 'S' : ''} // TAP TO PLAY`, hex, 2.6); lab.position.set(0, ht + 4, 0); grp.add(lab);
+    const lab = L.no_label ? LBL(list[0].title, hex, 2.6) : LBL(`${list.length} TRACK${list.length > 1 ? 'S' : ''} // TAP TO PLAY`, hex, 2.6); lab.position.set(0, ht + (L.no_label ? 15 : 4), 0); grp.add(lab);
     fx.clusters.push({ grp, key: L.key, frMat });
   }).catch(e => console.warn('cluster', e));
   window.JX ? boot() : addEventListener('DOMContentLoaded', boot);
@@ -291,7 +298,7 @@ function archive(L, base, ht) {
 /* ---------- jump-on-map: full-screen overlay of the whole mapped area; tap = teleport, quick-jump list ---------- */
 const MB = { x0: -1600, x1: 700, z0: -3300, z1: 3400 }; // walkable bounds (mirrors the clamp in world.js)
 const JUMPS = [['plaza', 'Plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
-  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues']];
+  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth']];
 function bigMap() {
   const el = document.createElement('div'); el.id = 'wmap'; el.className = 'wmap'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Map of Great Yarmouth: tap to jump');
   el.innerHTML = `<canvas class="wmap-cv" aria-hidden="true"></canvas><div class="wmap-top"><span class="wmap-title">GREAT YARMOUTH // JUMP MAP</span><span class="wmap-hint">tap to jump · drag to pan · pinch / scroll to zoom</span></div>
@@ -339,6 +346,7 @@ function bakeBig() { // whole area pre-rendered once into an offscreen bitmap (0
   g.lineWidth = 1; for (const [, a] of G.roads) line(a, 'rgba(255,140,60,.45)', 1.6);
   g.lineWidth = 0.6; for (const [, a] of G.buildings) poly(a, 'rgba(0,255,157,.28)', 'rgba(0,255,157,.55)');
   for (const a of G.coast) line(a, '#9dffe0', 1.5); for (const [a] of G.piers) line(a, '#b4fff0', 2.5);
+  if (G.harbour_spur) line(G.harbour_spur.coords, 'rgba(255,200,74,.7)', 3);
   if (G.golden_mile) { g.shadowColor = '#ffc84a'; g.shadowBlur = 8; line(G.golden_mile.coords, '#ffc84a', 5); g.shadowBlur = 0; }
   fx.bm.bake = c; fx.bm.K = K;
 }
@@ -430,6 +438,7 @@ function drawMap() {
   for (let i = -2; i <= 2; i++) { const q = s / 2 + i * s / 5; g.beginPath(); g.moveTo(q, 0); g.lineTo(q, s); g.moveTo(0, q); g.lineTo(s, q); g.stroke(); }
   g.fillStyle = 'rgba(0,160,200,.25)'; g.fillRect(s - 6 * dpr, 0, 6 * dpr, s); // sea is east
   g.strokeStyle = 'rgba(0,255,157,.35)'; g.beginPath(); g.arc(X(0), Z(-2), 4 * k, 0, 7); g.stroke(); // globe
+  if (fx.route2) { g.strokeStyle = 'rgba(255,200,74,.6)'; g.lineWidth = 1.5 * dpr; g.beginPath(); fx.route2.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); g.lineWidth = 1; }
   if (fx.route) { g.strokeStyle = '#ffc84a'; g.lineWidth = 2.5 * dpr; g.beginPath(); fx.route.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); g.lineWidth = 1; }
   for (const h of H) { g.fillStyle = h.hex; g.beginPath(); g.arc(X(h.o.pos[0]), Z(h.o.pos[1]), (h.lane === getPlaying() ? 4.5 : 3) * dpr, 0, 7); g.fill(); }
   g.font = `${8 * dpr}px ui-monospace,monospace`; // real-map spots: drawn in place when on the map, else pinned to the edge in their direction
@@ -541,7 +550,7 @@ export function updateWorldFX(t, dt) {
 }
 export const worldDebug = {
   openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },
-  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
+  get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, route2: fx.route2Info, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
 };

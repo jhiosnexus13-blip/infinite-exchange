@@ -143,6 +143,28 @@
    "height_m": 14,
    "source": "OSM way 958803579 'Arc Cinema', Marine Parade, NR30 2DL (Nominatim 2026-10-22; operator Arc Cinemas, Wikidata Q31677248, website greatyarmouth.arccinema.co.uk).",
    "crosscheck": "postcodes.io NR30 2DL 52.607896,1.737685 (postcode area spans the Britannia Pier / Marine Parade frontage, ~160 m S of the building). Lies just NORTH of Britannia Pier (52.60817). Note: the OSM way carries old tags disused:amenity=cinema, end_date=2019-02-07 (probably from the previous Hollywood cinema) alongside operator=Arc Cinemas."
+  },
+  {
+   "key": "harbour_mouth",
+   "name": "Harbour Mouth",
+   "lat": 52.57256,
+   "lon": 1.73889,
+   "type": "harbour",
+   "height_m": 10,
+   "song_tag": "harbour-mouth",
+   "source": "Mouth of the River Yare between Gorleston and South Denes: midpoint of the two harbour-entrance pier-head lights in OSM: node 2326738997 'Gorleston South Pier Lighthouse' (52.5721123,1.7381010) and node 1473358746 seamark light_minor on the north (South Denes) pier head (52.5730187,1.7396790); Geofabrik Norfolk extract + Nominatim 2026-10-22.",
+   "crosscheck": "postcodes.io reverse lookup: nearest postcode NR31 6PL (Pier Plain / South Pier area, Gorleston) 52.571012,1.733835 at 383 m, on the Gorleston bank just inland of the South Pier; Nominatim 'Gorleston South Pier Lighthouse, South Beach Parade, Gorleston-on-Sea' matches the OSM node."
+  },
+  {
+   "key": "beatty_close_screen",
+   "name": "Above The Riddim (feat. NAM3L3SS)",
+   "lat": 52.6247,
+   "lon": 1.7345,
+   "type": "screen",
+   "height_m": 12,
+   "song_tag": "beatty-close",
+   "no_label": true,
+   "source": "Generic street-level point over the Newtown housing block behind The Avenues: centroid of OSM residential way 36883456 (Nominatim 2026-10-22), rounded to 4 decimals. Not tied to any single building."
   }
  ],
  "seafront": {

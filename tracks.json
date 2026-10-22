@@ -570,7 +570,8 @@
    "youtube_url": "https://youtu.be/4N3Pcjccx7k",
    "tags": [
     "scr3wfac3-guitar-band",
-    "playlist-only"
+    "playlist-only",
+    "harbour-mouth"
    ]
   },
   {
@@ -1259,8 +1260,8 @@
   {
    "id": "above-the-riddim-feat-nam3l3ss",
    "title": "Above The Riddim (feat. NAM3L3SS)",
-   "artist": "",
-   "lane": "Unsorted",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
    "album": "",
    "release_date": "2026-01-12",
    "duration_s": 166,
@@ -1269,7 +1270,8 @@
    "youtube_url": "https://youtu.be/DQrsA9qLGC4",
    "tags": [
     "jhios-fr33-pvrty",
-    "playlist-only"
+    "playlist-only",
+    "beatty-close"
    ]
   },
   {
@@ -1361,7 +1363,8 @@
    "artwork_url": "",
    "youtube_url": "https://youtu.be/DjlnQoqYMwY",
    "tags": [
-    "playlist-only"
+    "playlist-only",
+    "harbour-mouth"
    ]
   },
   {
@@ -5119,6 +5122,21 @@
    "youtube_url": "https://youtu.be/u_Xdji--LNc",
    "tags": [
     "iron-duke"
+   ]
+  },
+  {
+   "id": "notes-taken",
+   "title": "Notes Taken",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/h9ABzAHk628",
+   "tags": [
+    "harbour-mouth"
    ]
   }
  ]
