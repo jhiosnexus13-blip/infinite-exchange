@@ -35,11 +35,11 @@
   {
    "key": "pleasure_beach",
    "name": "Great Yarmouth Pleasure Beach (big wheel)",
-   "lat": 52.5932831,
-   "lon": 1.7359856,
+   "lat": 52.5937437,
+   "lon": 1.7355419,
    "type": "wheel",
    "height_m": 45,
-   "crosscheck": "Cross-check (2026-10-22): OSM way 179321094 tourism=theme_park 'Pleasure Beach' (Nominatim) centroid 52.5932831,1.7359856, bbox 52.59123-52.59527 / 1.73541-1.73656, Wikidata Q3115993; postcodes.io NR30 3EH 52.594522,1.736190 (inside the park's postcode area).",
+   "crosscheck": "OSM has no attraction=big_wheel/wheel feature within 600 m. The pin lies inside OSM theme_park 'Pleasure Beach' (way 179321094 / 358642188, Wikidata Q3115993, bbox 52.59123-52.59527 / 1.73541-1.73656) on its Marine Parade (west) frontage; postcodes.io NR30 3EH 52.594522,1.736190.",
    "wheel_slots": 5,
    "wheel_track_ids": [
     "pleasure-bitch-original-version",
@@ -48,7 +48,8 @@
     "pleasure-bitch-feat-luce-aether-fried-phonk-remix",
     "pleasure-bitch-feat-luce-aether-fried-again-remix"
    ],
-   "wheel_note": "Playlist order of YouTube album 'Pleasure Bitch' (OLAK5uy_n3DSg7qRtAZBLzCoLpG0fwgFY0X6r-gjg), titles via YouTube oEmbed 2026-10-22. Add more ids to add gondolas."
+   "wheel_note": "Playlist order of YouTube album 'Pleasure Bitch' (OLAK5uy_n3DSg7qRtAZBLzCoLpG0fwgFY0X6r-gjg), titles via YouTube oEmbed 2026-10-22. Add more ids to add gondolas.",
+   "source": "Wheel position from Joseph's Google Maps link (maps.app.goo.gl/RrzmkG1GNSsRNbZa8 -> place 'Great Yarmouth Observation Wheel', pin 52.5937437,1.7355419), resolved 2026-10-22. Previously the park centroid 52.5932831,1.7359856 (moved ~59 m NW)."
   },
   {
    "key": "minster",
