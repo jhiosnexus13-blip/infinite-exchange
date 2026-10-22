@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=51'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=51' : '/assets/data/yarmouth-geo.json?v=51').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=54'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=54' : '/assets/data/yarmouth-geo.json?v=54').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=51').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=51'), j('/assets/data/newtown-extra.json?v=51')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=51').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=51'), j('/assets/data/newtown-streets.json?v=51')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
-      Promise.all([import('./world-pb.js?v=51'), j('/assets/data/pleasure-beach.json?v=51')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=54').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=54'), j('/assets/data/newtown-extra.json?v=54')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=54').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=54'), j('/assets/data/newtown-streets.json?v=54')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=54'), j('/assets/data/pleasure-beach.json?v=54')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=51').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=51').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=54').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=54').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -344,7 +344,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=51').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=54').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -357,7 +357,23 @@ function damSign() {
 
 /* v48: GYnet 'Helping Hand' community food basket on Sturdee Avenue (Newtown). OSM/Nominatim have no house-number points on this street, so it stands
    on the east kerb near the middle of the street (OSM way 36882994). Label is ONLY the project name; tap opens the GYnet Facebook group. */
-const FOOD = { lat: 52.62596, lon: 1.734628, url: 'https://www.facebook.com/groups/391524778452828/', label: 'GYnet · Helping Hand Food Basket' };
+const FOOD = { lat: 52.625772, lon: 1.734437, /* v54: pavement in front of the house Joseph pinned from Street View (west side of Sturdee Ave) */ url: 'https://www.facebook.com/groups/391524778452828/', bank: 'https://www.facebook.com/groups/2893679090868859/', label: 'Helping Hand Food Basket · GYnet' };
+/* v52: the food bank is run separately from GYnet, so the basket offers both: a small card with two big buttons (new tab) and Close.
+   Fixed near the top-centre so it stays clear of the bottom player bar and joystick in portrait and landscape. */
+function foodCard() {
+  let c = document.getElementById('foodcard'); if (c) { c.hidden = false; c.querySelector('a').focus(); return; }
+  c = document.createElement('div'); c.id = 'foodcard'; c.setAttribute('role', 'dialog'); c.setAttribute('aria-label', 'Helping Hand Food Basket');
+  c.style.cssText = 'position:fixed;left:50%;top:max(12px,env(safe-area-inset-top));transform:translateX(-50%);z-index:60;width:min(340px,calc(100vw - 24px));max-height:calc(100vh - 150px);overflow:auto;box-sizing:border-box;padding:14px;background:rgba(10,14,20,.94);border:1px solid #ffb347;border-radius:14px;color:#ffe3b8;font:15px/1.3 system-ui,sans-serif;box-shadow:0 0 24px rgba(255,179,71,.35);text-align:center';
+  const btn = 'display:block;margin:10px 0 0;padding:14px 10px;min-height:48px;box-sizing:border-box;border-radius:10px;font-weight:700;font-size:16px;text-decoration:none;';
+  c.innerHTML = '<div style="font-weight:800;font-size:17px;color:#ffcf8a">Helping Hand Food Basket</div>'
+    + '<a class="fc-bank" href="' + FOOD.bank + '" target="_blank" rel="noopener" style="' + btn + 'background:#ffb347;color:#1a1004">Food bank group</a>'
+    + '<a class="fc-gynet" href="' + FOOD.url + '" target="_blank" rel="noopener" style="' + btn + 'background:#1f6feb;color:#fff">Follow GYnet</a>'
+    + '<button type="button" class="fc-close" style="' + btn + 'width:100%;background:transparent;color:#ffe3b8;border:1px solid #6b5a40;cursor:pointer">Close</button>';
+  c.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { window.__lastOpen = a.href; }));
+  c.querySelector('.fc-close').onclick = () => { c.hidden = true; };
+  for (const ev of ['pointerdown', 'touchstart', 'mousedown', 'wheel']) c.addEventListener(ev, e => e.stopPropagation(), { passive: true });
+  document.body.appendChild(c); window.__foodCard = c;
+}
 function foodBasket() {
   const c = W(FOOD.lat, FOOD.lon), g = new T.Group(); g.position.copy(c); S.add(g);
   const A = (col, o = 0.9) => new T.MeshBasicMaterial({ color: col, transparent: true, opacity: o, blending: T.AdditiveBlending, depthWrite: false, fog: false });
@@ -376,7 +392,7 @@ function foodBasket() {
   const pole = new T.LineSegments(new T.BufferGeometry().setFromPoints([new T.Vector3(0, 2.2, 0), new T.Vector3(0, 2.8, 0)]), L(0xff5f8a)); g.add(pole);
   g.traverse(o => { o.raycast = () => {}; });
   const hit = new T.Mesh(new T.BoxGeometry(3.4, 4.6, 3.4), new T.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })); hit.position.y = 2.3;
-  hit.userData = { link: FOOD.url, title: FOOD.label, id: 'gynet-food-basket' }; g.add(hit); CL.push(hit);
+  hit.userData = { popup: foodCard, title: FOOD.label, id: 'gynet-food-basket' }; g.add(hit); CL.push(hit);
   const lab = LBL(FOOD.label, '#ffcf8a', 1.2); lab.position.set(0, 5.4, 0); g.add(lab);
   // v50: the standout of Newtown: raised on a glowing plinth with a soft beacon beam and halo visible from the surrounding streets
   g.position.y = 1.6; g.scale.setScalar(1.25);
@@ -385,7 +401,7 @@ function foodBasket() {
   const halo = new T.Mesh(new T.SphereGeometry(3.2, 12, 8), A(0xffb347, 0.12)); halo.position.y = 2; g.add(halo); fx.foodBeam = beam; fx.foodHalo = halo;
   beam.raycast = halo.raycast = plinth.raycast = () => {};
   lab.scale.multiplyScalar(1.3);
-  fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url };
+  fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url, bank: FOOD.bank };
 }
 
 /* v48: Fallen Angels, 83 Marine Parade (OSM way 175855364), rebuilt from Joseph's Street View (52.60989,1.73770, hdg 226, Mar 2019):
