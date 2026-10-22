@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=57'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=57' : '/assets/data/yarmouth-geo.json?v=57').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=58'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=58' : '/assets/data/yarmouth-geo.json?v=58').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=57').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=57'), j('/assets/data/newtown-extra.json?v=57')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=57').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=57'), j('/assets/data/newtown-streets.json?v=57')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
-      Promise.all([import('./world-pb.js?v=57'), j('/assets/data/pleasure-beach.json?v=57')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=58').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=58'), j('/assets/data/newtown-extra.json?v=58')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=58').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=58'), j('/assets/data/newtown-streets.json?v=58')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=58'), j('/assets/data/pleasure-beach.json?v=58')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=57').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=57').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=58').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=58').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -177,7 +177,7 @@ function skyline(D, grp, noGeo) {
     else if (L.type === 'cinema') { // Arc Cinema: block, marquee canopy and screen sign facing the prom (east)
       safe('arc', () => arcCinema());
       fx.mapSpots.push({ pos: base, label: 'ARC', col: '#ffcc66' }); }
-    else if (L.type === 'lighthouse') { box(base, 1.2, ht, 1.2, ry); box(base.clone().setY(ht), 1.6, 1.0, 1.6, ry); fx.beacon = base.clone().setY(ht + 0.5); }
+    else if (L.type === 'lighthouse' || L.type === 'coastwatch' || L.type === 'bascule_bridge') { fx.beacon = fx.beacon || base.clone().setY(ht + 0.5); } // v58: solid photo-based models in world-river.js (Gorleston Lighthouse, Coastwatch, Herring Bridge)
   }
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(segs, 3)); grp.add(new T.LineSegments(g, mat));
   if (noGeo) sea(coast); // real OSM geography (geo()) normally draws coast, water, roads and buildings
@@ -212,7 +212,7 @@ function geoMat(col, opts = {}) { // holographic fill with vertical glow, distan
 const COLC = 32, COL = new Map();
 function inPoly(p, e, n) { let c = false; for (let i = 0, j = p.length - 1; i < p.length; j = i++) { const [xi, yi] = p[i], [xj, yj] = p[j]; if ((yi > n) !== (yj > n) && e < (xj - xi) * (n - yi) / (yj - yi) + xi) c = !c; } return c; }
 function roofAt(x, z) { const e = x, n = -z, l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); let h = -1; if (l) for (const b of l) if (inPoly(b.p, e, n)) h = Math.max(h, b.h); return h; }
-function collide(x, z, r = 0.5, raw) { const e = x, n = -z; if (!raw && fx.clear && fx.clear.some(([cx, cz, cr]) => (x - cx) ** 2 + (z - cz) ** 2 < cr * cr)) return false; if (Math.hypot(e, n) > CORE - 40) return false; const l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); if (!l) return false;
+function collide(x, z, r = 0.5, raw) { const e = x, n = -z; if (!raw && fx.clear && fx.clear.some(([cx, cz, cr]) => (x - cx) ** 2 + (z - cz) ** 2 < cr * cr)) return false; if (Math.hypot(e, n) > CORE - 40) return false; if (fx.waterHit && fx.waterHit(e, n)) return true; /* v58: River Yare / Breydon / Bure block walking (bridges exempt, world-river.js) */ const l = COL.get(Math.floor(e / COLC) + ':' + Math.floor(n / COLC)); if (!l) return false;
   for (const b of l) if (e > b.x0 - r && e < b.x1 + r && n > b.y0 - r && n < b.y1 + r && (inPoly(b.p, e, n) || inPoly(b.p, e + r, n) || inPoly(b.p, e - r, n) || inPoly(b.p, e, n + r) || inPoly(b.p, e, n - r))) return true; return false; }
 function geo(G, grp) {
   // Buildings: indexed per 320 m tile (16-bit indices, shared wall/roof vertices: 2 verts per footprint corner),
@@ -256,7 +256,8 @@ function geo(G, grp) {
       for (const t of tri) for (const k of t) { p.push(W3[k].x, y, W3[k].z); v.push(0.6); } }
     const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(p, 3)); g.setAttribute('aV', new T.Float32BufferAttribute(v, 1));
     const m = new T.Mesh(g, geoMat(col, { a, add: true })); m.renderOrder = -1; grp.add(m); return m; };
-  flatMesh(G.water, 0.06, 0x00b4ff, 0.55); { const bm = flatMesh(G.beach, 0.04, 0xffcf5a, 0.3); bm.material.dispose(); bm.material = sandMat(0xffcf5a, 0.42); } // v44/v45: golden sand with grain
+  const rivA = c => { let A = 0, mx = -1e9; const N = c.length / 2; for (let i = 0; i < N; i++) { const j = (i + 1) % N; A += c[i * 2] * c[j * 2 + 1] - c[j * 2] * c[i * 2 + 1]; mx = Math.max(mx, c[i * 2]); } return mx > -3000 && Math.abs(A / 2) > 40000; }; // v58: same test as world-river.js isRiver()
+  flatMesh(G.water.filter(c => !rivA(c)), 0.06, 0x00b4ff, 0.55); { const bm = flatMesh(G.beach, 0.04, 0xffcf5a, 0.3); bm.material.dispose(); bm.material = sandMat(0xffcf5a, 0.42); } // v44/v45: golden sand with grain
   if (G.green && G.green.length) flatMesh(G.green, 0.03, 0x3dff7a, 0.22); // v44: OSM grass / parks / pitches / golf / racecourse turf = green
   // polylines (roads by class, piers raised, coastline bright)
   const lines = (list, y, col, op) => { const s = []; for (const c of list) { const W3 = flat(c).map(([e, n]) => warp(e, n)); for (let i = 0; i < W3.length - 1; i++) s.push(W3[i].x, y, W3[i].z, W3[i + 1].x, y, W3[i + 1].z); }
@@ -271,6 +272,7 @@ function geo(G, grp) {
   if (G.golden_mile) goldenMile(G.golden_mile, grp);
   if (G.harbour_spur) goldenMile(G.harbour_spur, grp, true);
   sea(prof);
+  import('./world-river.js?v=58').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
 }
 
 /* ---------- Golden Mile: the main explorable route, a glowing gold ribbon on the real OSM road centreline ---------- */
@@ -346,7 +348,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=57').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=58').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -870,6 +872,7 @@ export const worldDebug = {
     return { violations: V, items: items.length, replaced: fx.geo && fx.geo.replaced, roofs: fx.roofAt }; },
   get train() { return fx.train && fx.train.api; }, get gulls() { return fx.gulls && fx.gulls.info; }, get presence() { return fx.pres && fx.pres.api; }, get newtown() { return fx.newtownInfo; },
   openMap() { openMap(); }, closeMap() { closeMap(); }, jump(k) { jumpTo(k); },
+  get river() { const v = p => p && [Math.round(p.x), Math.round(p.y), Math.round(p.z)]; return { info: fx.riverInfo || null, herringBridge: v(fx.herringBridge), coastwatch: v(fx.coastwatch), lighthouse: v(fx.gorlestonLight) }; }, // v58
   get fx() { return { screens: fx.screens.length, thumbs: fx.screens.filter(s => s.userData.thumb).length, thumbFailed: fx.screens.filter(s => s.userData.thumbFailed).length, card: fx.cardLane, vol: fx.lastVol, frames: fx.frames, mapOpen: !!(fx.bm && fx.bm.open), lastJump: fx.lastJump, geo: fx.geo, pb: fx.pbInfo, env: fx.env && { day: +fx.env.state.day.toFixed(2), phase: +fx.env.state.phase.toFixed(3), wx: fx.env.state.wx, wxErr: fx.env.state.wxErr, rain: fx.env.state.rain, lamps: fx.env.state.lampInfo }, cols: COL.size, clusters: fx.clusterInfo, wheel: fx.wheelInfo, route: fx.routeInfo, route2: fx.route2Info, landmarks: fx.landmarks && Object.fromEntries(Object.entries(fx.landmarks).map(([k, v]) => [k, [+v.pos.x.toFixed(1), +v.pos.z.toFixed(1)]])) }; },
   featureAt() { const f = fx.feature; if (!f) return null; const v = f.grp.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: f.track, thumb: fx.featureThumb, pos: [+f.grp.position.x.toFixed(1), +f.grp.position.z.toFixed(1)], visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },
   screenAt(lane, i = 0) { const m = fx.screens.filter(s => s.userData.lane === lane)[i]; if (!m) return null; const v = m.getWorldPosition(new T.Vector3()).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, id: m.userData.track, z: v.z, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; },

@@ -403,10 +403,10 @@ function pick(x, y) {
   const r = canvas.getBoundingClientRect(); ndc.set((x - r.left) / r.width * 2 - 1, -(y - r.top) / r.height * 2 + 1);
   ray.setFromCamera(ndc, camera); const hits = ray.intersectObjects(clickables, false).filter(h => h.object.visible !== false && (!h.object.parent || h.object.parent.visible !== false));
   const hit = hits.find(h => h.object.userData.feature) || hits.find(h => h.object.userData.track) || hits[0]; // the giant featured skyline screen wins, then album-art screens, then hit-boxes // album-art screens win over the big hit-boxes
-  if (!hit) return; const u = hit.object.userData;
-  if (u.track) { if (window.JX) JX.load().then(() => { const t = JX.tracks.find(x => x.id === u.track); if (t) { JX.play(t, JX.byLane(t.lane)); selectLane(t.lane); openPanel(true); } }); return; }
-  if (u.popup) { window.__lastOpen = 'popup:' + (u.id || ''); u.popup(); return; }
-  if (u.link) { window.__lastOpen = u.link; window.open(u.link, '_blank', 'noopener'); } else playLane(u.lane);
+  if (!hit) return false; const u = hit.object.userData;
+  if (u.track) { if (window.JX) JX.load().then(() => { const t = JX.tracks.find(x => x.id === u.track); if (t) { JX.play(t, JX.byLane(t.lane)); selectLane(t.lane); openPanel(true); } }); return true; }
+  if (u.popup) { window.__lastOpen = 'popup:' + (u.id || ''); u.popup(); return true; }
+  if (u.link) { window.__lastOpen = u.link; window.open(u.link, '_blank', 'noopener'); } else playLane(u.lane); return true;
 }
 function playLane(lane) { if (!window.JX) return; JX.load().then(() => { JX.playLane(lane); selectLane(lane); openPanel(true); }); }
 
@@ -435,22 +435,29 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=57').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=58').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
+/* v58: gamepad (world-gamepad.js) drives the same actions: centre tap = pick(), the same panel / map functions, and the same move/look sums as the touch sticks */
+let pad = { mx: 0, my: 0, lx: 0, ly: 0, sprint: false, poll() { return this; } };
+const nearScreens = () => { const v = new THREE.Vector3(), out = []; for (const o of clickables) { if (o.visible === false || (o.parent && o.parent.visible === false)) continue; o.getWorldPosition(v); const d = Math.hypot(v.x - player.pos.x, v.z - player.pos.z); if (d < 40 && d > 1) out.push({ o, x: v.x, y: v.y, z: v.z, a: Math.atan2(-(v.x - player.pos.x), -(v.z - player.pos.z)) }); } return out.sort((p, q) => p.a - q.a); };
+import('./world-gamepad.js?v=58').then(m => { pad = m.initGamepad({ pickCentre: () => { const r = canvas.getBoundingClientRect(); return !!pick(r.left + r.width / 2, r.top + r.height / 2); }, openPanel,
+  openMap: () => window.__world.openMap && window.__world.openMap(), closeMap: () => window.__world.closeMap && window.__world.closeMap(), nearScreens,
+  faceAt: t => { player.yaw = t.a; player.pitch = Math.max(-1.2, Math.min(1.2, Math.atan2(t.y - player.pos.y, Math.hypot(t.x - player.pos.x, t.z - player.pos.z)))); } }); window.__pad = pad; }).catch(e => console.warn('gamepad', e));
 const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
 const MOVE = 7, TURN = 1.8;
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
-  let mv = (keys.has('f') ? 1 : 0) - (keys.has('b') ? 1 : 0) + stickL.y;
-  let st = (keys.has('sr') ? 1 : 0) - (keys.has('sl') ? 1 : 0) + stickL.x;
-  const turn = window.__mapOpen ? 0 : ((keys.has('tr') ? 1 : 0) - (keys.has('tl') ? 1 : 0) + stickR.x);
+  const gp = pad.poll();
+  let mv = (keys.has('f') ? 1 : 0) - (keys.has('b') ? 1 : 0) + stickL.y + gp.my;
+  let st = (keys.has('sr') ? 1 : 0) - (keys.has('sl') ? 1 : 0) + stickL.x + gp.mx;
+  const turn = window.__mapOpen ? 0 : ((keys.has('tr') ? 1 : 0) - (keys.has('tl') ? 1 : 0) + stickR.x + gp.lx);
   player.yaw -= turn * TURN * dt;              // positive turn = turn right
-  if (!window.__mapOpen) player.pitch += stickR.y * TURN * 0.7 * dt;  // stick up = look up
+  if (!window.__mapOpen) player.pitch += (stickR.y + gp.ly) * TURN * 0.7 * dt;  // stick up = look up
   player.pitch = Math.max(-1.3, Math.min(1.3, player.pitch));
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)); right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
-  const SPD = MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x - PZ[0], player.pos.z - PZ[1]) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
+  const SPD = (gp.sprint ? 2 : 1) * MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x - PZ[0], player.pos.z - PZ[1]) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
   if (window.__mapOpen) { mv = 0; st = 0; } // jump map overlay is up: no walking under it
   { const dx = (fwd.x * mv + right.x * st) * SPD * dt, dz = (fwd.z * mv + right.z * st) * SPD * dt, C = window.__collide, px = player.pos.x, pz = player.pos.z;
     if (C && (dx || dz) && !C(px, pz)) { if (!C(px + dx, pz + dz)) player.pos.x += dx, player.pos.z += dz; else if (!C(px + dx, pz)) player.pos.x += dx; else if (!C(px, pz + dz)) player.pos.z += dz; } // slide along walls; already inside (after a jump) = free to walk out
