@@ -34,7 +34,7 @@
   class YouTubeSource {
     constructor(box) { this.box = box; this.p = null; this.state = -1; }
     async load(t) {
-      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min'); document.body.classList.remove('yt-min'); for (const k of ['top', 'left', 'right', 'bottom']) this.box.style.removeProperty(k); // a new screen replaces the track and shows the panel again
+      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min', 'closed'); document.body.classList.remove('yt-closed'); document.body.classList.remove('yt-min'); for (const k of ['top', 'left', 'right', 'bottom']) this.box.style.removeProperty(k); // a new screen replaces the track and shows the panel again
       await loadYT();
       if (!this.p) {
         await new Promise(res => {
@@ -68,7 +68,7 @@
   bar.className = 'player'; bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Audio player');
   bar.innerHTML = `<div class="ctl"><button type="button" data-a="prev" aria-label="Previous track">⏮</button><button type="button" class="main" data-a="toggle" aria-label="Play">▶</button><button type="button" data-a="next" aria-label="Next track">⏭</button></div>
   <div class="now"><b class="pt">Nothing playing</b><input type="range" min="0" max="1000" value="0" aria-label="Seek" class="seek"><div class="time"><small class="cur">0:00</small><small class="src"></small><small class="dur">0:00</small></div></div>
-  <div class="extra"><button type="button" data-a="ytexp" class="ytonly" aria-label="Expand video">⤢</button><button type="button" data-a="ytstop" class="ytonly" aria-label="Stop and close video">✕</button><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
+  <div class="extra"><button type="button" data-a="ytexp" class="ytonly" aria-label="Expand video">⤢</button><button type="button" data-a="ytstop" class="ytonly" aria-label="Close video (keeps playing in the bottom player)">✕</button><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
   const qbox = document.createElement('div'); qbox.className = 'queue'; qbox.hidden = true; qbox.setAttribute('aria-label', 'Queue');
   const ytbox = document.createElement('div'); ytbox.className = 'ytbox'; ytbox.hidden = true;
   ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Minimise video (keeps playing)">▾ MINIMISE</button><button type="button" class="ytexp" aria-label="Expand video">⤢</button><div class="ytvol"><button type="button" class="ytmute" aria-label="Mute video" aria-pressed="false">🔊</button><input type="range" min="0" max="100" step="1" value="100" aria-label="Video volume"><span class="ytvoln">100</span></div>';
@@ -85,12 +85,16 @@
     const cand = []; for (let y = B; y >= T0; y -= 8) { cand.push([L, y], [R, y]); for (let x = L + 16; x < R; x += 16) cand.push([x, y]); }
     const [x, y] = cand.find(([x, y]) => free(x, y)) || [L, Math.max(T0, B)];
     ytbox.style.setProperty('left', x + 'px', 'important'); ytbox.style.setProperty('top', y + 'px', 'important'); ytbox.style.setProperty('right', 'auto', 'important'); ytbox.style.setProperty('bottom', 'auto', 'important'); }
-  const setMin = on => { ytbox.classList.toggle('min', on); document.body.classList.toggle('yt-min', on); bar.classList.toggle('yt-mini', on); requestAnimationFrame(placeMini); setTimeout(placeMini, 300); };
+  const setMin = on => { if (on) openYT(); ytbox.classList.toggle('min', on); document.body.classList.toggle('yt-min', on); bar.classList.toggle('yt-mini', on); requestAnimationFrame(placeMini); setTimeout(placeMini, 300); };
   addEventListener('resize', () => setTimeout(placeMini, 120)); addEventListener('orientationchange', () => setTimeout(placeMini, 400));
   setInterval(() => { if (ytbox.classList.contains('min')) placeMini(); }, 1500); // HUD bits (train buttons, presence counter) come and go
+  /* v55: closing the video panel (✕) no longer stops playback: the panel is hidden (iframe kept alive, never display:none) and the same track keeps playing at
+     the same position under the bottom player, whose play/pause is then the only thing deciding whether it is heard. ⤢ brings the panel back. */
+  const closeYT = () => { setMin(false); ytbox.classList.add('closed'); document.body.classList.add('yt-closed'); window.dispatchEvent(new CustomEvent('jx:ytclose')); render(); };
+  const openYT = () => { ytbox.classList.remove('closed'); document.body.classList.remove('yt-closed'); };
   const stopYT = () => { try { yt.stop(); } catch (_) {} if (src === yt) src = null; setMin(false); ytbox.hidden = true; document.body.classList.remove('yt-on'); bar.classList.remove('has-yt'); window.dispatchEvent(new CustomEvent('jx:ytclose')); render(); };
   ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); setMin(true); });
-  ytbox.querySelector('.ytexp').addEventListener('click', e => { e.stopPropagation(); setMin(false); });
+  ytbox.querySelector('.ytexp').addEventListener('click', e => { e.stopPropagation(); openYT(); setMin(false); });
   ytbox.addEventListener('pointerdown', e => e.stopPropagation());
   // v48: our own big volume slider + mute (YouTube's own slider is hidden at small sizes and ignored on iOS); remembered in localStorage
   const vr = ytbox.querySelector('.ytvol input'), vn = ytbox.querySelector('.ytvoln'), vm = ytbox.querySelector('.ytmute');
@@ -175,7 +179,7 @@
 
   bar.addEventListener('click', e => {
     const a = e.target.closest('button')?.dataset.a; if (!a) return;
-    if (a === 'ytexp') { setMin(!ytbox.classList.contains('min')); return; } if (a === 'ytstop') { stopYT(); return; }
+    if (a === 'ytexp') { if (ytbox.classList.contains('closed')) { openYT(); setMin(false); } else setMin(!ytbox.classList.contains('min')); render(); return; } if (a === 'ytstop') { closeYT(); return; }
     if (a === 'toggle') toggle(); if (a === 'next') next(); if (a === 'prev') prev();
     if (a === 'queue') { qbox.hidden = !qbox.hidden; e.target.setAttribute('aria-expanded', String(!qbox.hidden)); render(); }
   });
