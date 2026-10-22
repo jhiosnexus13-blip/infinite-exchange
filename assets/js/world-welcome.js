@@ -28,9 +28,11 @@ ${li('🗺', `<b>${tap} the minimap</b> (top right) to open the jump map, then $
 ${li('🚂', `<b>Seafront train</b> runs from North Drive to the Harbour Mouth, stopping at Britannia Pier, Tower Complex, Wellington Pier and Pleasure Beach. At a stop press <b>RIDE TRAIN</b> (or ${tap.toLowerCase()} the train), choose a stop from <b>STOPS ▾</b>, and press <b>HOP OFF</b> to get out at the next stop.`)}
 ${li('☾', '<b>Sun / moon button</b> switches day and night. The weather is live Great Yarmouth weather.')}
 ${li('👥', 'Other visitors show up as <b>glowing silhouettes</b>, and the counter shows how many are here now. Nobody sees a name.')}
+${li('💬', '<b>Chat</b>: press <b>T</b> (or the 💬 button) to chat. Everyone is an anonymous visitor-xxxx; links are removed.')}
+${li('🎙', '<b>Voice notes</b>: hold <b>V</b>, the 🎙 button (press and hold on a phone) or LB + RB on a controller to record up to 15 s; let go to send. The mic is only on while you hold it.')}
 ${li('🎧', 'Headphones recommended.')}
 ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite ? '' : ' If it runs slowly, add <b>?lite=1</b> to the address for a lighter version.'}`) : ''}
-</ul><p class="note">Some live features, like seeing other visitors (and voice chat, coming soon), work best on Wi-Fi for now; mobile data may not connect.</p>
+</ul><p class="note">Live features (other visitors, chat and voice notes) work best on a stable Wi-Fi connection; mobile data may not connect. Messages and voice notes disappear after 30 minutes.</p>
 <p class="note">Work in progress: more local artists are on the way.</p>
 <button type="button" class="wwel-go">ENTER THE WORLD</button><label><input type="checkbox" class="wwel-off"> Don't show this again</label>${(window.JHIOS_CONFIG || {}).KOFI_URL ? `<a class="wwel-kofi" href="${JHIOS_CONFIG.KOFI_URL}" target="_blank" rel="noopener" title="${JHIOS_CONFIG.KOFI_LABEL}" aria-label="${JHIOS_CONFIG.KOFI_LABEL}">☕ Support on Ko-fi</a>` : ''}</div>`;
   const help = document.createElement('button'); help.type = 'button'; help.className = 'whelp'; help.textContent = '?'; help.setAttribute('aria-label', 'How to use the world'); help.title = 'Help';

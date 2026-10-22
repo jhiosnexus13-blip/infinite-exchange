@@ -20,7 +20,7 @@ export function initGamepad(api) {
     ov.innerHTML = `<b style="color:#00ff9d">🎮 Controller connected</b><table style="border-collapse:collapse;margin-top:6px">`
       + R('Sticks', 'Left: walk · Right: look') + R(g.A, '<b>Do it</b>: play, open, ride the train, select') + R(g.B, 'Back / close') + R(g.S, 'Map') + `</table>`
       + `<details style="margin-top:6px;font-size:12px;opacity:.85"><summary style="cursor:pointer;color:#7dffd0">more</summary><table style="border-collapse:collapse">`
-      + R(g.Y, 'Music play / pause') + R(g.X + ' hold', 'Run') + R(g.LB + ' / ' + g.RB, 'Skip track') + R(g.LT + ' / ' + g.RT, 'Volume') + R(g.V, 'Minimise video / window') + R('D-pad', 'Walk · ←→ nearby screens') + R('Click a stick', 'On-screen buttons')
+      + R(g.Y, 'Music play / pause') + R(g.X + ' hold', 'Run') + R(g.LB + ' + ' + g.RB + ' hold', 'Record a voice note (release to send)') + R(g.LB + ' / ' + g.RB, 'Skip track') + R(g.LT + ' / ' + g.RT, 'Volume') + R(g.V, 'Minimise video / window') + R('D-pad', 'Walk · ←→ nearby screens') + R('Click a stick', 'On-screen buttons')
       + `<tr><td colspan="2">In menus and the map: stick / D-pad move, ${g.A} select, ${g.B} back; map: triggers zoom.</td></tr></table></details>`
       + `<button type="button" class="wgp-x" style="margin-top:8px;width:100%;padding:8px;background:transparent;color:#c8ffe8;border:1px solid #2f6a55;border-radius:8px;cursor:pointer">Got it (${g.B})</button>`;
     ov.querySelector('.wgp-x').onclick = () => { ov.remove(); ov = null; }; for (const ev of ['pointerdown', 'wheel']) ov.addEventListener(ev, e => e.stopPropagation(), { passive: true }); document.body.appendChild(ov); };
@@ -36,7 +36,7 @@ export function initGamepad(api) {
   st.doIt = interact;
   const cycle = d => { const L = api.nearScreens(); if (!L.length) return false; st.focus = (st.focus + d + L.length) % L.length; api.faceAt(L[st.focus]); return true; };
   const WALK = { 0: ['interact', interact], 1: ['back', backWalk], 3: ['playpause', () => click('[data-a=toggle]')], 9: ['map', () => api.openMap()],
-    8: ['video-min', ytMin], 4: ['prev', () => click('[data-a=prev]')], 5: ['next', () => click('[data-a=next]')], 6: ['vol-', () => volStep(-10)], 7: ['vol+', () => volStep(10)], 10: ['enter-ui', () => ui.enter()], 11: ['enter-ui', () => ui.enter()] };
+    8: ['video-min', ytMin], 6: ['vol-', () => volStep(-10)], 7: ['vol+', () => volStep(10)], 10: ['enter-ui', () => ui.enter()], 11: ['enter-ui', () => ui.enter()] };
   // map: pins in screen space relative to the centre cursor
   const pinHop = (dx, dy) => { const P = (window.__mapApi && __mapApi.pins()) || []; let best = null, bd = 1e9; for (const p of P) { const along = p.sx * dx + p.sy * dy; if (along <= 4) continue; const side = Math.abs(p.sx * dy - p.sy * dx), d = along + side * 2; if (d < bd) { bd = d; best = p; } }
     if (best) { __mapApi.centreOn(best.x, best.z); __mapApi.setCursor(true, best.name); st.pin = best.k; } };
@@ -77,8 +77,12 @@ export function initGamepad(api) {
       st.mx = L0; st.my = -L1 + (dU ? 1 : 0) - (dD ? 1 : 0); // up = forward, analogue speed
       st.lx = R0 + (!near ? (dR ? 1 : 0) - (dL ? 1 : 0) : 0); st.ly = -R1; st.sprint = now16[2];
       for (const k in WALK) if (edge(+k)) act(WALK[k][0], WALK[k][1]);
+      // v61: hold LB + RB together = record a voice note (world-chat.js reads window.__pttPad); a single bumper skips a track on RELEASE
+      const both = now16[4] && now16[5]; if (both) st.bb = true; window.__pttPad = both;
+      if (!now16[4] && st.prev[4] && !st.bb) act('prev', () => click('[data-a=prev]')); if (!now16[5] && st.prev[5] && !st.bb) act('next', () => click('[data-a=next]'));
+      if (!now16[4] && !now16[5]) st.bb = false;
       if (near && edge(14)) act('focus-prev', () => cycle(-1)); if (near && edge(15)) act('focus-next', () => cycle(1)); }
-    st.lastMode = st.mode; st.prev = now16; return st; };
+    if (st.mode !== 'walk') window.__pttPad = false; st.lastMode = st.mode; st.prev = now16; return st; };
   // ---- centre pointer (tiny SCR3WFAC3 mask) + context prompt ----
   const css = document.createElement('style'); css.textContent = `.waim{position:fixed;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;z-index:25;pointer-events:none;color:#fff;opacity:.6;filter:drop-shadow(0 0 2px rgba(0,255,157,.55));transition:transform .15s,opacity .15s,color .15s,filter .15s}.waim svg{width:100%;height:100%;display:block;overflow:visible}
 .waim.on{opacity:1;color:#00ff9d;transform:scale(1.3);filter:drop-shadow(0 0 3px #00ff9d) drop-shadow(0 0 7px #00ff9d)}.waim[hidden],.wprompt[hidden]{display:none}
