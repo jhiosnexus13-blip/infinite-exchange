@@ -36,7 +36,7 @@
    "key": "pleasure_beach",
    "name": "Great Yarmouth Pleasure Beach (big wheel)",
    "lat": 52.5937437,
-   "lon": 1.7355419,
+   "lon": 1.73595,
    "type": "wheel",
    "height_m": 45,
    "crosscheck": "OSM has no attraction=big_wheel/wheel feature within 600 m. The pin lies inside OSM theme_park 'Pleasure Beach' (way 179321094 / 358642188, Wikidata Q3115993, bbox 52.59123-52.59527 / 1.73541-1.73656) on its Marine Parade (west) frontage; postcodes.io NR30 3EH 52.594522,1.736190.",
@@ -49,7 +49,12 @@
     "pleasure-bitch-feat-luce-aether-fried-again-remix"
    ],
    "wheel_note": "Playlist order of YouTube album 'Pleasure Bitch' (OLAK5uy_n3DSg7qRtAZBLzCoLpG0fwgFY0X6r-gjg), titles via YouTube oEmbed 2026-10-22. Add more ids to add gondolas.",
-   "source": "Wheel position from Joseph's Google Maps link (maps.app.goo.gl/RrzmkG1GNSsRNbZa8 -> place 'Great Yarmouth Observation Wheel', pin 52.5937437,1.7355419), resolved 2026-10-22. Previously the park centroid 52.5932831,1.7359856 (moved ~59 m NW)."
+   "source": "Wheel position from Joseph's Google Maps link (maps.app.goo.gl/RrzmkG1GNSsRNbZa8 -> place 'Great Yarmouth Observation Wheel', pin 52.5937437,1.7355419), resolved 2026-10-22. Previously the park centroid 52.5932831,1.7359856 (moved ~59 m NW). v42: Joseph's pin (lon 1.7355419) sits on the South Beach Parade carriageway (OSM ways 47380278/29992296, lon ~1.7355 here), so the 45 m wheel straddled the road with half of it on the landward side. Moved ~27 m east (lon 1.73595, same lat) onto the park's seaward side inside OSM theme_park way 179321094, and turned to face the road (rot_y 1.4) so it stands along the frontage.",
+   "rot_y": 1.4,
+   "land_offset": [
+    -42,
+    -6
+   ]
   },
   {
    "key": "minster",
@@ -110,7 +115,14 @@
     "iron\\s*duke"
    ],
    "song_note": "Tracks tagged 'iron-duke' plus any title/artist/album/tag matching Lee T / Iron Duke.",
-   "song_tag": "iron-duke"
+   "song_tag": "iron-duke",
+   "use_footprint": true,
+   "pint": true,
+   "cluster_at": [
+    52.627853,
+    1.738936
+   ],
+   "v42_note": "v42: the generic stand-in pub model was drawn over the real OSM footprint (way 232015022 was also being removed as 'replaced by the landmark model'), which read as a stray house. Now the real OSM footprint is the pub, labelled THE IRON DUKE, and the Iron Duke tracks orbit a giant neon pint on open ground ~30 m east (seafront side) of the building."
   },
   {
    "key": "the_avenues",
@@ -189,6 +201,17 @@
    "song_tag": "seafront-shelter",
    "source": "Google Maps link (maps.app.goo.gl/o43XBNigsbktf3w48) resolves to a Street View camera at 52.6246793,1.738168 heading 152 deg (place pin 52.624603,1.738119, 'Tennyson Road'). Looking SSE from there is OSM shelter building way 231808791 (North Drive, NR30 4HE) centroid 52.624514,1.738397, ~24 m away on bearing ~142 deg.",
    "crosscheck": "OSM bus stop node 562733180 'Tennyson Road, opp' shelter=yes at 52.6245235,1.7383318 (~5 m from the shelter building)."
+  },
+  {
+   "key": "racecourse_newtown",
+   "name": "NEWTOWN",
+   "lat": 52.629373,
+   "lon": 1.732809,
+   "type": "screen",
+   "height_m": 4,
+   "song_tag": "racecourse-edge",
+   "no_label": true,
+   "source": "Track zaIx29PCNSk (title 'NEWTOWN' via YouTube oEmbed). Placed on open racecourse ground just north-east of the Lord Nelson Stand (OSM way 230703557), inside racecourse relation 3118342; no specific building identified or labelled."
   }
  ],
  "seafront": {
