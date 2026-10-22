@@ -48,7 +48,13 @@ function rain() {
 /* ---------- lat/lon -> world ---------- */
 let ORG;
 function local(lat, lon) { return { e: (lon - ORG.lon) * Math.cos(ORG.lat * Math.PI / 180) * 111320, n: (lat - ORG.lat) * 110540 }; }
-function warp(e, n) { const r = Math.hypot(e, n) || 1, rr = R0 + r * SCALE; return new T.Vector3(e / r * rr, 0, -n / r * rr); }
+/* Seafront projection: the coast is a near-straight N-S line just east of the origin, so bearings from the
+   origin itself would misorder seafront landmarks (e.g. Tower Complex 110 m N of origin would sit WEST of
+   Britannia Pier on the ring). Seafront items (coast, sea, piers, tower, wheel, pillar, lighthouse, Marine Parade
+   strip) are therefore projected from a virtual viewpoint SEA_OFF metres west, which makes their ring order
+   strictly north->south along Marine Parade while keeping them east of spawn. Inland items use the origin. */
+const SEA_OFF = -1200;
+function warp(e, n, off = 0) { e -= off; const r = Math.hypot(e, n) || 1, rr = R0 + r * SCALE; return new T.Vector3(e / r * rr, 0, -n / r * rr); }
 const W = (lat, lon, de = 0, dn = 0) => { const l = local(lat, lon); return warp(l.e + de, l.n + dn); };
 
 function skyline(D) {
@@ -65,11 +71,11 @@ function skyline(D) {
   const coastE = n => { for (let i = 0; i < coast.length - 1; i++) { const a = coast[i], b = coast[i + 1]; if (n <= a.n && n >= b.n) return a.e + (b.e - a.e) * (n - a.n) / (b.n - a.n); } return coast[n > 0 ? 0 : coast.length - 1].e; };
   fx.coastE = coastE;
   for (const L of D.landmarks) {
-    const l = local(L.lat, L.lon), base = warp(l.e, l.n), ht = (L.height_m || 10) * HS, ry = yaw(base);
+    const OFF = ['pier', 'tower', 'wheel', 'column', 'lighthouse'].includes(L.type) ? SEA_OFF : 0, l = local(L.lat, L.lon), base = warp(l.e, l.n, OFF), ht = (L.height_m || 10) * HS, ry = yaw(base);
     const tag = LBL(L.name.split(' (')[0], '#5dffc0', 1.6); tag.position.copy(base).setY(ht + 3); grp.add(tag);
     fx.landmarks[L.key] = { pos: base, name: L.name };
     if (L.type === 'pier') { // deck from the coast out to sea (east), legs, pavilion at the head
-      const ce = coastE(l.n), root = warp(ce, l.n), tip = warp(ce + L.length_m, l.n), N = 10;
+      const ce = coastE(l.n), root = warp(ce, l.n, OFF), tip = warp(ce + L.length_m, l.n, OFF), N = 10;
       for (let i = 0; i < N; i++) { const a = root.clone().lerp(tip, i / N), b = root.clone().lerp(tip, (i + 1) / N);
         a.y = b.y = 1.4; add(a, b); add(a.clone().setZ(a.z - 0.8), b.clone().setZ(b.z - 0.8)); add(a, a.clone().setY(0)); add(a.clone().setZ(a.z - 0.8), a.clone().setZ(a.z - 0.8).setY(0)); }
       const head = tip.clone(); head.y = 1.4; box(head, 4, ht * 0.6, 3, 0); box(head.clone().setY(1.4 + ht * 0.6), 2.6, ht * 0.35, 2, 0);
@@ -104,7 +110,7 @@ function skyline(D) {
   // Marine Parade / Atlas seafront strip: buildings just inland of the coast
   const f = local(D.seafront.from.lat, D.seafront.from.lon), t2 = local(D.seafront.to.lat, D.seafront.to.lon);
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  for (let n = f.n; n < t2.n; n += 55) { const e = coastE(n) - 35 - rnd() * 40, b = warp(e, n), h = (8 + rnd() * 18) * HS * 1.4; box(b, 2.2 + rnd() * 2, h, 2.5, yaw(b)); if (rnd() < 0.3) add(b.clone().setY(h), b.clone().setY(h + 1.5)); }
+  for (let n = f.n; n < t2.n; n += 55) { const e = coastE(n) - 35 - rnd() * 40, b = warp(e, n, SEA_OFF), h = (8 + rnd() * 18) * HS * 1.4; box(b, 2.2 + rnd() * 2, h, 2.5, yaw(b)); if (rnd() < 0.3) add(b.clone().setY(h), b.clone().setY(h + 1.5)); }
   // generic town blocks between seafront and river
   for (let i = 0; i < 70; i++) { const n = -2600 + rnd() * 3800, e = coastE(n) - 150 - rnd() * 650, b = warp(e, n); box(b, 2 + rnd() * 3, (6 + rnd() * 10) * HS, 2 + rnd() * 3, yaw(b)); }
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(segs, 3)); grp.add(new T.LineSegments(g, mat));
@@ -114,7 +120,7 @@ function skyline(D) {
   grp.add(new T.Line(new T.BufferGeometry().setFromPoints(rp), new T.LineBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, fog: false })));
   grp.add(new T.Line(new T.BufferGeometry().setFromPoints(rp.map(p => p.clone().add(new T.Vector3(0.9, 0, 0)))), new T.LineBasicMaterial({ color: 0x0088cc, transparent: true, opacity: 0.6, blending: T.AdditiveBlending, fog: false })));
   // coastline glow
-  grp.add(new T.Line(new T.BufferGeometry().setFromPoints(coast.map(c => warp(c.e, c.n).setY(0.12))), new T.LineBasicMaterial({ color: 0x9dffe0, fog: false })));
+  grp.add(new T.Line(new T.BufferGeometry().setFromPoints(coast.map(c => warp(c.e, c.n, SEA_OFF).setY(0.12))), new T.LineBasicMaterial({ color: 0x9dffe0, fog: false })));
   sea(coast);
   fx.mapLandmarks = Object.values(fx.landmarks);
 }
@@ -142,14 +148,14 @@ function sea(coast) {
   const seg = LOW ? 60 : 140, geo = new T.PlaneGeometry(900, 900, seg, seg); geo.rotateX(-Math.PI / 2);
   const cn = coast.map(c => c.n), ce = coast.map(c => c.e);
   const m = new T.ShaderMaterial({ transparent: true, depthWrite: false, fog: false, side: T.DoubleSide,
-    uniforms: { uTime: { value: 0 }, uR0: { value: R0 }, uS: { value: SCALE }, uN: { value: cn }, uE: { value: ce } },
+    uniforms: { uTime: { value: 0 }, uR0: { value: R0 }, uS: { value: SCALE }, uOff: { value: SEA_OFF }, uN: { value: cn }, uE: { value: ce } },
     vertexShader: `uniform float uTime; varying vec3 vW; varying float vH;
       void main(){ vec3 p = position; vec4 w = modelMatrix * vec4(p,1.0);
         float h = sin(w.x * 0.08 + uTime * 0.9) * 0.35 + sin(w.z * 0.11 - uTime * 0.7) * 0.25 + sin((w.x + w.z) * 0.21 + uTime * 1.3) * 0.12;
         w.y += h - 0.3; vW = w.xyz; vH = h; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; uniform float uR0; uniform float uS; uniform float uN[6]; uniform float uE[6]; varying vec3 vW; varying float vH;
+    fragmentShader: `uniform float uTime; uniform float uR0; uniform float uS; uniform float uOff; uniform float uN[6]; uniform float uE[6]; varying vec3 vW; varying float vH;
       float coastE(float n){ for(int i=0;i<5;i++){ if(n <= uN[i] && n >= uN[i+1]) return mix(uE[i], uE[i+1], (n-uN[i])/(uN[i+1]-uN[i])); } return n > 0.0 ? uE[0] : uE[5]; }
-      void main(){ float rr = length(vW.xz); if (rr < uR0) discard; float r = (rr - uR0) / uS; vec2 d = vW.xz / rr; float e = d.x * r, n = -d.y * r;
+      void main(){ float rr = length(vW.xz); if (rr < uR0) discard; float r = (rr - uR0) / uS; vec2 d = vW.xz / rr; float e = d.x * r + uOff, n = -d.y * r;
         float ce = coastE(n); if (e < ce) discard;
         float grid = step(0.94, fract(vW.x * 0.25)) + step(0.94, fract(vW.z * 0.25));
         float edge = 1.0 - smoothstep(0.0, 60.0, e - ce);
