@@ -11,11 +11,11 @@ export function initPresence(o) {
   const pos = [], nor = [];
   for (const [g0, x, y, z, rz = 0] of parts) { const g = g0.toNonIndexed(); g.rotateZ(rz); g.translate(x, y, z); pos.push(...g.attributes.position.array); nor.push(...g.attributes.normal.array); g.dispose(); g0.dispose(); }
   const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); geo.setAttribute('normal', new T.Float32BufferAttribute(nor, 3));
-  const mat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, uniforms: { uTime: { value: 0 } },
+  const mat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, uniforms: { uTime: { value: 0 }, uGlow: window.__glowU || { value: 1 } },
     vertexShader: `varying vec3 vN; varying vec3 vV; varying float vY; void main(){ vec4 w = modelMatrix * instanceMatrix * vec4(position, 1.0); vY = position.y;
       vN = normalize(mat3(modelMatrix * instanceMatrix) * normal); vV = normalize(cameraPosition - w.xyz); gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; varying vec3 vN; varying vec3 vV; varying float vY; void main(){ float fr = pow(1.0 - abs(dot(normalize(vN), vV)), 1.6);
-      float a = (0.18 + 0.85 * fr) * (0.85 + 0.15 * sin(uTime * 2.0 + vY * 4.0)); gl_FragColor = vec4(vec3(0.45, 0.95, 1.0) * (0.8 + fr), clamp(a, 0.0, 0.95)); }` });
+    fragmentShader: `uniform float uTime; uniform float uGlow; varying vec3 vN; varying vec3 vV; varying float vY; void main(){ float fr = pow(1.0 - abs(dot(normalize(vN), vV)), 1.6);
+      float a = (0.18 + 0.85 * fr) * (0.85 + 0.15 * sin(uTime * 2.0 + vY * 4.0)); gl_FragColor = vec4(vec3(0.45, 0.95, 1.0) * (0.8 + fr), clamp(a * uGlow, 0.0, 0.95)); }` });
   const mesh = new T.InstancedMesh(geo, mat, MAX); mesh.count = 0; mesh.frustumCulled = false; mesh.raycast = () => {}; mesh.name = 'presence'; S.add(mesh);
   // ---- HUD counter ----
   const hud = document.createElement('div'); hud.className = 'wpresence'; hud.hidden = true; hud.setAttribute('role', 'status'); hud.setAttribute('aria-live', 'polite');

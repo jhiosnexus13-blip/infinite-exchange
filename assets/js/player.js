@@ -34,7 +34,7 @@
   class YouTubeSource {
     constructor(box) { this.box = box; this.p = null; this.state = -1; }
     async load(t) {
-      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on');
+      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min'); document.body.classList.remove('yt-min'); // a new screen replaces the track and shows the panel again
       await loadYT();
       if (!this.p) {
         await new Promise(res => {
@@ -66,11 +66,17 @@
   bar.className = 'player'; bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Audio player');
   bar.innerHTML = `<div class="ctl"><button type="button" data-a="prev" aria-label="Previous track">⏮</button><button type="button" class="main" data-a="toggle" aria-label="Play">▶</button><button type="button" data-a="next" aria-label="Next track">⏭</button></div>
   <div class="now"><b class="pt">Nothing playing</b><input type="range" min="0" max="1000" value="0" aria-label="Seek" class="seek"><div class="time"><small class="cur">0:00</small><small class="src"></small><small class="dur">0:00</small></div></div>
-  <div class="extra"><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
+  <div class="extra"><button type="button" data-a="ytexp" class="ytonly" aria-label="Expand video">⤢</button><button type="button" data-a="ytstop" class="ytonly" aria-label="Stop and close video">✕</button><button type="button" data-a="queue" aria-label="Show queue" aria-expanded="false">☰</button></div>`;
   const qbox = document.createElement('div'); qbox.className = 'queue'; qbox.hidden = true; qbox.setAttribute('aria-label', 'Queue');
   const ytbox = document.createElement('div'); ytbox.className = 'ytbox'; ytbox.hidden = true;
-  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Close video and stop">✕ CLOSE</button>';
-  ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); try { yt.stop(); } catch (_) {} ytbox.hidden = true; document.body.classList.remove('yt-on'); window.dispatchEvent(new CustomEvent('jx:ytclose')); });
+  ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Minimise video (keeps playing)">▾ MINIMISE</button><button type="button" class="ytexp" aria-label="Expand video">⤢</button>';
+  /* v41: closing the video panel only minimises it; the same iframe/player keeps playing (never moved in the DOM, never destroyed, stays visible as a mini
+     player). The bottom bar gets expand + a separate ✕ stop. */
+  const setMin = on => { ytbox.classList.toggle('min', on); document.body.classList.toggle('yt-min', on); bar.classList.toggle('yt-mini', on); };
+  const stopYT = () => { try { yt.stop(); } catch (_) {} if (src === yt) src = null; setMin(false); ytbox.hidden = true; document.body.classList.remove('yt-on'); bar.classList.remove('has-yt'); window.dispatchEvent(new CustomEvent('jx:ytclose')); render(); };
+  ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); setMin(true); });
+  ytbox.querySelector('.ytexp').addEventListener('click', e => { e.stopPropagation(); setMin(false); });
+  ytbox.addEventListener('pointerdown', e => e.stopPropagation());
   const mount = () => { document.body.append(ytbox, qbox, bar); };
   document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', mount) : mount();
 
@@ -112,6 +118,7 @@
     q('.pt').textContent = t ? t.title + (t.artist ? ' — ' + t.artist : '') : 'Nothing playing';
     const tg = q('[data-a=toggle]'); tg.textContent = playing ? '⏸' : '▶'; tg.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     q('.src').textContent = t ? (src === yt ? 'via YouTube' : 'self-hosted') : '';
+    bar.classList.toggle('has-yt', src === yt && !ytbox.hidden);
     const d = src ? src.duration : NaN, tm = src ? src.time : 0;
     q('.cur').textContent = fmt(tm); q('.dur').textContent = fmt(isFinite(d) ? d : (t && t.duration_s));
     if (!seeking) q('.seek').value = isFinite(d) && d > 0 ? Math.round(tm / d * 1000) : 0;
@@ -144,6 +151,7 @@
 
   bar.addEventListener('click', e => {
     const a = e.target.closest('button')?.dataset.a; if (!a) return;
+    if (a === 'ytexp') { setMin(!ytbox.classList.contains('min')); return; } if (a === 'ytstop') { stopYT(); return; }
     if (a === 'toggle') toggle(); if (a === 'next') next(); if (a === 'prev') prev();
     if (a === 'queue') { qbox.hidden = !qbox.hidden; e.target.setAttribute('aria-expanded', String(!qbox.hidden)); render(); }
   });

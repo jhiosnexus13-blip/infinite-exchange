@@ -21,6 +21,7 @@ const safe = (where, f) => { try { return f(); } catch (e) { worldErr(where, e);
    plaza around spawn (buildings within PLAZA m of the origin are left out so they stay reachable). */
 const CORE = 3200, FAR = 0.35, PLAZA = 62, HS = 1;
 const fx = { t: 0 };
+const PZ = () => window.__PLAZA || [0, 0]; // plaza centre in world x/z (set by world.js)
 
 export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
@@ -81,7 +82,7 @@ function skyline(D, grp, noGeo) {
   for (const L of D.landmarks) {
     const l = local(L.lat, L.lon), base = warp(l.e, l.n), ht = (L.height_m || 10) * HS, ry = yaw(base);
     const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label) tag.visible = false; tag.position.copy(base).setY(ht + (L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : L.type === 'wheel' ? 22 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
-    fx.landmarks[L.key] = { pos: base, name: L.name, fy: ht + 6 }; (fx.clear || (fx.clear = [[0, 0, PLAZA]])).push([base.x, base.z, L.type === 'tower' ? 30 : L.type === 'wheel' ? 26 : 12]); // approach radius never blocked by colliders
+    fx.landmarks[L.key] = { pos: base, name: L.name, fy: ht + 6 }; (fx.clear || (fx.clear = [[PZ()[0], PZ()[1], PLAZA]])).push([base.x, base.z, L.type === 'tower' ? 30 : L.type === 'wheel' ? 26 : 12]); // approach radius never blocked by colliders
     if (L.song_match || L.song_tag || L.song_patterns) songCluster(L, base, ht);
     if (L.type === 'pier') { // deck from the coast out to sea (east), legs, pavilion at the head
       const ce = coastE(l.n), root = warp(ce, l.n), tip = warp(ce + L.length_m, l.n), N = 10;
@@ -172,7 +173,7 @@ function geo(G, grp) {
   // Buildings: indexed per 320 m tile (16-bit indices, shared wall/roof vertices: 2 verts per footprint corner),
   // built in time-sliced batches so a slow phone never blocks the main thread for long.
   const CH = 320, tiles = new Map();
-  const holes = [[0, 0, PLAZA], ...(G.keep || [])]; // [e, n, radius] spots kept clear of buildings
+  const holes = [[PZ()[0], -PZ()[1], PLAZA], ...(G.keep || [])]; // [e, n, radius] spots kept clear of buildings
   const flat = a => { const o = []; for (let i = 0; i < a.length; i += 2) o.push([a[i], a[i + 1]]); return o; };
   const minA = LITE ? 60 : LOW ? 70 : 25, EDGES = !LOW && !LITE;
   const bm = geoMat(0x00ff9d, { a: 0.72, depth: true }), em = new T.LineBasicMaterial({ color: 0x7dffd0, transparent: true, opacity: 0.7, blending: T.AdditiveBlending, depthWrite: false, fog: false });
@@ -322,7 +323,7 @@ function archive(L, base, ht) {
 
 /* ---------- jump-on-map: full-screen overlay of the whole mapped area; tap = teleport, quick-jump list ---------- */
 const MB = { x0: -1600, x1: 700, z0: -3300, z1: 3400 }; // walkable bounds (mirrors the clamp in world.js)
-const JUMPS = [['plaza', 'Plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
+const JUMPS = [['plaza', 'Beach plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
   ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth'], ['police_investigation_centre', 'Police Investigation Centre']];
 function bigMap() {
   const el = document.createElement('div'); el.id = 'wmap'; el.className = 'wmap'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Map of Great Yarmouth: tap to jump');
@@ -387,7 +388,7 @@ function drawBig() {
   for (const [k, v] of Object.entries(lm)) { const x = X(v.pos.x), y = Z(v.pos.z), j = JUMPS.some(q => q[0] === k);
     g.fillStyle = j ? '#ffcc4a' : '#5dffc0'; g.beginPath(); g.arc(x, y, (j ? 5 : 3.5) * d, 0, 7); g.fill(); g.strokeStyle = '#000'; g.lineWidth = 2 * d; g.stroke();
     const t = v.name.split(' (')[0]; g.lineWidth = 3 * d; g.strokeStyle = 'rgba(0,0,0,.8)'; g.strokeText(t, x + 8 * d, y); g.fillText(t, x + 8 * d, y); }
-  g.fillStyle = '#00ff9d'; g.beginPath(); g.arc(X(0), Z(0), 6 * d, 0, 7); g.fill(); g.fillText('PLAZA', X(0) + 9 * d, Z(0) + 12 * d);
+  g.fillStyle = '#00ff9d'; g.beginPath(); g.arc(X(PZ()[0]), Z(PZ()[1]), 6 * d, 0, 7); g.fill(); g.fillText('PLAZA', X(PZ()[0]) + 9 * d, Z(PZ()[1]) + 12 * d);
   if (fx.presence) { g.fillStyle = '#7fe9ff'; g.shadowColor = '#7fe9ff'; g.shadowBlur = 8 * d; for (const v of fx.presence.others.values()) { g.beginPath(); g.arc(X(v.x), Z(v.z), 4 * d, 0, 7); g.fill(); } g.shadowBlur = 0; } // other visitors (anonymous)
   // you are here
   const px = X(P.pos.x), pz = Z(P.pos.z); g.save(); g.translate(px, pz); g.rotate(-P.yaw); g.fillStyle = '#fff'; g.shadowColor = '#00ff9d'; g.shadowBlur = 12 * d;
@@ -418,7 +419,7 @@ function teleport(x, z, face) {
   closeMap(); setTimeout(() => { P.pos.set(x, P.pos.y, z); if (face) { P.yaw = Math.atan2(-(face[0] - x), -(face[1] - z)); P.pitch = 0.12; } fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }, 180);
 }
 function jumpTo(k) {
-  if (k === 'plaza') return teleport(0, 22, [0, -6]);
+  if (k === 'plaza') { const [px, pz] = PZ(); return teleport(px, pz + 22, [px, pz - 6]); }
   const L = fx.landmarks && fx.landmarks[k]; if (!L) return; const t = [L.pos.x, L.pos.z];
   // stand 55 m to the landward/south-west side and look at it (seafront spots: on the prom, facing out)
   const [x, z] = landing(k); teleport(x, z, t); // open ground with a clear view of it, preferring the landward/south-west side
@@ -445,7 +446,7 @@ function sea(coast) {
 }
 /* ---------- glowing walkways from spawn to each object ---------- */
 function paths() {
-  const sp = new T.Vector3(0, 0, 22);
+  const sp = new T.Vector3(PZ()[0], 0, PZ()[1] + 22);
   fx.pathMat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, uniforms: { uTime: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform float uTime; varying vec2 vU; void main(){ float edge = smoothstep(0.5, 0.0, abs(vU.x - 0.5)) ; float side = step(0.42, abs(vU.x - 0.5));
@@ -466,13 +467,13 @@ function minimap() {
 function drawMap() {
   const c = fx.map, css = c.clientWidth; if (!css) return; const dpr = Math.min(2, devicePixelRatio || 1);
   if (c.width !== Math.round(css * dpr)) { c.width = c.height = Math.round(css * dpr); }
-  const far = Math.hypot(P.pos.x, P.pos.z) > 70, RM = far ? 350 : 48, cx0 = far ? P.pos.x : 0, cz0 = far ? P.pos.z : 0; // plaza view around origin, or a 350 m view following the player in town
+  const far = Math.hypot(P.pos.x - PZ()[0], P.pos.z - PZ()[1]) > 70, RM = far ? 350 : 48, cx0 = far ? P.pos.x : PZ()[0], cz0 = far ? P.pos.z : PZ()[1]; // plaza view around origin, or a 350 m view following the player in town
   const g = c.getContext('2d'), s = c.width, k = s / 2 / RM;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, s, s); g.fillStyle = 'rgba(3,10,8,.82)'; g.fillRect(0, 0, s, s);
   const X = x => s / 2 + (x - cx0) * k, Z = z => s / 2 + (z - cz0) * k; g.strokeStyle = 'rgba(0,255,157,.18)'; g.lineWidth = 1;
   for (let i = -2; i <= 2; i++) { const q = s / 2 + i * s / 5; g.beginPath(); g.moveTo(q, 0); g.lineTo(q, s); g.moveTo(0, q); g.lineTo(s, q); g.stroke(); }
   g.fillStyle = 'rgba(0,160,200,.25)'; g.fillRect(s - 6 * dpr, 0, 6 * dpr, s); // sea is east
-  g.strokeStyle = 'rgba(0,255,157,.35)'; g.beginPath(); g.arc(X(0), Z(-2), 4 * k, 0, 7); g.stroke(); // globe
+  g.strokeStyle = 'rgba(0,255,157,.35)'; g.beginPath(); g.arc(X(PZ()[0]), Z(PZ()[1] - 2), 4 * k, 0, 7); g.stroke(); // globe
   if (fx.route2) { g.strokeStyle = 'rgba(255,200,74,.6)'; g.lineWidth = 1.5 * dpr; g.beginPath(); fx.route2.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); g.lineWidth = 1; }
   if (fx.route) { g.strokeStyle = '#ffc84a'; g.lineWidth = 2.5 * dpr; g.beginPath(); fx.route.forEach(([x, z], i) => i ? g.lineTo(X(x), Z(z)) : g.moveTo(X(x), Z(z))); g.stroke(); g.lineWidth = 1; }
   for (const h of H) { g.fillStyle = h.hex; g.beginPath(); g.arc(X(h.o.pos[0]), Z(h.o.pos[1]), (h.lane === getPlaying() ? 4.5 : 3) * dpr, 0, 7); g.fill(); }
@@ -595,7 +596,7 @@ export const worldDebug = {
     const items = CL.filter(o => o.visible !== false).map(o => { o.getWorldPosition(wp); return { n: o.userData.title || o.userData.id || o.userData.track || o.name || 'obj', x: wp.x, y: wp.y, z: wp.z }; });
     for (const it of items) { const h = roofAt(it.x, it.z); if (h >= 0 && it.y < h + 1) V.push(`inside building: ${it.n} y=${it.y.toFixed(1)} roof=${h}`);
       let ok = false; for (let r = 0; r <= 10 && !ok; r += 2.5) for (let k = 0; k < 12; k++) { const a = k / 12 * 6.283; if (!C(it.x + Math.cos(a) * r, it.z + Math.sin(a) * r)) { ok = true; break; } } if (!ok) V.push(`no open approach within 10 m: ${it.n}`); }
-    if (C(0, 22)) V.push('spawn blocked');
+    if (C(PZ()[0], PZ()[1] + 22)) V.push('spawn blocked');
     for (const k of Object.keys(fx.landmarks)) { const L = fx.landmarks[k], [x, z, see] = landing(k); if (C(x, z, 0.8)) V.push(`landing inside building: ${k}`); if (!see) V.push(`no clear view from landing: ${k}`);
       const near = items.filter(i => Math.hypot(i.x - L.pos.x, i.z - L.pos.z) < 60); for (const i of near) if (!sightClear(x, z, i.x, i.y, i.z)) V.push(`screen occluded from landing: ${k} -> ${i.n}`); }
     return { violations: V, items: items.length, replaced: fx.geo && fx.geo.replaced, roofs: fx.roofAt }; },

@@ -27,12 +27,14 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x050607);
 scene.fog = LOW ? null : new THREE.FogExp2(0x03100b, 0.011);
 const camera = new THREE.PerspectiveCamera(70, 1, 0.5, LITE ? 3500 : 6000);
-const player = { pos: new THREE.Vector3(0, 1.7, 22), yaw: 0, pitch: 0 };
+/* v41: the lane plaza + spawn sit on open sand on the Golden Mile beach, between the Tower Complex and Britannia Pier (OSM beach, 140 m E / 300 m N of the Marine Parade origin) */
+const PZ = window.__PLAZA = [140, -300];
+const player = { pos: new THREE.Vector3(PZ[0], 1.7, PZ[1] + 22), yaw: 0, pitch: 0 };
 
 /* ---------- world ---------- */
 const grid = new THREE.GridHelper(400, 200, 0x00ff9d, 0x0d3326); grid.material.transparent = true; grid.material.opacity = 0.35; scene.add(grid);
 scene.add(new THREE.AmbientLight(0x406060, 1.2));
-const sun = new THREE.PointLight(0x00ff9d, 40, 60); sun.position.set(0, 12, 0); scene.add(sun);
+const sun = new THREE.PointLight(0x00ff9d, 40, 60); sun.position.set(PZ[0], 12, PZ[1]); scene.add(sun);
 
 /* sprite sized to its text: height h world units, width follows the measured text (keeps labels on-screen) */
 function labelSprite(text, color = '#00ff9d', h = 1.1) {
@@ -227,6 +229,7 @@ const HOLO_OBJS = {
   // GoldBot scaled to 0.56 (fits the frame + label from __world.face) and moved off the spawn->globe sightline
   'GoldBot':           { pos: [13, -27], col: 0xffc94a, build: c => { const g = buildRobot(c); g.scale.setScalar(0.56); return g; }, h: 8.1, w: 3.9, link: 'https://goldbot-digitalassetops.lovable.app/', label: 'GoldBot // Zak Denny', sub: 'tap to open' },
 };
+for (const o of Object.values(HOLO_OBJS)) o.pos = [o.pos[0] + PZ[0], o.pos[1] + PZ[1]]; // lane layout is relative to the plaza centre
 const clickables = [], holos = [];
 const hitMat = new THREE.MeshBasicMaterial({ visible: false });
 for (const [lane, o] of Object.entries(HOLO_OBJS)) {
@@ -259,6 +262,20 @@ function beatNow() {
   const ph = (JX.time * 140 / 60) % 1; return Math.exp(-ph * 6);
 }
 window.__beat = beatNow;
+/* v41 global beat clock: one shared glow multiplier for every additive (neon) material. YouTube audio can't be analysed, so while a track plays the
+   pulse runs at the track's `bpm` (tracks.json, optional; 120 when unset), phase-locked to the player's current time so pause / seek stay aligned.
+   Gentle (about +/-12%); idle = very slow breathe; reduced motion = steady. */
+const glowU = window.__glowU = { value: 1 }; let glowMats = [], glowScanT = -9;
+function updateGlow(t) {
+  let v = 1;
+  if (!reduced) { if (window.JX && JX.playing && JX.current) { const bpm = +JX.current.bpm > 0 ? +JX.current.bpm : 120, ph = ((JX.time || 0) * bpm / 60) % 1; v = 0.9 + 0.22 * Math.exp(-ph * 5); }
+    else v = 1 + 0.03 * Math.sin(t * 0.6); }
+  glowU.value += (v - glowU.value) * 0.5;
+  if (t - glowScanT > 3) { glowScanT = t; const L = []; scene.traverse(o => { const m = o.material; if (!m) return; for (const q of Array.isArray(m) ? m : [m]) if (q.blending === THREE.AdditiveBlending && q.color && !q.userData.noPulse) L.push(q); }); glowMats = [...new Set(L)]; }
+  for (const m of glowMats) { const u = m.userData; if (!u._gb) { u._gb = m.color.clone(); u._gw = new THREE.Color(); }
+    else if (!m.color.equals(u._gw)) u._gb.copy(m.color); // colour was changed elsewhere (e.g. flashing police light): take it as the new base
+    m.color.copy(u._gb).multiplyScalar(glowU.value); u._gw.copy(m.color); }
+}
 function animateHolos(t, dt) {
   holoU.uTime.value = t;
   const beatV = beatNow();
@@ -291,12 +308,12 @@ function animateHolos(t, dt) {
 }
 
 /* ---------- holographic listener globe ---------- */
-const GLOBE_R = 4, globe = new THREE.Group(); globe.position.set(0, 6, -2); scene.add(globe);
+const GLOBE_R = 4, globe = new THREE.Group(); globe.position.set(PZ[0], 6, PZ[1] - 2); scene.add(globe);
 globe.add(new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 32, 20), new THREE.MeshBasicMaterial({ color: 0x00ff9d, wireframe: true, transparent: true, opacity: 0.18 })));
 globe.add(new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R * 0.98, 32, 20), new THREE.MeshBasicMaterial({ color: 0x002a1a, transparent: true, opacity: 0.35 })));
 const ring = new THREE.Mesh(new THREE.TorusGeometry(GLOBE_R * 1.25, 0.03, 8, 96), new THREE.MeshBasicMaterial({ color: 0xb48cff })); ring.rotation.x = Math.PI / 2; globe.add(ring);
-const globeTitle = labelSprite('WHERE PEOPLE LISTEN FROM'); globeTitle.position.set(0, 11.2, -2); scene.add(globeTitle);
-const demoTag = labelSprite('DEMO DATA — NOT REAL', '#ffcc00'); demoTag.scale.set(12, 1.1, 1); demoTag.position.set(0, 10.3, -2); demoTag.visible = false; scene.add(demoTag);
+const globeTitle = labelSprite('WHERE PEOPLE LISTEN FROM'); globeTitle.position.set(PZ[0], 11.2, PZ[1] - 2); scene.add(globeTitle);
+const demoTag = labelSprite('DEMO DATA — NOT REAL', '#ffcc00'); demoTag.scale.set(12, 1.1, 1); demoTag.position.set(PZ[0], 10.3, PZ[1] - 2); demoTag.visible = false; scene.add(demoTag);
 // Approximate country centroids [lat, lon] for plotting country-level counts.
 const CENTROIDS = { GB: [54, -2], IE: [53, -8], US: [39, -98], CA: [56, -106], MX: [23, -102], BR: [-10, -55], AR: [-34, -64], CL: [-30, -71], CO: [4, -73], PE: [-10, -76],
   FR: [46, 2], DE: [51, 10], NL: [52, 5], BE: [50.5, 4.5], ES: [40, -4], PT: [39.5, -8], IT: [42.8, 12.8], CH: [47, 8], AT: [47.5, 14.5], PL: [52, 19], CZ: [49.8, 15.5],
@@ -432,7 +449,7 @@ function tick() {
   if (!window.__mapOpen) player.pitch += stickR.y * TURN * 0.7 * dt;  // stick up = look up
   player.pitch = Math.max(-1.3, Math.min(1.3, player.pitch));
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)); right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
-  const SPD = MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x, player.pos.z) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
+  const SPD = MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x - PZ[0], player.pos.z - PZ[1]) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
   if (window.__mapOpen) { mv = 0; st = 0; } // jump map overlay is up: no walking under it
   { const dx = (fwd.x * mv + right.x * st) * SPD * dt, dz = (fwd.z * mv + right.z * st) * SPD * dt, C = window.__collide, px = player.pos.x, pz = player.pos.z;
     if (C && (dx || dz) && !C(px, pz)) { if (!C(px + dx, pz + dz)) player.pos.x += dx, player.pos.z += dz; else if (!C(px + dx, pz)) player.pos.x += dx; else if (!C(px, pz + dz)) player.pos.z += dz; } // slide along walls; already inside (after a jump) = free to walk out
@@ -442,6 +459,7 @@ function tick() {
   if (!reduced) { globe.rotation.y += dt * 0.12; ring.rotation.z += dt * 0.3; }
   animateHolos(clock.elapsedTime, dt);
   updateWorldFX(clock.elapsedTime, dt);
+  updateGlow(clock.elapsedTime);
   renderer.render(scene, camera);
   if (!window.__worldReady) { window.__worldReady = true; document.documentElement.dataset.world = 'ok'; }
 }
