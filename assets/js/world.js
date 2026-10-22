@@ -322,7 +322,7 @@ const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function pick(x, y) {
   const r = canvas.getBoundingClientRect(); ndc.set((x - r.left) / r.width * 2 - 1, -(y - r.top) / r.height * 2 + 1);
   ray.setFromCamera(ndc, camera); const hits = ray.intersectObjects(clickables, false).filter(h => h.object.visible !== false && (!h.object.parent || h.object.parent.visible !== false));
-  const hit = hits.find(h => h.object.userData.track) || hits[0]; // album-art screens win over the big hit-boxes
+  const hit = hits.find(h => h.object.userData.feature) || hits.find(h => h.object.userData.track) || hits[0]; // the giant featured skyline screen wins, then album-art screens, then hit-boxes // album-art screens win over the big hit-boxes
   if (!hit) return; const u = hit.object.userData;
   if (u.track) { if (window.JX) JX.load().then(() => { const t = JX.tracks.find(x => x.id === u.track); if (t) { JX.play(t, JX.byLane(t.lane)); selectLane(t.lane); openPanel(true); } }); return; }
   if (u.link) { window.__lastOpen = u.link; window.open(u.link, '_blank', 'noopener'); } else playLane(u.lane);
@@ -332,7 +332,8 @@ function playLane(lane) { if (!window.JX) return; JX.load().then(() => { JX.play
 /* ---------- playlist panel (shared engine: window.JX from player.js) ---------- */
 const ptoggle = document.getElementById('ptoggle'), pbody = document.getElementById('pbody'), tabs = document.getElementById('planess'), plist = document.getElementById('ptracks');
 let curLane = 'SCR3WFAC3';
-function openPanel(force) { const open = force ?? pbody.hidden; pbody.hidden = !open; ptoggle.setAttribute('aria-expanded', String(open)); }
+let panelOpenedAt = 0;
+function openPanel(force) { const open = force ?? pbody.hidden; if (open && pbody.hidden) panelOpenedAt = performance.now(); pbody.hidden = !open; ptoggle.setAttribute('aria-expanded', String(open)); }
 ptoggle.addEventListener('click', () => openPanel());
 function selectLane(l) { curLane = l; renderPanel(); }
 function renderPanel() {
@@ -341,14 +342,14 @@ function renderPanel() {
   plist.innerHTML = JX.byLane(curLane).map(t => `<li><button type="button" data-id="${JX.esc(t.id)}" class="${JX.current === t ? 'cur' : ''}" ${JX.playable(t) ? '' : 'disabled'}>${JX.current === t && JX.playing ? '⏸ ' : '▶ '}${JX.esc(t.title)}</button></li>`).join('') || '<li class="meta">No tracks in this lane yet.</li>';
 }
 tabs.addEventListener('click', e => { const b = e.target.closest('[data-lane]'); if (b) selectLane(b.dataset.lane); });
-plist.addEventListener('click', e => { const b = e.target.closest('[data-id]'); if (!b || b.disabled) return; const t = JX.tracks.find(x => x.id === b.dataset.id); JX.current === t ? JX.toggle() : JX.play(t, JX.byLane(curLane)); });
+plist.addEventListener('click', e => { if (performance.now() - panelOpenedAt < 500) return; /* ignore the ghost click from the scene tap that just opened the panel (mobile) */ const b = e.target.closest('[data-id]'); if (!b || b.disabled) return; const t = JX.tracks.find(x => x.id === b.dataset.id); JX.current === t ? JX.toggle() : JX.play(t, JX.byLane(curLane)); });
 const bootPanel = () => JX.load().then(() => { renderPanel(); JX.on('state', renderPanel); }).catch(e => { plist.innerHTML = '<li class="meta">Could not load tracks.</li>'; console.warn(e); });
 window.JX ? bootPanel() : addEventListener('DOMContentLoaded', bootPanel);
 
 /* ---------- loop ---------- */
 function resize() { const w = innerWidth, h = innerHeight; renderer.setPixelRatio(capDPR()); renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
 addEventListener('resize', resize); resize();
-import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=23';
+import { buildEnvironment, updateWorldFX, worldDebug } from './world-fx.js?v=25';
 buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, reduced, HOLO_OBJS, getPlaying: () => playingLane });
 const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
 const MOVE = 7, TURN = 1.8;
