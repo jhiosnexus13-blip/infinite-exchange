@@ -13,6 +13,7 @@ export function initStreets(o, X) {
   for (const b of (G && G.buildings) || []) { const f = b[1]; if (f[0] > bb[0] && f[0] < bb[2] && f[1] > bb[1] && f[1] < bb[3]) addBox(P(f)); }
   for (const f of X.buildings) addBox(P(f));
   const park = P(X.park.poly); addBox(park); for (const f of X.green_extra || []) addBox(P(f)); if (X.centre) addBox(P(X.centre.poly)); const TR = X.terrace; if (TR) { const hs = TR.houses; boxes.push([TR.front - TR.depth - 3, hs[0][0] - 1, TR.front + 4, hs[hs.length - 1][0] + TR.w + 1]); }
+  boxes.push([-166, 2322, -88, 2378]); // v57: Beatty Close flats + bungalows plot
   boxes.push([-217, 2325, -176, 2375]); // v56: The Avenue pub + forecourt (built below) keeps filler terraces off its plot
   const hit = (x, y) => boxes.some(q => x > q[0] && x < q[2] && y > q[1] && y < q[3]);
   const dseg = (p, a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l)); return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy); };
@@ -22,10 +23,11 @@ export function initStreets(o, X) {
   const quad = (a, b, c, d, y) => { const k = rv.length / 3; for (const q of [a, b, c, d]) rv.push(q.x, y, q.z); ri.push(k, k + 1, k + 2, k, k + 2, k + 3); };
   // ---- terrace filler ----
   const tv = [], ti = []; const TH = 6.2, DEP = 7, OFF = 9, LEN = LITE ? 24 : 12; let terr = 0;
-  const box = (c, t, n, len) => { const k = tv.length / 3, hw = len / 2;
+  const ctv = [], cti = [], chq = []; // v57: Chaucer Road terraces get their own red-brick arrays + front details
+  const box = (c, t, n, len, V = tv, I = ti) => { const k = V.length / 3, hw = len / 2;
     const pts = [[-hw, 0], [hw, 0], [hw, DEP], [-hw, DEP]].map(([u, v]) => [c[0] + t[0] * u + n[0] * v, c[1] + t[1] * u + n[1] * v]).map(p => warp(p[0], p[1]));
-    for (const y of [0, TH]) for (const p of pts) tv.push(p.x, y, p.z);
-    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ti.push(k + i, k + j, k + 4 + j, k + i, k + 4 + j, k + 4 + i); } ti.push(k + 4, k + 5, k + 6, k + 4, k + 6, k + 7); terr++; };
+    for (const y of [0, TH]) for (const p of pts) V.push(p.x, y, p.z);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; I.push(k + i, k + j, k + 4 + j, k + i, k + 4 + j, k + 4 + i); } I.push(k + 4, k + 5, k + 6, k + 4, k + 6, k + 7); terr++; };
   const lines = [];
   for (const [name, R] of roads) { let best = null, bl = 0;
     for (let i = 0; i < R.length - 1; i++) { const a = R[i], b = R[i + 1], dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy); if (!L) continue;
@@ -37,27 +39,29 @@ export function initStreets(o, X) {
       for (let s = LEN / 2 + 8; s < L - 8; s += LEN + 0.6) for (const side of [1, -1]) {
         const c = [a[0] + t[0] * s + n[0] * side * OFF, a[1] + t[1] * s + n[1] * side * OFF], nn = [n[0] * side, n[1] * side];
         const far = [c[0] + nn[0] * DEP * 0.5, c[1] + nn[1] * DEP * 0.5], probes = [far, [far[0] + t[0] * LEN / 2, far[1] + t[1] * LEN / 2], [far[0] - t[0] * LEN / 2, far[1] - t[1] * LEN / 2]];
-        if (probes.some(p => hit(p[0], p[1]) || nearRoad(p, name))) continue; box(c, t, nn, LEN); boxes.push([Math.min(...probes.map(p => p[0])) - 2, Math.min(...probes.map(p => p[1])) - 2, Math.max(...probes.map(p => p[0])) + 2, Math.max(...probes.map(p => p[1])) + 2]); } }
+        if (probes.some(p => hit(p[0], p[1]) || nearRoad(p, name))) continue; if (name === 'Chaucer Road') { box(c, t, nn, LEN, ctv, cti); chq.push([c, t, nn]); } else box(c, t, nn, LEN); boxes.push([Math.min(...probes.map(p => p[0])) - 2, Math.min(...probes.map(p => p[1])) - 2, Math.max(...probes.map(p => p[0])) + 2, Math.max(...probes.map(p => p[1])) + 2]); } }
     if (best) { const l = LBL(name.toUpperCase(), '#b9c3cc', LITE ? 2.2 : 1.8); const w = warp(best[0], best[1]); l.position.set(w.x, 4.2, w.z); S.add(l); } }
   const geo = (v, i) => { const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(v, 3)); g.setIndex(i); g.computeVertexNormals(); return g; };
   const grp = new T.Group(); grp.name = 'newtown-streets'; S.add(grp);
   grp.add(new T.Mesh(geo(rv, ri), new T.MeshBasicMaterial({ color: 0x3a3f45, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 })));
   const kerb = new T.LineSegments(new T.BufferGeometry().setFromPoints(lines), new T.LineBasicMaterial({ color: 0x7c858e, transparent: true, opacity: 0.55 })); grp.add(kerb);
   // v53: solid buildings: brick walls + brown roofs for the filler terraces AND the OSM buildings here (re-skinned, 2% outset), merged per material
-  const wv = [], wi = [], fv = [], fi = [];
+  const wv = [], wi = [], fv = [], fi = [], cwv = [], cwi = [];
+  const chR = (X.roads['Chaucer Road'] || []).map(P), nearCh = R => { const cx = R.reduce((a, p) => a + p[0], 0) / R.length, cy = R.reduce((a, p) => a + p[1], 0) / R.length; return chR.some(L => L.some((a, i) => i < L.length - 1 && dseg([cx, cy], a, L[i + 1]) < 22)); };
   const solid = (R, h, wallsV = wv, wallsI = wi) => { const cx = R.reduce((a, p) => a + p[0], 0) / R.length, cy = R.reduce((a, p) => a + p[1], 0) / R.length;
     const Q = R.map(p => warp(cx + (p[0] - cx) * 1.02, cy + (p[1] - cy) * 1.02)); const n = Q.length;
     for (let i = 0; i < n; i++) { const a = Q[i], b = Q[(i + 1) % n], k = wallsV.length / 3; wallsV.push(a.x, 0, a.z, b.x, 0, b.z, b.x, h, b.z, a.x, h, a.z); wallsI.push(k, k + 1, k + 2, k, k + 2, k + 3); }
     const tri = T.ShapeUtils.triangulateShape(Q.map(q => new T.Vector2(q.x, q.z)), []), k = fv.length / 3; for (const q of Q) fv.push(q.x, h, q.z); for (const t of tri) fi.push(k + t[0], k + t[1], k + t[2]); };
   for (let i = 0; i < tv.length; i += 24) { const R = []; for (let j = 0; j < 4; j++) R.push([0, 0]); } // (filler boxes below come from tv directly)
-  if (terr) { const tg = geo(tv, ti); grp.add(new T.Mesh(tg, new T.MeshBasicMaterial({ color: 0x8a4e34, side: T.DoubleSide }))); }
-  for (const f of X.buildings) { const R = P(f); if (R.length > 2) solid(R, 6.4); }
+  if (ctv.length) grp.add(new T.Mesh(geo(ctv, cti), new T.MeshBasicMaterial({ color: 0xa2432b, side: T.DoubleSide }))); // v57 Chaucer red brick
+  if (tv.length) { const tg = geo(tv, ti); grp.add(new T.Mesh(tg, new T.MeshBasicMaterial({ color: 0x8a4e34, side: T.DoubleSide }))); }
+  for (const f of X.buildings) { const R = P(f); if (R.length > 2) nearCh(R) ? solid(R, 6.4, cwv, cwi) : solid(R, 6.4); }
   // v56: 'all brick buildings need to be solid too': the main-geo OSM footprints inside the Newtown streets area (drawn as translucent neon blocks
   // by geo()) get the same solid brick skin at their own height (+0.3 so the brick roof caps the neon one); duplicates of X.buildings are skipped
-  { const seen = new Set(X.buildings.map(f => f[0] + ',' + f[1])); let nb = 0;
+  { const seen = new Set([...X.buildings.map(f => f[0] + ',' + f[1]), '-160,2365', '-128,2365']); let nb = 0; // v57: the two approximate Beatty Close blocks are replaced by the flats model
     for (const b of (G && G.buildings) || []) { const f = b[1]; if (!(f[0] > bb[0] && f[0] < bb[2] && f[1] > bb[1] && f[1] < bb[3]) || seen.has(f[0] + ',' + f[1])) continue;
       const R = P(f); if (R.length < 3) continue; let A = 0; for (let i = 0; i < R.length; i++) { const p = R[i], q = R[(i + 1) % R.length]; A += p[0] * q[1] - q[0] * p[1]; } A = Math.abs(A / 2);
-      solid(R, Math.max(6.4, (b[0] || (A > 900 ? 9 : 6)) + 0.3)); nb++; }
+      const hh = Math.max(6.4, (b[0] || (A > 900 ? 9 : 6)) + 0.3); nearCh(R) ? solid(R, hh, cwv, cwi) : solid(R, hh); nb++; }
     window.__brickSolid = nb; }
   // v54: the terrace Joseph pinned on Sturdee Ave: pink-render ends, red-brick middle pair with pointed front gables, grey roofs, low front walls, cordyline
   if (TR) { const M = c => new T.MeshBasicMaterial({ color: c }), put = (g, m, x, y, h) => { const o3 = new T.Mesh(g, m); const w = warp(x, y); o3.position.set(w.x, h, w.z); grp.add(o3); return o3; };
@@ -72,7 +76,9 @@ export function initStreets(o, X) {
       put(new T.BoxGeometry(0.7, 1.1, 0.7), M(0x2c6a34), fx0 + 4.9, cy + 1.6, 0.55); } // wheelie bin
     const [px, py] = TR.palm; put(new T.CylinderGeometry(0.18, 0.25, 2.4, 6), M(0x6b5130), px, py, 1.2);
     for (let i = 0; i < (LITE ? 8 : 16); i++) { const a = i / (LITE ? 8 : 16) * Math.PI * 2, lf = put(new T.ConeGeometry(0.12, 2.2, 4), M(0x3f8a3a), px + Math.cos(a) * 0.6, py + Math.sin(a) * 0.6, 3.0); lf.rotation.set(Math.sin(a) * 0.9, 0, -Math.cos(a) * 0.9); } }
+  for (let k = 0; k < ctv.length; k += 24) { const kk = fv.length / 3; for (const j of [12, 15, 18, 21]) fv.push(ctv[k + j], TH + 0.05, ctv[k + j + 2]); fi.push(kk, kk + 1, kk + 2, kk, kk + 2, kk + 3); } // Chaucer roofs
   for (let k = 0; k < tv.length; k += 24) { const kk = fv.length / 3; for (const j of [12, 15, 18, 21]) fv.push(tv[k + j], TH + 0.05, tv[k + j + 2]); fi.push(kk, kk + 1, kk + 2, kk, kk + 2, kk + 3); } // filler roofs
+  if (cwv.length) grp.add(new T.Mesh(geo(cwv, cwi), new T.MeshBasicMaterial({ color: 0xa2432b, side: T.DoubleSide })));
   if (wv.length) grp.add(new T.Mesh(geo(wv, wi), new T.MeshBasicMaterial({ color: 0x7e4630, side: T.DoubleSide })));
   if (fv.length) grp.add(new T.Mesh(geo(fv, fi), new T.MeshBasicMaterial({ color: 0x4e3226, side: T.DoubleSide })));
   if (!LITE && wv.length) grp.add(new T.LineSegments(new T.EdgesGeometry(geo(wv, wi), 30), new T.LineBasicMaterial({ color: 0xc08060, transparent: true, opacity: 0.25 })));
@@ -141,6 +147,43 @@ export function initStreets(o, X) {
       at(-215.9, 2349, 1.3, new T.MeshBasicMaterial({ color: 0xbfe4ff, transparent: true, opacity: 0.35, depthWrite: false }), B(0.05, 2, 3.8)); } // bus shelter on the pavement
     at(-211.5, 2366, 2, black, new T.CylinderGeometry(0.1, 0.1, 4, 6)); at(-211.5, 2366, 4, M(0x5a1e1e), B(0.12, 1.2, 1.8)); // pub sign
     const ps = LBL('THE AVENUE', '#ffd27a', 1.4); const pw2 = warp(-211.5, 2366); ps.position.set(pw2.x, 5.4, pw2.z); S.add(ps); }
+  // v57: merged solid detail boxes (one draw call per colour) for Beatty Close + Chaucer Road
+  { const MB = new Map(), tri = (w, h, dep) => { const g = new T.ExtrudeGeometry(new T.Shape([new T.Vector2(-w / 2, 0), new T.Vector2(w / 2, 0), new T.Vector2(0, h)]), { depth: dep, bevelEnabled: false }); g.translate(0, 0, -dep / 2); return g; };
+    const addG = (hex, g, e, n, y, ry = 0) => { g.rotateY(ry); const w = warp(e, n); g.translate(w.x, y, w.z); (MB.get(hex) || MB.set(hex, []).get(hex)).push(g); };
+    const AB = (hex, w, h, d, e, n, y, ry = 0, rx = 0, rz = 0) => { const g = new T.BoxGeometry(w, h, d); if (rx) g.rotateX(rx); if (rz) g.rotateZ(rz); addG(hex, g, e, n, y, ry); };
+    const BR = 0x8a4a33, CR = 0xe9e2cf, WH = 0xf4f6f8, GR = 0x8c9298, TL = 0x34302e;
+    // Beatty Close (behind The Avenue): north side = one long two-storey brown/red-brick block of flats with a cream first-floor access walkway on
+    // the road (south) face, metal railings, two outside stairs, chimneys on the ridge, white bargeboards + a street-name sign on the west gable.
+    // OSM has no footprints here (see newtown-extra.json); it replaces the two approximate blocks. South side = single-storey brick bungalows.
+    // No numbers, names or addresses on any of it.
+    { const x0 = -162, x1 = -104, L = x1 - x0, xc = (x0 + x1) / 2, nf = 2366, D = 9, nc = nf + D / 2, H = 5.8;
+      AB(BR, L, H, D, xc, nc, H / 2);
+      addG(TL, tri(D + 0.6, 3.2, L + 0.6), xc, nc, H, Math.PI / 2);
+      const sl = Math.hypot(D / 2 + 0.3, 3.2), ang = Math.atan2(3.2, D / 2 + 0.3);
+      for (const s2 of [-1, 1]) AB(WH, 0.18, 0.3, sl, x0 - 0.35, nc + s2 * (D / 2 + 0.3) / 2, H + 1.6, 0, -s2 * ang); // white bargeboards (west gable)
+      for (let x = x0 + 4; x < x1 - 2; x += 9.5) AB(0x8f5a40, 0.9, 1.6, 0.9, x, nc, H + 3.2);                    // chimneys along the ridge
+      for (let x = x0 + 2.4; x < x1 - 1; x += 4.8) for (const y of [1.5, 4.3]) AB(WH, 1.3, 1.2, 0.1, x, nf - 0.06, y); // white windows (road face)
+      for (const y of [1.5, 4.3]) AB(WH, 0.1, 1.1, 1.7, x0 - 0.06, nc + 1.2, y);                                 // gable windows
+      AB(CR, L, 0.25, 1.7, xc, nf - 0.85, 2.9); AB(CR, L, 0.9, 0.14, xc, nf - 1.7, 3.45);                         // access walkway + cream parapet
+      AB(GR, L, 0.06, 0.06, xc, nf - 1.7, 4.15); for (let x = x0; x <= x1; x += 2) AB(GR, 0.05, 0.3, 0.05, x, nf - 1.7, 4.0); // metal railing
+      for (let x = x0 + 1; x <= x1; x += 6.4) AB(CR, 0.25, 2.8, 0.25, x, nf - 1.55, 1.4);                         // walkway posts
+      for (const sx of [x0 + 5, x1 - 9]) { AB(CR, 1.6, 0.25, 1.6, sx - 0.8, nf - 2.6, 2.9); AB(GR, Math.hypot(4, 2.9), 0.18, 1.1, sx + 2, nf - 2.6, 1.45, 0, 0, Math.atan2(2.9, 4)); AB(CR, 0.2, 1.1, 1.6, sx - 1.6, nf - 2.6, 2.4); } // outside stairs
+      AB(0x1f5c3a, 0.08, 0.42, 2.0, x0 - 0.08, nc - 1.5, 2.9); AB(WH, 0.06, 0.32, 1.9, x0 - 0.11, nc - 1.5, 2.9); // 'BEATTY CLOSE' street-name sign on the gable
+      const bs = LBL('BEATTY CLOSE', '#1f5c3a', 0.5); const bw = warp(x0 - 0.4, nc - 1.5); bs.position.set(bw.x, 3.5, bw.z); S.add(bs);
+      for (const bx of [-158, -145, -121, -108, -95]) { const n0 = 2331; AB(0x9a5a3e, 10, 2.8, 8, bx, n0, 1.4); addG(TL, tri(8.6, 2.2, 10.4), bx, n0, 2.8, Math.PI / 2);
+        AB(WH, 1.4, 1.1, 0.1, bx - 2.5, n0 + 4.05, 1.5); AB(WH, 1.4, 1.1, 0.1, bx + 2.5, n0 + 4.05, 1.5); AB(0x3b4a5a, 0.95, 2, 0.1, bx, n0 + 4.05, 1.0); } } // bungalows
+    // Chaucer Road (Joseph's Street View at the south end): red-brick semis with small grey porch canopies, low red-brick front walls with grey
+    // metal railings, a green 'CHAUCER ROAD' sign on a front wall, and a footpath leading back between the houses.
+    chq.forEach(([c, t, nn], idx) => { const ry = Math.atan2(t[1], t[0]), at = (u, v) => [c[0] + t[0] * u + nn[0] * v, c[1] + t[1] * u + nn[1] * v];
+      const fw = at(0, -2.6); AB(0x9a3f2a, LEN - 1.2, 0.8, 0.3, fw[0], fw[1], 0.4, ry); AB(GR, LEN - 1.2, 0.05, 0.05, fw[0], fw[1], 1.25, ry);
+      for (let u = -LEN / 2 + 0.6; u <= LEN / 2 - 0.6; u += 1.2) { const q = at(u, -2.6); AB(GR, 0.05, 0.45, 0.05, q[0], q[1], 1.02, ry); }
+      for (const u of [-LEN / 4, LEN / 4]) { const p1 = at(u, -0.55), d1 = at(u, -0.03); AB(0x5b6066, 1.9, 0.12, 1.1, p1[0], p1[1], 2.55, ry); AB(u < 0 ? 0xc0303a : WH, 0.95, 2.0, 0.08, d1[0], d1[1], 1.0, ry);
+        for (const du of [-1.9, 1.9]) for (const y of [1.5, 4.4]) { const w1 = at(u + du * (u < 0 ? -1 : 1) * 0 + du, -0.03); AB(WH, 1.5, 1.1, 0.08, w1[0], w1[1], y, ry); } }
+      if (idx === 0) { const sg = at(LEN / 4, -2.8); AB(0x1f6b3c, 2.4, 0.4, 0.06, sg[0], sg[1], 0.5, ry); const sw = warp(sg[0], sg[1]); const sl = LBL('CHAUCER ROAD', '#e8fff0', 0.45); sl.position.set(sw.x, 1.3, sw.z); S.add(sl);
+        const ap = at(-LEN / 2 - 1.4, DEP / 2 - 1); AB(0x6a6560, 1.8, 0.05, DEP + 6, ap[0], ap[1], 0.09, ry); // footpath back between the houses
+        for (const du of [-1, 1]) { const fp = at(-LEN / 2 - 1.4 + du * 1.0, DEP / 2); AB(0x6b4a32, 0.08, 1.6, DEP + 2, fp[0], fp[1], 0.8, ry); } } }); // fences
+    for (const [hex, list] of MB) { const pos = []; for (const g of list) { const nb = g.index ? g.toNonIndexed() : g; pos.push(...nb.attributes.position.array); nb.dispose(); g.dispose(); }
+      const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); grp.add(new T.Mesh(g, new T.MeshBasicMaterial({ color: hex, side: T.DoubleSide }))); } }
   const pl = LBL('NEWTOWN PARK', '#8dffa0', 2.4); pl.position.set(pw.x, 5, pw.z); S.add(pl);
   grp.traverse(m => { m.raycast = () => {}; });
   return window.__streets = { roads: roads.length, terraces: terr, park: [pw.x, pw.z] };

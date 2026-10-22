@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=56'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=56' : '/assets/data/yarmouth-geo.json?v=56').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=57'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=57' : '/assets/data/yarmouth-geo.json?v=57').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=56').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=56'), j('/assets/data/newtown-extra.json?v=56')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=56').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=56'), j('/assets/data/newtown-streets.json?v=56')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
-      Promise.all([import('./world-pb.js?v=56'), j('/assets/data/pleasure-beach.json?v=56')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=57').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=57'), j('/assets/data/newtown-extra.json?v=57')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=57').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=57'), j('/assets/data/newtown-streets.json?v=57')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=57'), j('/assets/data/pleasure-beach.json?v=57')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=56').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=56').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=57').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=57').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -109,7 +109,7 @@ function skyline(D, grp, noGeo) {
   const coastE = fx.coastE || coastE0;
   for (const L of D.landmarks) {
     const l = local(L.lat, L.lon), base = warp(l.e, l.n), ht = (L.height_m || 10) * HS, ry = yaw(base);
-    const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label) tag.visible = false; tag.position.copy(base).setY(ht + (L.use_footprint ? 8 : L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : L.type === 'wheel' ? 22 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
+    const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label || L.key === 'the_avenues') tag.visible = false; // v57: only the pub's own 'THE AVENUE' sign shows tag.position.copy(base).setY(ht + (L.use_footprint ? 8 : L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : L.type === 'wheel' ? 22 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
     fx.landmarks[L.key] = { pos: base, name: L.name, fy: ht + 6, land: L.land_offset }; (fx.clear || (fx.clear = [[PZ()[0], PZ()[1], PLAZA]])).push([base.x, base.z, L.type === 'tower' ? 30 : L.type === 'wheel' ? 26 : 12]); // approach radius never blocked by colliders
     if (L.song_match || L.song_tag || L.song_patterns) songCluster(L, base, ht);
     if (L.type === 'pier') { // deck from the coast out to sea (east), legs, pavilion at the head
@@ -231,6 +231,7 @@ function geo(G, grp) {
     if (t.e.length) { const eg = new T.BufferGeometry(); eg.setAttribute('position', pos); eg.setIndex(new T.BufferAttribute(new Uint16Array(t.e), 1)); eg.boundingSphere = g.boundingSphere; const l = new T.LineSegments(eg, em); city.add(l); ch.o.push(l); ch.edge = l; }
     fx.chunks.push(ch); fx.geo.verts += t.n; fx.geo.meshes = city.children.length; t.p = t.v = t.i = t.e = null; t.n = 0; tiles.delete(t.k); };
   const one = (h0, c) => {
+    if (c[1] === 2365 && (c[0] === -160 || c[0] === -128)) return; // v57: approximate Beatty Close blocks, replaced by the solid flats model (world-streets.js)
     const pts = flat(c); let A = 0; for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; A += p[0] * q[1] - q[0] * p[1]; } A /= 2;
     if (Math.abs(A) < minA) return; if (A < 0) pts.reverse();
     const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length, cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
@@ -345,7 +346,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=56').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=57').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -405,6 +406,60 @@ function foodBasket() {
   fx.food = window.__food = { pos: [c.x, c.z], url: FOOD.url, bank: FOOD.bank };
 }
 
+/* v57: Waterways North Drive entrance (~26 North Dr, the southern section's road-side gate, on the park's west edge ~1.73804, about 120 m north of
+   the Sandown Rd arch). From Joseph's Street View (Aug 2022, looking east to the sea): two pale stone gate pillars with stone urns either side of
+   a path off the red pavement, low clipped hedges along the pavement, a small stone kiosk with a pointed thatched-style roof and a little stone hut
+   beside it, a larger thatched shelter further in to the left (north), an information board on the right (south), open lawns beyond.
+   Local axes: x = east (into the park), z = south. Solid, shared materials, no colliders. */
+function waterwaysDriveGate() {
+  const g = new T.Group(); g.name = 'waterways-drive-gate'; g.position.copy(W(52.6145, 1.73806)); S.add(g);
+  const mats = new Map(), M = (c, o) => { const k = c + (o ? 't' : ''); if (!mats.has(k)) mats.set(k, new T.MeshBasicMaterial(Object.assign({ color: c }, o || {}))); return mats.get(k); };
+  const A = (geo, c, x, y, z, rx = 0, ry = 0, rz = 0, o) => { const m = new T.Mesh(geo, M(c, o)); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); g.add(m); return m; };
+  const STONE = 0xd9cdb4, HEDGE = 0x2f5a2a, THATCH = 0x8a6a3a, LAWN = 0x6f8a45;
+  A(new T.BoxGeometry(5, 0.05, 40), 0xa04a3e, -3, 0.06, 0);                                          // red pavement along North Drive
+  A(new T.BoxGeometry(36, 0.03, 40), LAWN, 18, 0.04, 0);                                             // lawns
+  A(new T.BoxGeometry(18, 0.05, 3), 0x9a9286, 9, 0.07, 0);                                           // path in
+  for (const sz of [-1, 1]) { A(new T.BoxGeometry(1.0, 1.5, 1.0), STONE, 0.4, 0.75, sz * 2.1); A(new T.BoxGeometry(1.15, 0.15, 1.15), STONE, 0.4, 1.57, sz * 2.1);
+    A(new T.CylinderGeometry(0.45, 0.22, 0.7, 10), STONE, 0.4, 2.0, sz * 2.1); A(new T.CylinderGeometry(0.15, 0.25, 0.25, 8), STONE, 0.4, 1.73, sz * 2.1); // urns
+    A(new T.BoxGeometry(1.0, 0.9, 17), HEDGE, 0.4, 0.45, sz * (2.6 + 8.5)); }                         // low clipped hedges
+  A(new T.CylinderGeometry(1.3, 1.4, 2.4, 8), STONE, 17, 1.2, 0.5); A(new T.ConeGeometry(1.7, 2.6, 8), THATCH, 17, 3.7, 0.5); A(new T.SphereGeometry(0.2, 6, 5), STONE, 17, 5.1, 0.5); // stone kiosk, pointed roof
+  A(new T.BoxGeometry(2.4, 2.2, 2.0), STONE, 20.5, 1.1, 3.0); A(new T.ConeGeometry(1.8, 1.0, 4), 0x6b6258, 20.5, 2.7, 3.0, 0, Math.PI / 4); // little stone hut
+  A(new T.BoxGeometry(7, 2.4, 5), 0x8a5a40, 22, 1.2, -16); A(new T.ConeGeometry(5.4, 2.8, 4), THATCH, 22, 3.8, -16, 0, Math.PI / 4); // larger thatched shelter (north / left)
+  A(new T.BoxGeometry(0.12, 1.3, 2.4), 0x2c3540, 2.2, 1.6, 6.5); for (const dz of [-1, 1]) A(new T.BoxGeometry(0.1, 1.0, 0.1), 0x2c3540, 2.2, 0.5, 6.5 + dz * 1.0); // information board (south / right)
+  g.traverse(o => { o.raycast = () => {}; });
+}
+/* v57: Venetian Waterways south entrance, North Drive / Sandown Road corner (OSM park way 175858676, south edge 52.61341, SW corner ~1.73810;
+   Sandown Rd way 29992301 meets North Drive here). From Joseph's Street View (Sandown Rd, Sept 2024, looking N/NE into the park): dark wrought-iron
+   arch with 'WATERWAYS' lettering between two red-brick pillars, low cream balustrade walls with red-brick piers either side, red paved pavement,
+   white arched footbridge over the water to the right (east), small thatched shelter inside, flagpole with a green flag, Victorian lamp post.
+   Local axes: x = east, z = south (the gate faces south onto Sandown Rd). Solid, a few shared materials, no colliders. */
+function waterwaysGate() {
+  const g = new T.Group(); g.name = 'waterways-gate'; g.position.copy(W(52.61348, 1.73812)); S.add(g);
+  const mats = new Map(), M = (c, o) => { const k = c + (o ? 't' : ''); if (!mats.has(k)) mats.set(k, new T.MeshBasicMaterial(Object.assign({ color: c, fog: true }, o || {}))); return mats.get(k); };
+  const A = (geo, c, x, y, z, rx = 0, ry = 0, rz = 0, o) => { const m = new T.Mesh(geo, M(c, o)); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); g.add(m); return m; };
+  const BRK = 0x9a3f2a, CRM = 0xe9e2cf, IRON = 0x1a1a1c, WHT = 0xf3f3f0;
+  A(new T.BoxGeometry(30, 0.05, 6), 0xa04a3e, 0, 0.06, 4);                                         // red paved pavement
+  A(new T.BoxGeometry(3.2, 0.04, 14), 0x8a8478, 0, 0.07, -6);                                       // path into the park
+  for (const sx of [-1, 1]) { A(new T.BoxGeometry(0.8, 2.6, 0.8), BRK, sx * 1.9, 1.3, 0); A(new T.BoxGeometry(1.0, 0.18, 1.0), CRM, sx * 1.9, 2.69, 0); } // brick gate pillars
+  A(new T.TorusGeometry(1.9, 0.07, 6, 28, Math.PI), IRON, 0, 2.7, 0); A(new T.TorusGeometry(1.6, 0.05, 6, 28, Math.PI), IRON, 0, 2.7, 0); // wrought-iron arch
+  for (let k = 1; k < 8; k++) { const a = k / 8 * Math.PI; A(new T.BoxGeometry(0.04, 0.32, 0.04), IRON, Math.cos(a) * 1.75, 2.7 + Math.sin(a) * 1.75, 0, 0, 0, a - Math.PI / 2); }
+  A(new T.TorusGeometry(0.32, 0.05, 6, 16), IRON, 0, 4.85, 0);                                       // crest
+  const lt = LBL('WATERWAYS', '#d9c27a', 0.45); lt.position.set(0, 4.35, 0.05); g.add(lt);
+  const wall = (x0, x1, z0, z1) => { const L = Math.hypot(x1 - x0, z1 - z0), ry = -Math.atan2(z1 - z0, x1 - x0), cx = (x0 + x1) / 2, cz = (z0 + z1) / 2;
+    A(new T.BoxGeometry(L, 0.2, 0.5), CRM, cx, 0.1, cz, 0, ry); A(new T.BoxGeometry(L, 0.14, 0.55), CRM, cx, 0.95, cz, 0, ry); // plinth + coping
+    const n = Math.floor(L / 0.32); for (let i = 0; i < n; i++) { const t = (i + 0.5) / n; A(new T.CylinderGeometry(0.09, 0.12, 0.68, 6), CRM, x0 + (x1 - x0) * t, 0.54, z0 + (z1 - z0) * t); } // balusters
+    for (const p of [[x1, z1]]) { A(new T.BoxGeometry(0.6, 1.25, 0.6), BRK, p[0], 0.62, p[1]); A(new T.BoxGeometry(0.7, 0.12, 0.7), CRM, p[0], 1.3, p[1]); } }; // red-brick pier
+  wall(-2.3, -6, 0, 0.4); wall(-6, -9.5, 0.4, 1.6); wall(-9.5, -12.5, 1.6, 3.6);                      // west, curving round the corner
+  wall(2.3, 6, 0, 0.3); wall(6, 9.5, 0.3, 0.6);                                                      // east
+  A(new T.BoxGeometry(22, 0.04, 4.5), 0x2f6f8f, 6, 0.05, -5.5);                                      // water channel
+  for (const s2 of [-1, 1]) A(new T.BoxGeometry(1.8, 0.2, 3.3), WHT, 12, 0.6, -5.5 + s2 * 1.45, -s2 * 0.38, 0, 0); // white arched footbridge (east): two ramps over the channel
+  for (const sx of [-1, 1]) A(new T.TorusGeometry(3.05, 0.12, 6, 20, Math.PI), WHT, 12 + sx * 0.95, 0.15, -5.5, 0, Math.PI / 2, 0).scale.set(1, 0.42, 1);
+  const gz = new T.Vector3(3.5, 0, -13); for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; A(new T.CylinderGeometry(0.08, 0.08, 2.2, 5), 0x5a4030, gz.x + Math.cos(a) * 1.6, 1.1, gz.z + Math.sin(a) * 1.6); }
+  A(new T.ConeGeometry(2.4, 1.8, 6), 0x8a6a3a, gz.x, 3.1, gz.z);                                    // thatched shelter
+  A(new T.CylinderGeometry(0.06, 0.08, 7.5, 6), WHT, -4.2, 3.75, 1.2); A(new T.PlaneGeometry(1.7, 0.95), 0x9bc53d, -3.32, 6.9, 1.2, 0, 0, 0, { side: T.DoubleSide }); // flagpole, green flag
+  A(new T.CylinderGeometry(0.07, 0.12, 3.6, 6), IRON, 5.5, 1.8, -2.2); A(new T.CylinderGeometry(0.22, 0.12, 0.5, 6), IRON, 5.5, 3.85, -2.2); A(new T.SphereGeometry(0.16, 8, 6), 0xfff2c0, 5.5, 3.8, -2.2); // Victorian lamp
+  g.traverse(o => { o.raycast = () => {}; }); fx.waterwaysGate = g.position.clone();
+}
 /* v48: Fallen Angels, 83 Marine Parade (OSM way 175855364), rebuilt from Joseph's Street View (52.60989,1.73770, hdg 226, Mar 2019):
    2-storey Victorian yellow-brown brick corner building, round-arched windows, chimney, black railings, white rendered arched ground floor on the
    NE (Marine Parade / Euston Rd roundabout) corner. Drawn just outside the OSM footprint so it hides the generic block; neon edges keep the style. */
