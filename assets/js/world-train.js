@@ -4,7 +4,7 @@
    One merged LineSegments for the train (rewritten per frame, ~200 verts), one for all stop shelters; nothing is added to the clickables list.
    Gulls: one InstancedMesh, circling high overhead; a shader fades them out below ~40° elevation so they only appear when you look up. */
 let T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV;
-const STOPS = [['north_drive', 'North Drive', 52.624514, 1.738397], ['britannia_pier', 'Britannia Pier', 52.6081748, 1.7395651], ['tower_complex', 'Tower Complex', 52.604471, 1.736196],
+const STOPS = [['north_drive', 'North Drive', 52.624514, 1.738397], ['fallen_angels', 'Fallen Angels', 52.609742, 1.736766], ['britannia_pier', 'Britannia Pier', 52.6081748, 1.7395651], ['tower_complex', 'Tower Complex', 52.604471, 1.736196],
   ['wellington_pier', 'Wellington Pier', 52.5993089, 1.7366743], ['pleasure_beach', 'Pleasure Beach', 52.5937437, 1.7355419], ['harbour_mouth', 'Harbour Mouth', 52.57256, 1.73889]];
 const CARS = [[4.6, 0x00e5ff], [6.2, 0xff5fd2], [6.2, 0xffc84a], [6.2, 0x9d7dff]], GAP = 1.0, CW = 2.3, CH = 2.6; // v42: engine + 3 open canopy carriages, like the real Golden Mile road train
 
@@ -36,8 +36,9 @@ export function initTrain(o) {
   // ---- stop shelters (one merged draw) + labels ----
   const sv = [], push = (a, b) => sv.push(a[0], a[1], a[2], b[0], b[1], b[2]);
   for (const st of stops) { const tx = -st.nz, tz = st.nx, c = (u, y, v) => [st.x + tx * u + st.nx * v, y, st.z + tz * u + st.nz * v];
-    if (!st.real) { for (const [u, v] of [[-3, -1.2], [3, -1.2], [-3, 1.2], [3, 1.2]]) push(c(u, 0, v), c(u, 3.2, v));
-    for (const y of [3.2, 3.5]) { push(c(-3.4, y, -1.6), c(3.4, y, -1.6)); push(c(-3.4, y, 1.6), c(3.4, y, 1.6)); push(c(-3.4, y, -1.6), c(-3.4, y, 1.6)); push(c(3.4, y, -1.6), c(3.4, y, 1.6)); } }
+    if (!st.real) { // v45: simple land-train stop (Great Yarmouth has only ONE white shelter, the North Drive landmark): post + name board + bench
+      push(c(-2.6, 0, 0.4), c(-2.6, 3.1, 0.4)); for (const y of [2.3, 3.1]) push(c(-3.9, y, 0.4), c(-1.3, y, 0.4)); push(c(-3.9, 2.3, 0.4), c(-3.9, 3.1, 0.4)); push(c(-1.3, 2.3, 0.4), c(-1.3, 3.1, 0.4));
+      { for (const v of [0.6, 1.0]) push(c(0, 0.45, v), c(2.4, 0.45, v)); push(c(0, 0.85, 1.05), c(2.4, 0.85, 1.05)); for (const u of [0.2, 2.2]) { push(c(u, 0, 0.6), c(u, 0.45, 0.6)); push(c(u, 0, 1.0), c(u, 0.85, 1.05)); } } }
     for (let k = 0; k < 16; k++) { const a0 = k / 16 * 6.283, a1 = (k + 1) / 16 * 6.283; push([st.x + Math.cos(a0) * 5, 0.2, st.z + Math.sin(a0) * 5], [st.x + Math.cos(a1) * 5, 0.2, st.z + Math.sin(a1) * 5]); }
     const lab = LBL('🚂 ' + st.name.toUpperCase(), '#00e5ff', LITE ? 1.6 : 1.8); lab.position.set(st.x, 5.6, st.z); S.add(lab); }
   const sg = new T.BufferGeometry(); sg.setAttribute('position', new T.Float32BufferAttribute(sv, 3));

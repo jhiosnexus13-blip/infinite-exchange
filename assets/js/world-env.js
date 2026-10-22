@@ -124,7 +124,7 @@ function update(t, dt) {
   if (E.btn) { const s = E.day > 0.5 ? '☀' : '☾'; if (E.btn.textContent !== s) E.btn.textContent = s; }
   const dk = E.day * (1 - gloom * 0.55);
   if (S.background && E.bg0) S.background.copy(E.bg0).lerp(col('dayBg', gloom > 0.5 ? 0x45525a : 0x3a6a8a), dk * 0.85);
-  if (fx.sky && fx.sky.uniforms.uDay) { fx.sky.uniforms.uDay.value = dk; fx.sky.uniforms.uGloom.value = gloom; }
+  if (fx.sky && fx.sky.uniforms.uDay) { fx.sky.uniforms.uDay.value = dk; fx.sky.uniforms.uGloom.value = gloom; } if (fx.sea && fx.sea.uniforms.uDay) fx.sea.uniforms.uDay.value = dk; // v45: daylight blue sea
   if (S.fog && E.fogC0) { S.fog.color.copy(E.fogC0).lerp(col('dayFog', 0x5d7a80), dk * 0.7); S.fog.density = E.fogD0 * E.fogK * (LITE ? 0.8 : 1); }
   for (const a of E.amb) a.intensity = 1.2 + dk * 1.6;
   if (fx.goldMat && fx.goldMat.uniforms.uGlow) fx.goldMat.uniforms.uGlow.value = 0.8 + night * 1.0;

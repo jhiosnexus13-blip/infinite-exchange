@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=44'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=44' : '/assets/data/yarmouth-geo.json?v=44').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=45'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=45' : '/assets/data/yarmouth-geo.json?v=45').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=44').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=44'), j('/assets/data/newtown-extra.json?v=44')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=44').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); 
-      Promise.all([import('./world-pb.js?v=44'), j('/assets/data/pleasure-beach.json?v=44')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=45').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=45'), j('/assets/data/newtown-extra.json?v=45')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=45').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('dam sign', damSign); 
+      Promise.all([import('./world-pb.js?v=45'), j('/assets/data/pleasure-beach.json?v=45')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=44').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
-  import('./world-train.js?v=44').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=45').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e));
+  import('./world-train.js?v=45').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -184,6 +184,20 @@ function skyline(D, grp, noGeo) {
 }
 
 /* ---------- OSM geography: everything goes through warp() so it shares the landmark/lane mapping ---------- */
+function sandMat(col, a) { // v45: golden sand with procedural grain + wind ripples (no texture fetch); rides the beat glow uniform
+  return new T.ShaderMaterial({ transparent: true, depthWrite: false, side: T.DoubleSide, blending: T.AdditiveBlending, fog: false,
+    uniforms: { uC: { value: new T.Color(col) }, uA: { value: a }, uG: window.__glowU || { value: 1 } },
+    vertexShader: `varying vec2 vP; varying float vD; void main(){ vP = position.xz; vec4 mv = modelViewMatrix * vec4(position,1.0); vD = -mv.z; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform vec3 uC; uniform float uA; uniform float uG; varying vec2 vP; varying float vD;
+      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+      float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f); return mix(mix(h(i), h(i + vec2(1,0)), f.x), mix(h(i + vec2(0,1)), h(i + 1.0), f.x), f.y); }
+      void main(){ float near = exp(-vD * 0.01);
+        float grain = mix(0.5, n(vP * 7.0), near) * 0.35 + mix(0.5, h(vP * 40.0), near * 0.6) * 0.12 + n(vP * 0.9) * 0.3 + n(vP * 0.12) * 0.3;
+        float rip = 0.5 + 0.5 * sin(vP.x * 1.7 + vP.y * 0.6 + n(vP * 0.3) * 4.0);
+        vec3 c = uC * (0.55 + 0.45 * grain) * (0.9 + 0.12 * rip);
+        float f = exp(-max(vD - 150.0, 0.0) * 0.0025);
+        gl_FragColor = vec4(c, uA * (0.5 + 0.5 * f) * (0.85 + 0.15 * uG)); }` });
+}
 function geoMat(col, opts = {}) { // holographic fill with vertical glow, distance fade (own fog: scene fog would hide the ring)
   return new T.ShaderMaterial({ transparent: true, depthWrite: !!opts.depth, side: T.DoubleSide, blending: opts.add ? T.AdditiveBlending : T.NormalBlending,
     uniforms: { uC: { value: new T.Color(col) }, uA: { value: opts.a ?? 0.8 }, uTime: { value: 0 } },
@@ -240,7 +254,7 @@ function geo(G, grp) {
       for (const t of tri) for (const k of t) { p.push(W3[k].x, y, W3[k].z); v.push(0.6); } }
     const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(p, 3)); g.setAttribute('aV', new T.Float32BufferAttribute(v, 1));
     const m = new T.Mesh(g, geoMat(col, { a, add: true })); m.renderOrder = -1; grp.add(m); return m; };
-  flatMesh(G.water, 0.06, 0x00b4ff, 0.55); flatMesh(G.beach, 0.04, 0xffcf5a, 0.3); // v44: sand = golden
+  flatMesh(G.water, 0.06, 0x00b4ff, 0.55); { const bm = flatMesh(G.beach, 0.04, 0xffcf5a, 0.3); bm.material.dispose(); bm.material = sandMat(0xffcf5a, 0.42); } // v44/v45: golden sand with grain
   if (G.green && G.green.length) flatMesh(G.green, 0.03, 0x3dff7a, 0.22); // v44: OSM grass / parks / pitches / golf / racecourse turf = green
   // polylines (roads by class, piers raised, coastline bright)
   const lines = (list, y, col, op) => { const s = []; for (const c of list) { const W3 = flat(c).map(([e, n]) => warp(e, n)); for (let i = 0; i < W3.length - 1; i++) s.push(W3[i].x, y, W3[i].z, W3[i + 1].x, y, W3[i + 1].z); }
@@ -319,6 +333,24 @@ function neonPint() {
   const bub = []; for (let i = 0; i < 40; i++) { const a = Math.random() * 6.283, r = Math.random() * 1.8; bub.push(Math.cos(a) * r, 0.6 + Math.random() * 7.2, Math.sin(a) * r); }
   const bg = new T.BufferGeometry(); bg.setAttribute('position', new T.Float32BufferAttribute(bub, 3)); g.add(new T.Points(bg, new T.PointsMaterial({ color: 0xfff2c0, size: 0.25, transparent: true, opacity: 0.9, blending: T.AdditiveBlending, depthWrite: false, fog: false })));
   g.traverse(o => { o.raycast = () => {}; }); g.name = 'neon-pint'; return g;
+}
+
+/* v45: DAM After Dark sign on the Marine Parade (west) face of Fallen Angels, east side of the Golden Mile, 83 Marine Parade (OSM way 175855364, next to the Arc Cinema).
+   Logo texture (512 px jpeg as data URL text, black background -> additive so only the neon shows), pulses with the shared beat uniform; tap opens their TikTok. */
+const DAM = { lat: 52.609706, lon: 1.736847, url: 'https://www.tiktok.com/@damafterdark.ent', label: 'DAM After Dark on TikTok' };
+function damSign() {
+  const c = W(DAM.lat, DAM.lon), g = new T.Group(); g.position.copy(c); g.rotation.y = -Math.PI / 2; S.add(g); // west face, over Marine Parade / the train route
+  const mat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.DoubleSide, fog: false,
+    uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
+    vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+    fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
+  fetch('/assets/img/dam-after-dark.b64.txt?v=45').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  const sign = new T.Mesh(new T.PlaneGeometry(7, 7), mat); sign.position.y = 12.5; g.add(sign);
+  sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
+  const fr = new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(7.4, 7.4)), new T.LineBasicMaterial({ color: 0xff2a3a, transparent: true, opacity: 0.85, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
+  fr.position.y = 12.5; fr.raycast = () => {}; g.add(fr);
+  const lab = LBL(DAM.label, '#ff5a6a', 1.1); lab.position.set(0, 8.4, 0.1); g.add(lab);
+  fx.dam = window.__dam = { pos: [c.x, c.z], url: DAM.url };
 }
 /* ---------- song cluster: every matching track from tracks.json as a tappable floating screen over a landmark ---------- */
 fx.clusters = [];
@@ -476,19 +508,26 @@ function sea(coast) {
   const seg = LOW ? 80 : 160, geo = new T.PlaneGeometry(7000, 9000, seg, seg); geo.rotateX(-Math.PI / 2);
   const cs = coast.concat(Array(Math.max(0, 16 - coast.length)).fill(coast[coast.length - 1]).map((c, i) => ({ n: c.n - (i + 1), e: c.e }))).slice(0, 16), cn = cs.map(c => c.n), ce = cs.map(c => c.e);
   const m = new T.ShaderMaterial({ transparent: true, depthWrite: false, fog: false, side: T.DoubleSide,
-    uniforms: { uTime: { value: 0 }, uAmp: { value: 1 }, uC: { value: CORE }, uK: { value: FAR }, uN: { value: cn }, uE: { value: ce } },
+    uniforms: { uTime: { value: 0 }, uAmp: { value: 1 }, uDay: { value: 0 }, uG: window.__glowU || { value: 1 }, uC: { value: CORE }, uK: { value: FAR }, uN: { value: cn }, uE: { value: ce } },
     vertexShader: `uniform float uTime; uniform float uAmp; varying vec3 vW; varying float vH;
       void main(){ vec3 p = position; vec4 w = modelMatrix * vec4(p,1.0);
-        float h = sin(w.x * 0.08 + uTime * 0.9) * 0.35 + sin(w.z * 0.11 - uTime * 0.7) * 0.25 + sin((w.x + w.z) * 0.21 + uTime * 1.3) * 0.12; h *= uAmp;
+        float h = sin(w.x * 0.08 + uTime * 0.9) * 0.35 + sin(w.z * 0.11 - uTime * 0.7) * 0.25 + sin((w.x + w.z) * 0.21 + uTime * 1.3) * 0.12${LOW ? '' : ' + sin(w.x * 0.37 - w.z * 0.19 + uTime * 2.1) * 0.06 + sin(w.z * 0.53 + w.x * 0.11 - uTime * 1.7) * 0.05'}; h *= uAmp;
         w.y += h - 0.3; vW = w.xyz; vH = h; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform float uTime; uniform float uC; uniform float uK; uniform float uN[16]; uniform float uE[16]; varying vec3 vW; varying float vH;
+    fragmentShader: `uniform float uTime; uniform float uDay; uniform float uG; uniform float uC; uniform float uK; uniform float uN[16]; uniform float uE[16]; varying vec3 vW; varying float vH;
       float coastE(float n){ for(int i=0;i<15;i++){ if(n <= uN[i] && n >= uN[i+1]) return mix(uE[i], uE[i+1], (n-uN[i])/(uN[i+1]-uN[i])); } return n > 0.0 ? uE[0] : uE[15]; }
       void main(){ float rr = max(length(vW.xz), 0.001); float r = rr < uC ? rr : uC + (rr - uC) / uK; vec2 d = vW.xz / rr; float e = d.x * r, n = -d.y * r;
         float ce = coastE(n); if (e < ce) discard;
         float grid = step(0.94, fract(vW.x * 0.25)) + step(0.94, fract(vW.z * 0.25));
         float edge = 1.0 - smoothstep(0.0, 60.0, e - ce);
-        vec3 c = vec3(0.0, 0.12, 0.16) + vec3(0.0, 0.6, 0.55) * (vH * 0.4 + 0.2) + vec3(0.2,1.0,0.8) * grid * 0.12 + vec3(0.6,1.0,0.9) * edge * 0.25;
-        gl_FragColor = vec4(c, 0.78); }` });
+        // v45: clearly blue sea: deep/day blues, crest highlights, sun/moon shimmer, foam line at the shore that breathes in and out
+        float crest = smoothstep(0.25, 0.75, vH);
+        float sh = ${LOW ? '0.0' : 'pow(max(0.0, sin(vW.x * 0.9 + uTime * 1.6) * sin(vW.z * 0.7 - uTime * 1.2)), 6.0)'};
+        vec3 deep = mix(vec3(0.0, 0.07, 0.22), vec3(0.06, 0.34, 0.72), uDay), lite = mix(vec3(0.1, 0.45, 1.0), vec3(0.35, 0.7, 1.0), uDay);
+        vec3 c = deep + lite * (vH * 0.35 + 0.18) + vec3(0.6, 0.85, 1.0) * (crest * 0.18 + sh * 0.35) + vec3(0.3, 0.6, 1.0) * grid * 0.08;
+        float fl = e - ce, fw = 6.0 + 3.0 * sin(uTime * 0.6 + n * 0.02);
+        float foam = (1.0 - smoothstep(0.0, fw, fl)) * (0.6 + 0.4 * sin(n * 0.3 + uTime * 1.1)) + (1.0 - smoothstep(0.0, 2.0, abs(fl - fw - 4.0))) * 0.35;
+        c += vec3(0.85, 0.95, 1.0) * foam * 0.55 + vec3(0.5, 0.8, 1.0) * edge * 0.12;
+        gl_FragColor = vec4(c * (0.9 + 0.1 * uG), 0.82); }` });
   const mesh = new T.Mesh(geo, m); mesh.position.set(3200, 0, 0); mesh.frustumCulled = false; S.add(mesh); fx.sea = m;
 }
 /* ---------- glowing walkways from spawn to each object ---------- */
