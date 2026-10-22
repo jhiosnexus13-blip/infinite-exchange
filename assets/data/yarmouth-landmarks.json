@@ -119,7 +119,8 @@
    "type": "pub",
    "height_m": 9,
    "source": "OSM node 601501713 amenity=pub 'The Avenues', Beatty Road, Newtown, NR30 4BW (Geofabrik Norfolk extract + Nominatim 2026-10-22).",
-   "crosscheck": "Cross-check: postcodes.io NR30 4BW centroid 52.624024,1.733695 (~90 m S of the OSM node, same street)."
+   "crosscheck": "Cross-check: postcodes.io NR30 4BW centroid 52.624024,1.733695 (~90 m S of the OSM node, same street).",
+   "song_tag": "avenues"
   },
   {
    "key": "newtown_archive",
@@ -165,6 +166,28 @@
    "song_tag": "beatty-close",
    "no_label": true,
    "source": "Requested building is not mapped in OSM at this location (no building footprints or address points on this residential way in the Geofabrik extract / Nominatim, 2026-10-22), so the screens float over the street-level centroid of OSM residential way 36883456 (rounded to 4 decimals), inside the same housing block."
+  },
+  {
+   "key": "police_investigation_centre",
+   "name": "Police Investigation Centre",
+   "lat": 52.597368,
+   "lon": 1.7168346,
+   "type": "police",
+   "height_m": 10,
+   "song_tag": "pic",
+   "source": "OSM way 210113579 amenity=police 'Police Investigation Centre' (Nominatim 2026-10-22: road A47, Southtown, NR31 0NA; bbox 52.59706-52.59765 / 1.71632-1.71733). It fronts the A47 about 300 m east of Gapton Hall Road (OSM way 1197050813, 52.59602,1.71242).",
+   "crosscheck": "postcodes.io NR31 0NA centroid 52.594999,1.718182 (~280 m S, same postcode as the OSM building's address)."
+  },
+  {
+   "key": "seafront_shelter",
+   "name": "Seafront Shelter",
+   "lat": 52.624514,
+   "lon": 1.738397,
+   "type": "shelter",
+   "height_m": 3,
+   "song_tag": "seafront-shelter",
+   "source": "Google Maps link (maps.app.goo.gl/o43XBNigsbktf3w48) resolves to a Street View camera at 52.6246793,1.738168 heading 152 deg (place pin 52.624603,1.738119, 'Tennyson Road'). Looking SSE from there is OSM shelter building way 231808791 (North Drive, NR30 4HE) centroid 52.624514,1.738397, ~24 m away on bearing ~142 deg.",
+   "crosscheck": "OSM bus stop node 562733180 'Tennyson Road, opp' shelter=yes at 52.6245235,1.7383318 (~5 m from the shelter building)."
   }
  ],
  "seafront": {

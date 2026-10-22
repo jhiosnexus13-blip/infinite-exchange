@@ -182,7 +182,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=sxMfA2CXY2g",
    "tags": [
-    "vault"
+    "vault",
+    "avenues"
    ]
   },
   {
@@ -197,7 +198,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=B4hxuez9u0M",
    "tags": [
-    "vault"
+    "vault",
+    "pic"
    ]
   },
   {
@@ -5155,6 +5157,21 @@
    "youtube_url": "https://youtu.be/3AM1UzB3IZM",
    "tags": [
     "beatty-close"
+   ]
+  },
+  {
+   "id": "odds-against-me-ft-luce-aether",
+   "title": "Odds Against Me - Ft Luce Aether",
+   "artist": "SCR3WFAC3",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/h3taN2FHCpI",
+   "tags": [
+    "seafront-shelter"
    ]
   }
  ]

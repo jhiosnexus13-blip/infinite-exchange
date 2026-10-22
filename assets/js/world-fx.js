@@ -9,7 +9,7 @@
 export const MODELS = {
   britannia_pier: null, wellington_pier: null, nelsons_monument: null, pleasure_beach: null,
   minster: null, haven_bridge: null, gorleston_harbour: null, tower_complex: null,
-  venetian_waterways: null, iron_duke: null, the_avenues: null, newtown_archive: null, arc_cinema: null, harbour_mouth: null,
+  venetian_waterways: null, iron_duke: null, the_avenues: null, newtown_archive: null, arc_cinema: null, harbour_mouth: null, police_investigation_centre: null, seafront_shelter: null,
   'SCR3WFAC3': null, 'Luce Aether': null, 'JHIOS Soundtracks': null, 'Sanctum': null, 'Unsorted': null, 'GoldBot': null,
 };
 let T, S, CAM, P, H, CL, LBL, CV, LOW, RED, OBJS, getPlaying, LITE = false;
@@ -26,7 +26,7 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=35'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=35' : '/assets/data/yarmouth-geo.json?v=35').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=36'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=36' : '/assets/data/yarmouth-geo.json?v=36').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); }); safe('landmarks', () => skyline(D, grp, !fx.coastE)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
 }
@@ -121,6 +121,17 @@ function skyline(D, grp, noGeo) {
       fx.mapSpots.push({ pos: base, label: 'WATERWAYS', col: '#00c8ff' });
     }
     else if (L.type === 'archive') archive(L, base, ht);
+    else if (L.type === 'police') { // low custody block + blue light bar
+      box(base, 46, ht, 30, ry); box(base.clone().setY(ht), 20, 2, 12, ry);
+      const lb = new T.Mesh(new T.BoxGeometry(8, 0.8, 1.2), new T.MeshBasicMaterial({ color: 0x3b7bff, fog: false })); lb.position.copy(base).setY(ht + 2.6); lb.rotation.y = ry; grp.add(lb); fx.policeBar = lb;
+      fx.mapSpots.push({ pos: base, label: 'POLICE', col: '#5b8bff' }); }
+    else if (L.type === 'shelter') { // small white seafront bus shelter: roof, back screen, two posts
+      const w = [], q = (x, y, z) => base.clone().add(new T.Vector3(x, y, z)), seg = (a, b) => w.push(a.x, a.y, a.z, b.x, b.y, b.z);
+      for (const [x, z] of [[-2.5, -0.9], [2.5, -0.9], [2.5, 0.9], [-2.5, 0.9]]) seg(q(x, 0, z), q(x, 2.6, z));
+      for (const y of [2.6, 2.8]) { seg(q(-2.8, y, -1.1), q(2.8, y, -1.1)); seg(q(2.8, y, -1.1), q(2.8, y, 1.1)); seg(q(2.8, y, 1.1), q(-2.8, y, 1.1)); seg(q(-2.8, y, 1.1), q(-2.8, y, -1.1)); }
+      for (let x = -2.5; x <= 2.5; x += 1.25) seg(q(x, 0.3, -0.9), q(x, 2.4, -0.9)); seg(q(-2.5, 0.3, -0.9), q(2.5, 0.3, -0.9)); seg(q(-2.5, 0.8, 0.5), q(2.5, 0.8, 0.5));
+      const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(w, 3)); grp.add(new T.LineSegments(g, new T.LineBasicMaterial({ color: 0xffffff, fog: false })));
+      const pane = new T.Mesh(new T.PlaneGeometry(5, 2.1), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12, side: T.DoubleSide, depthWrite: false, fog: false })); pane.position.copy(q(0, 1.35, -0.9)); grp.add(pane); }
     else if (L.type === 'harbour') { // harbour entrance: two pier-head beacons either side of the river mouth + a channel marker line
       for (const [dx, dz, c] of [[-14, 6, 0xff3b3b], [14, -6, 0x3bff6a]]) { const p = base.clone().add(new T.Vector3(dx, 0, dz)); box(p, 3, ht, 3, 0); box(p.clone().setY(ht), 4, 2, 4, 0);
         const lm = new T.Mesh(new T.SphereGeometry(1.2, 8, 6), new T.MeshBasicMaterial({ color: c, fog: false })); lm.position.copy(p).setY(ht + 3); grp.add(lm); }
@@ -298,7 +309,7 @@ function archive(L, base, ht) {
 /* ---------- jump-on-map: full-screen overlay of the whole mapped area; tap = teleport, quick-jump list ---------- */
 const MB = { x0: -1600, x1: 700, z0: -3300, z1: 3400 }; // walkable bounds (mirrors the clamp in world.js)
 const JUMPS = [['plaza', 'Plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
-  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth']];
+  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth'], ['police_investigation_centre', 'Police Investigation Centre']];
 function bigMap() {
   const el = document.createElement('div'); el.id = 'wmap'; el.className = 'wmap'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Map of Great Yarmouth: tap to jump');
   el.innerHTML = `<canvas class="wmap-cv" aria-hidden="true"></canvas><div class="wmap-top"><span class="wmap-title">GREAT YARMOUTH // JUMP MAP</span><span class="wmap-hint">tap to jump · drag to pan · pinch / scroll to zoom</span></div>
@@ -535,6 +546,7 @@ export function updateWorldFX(t, dt) {
     const on = window.JX && JX.playing && JX.current && JX.current.id === f.track; f.frMat.opacity = on ? 0.6 + 0.4 * (window.__beat ? __beat() : 1) : 0.75 + 0.2 * Math.sin(t * 2); f.glow.material.opacity = on ? 0.25 : 0.12; }
   if (fx.chunks && t - (fx.cullT || 0) > 0.25) { fx.cullT = t; const far = LOW ? 900 : 1800, edge = LOW ? 0 : 700; // distance culling per 320 m chunk
     for (const c of fx.chunks) { const d = Math.hypot(c.c.x - P.pos.x, c.c.z - P.pos.z) - c.r; c.o[0].visible = d < far; if (c.edge) c.edge.visible = d < edge; } }
+  if (fx.policeBar) fx.policeBar.material.color.setHex(Math.floor(t * 3) % 2 ? 0x3b7bff : 0xff3b3b);
   if (fx.archiveCore && !RED) fx.archiveCore.rotation.y += dt * 0.6;
   updateClusters(t, dt);
   if (fx.wheel && !RED) fx.wheel.rotation.z += dt * 0.08;
