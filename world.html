@@ -26,11 +26,11 @@ window.addEventListener('unhandledrejection',function(e){var r=e.reason;show('pr
 setTimeout(function(){if(window.__worldReady)return;var c=document.createElement('canvas'),gl=null;try{gl=c.getContext('webgl2')||c.getContext('webgl');}catch(x){}
 var css=[].slice.call(document.styleSheets).map(function(s){try{return (s.href||'inline').split('/').pop()+':'+s.cssRules.length}catch(x){return 'blocked'}}).join(' ');
 show('3D world did not start after 12 s. webgl='+(gl?'yes':'NO')+' css='+(css||'none')+' mem='+(navigator.deviceMemory||'?')+' dpr='+devicePixelRatio+' '+innerWidth+'x'+innerHeight+' '+navigator.userAgent.replace(/^.*?\) /,'').slice(0,60));},12000);})();</script>
-<link rel="stylesheet" href="/assets/css/site.css?v=57">
+<link rel="stylesheet" href="/assets/css/site.css?v=58">
 <script src="/config.js"></script>
-<script src="/assets/js/player.js?v=57" defer></script>
+<script src="/assets/js/player.js?v=58" defer></script>
 
-<link rel="stylesheet" href="/assets/css/world.css?v=57">
+<link rel="stylesheet" href="/assets/css/world.css?v=58">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 </head><body class="world">
 <a class="skip" href="#wpanel">Skip to playlists</a>
@@ -44,6 +44,6 @@ show('3D world did not start after 12 s. webgl='+(gl?'yes':'NO')+' css='+(css||'
 <div class="stick right" id="stickR" aria-hidden="true"><div class="knob"></div><span>LOOK</span></div>
 <small class="wcredits">Great Yarmouth buildings, roads &amp; coast from map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></small>
 <noscript><p style="padding:2rem">The 3D world needs JavaScript. <a href="/vault">Open the vault instead</a>.</p></noscript>
-<script src="/assets/js/world-welcome.js?v=57" defer></script>
-<script type="module" src="/assets/js/world.js?v=57"></script>
+<script src="/assets/js/world-welcome.js?v=58" defer></script>
+<script type="module" src="/assets/js/world.js?v=58"></script>
 </body></html>
