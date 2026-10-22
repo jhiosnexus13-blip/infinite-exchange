@@ -155,7 +155,9 @@
    "height_m": 9,
    "source": "OSM node 601501713 amenity=pub 'The Avenues', Beatty Road, Newtown, NR30 4BW (Geofabrik Norfolk extract + Nominatim 2026-10-22).",
    "crosscheck": "Cross-check: postcodes.io NR30 4BW centroid 52.624024,1.733695 (~90 m S of the OSM node, same street).",
-   "song_tag": "avenues"
+   "song_tag": "avenues",
+   "cluster_at": [52.624777, 1.733439],
+   "v60_note": "Song screen sits over the car park (~15 m W of the pub) so it no longer overlaps the pub roof from Sturdee Ave."
   },
   {
    "key": "newtown_archive",
@@ -228,10 +230,11 @@
   {
    "key": "racecourse_newtown",
    "name": "NEWTOWN",
-   "lat": 52.629373,
-   "lon": 1.732809,
+   "lat": 52.627718,
+   "lon": 1.732980,
    "type": "screen",
-   "height_m": 4,
+   "height_m": 0.01,
+   "v60_note": "Moved onto the Great Yarmouth Racecourse main-entrance sign (Jellicoe Rd, by the OSM entrance way 230703557/230703895): the screen sits on a mount on top of the sign.",
    "song_tag": "racecourse-edge",
    "no_label": true,
    "source": "Track zaIx29PCNSk (title 'NEWTOWN' via YouTube oEmbed). Placed on open racecourse ground just north-east of the Lord Nelson Stand (OSM way 230703557), inside racecourse relation 3118342; no specific building identified or labelled."

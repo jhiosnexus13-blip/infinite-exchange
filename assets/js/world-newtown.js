@@ -37,7 +37,7 @@ export function initNewtown(o, X) {
     for (const p of ND.pois) label(p.name.toUpperCase(), p.at, 7, '#ff9de6', 1.2);
     label('NORTH DENES ROAD', ND.road[Math.floor(ND.road.length / 2)], 9, '#bfeee0', 1.6); info.ndr = { lamps: lampN, junctions: ND.junctions.length, pois: ND.pois.length }; }
   // ---- Beatty Close (street label only) ----
-  const BC = X.beatty_close; if (BC) { for (const R of BC.roads) ring(0xc4ccd4, R, 0.15, false); label('BEATTY CLOSE', BC.label_at, 5, '#bfeee0', 1.1); info.beatty = { blocks: BC.blocks.length }; }
+  const BC = X.beatty_close; if (BC) { for (const R of BC.roads) ring(0xc4ccd4, R, 0.15, false); /* v60: no floating label; the close has its real street-name sign on the flats gable */ info.beatty = { blocks: BC.blocks.length }; }
   for (const [hex, s] of buckets) { const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(s, 3));
     const m = new T.LineBasicMaterial({ color: hex, transparent: true, opacity: 0.75, blending: T.AdditiveBlending, depthWrite: false, fog: false }); m.userData.op = 0.75; mats.push(m);
     const l = new T.LineSegments(g, m); l.raycast = () => {}; S.add(l); }
