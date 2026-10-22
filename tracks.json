@@ -1,6 +1,6 @@
 {
  "generated": "2026-10-21",
- "note": "Built from jhios-vault/vault.csv + catalogue-audit-2026-10-20.csv. Playback currently uses YouTube (youtube_url). Set audio_url (relative to AUDIO_BASE in config.js) per track to switch that track to self-hosted audio. Lanes only assigned where source data supports it.",
+ "note": "Built from jhios-vault/vault.csv + catalogue-audit-2026-10-20.csv. Playback currently uses YouTube (youtube_url). Set audio_url (relative to AUDIO_BASE in config.js) per track to switch that track to self-hosted audio. Lanes only assigned where source data supports it. Optional per-track \"bpm\" (number) sets the 3D world's neon beat pulse for that track; unset = 120.",
  "tracks": [
   {
    "id": "learning-to-love-it",
