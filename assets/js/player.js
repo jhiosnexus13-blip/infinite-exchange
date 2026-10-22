@@ -34,7 +34,7 @@
   class YouTubeSource {
     constructor(box) { this.box = box; this.p = null; this.state = -1; }
     async load(t) {
-      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min'); document.body.classList.remove('yt-min'); // a new screen replaces the track and shows the panel again
+      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min'); document.body.classList.remove('yt-min'); for (const k of ['top', 'left', 'right', 'bottom']) this.box.style.removeProperty(k); // a new screen replaces the track and shows the panel again
       await loadYT();
       if (!this.p) {
         await new Promise(res => {
@@ -72,7 +72,20 @@
   ytbox.innerHTML = '<div class="ytmount"></div><span class="ytlabel">via YouTube</span><button type="button" class="ytclose" aria-label="Minimise video (keeps playing)">▾ MINIMISE</button><button type="button" class="ytexp" aria-label="Expand video">⤢</button>';
   /* v41: closing the video panel only minimises it; the same iframe/player keeps playing (never moved in the DOM, never destroyed, stays visible as a mini
      player). The bottom bar gets expand + a separate ✕ stop. */
-  const setMin = on => { ytbox.classList.toggle('min', on); document.body.classList.toggle('yt-min', on); bar.classList.toggle('yt-mini', on); };
+  /* v42: the docked mini player picks the first spot (200x200, safe-area aware) that overlaps none of the bottom-bar controls, joysticks or HUD buttons */
+  const MINI = 202, AVOID = '.player button,.player .now,.stick,.wtrain button,#minimap,.whelp,#ptoggle,.wpresence,.hud a,.wcard,.wtrain-menu:not([hidden])';
+  function placeMini() { if (!ytbox.classList.contains('min')) { for (const k of ['top', 'left', 'right', 'bottom']) ytbox.style.removeProperty(k); return; }
+    const W = innerWidth, H = innerHeight, br = bar.getBoundingClientRect(), barTop = br.height ? br.top : H, m = 8;
+    const sa = k => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sa' + k)) || 0;
+    const L = m + sa('l'), R = W - m - sa('r') - MINI, T0 = m + sa('t'), B = barTop - m - MINI;
+    const boxes = [...document.querySelectorAll(AVOID)].filter(e => e.offsetParent !== null || getComputedStyle(e).position === 'fixed').map(e => e.getBoundingClientRect()).filter(r => r.width && r.height);
+    const free = (x, y) => x >= 0 && y >= 0 && x + MINI <= W && y + MINI <= barTop - 2 && !boxes.some(r => x < r.right + 4 && x + MINI > r.left - 4 && y < r.bottom + 4 && y + MINI > r.top - 4);
+    const cand = []; for (let y = B; y >= T0; y -= 8) { cand.push([L, y], [R, y]); for (let x = L + 16; x < R; x += 16) cand.push([x, y]); }
+    const [x, y] = cand.find(([x, y]) => free(x, y)) || [L, Math.max(T0, B)];
+    ytbox.style.setProperty('left', x + 'px', 'important'); ytbox.style.setProperty('top', y + 'px', 'important'); ytbox.style.setProperty('right', 'auto', 'important'); ytbox.style.setProperty('bottom', 'auto', 'important'); }
+  const setMin = on => { ytbox.classList.toggle('min', on); document.body.classList.toggle('yt-min', on); bar.classList.toggle('yt-mini', on); requestAnimationFrame(placeMini); setTimeout(placeMini, 300); };
+  addEventListener('resize', () => setTimeout(placeMini, 120)); addEventListener('orientationchange', () => setTimeout(placeMini, 400));
+  setInterval(() => { if (ytbox.classList.contains('min')) placeMini(); }, 1500); // HUD bits (train buttons, presence counter) come and go
   const stopYT = () => { try { yt.stop(); } catch (_) {} if (src === yt) src = null; setMin(false); ytbox.hidden = true; document.body.classList.remove('yt-on'); bar.classList.remove('has-yt'); window.dispatchEvent(new CustomEvent('jx:ytclose')); render(); };
   ytbox.querySelector('.ytclose').addEventListener('click', e => { e.stopPropagation(); setMin(true); });
   ytbox.querySelector('.ytexp').addEventListener('click', e => { e.stopPropagation(); setMin(false); });

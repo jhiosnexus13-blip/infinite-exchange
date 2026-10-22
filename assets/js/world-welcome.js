@@ -11,7 +11,9 @@
 .wwel .note{margin:.7rem 0 0;font-size:.68rem;color:#7fa99a}.wwel-go{display:block;width:100%;min-height:54px;margin:.9rem 0 .5rem;border:2px solid #00ff9d;border-radius:28px;background:#00ff9d;color:#001a10;font:700 1rem ui-monospace,monospace;letter-spacing:.1em;cursor:pointer}
 .wwel-go:hover,.wwel-go:focus-visible{background:#fff;outline:none}.wwel label{display:flex;gap:.45rem;align-items:center;font-size:.72rem;color:#9cc;cursor:pointer;min-height:32px}.wwel input{width:18px;height:18px;accent-color:#00ff9d}
 .whelp{position:fixed;z-index:31;top:calc(3.3rem + env(safe-area-inset-top));left:calc(.5rem + env(safe-area-inset-left));width:44px;height:44px;border-radius:50%;border:1px solid #00ff9d;background:rgba(0,0,0,.7);color:#00ff9d;font:700 1.1rem ui-monospace,monospace;cursor:pointer}
-.whelp:hover,.whelp:focus-visible{background:#00ff9d;color:#000;outline:none}`;
+.whelp:hover,.whelp:focus-visible{background:#00ff9d;color:#000;outline:none}
+.whelp.docked{position:static;pointer-events:auto;flex:0 0 auto}
+#hint{transition:opacity .8s}#hint.gone{opacity:0}.hud>*{background:rgba(1,8,6,.72);padding:.1rem .45rem;border-radius:8px}`;
   document.head.appendChild(css);
   const li = (ic, html) => `<li><span class="ic" aria-hidden="true">${ic}</span><span>${html}</span></li>`;
   const move = touch ? li('🕹', '<b>Move</b> with the left joystick, <b>look</b> with the right one or drag anywhere on the screen.')
@@ -35,10 +37,13 @@ ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite 
   const unlock = () => { try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { const c = window.__jxAC || (window.__jxAC = new AC()); c.resume && c.resume(); const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } } catch (_) {} };
   const show = () => { el.hidden = false; el.querySelector('.wwel-off').checked = off; window.__welcomeOpen = true; setTimeout(() => el.querySelector('.wwel-go').focus(), 50); };
   const hide = () => { el.hidden = true; window.__welcomeOpen = false; const c = document.getElementById('scene'); c && c.focus({ preventScroll: true }); };
-  el.querySelector('.wwel-go').addEventListener('click', () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); });
+  el.querySelector('.wwel-go').addEventListener('click', () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); });
   el.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); e.stopPropagation(); });
   for (const n of [el, help]) n.addEventListener('pointerdown', e => e.stopPropagation());
   help.addEventListener('click', e => { e.stopPropagation(); show(); });
-  const mount = () => { document.body.append(el, help); if (off || /[?&]nowelcome=1/.test(location.search)) { el.hidden = true; window.__welcomeOpen = false; } else show(); };
+  // v42: the ? sits in the weather / day-night row (top right) so it never covers the playlists panel; falls back to its own corner until that row exists
+  const dock = () => { const dn = document.getElementById('daynight'); if (!dn) return false; help.classList.add('docked'); dn.parentNode.appendChild(help); return true; };
+  const hideHint = () => setTimeout(() => { const h = document.getElementById('hint'); if (h) h.classList.add('gone'); }, 9000); // the welcome screen covers the controls, so the top hint fades out
+  const mount = () => { document.body.append(el, help); let n = 0; const iv = setInterval(() => { if (dock() || ++n > 60) clearInterval(iv); }, 250); if (off || /[?&]nowelcome=1/.test(location.search)) { el.hidden = true; window.__welcomeOpen = false; hideHint(); } else show(); };
   document.body ? mount() : addEventListener('DOMContentLoaded', mount);
 })();

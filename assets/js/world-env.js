@@ -18,13 +18,14 @@ export function initEnv(o) {
 }
 
 /* ---------- weather ---------- */
+let wxTry = 0;
 function weather() {
   const force = (location.search.match(/[?&]wx=(\d+)/) || [])[1];
   if (force) { apply({ weather_code: +force, cloud_cover: 90, wind_speed_10m: 30, wind_direction_10m: 240, precipitation: 2, rain: 2, visibility: 4000, is_day: 1, temperature_2m: 11 }, true); return; }
   const ac = 'AbortController' in window ? new AbortController() : null; const to = setTimeout(() => ac && ac.abort(), 8000);
   fetch(URL_WX, ac ? { signal: ac.signal } : {}).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(j => { clearTimeout(to); apply(j.current || {}); })
-    .catch(e => { clearTimeout(to); E.wxErr = String(e && e.message || e); console.warn('[env] weather', e); chip(); });
+    .catch(e => { clearTimeout(to); E.wxErr = String(e && e.message || e); console.warn('[env] weather', e); if (!E.wx) chip(); if (wxTry < 4) setTimeout(weather, [2000, 6000, 15000, 45000][wxTry++]); }); // v42: retry with backoff (an Open-Meteo 503 or a slow phone network)
 }
 const DESC = c => c === 0 ? ['Clear', '☀'] : c <= 2 ? ['Partly cloudy', '⛅'] : c === 3 ? ['Overcast', '☁'] : c <= 48 ? ['Fog', '🌫'] : c <= 57 ? ['Drizzle', '🌦'] : c <= 67 ? ['Rain', '🌧'] : c <= 77 ? ['Snow', '🌨'] : c <= 82 ? ['Showers', '🌧'] : c <= 86 ? ['Snow showers', '🌨'] : ['Thunderstorm', '⛈'];
 function apply(c, forced) {
