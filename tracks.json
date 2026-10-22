@@ -182,7 +182,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=sxMfA2CXY2g",
    "tags": [
-    "vault"
+    "vault",
+    "avenues"
    ]
   },
   {
@@ -197,7 +198,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=B4hxuez9u0M",
    "tags": [
-    "vault"
+    "vault",
+    "pic"
    ]
   },
   {
@@ -288,7 +290,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=WvKHnTipTyg",
    "tags": [
-    "vault"
+    "vault",
+    "beatty-close"
    ]
   },
   {
@@ -303,7 +306,8 @@
    "artwork_url": "",
    "youtube_url": "https://www.youtube.com/watch?v=VFFvRiNneGo",
    "tags": [
-    "vault"
+    "vault",
+    "beatty-close"
    ]
   },
   {
@@ -443,7 +447,8 @@
    "artwork_url": "",
    "youtube_url": "https://youtu.be/1xkNywyzlCc",
    "tags": [
-    "playlist-only"
+    "playlist-only",
+    "pleasure-bitch"
    ]
   },
   {
@@ -569,7 +574,8 @@
    "youtube_url": "https://youtu.be/4N3Pcjccx7k",
    "tags": [
     "scr3wfac3-guitar-band",
-    "playlist-only"
+    "playlist-only",
+    "harbour-mouth"
    ]
   },
   {
@@ -697,8 +703,8 @@
   {
    "id": "two-mad-bastards",
    "title": "Two Mad Bastards",
-   "artist": "",
-   "lane": "Unsorted",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
    "album": "",
    "release_date": "2026-08-03",
    "duration_s": 179,
@@ -706,7 +712,8 @@
    "artwork_url": "",
    "youtube_url": "https://youtu.be/5zp_phSx4S4",
    "tags": [
-    "shorts"
+    "shorts",
+    "beatty-close"
    ]
   },
   {
@@ -1258,8 +1265,8 @@
   {
    "id": "above-the-riddim-feat-nam3l3ss",
    "title": "Above The Riddim (feat. NAM3L3SS)",
-   "artist": "",
-   "lane": "Unsorted",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
    "album": "",
    "release_date": "2026-01-12",
    "duration_s": 166,
@@ -1268,7 +1275,8 @@
    "youtube_url": "https://youtu.be/DQrsA9qLGC4",
    "tags": [
     "jhios-fr33-pvrty",
-    "playlist-only"
+    "playlist-only",
+    "beatty-close"
    ]
   },
   {
@@ -1360,7 +1368,8 @@
    "artwork_url": "",
    "youtube_url": "https://youtu.be/DjlnQoqYMwY",
    "tags": [
-    "playlist-only"
+    "playlist-only",
+    "harbour-mouth"
    ]
   },
   {
@@ -1920,7 +1929,8 @@
    "artwork_url": "",
    "youtube_url": "https://youtu.be/MbrpBAPRp6Y",
    "tags": [
-    "playlist-only"
+    "playlist-only",
+    "pleasure-bitch"
    ]
   },
   {
@@ -2153,7 +2163,8 @@
    "artwork_url": "",
    "youtube_url": "https://youtu.be/PkIU3mIHeIg",
    "tags": [
-    "playlist-only"
+    "playlist-only",
+    "pleasure-bitch"
    ]
   },
   {
@@ -5008,6 +5019,159 @@
      "label": "Ditto",
      "url": "https://ditto.fm/dam-after-dark-vol-1"
     }
+   ]
+  },
+  {
+   "id": "dont-this-remind-ya",
+   "title": "Don't This Remind Ya",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "https://i.ytimg.com/vi/hN8QWPKuDvk/hqdefault.jpg",
+   "youtube_url": "https://www.youtube.com/watch?v=hN8QWPKuDvk",
+   "tags": [
+    "featured",
+    "tower-complex"
+   ]
+  },
+  {
+   "id": "pleasure-bitch-feat-luce-aether-break-remix",
+   "title": "Pleasure Bitch (feat. Luce Aether) (Break Remix)",
+   "artist": "SCR3WFAC3",
+   "lane": "Luce Aether",
+   "album": "Pleasure Bitch",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/hSII2U8sDak",
+   "tags": [
+    "playlist-only",
+    "pleasure-bitch"
+   ]
+  },
+  {
+   "id": "pleasure-bitch-feat-luce-aether-fried-again-remix",
+   "title": "Pleasure Bitch (feat. Luce Aether) (Fried Again Remix)",
+   "artist": "SCR3WFAC3",
+   "lane": "Luce Aether",
+   "album": "Pleasure Bitch",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/pW1kXuJV0TI",
+   "tags": [
+    "playlist-only",
+    "pleasure-bitch"
+   ]
+  },
+  {
+   "id": "the-iron-duke-east-sun-ghosts",
+   "title": "The Iron Duke: East Sun Ghosts",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/8tJTuNoDydc",
+   "tags": [
+    "iron-duke"
+   ]
+  },
+  {
+   "id": "lee-t-the-iron-duke",
+   "title": "Lee T (The Iron Duke)",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/hcnm11vl9L4",
+   "tags": [
+    "iron-duke"
+   ]
+  },
+  {
+   "id": "lee-t-the-iron-duke-livestream",
+   "title": "Lee T (The Iron Duke) LIVESTREAM",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/kmlC4aFcqo4",
+   "tags": [
+    "iron-duke"
+   ]
+  },
+  {
+   "id": "the-iron-duke-rising-remix",
+   "title": "The Iron Duke (Rising Remix)",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/u_Xdji--LNc",
+   "tags": [
+    "iron-duke"
+   ]
+  },
+  {
+   "id": "notes-taken",
+   "title": "Notes Taken",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/h9ABzAHk628",
+   "tags": [
+    "harbour-mouth"
+   ]
+  },
+  {
+   "id": "40-pills-at-bills",
+   "title": "40 Pills at Bills",
+   "artist": "SCR3WFAC3",
+   "lane": "SCR3WFAC3",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/3AM1UzB3IZM",
+   "tags": [
+    "beatty-close"
+   ]
+  },
+  {
+   "id": "odds-against-me-ft-luce-aether",
+   "title": "Odds Against Me - Ft Luce Aether",
+   "artist": "SCR3WFAC3",
+   "lane": "Luce Aether",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/h3taN2FHCpI",
+   "tags": [
+    "seafront-shelter"
    ]
   }
  ]

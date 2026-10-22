@@ -1,16 +1,265 @@
 {
- "attribution": "Coordinates © OpenStreetMap contributors (ODbL), via Nominatim search, 2026-10-22. Coastline / river polylines are hand-simplified approximations traced from the same OSM positions.",
- "origin": { "name": "Marine Parade (world origin / spawn)", "lat": 52.6035, "lon": 1.7365 },
+ "attribution": "Coordinates © OpenStreetMap contributors (ODbL), via Nominatim search, 2026-10-22. Coastline / river polylines are hand-simplified approximations traced from the same OSM positions. New landmarks (2026-10-22): OSM via Nominatim / Geofabrik, see per-landmark 'source'.",
+ "origin": {
+  "name": "Marine Parade (world origin / spawn)",
+  "lat": 52.6035,
+  "lon": 1.7365
+ },
  "landmarks": [
-  { "key": "britannia_pier", "name": "Britannia Pier", "lat": 52.6081748, "lon": 1.7395651, "type": "pier", "length_m": 250, "height_m": 14 },
-  { "key": "wellington_pier", "name": "Wellington Pier", "lat": 52.5993089, "lon": 1.7366743, "type": "pier", "length_m": 110, "height_m": 12 },
-  { "key": "nelsons_monument", "name": "Nelson's Monument (Norfolk Naval Pillar)", "lat": 52.5884393, "lon": 1.7335971, "type": "column", "height_m": 44 },
-  { "key": "pleasure_beach", "name": "Great Yarmouth Pleasure Beach (big wheel)", "lat": 52.5932831, "lon": 1.7359856, "type": "wheel", "height_m": 45 },
-  { "key": "minster", "name": "Great Yarmouth Minster (St Nicholas)", "lat": 52.6113670, "lon": 1.7273138, "type": "minster", "height_m": 32 },
-  { "key": "haven_bridge", "name": "Haven Bridge", "lat": 52.6065825, "lon": 1.7221957, "type": "bridge", "height_m": 6 },
-  { "key": "gorleston_harbour", "name": "Gorleston South Pier lighthouse / harbour mouth", "lat": 52.5721123, "lon": 1.7381010, "type": "lighthouse", "height_m": 18 }
+  {
+   "key": "britannia_pier",
+   "name": "Britannia Pier",
+   "lat": 52.6081748,
+   "lon": 1.7395651,
+   "type": "pier",
+   "length_m": 250,
+   "height_m": 14
+  },
+  {
+   "key": "wellington_pier",
+   "name": "Wellington Pier",
+   "lat": 52.5993089,
+   "lon": 1.7366743,
+   "type": "pier",
+   "length_m": 110,
+   "height_m": 12
+  },
+  {
+   "key": "nelsons_monument",
+   "name": "Nelson's Monument (Norfolk Naval Pillar)",
+   "lat": 52.5884393,
+   "lon": 1.7335971,
+   "type": "column",
+   "height_m": 44
+  },
+  {
+   "key": "pleasure_beach",
+   "name": "Great Yarmouth Pleasure Beach (big wheel)",
+   "lat": 52.5937437,
+   "lon": 1.7355419,
+   "type": "wheel",
+   "height_m": 45,
+   "crosscheck": "OSM has no attraction=big_wheel/wheel feature within 600 m. The pin lies inside OSM theme_park 'Pleasure Beach' (way 179321094 / 358642188, Wikidata Q3115993, bbox 52.59123-52.59527 / 1.73541-1.73656) on its Marine Parade (west) frontage; postcodes.io NR30 3EH 52.594522,1.736190.",
+   "wheel_slots": 5,
+   "wheel_track_ids": [
+    "pleasure-bitch-original-version",
+    "pleasure-bitch-feat-luce-aether-fried-remix",
+    "pleasure-bitch-feat-luce-aether-break-remix",
+    "pleasure-bitch-feat-luce-aether-fried-phonk-remix",
+    "pleasure-bitch-feat-luce-aether-fried-again-remix"
+   ],
+   "wheel_note": "Playlist order of YouTube album 'Pleasure Bitch' (OLAK5uy_n3DSg7qRtAZBLzCoLpG0fwgFY0X6r-gjg), titles via YouTube oEmbed 2026-10-22. Add more ids to add gondolas.",
+   "source": "Wheel position from Joseph's Google Maps link (maps.app.goo.gl/RrzmkG1GNSsRNbZa8 -> place 'Great Yarmouth Observation Wheel', pin 52.5937437,1.7355419), resolved 2026-10-22. Previously the park centroid 52.5932831,1.7359856 (moved ~59 m NW)."
+  },
+  {
+   "key": "minster",
+   "name": "Great Yarmouth Minster (St Nicholas)",
+   "lat": 52.611367,
+   "lon": 1.7273138,
+   "type": "minster",
+   "height_m": 32
+  },
+  {
+   "key": "haven_bridge",
+   "name": "Haven Bridge",
+   "lat": 52.6065825,
+   "lon": 1.7221957,
+   "type": "bridge",
+   "height_m": 6
+  },
+  {
+   "key": "tower_complex",
+   "name": "Tower Complex / Arena (32 Marine Parade, NR30 2EN)",
+   "lat": 52.604471,
+   "lon": 1.736196,
+   "type": "tower",
+   "height_m": 36,
+   "note": "Real location: 32 Marine Parade, Great Yarmouth NR30 2EN (SIA Group sale particulars 'The Tower Complex, 32 Marine Parade'; staycation.co.uk / ukpostcodecheck.com list 32 Marine Parade NR30 2EN; visitgreatyarmouth.co.uk 'ATM outside The Tower' and ents24 give NR30 2EW). Coords = postcodes.io NR30 2EN centroid 52.604471,1.736196 (NR30 2EW: 52.604497,1.736213); cross-checked with OSM Nominatim 'Oasis Tower, Marine Parade, NR30 2EN' at 52.6044981,1.7361511. Lies on Marine Parade ~410 m SOUTH of Britannia Pier and ~575 m NORTH of Wellington Pier, south of the Regent Road junction (Regent Road meets Marine Parade near Britannia Pier). Postcode data: Royal Mail/OS via postcodes.io (OGL).",
+   "feature_track": "dont-this-remind-ya",
+   "crosscheck": "Cross-check (2026-10-22): postcodes.io NR30 2EN 52.604471,1.736196; OSM node 9817353238 'The Landmark' pub, Marine Parade NR30 2EN at 52.604604,1.736211 (Geofabrik extract)."
+  },
+  {
+   "key": "gorleston_harbour",
+   "name": "Gorleston South Pier lighthouse / harbour mouth",
+   "lat": 52.5721123,
+   "lon": 1.738101,
+   "type": "lighthouse",
+   "height_m": 18
+  },
+  {
+   "key": "venetian_waterways",
+   "name": "The Venetian Waterways",
+   "lat": 52.6164907,
+   "lon": 1.7385399,
+   "type": "waterways",
+   "height_m": 6,
+   "source": "OSM way 175858676 (leisure park 'The Venetian Waterways', Newtown) via Nominatim lookup 2026-10-22; centroid. Runs alongside North Drive from ~52.612 to ~52.621.",
+   "crosscheck": "Cross-check: OSM park bbox 52.61341-52.61809 / 1.73804-1.73899 (Nominatim lookup); postcodes.io NR30 1EQ (North Drive, south end) 52.612984,1.737483."
+  },
+  {
+   "key": "iron_duke",
+   "name": "The Iron Duke",
+   "lat": 52.6278547,
+   "lon": 1.7383001,
+   "type": "pub",
+   "height_m": 10,
+   "source": "OSM way 232015022 'The Iron Duke', Jellicoe Road, Newtown, NR30 4HB via Nominatim 2026-10-22 (building on the North Drive / Jellicoe Road corner, north of the Waterways). Not present as amenity=pub in the Geofabrik extract, only as a named building.",
+   "crosscheck": "Cross-check: postcodes.io NR30 4HB centroid 52.627300,1.737048 (~100 m SW of the OSM building, same block); OSM building bbox 52.62773-52.62796 / 1.73814-1.73850; Wikidata Q55457632. Order check: northernmost placed spot, east of The Avenues.",
+   "song_patterns": [
+    "lee[\\s-]?t\\b",
+    "iron\\s*duke"
+   ],
+   "song_note": "Tracks tagged 'iron-duke' plus any title/artist/album/tag matching Lee T / Iron Duke.",
+   "song_tag": "iron-duke"
+  },
+  {
+   "key": "the_avenues",
+   "name": "The Avenues",
+   "lat": 52.6248438,
+   "lon": 1.7336626,
+   "type": "pub",
+   "height_m": 9,
+   "source": "OSM node 601501713 amenity=pub 'The Avenues', Beatty Road, Newtown, NR30 4BW (Geofabrik Norfolk extract + Nominatim 2026-10-22).",
+   "crosscheck": "Cross-check: postcodes.io NR30 4BW centroid 52.624024,1.733695 (~90 m S of the OSM node, same street).",
+   "song_tag": "avenues"
+  },
+  {
+   "key": "newtown_archive",
+   "name": "Newtown Archive (Newtown Community Centre)",
+   "lat": 52.625267,
+   "lon": 1.735168,
+   "type": "archive",
+   "height_m": 14,
+   "song_tag": "newtown-archive",
+   "song_match": "newtown",
+   "song_album": "NEWTOWN",
+   "source": "Newtown Community Centre, Beatty Close, Great Yarmouth NR30 4BN. OSM way 733110190 amenity=community_centre (Geofabrik Norfolk extract 2026-10-22), centroid 52.625267,1.735168; joined on its north side to an OSM playground/park (way 733110189, centroid 52.625424,1.735141); ~110 m ENE of (behind) The Avenues pub, Beatty Road.",
+   "crosscheck": "postcodes.io NR30 4BN centroid 52.624675,1.734726 (~70 m SW, same block); great-yarmouth.gov.uk article 9593 and greatyarmouthonline.co.uk give 'Newtown Community Centre, Beatty Close, NR30 4BN'; place listing 'Newtown Youth and Community Centre' 52.625289,1.735241 (~5 m from the OSM centroid)."
+  },
+  {
+   "key": "arc_cinema",
+   "name": "Arc Cinema",
+   "lat": 52.6093399,
+   "lon": 1.7370726,
+   "type": "cinema",
+   "height_m": 14,
+   "source": "OSM way 958803579 'Arc Cinema', Marine Parade, NR30 2DL (Nominatim 2026-10-22; operator Arc Cinemas, Wikidata Q31677248, website greatyarmouth.arccinema.co.uk).",
+   "crosscheck": "postcodes.io NR30 2DL 52.607896,1.737685 (postcode area spans the Britannia Pier / Marine Parade frontage, ~160 m S of the building). Lies just NORTH of Britannia Pier (52.60817). Note: the OSM way carries old tags disused:amenity=cinema, end_date=2019-02-07 (probably from the previous Hollywood cinema) alongside operator=Arc Cinemas."
+  },
+  {
+   "key": "harbour_mouth",
+   "name": "Harbour Mouth",
+   "lat": 52.57256,
+   "lon": 1.73889,
+   "type": "harbour",
+   "height_m": 10,
+   "song_tag": "harbour-mouth",
+   "source": "Mouth of the River Yare between Gorleston and South Denes: midpoint of the two harbour-entrance pier-head lights in OSM: node 2326738997 'Gorleston South Pier Lighthouse' (52.5721123,1.7381010) and node 1473358746 seamark light_minor on the north (South Denes) pier head (52.5730187,1.7396790); Geofabrik Norfolk extract + Nominatim 2026-10-22.",
+   "crosscheck": "postcodes.io reverse lookup: nearest postcode NR31 6PL (Pier Plain / South Pier area, Gorleston) 52.571012,1.733835 at 383 m, on the Gorleston bank just inland of the South Pier; Nominatim 'Gorleston South Pier Lighthouse, South Beach Parade, Gorleston-on-Sea' matches the OSM node."
+  },
+  {
+   "key": "beatty-close-flat",
+   "name": "beatty-close-flat",
+   "lat": 52.6247,
+   "lon": 1.7345,
+   "type": "screen",
+   "height_m": 12,
+   "song_tag": "beatty-close",
+   "no_label": true,
+   "source": "Requested building is not mapped in OSM at this location (no building footprints or address points on this residential way in the Geofabrik extract / Nominatim, 2026-10-22), so the screens float over the street-level centroid of OSM residential way 36883456 (rounded to 4 decimals), inside the same housing block."
+  },
+  {
+   "key": "police_investigation_centre",
+   "name": "Police Investigation Centre",
+   "lat": 52.597368,
+   "lon": 1.7168346,
+   "type": "police",
+   "height_m": 10,
+   "song_tag": "pic",
+   "source": "OSM way 210113579 amenity=police 'Police Investigation Centre' (Nominatim 2026-10-22: road A47, Southtown, NR31 0NA; bbox 52.59706-52.59765 / 1.71632-1.71733). It fronts the A47 about 300 m east of Gapton Hall Road (OSM way 1197050813, 52.59602,1.71242).",
+   "crosscheck": "postcodes.io NR31 0NA centroid 52.594999,1.718182 (~280 m S, same postcode as the OSM building's address)."
+  },
+  {
+   "key": "seafront_shelter",
+   "name": "Seafront Shelter",
+   "lat": 52.624514,
+   "lon": 1.738397,
+   "type": "shelter",
+   "height_m": 3,
+   "song_tag": "seafront-shelter",
+   "source": "Google Maps link (maps.app.goo.gl/o43XBNigsbktf3w48) resolves to a Street View camera at 52.6246793,1.738168 heading 152 deg (place pin 52.624603,1.738119, 'Tennyson Road'). Looking SSE from there is OSM shelter building way 231808791 (North Drive, NR30 4HE) centroid 52.624514,1.738397, ~24 m away on bearing ~142 deg.",
+   "crosscheck": "OSM bus stop node 562733180 'Tennyson Road, opp' shelter=yes at 52.6245235,1.7383318 (~5 m from the shelter building)."
+  }
  ],
- "seafront": { "name": "Marine Parade / Atlas seafront strip", "from": { "lat": 52.5935, "lon": 1.7350 }, "to": { "lat": 52.6125, "lon": 1.7372 } },
- "coastline": [[52.625, 1.7392], [52.6082, 1.7378], [52.5993, 1.7356], [52.585, 1.7352], [52.5725, 1.7372], [52.560, 1.7350]],
- "river_yare": [[52.6200, 1.7175], [52.6115, 1.7215], [52.6066, 1.7222], [52.5990, 1.7238], [52.5900, 1.7262], [52.5820, 1.7300], [52.5760, 1.7335], [52.5725, 1.7372]]
+ "seafront": {
+  "name": "Marine Parade / Atlas seafront strip",
+  "from": {
+   "lat": 52.5935,
+   "lon": 1.735
+  },
+  "to": {
+   "lat": 52.6125,
+   "lon": 1.7372
+  }
+ },
+ "coastline": [
+  [
+   52.625,
+   1.7392
+  ],
+  [
+   52.6082,
+   1.7378
+  ],
+  [
+   52.5993,
+   1.7356
+  ],
+  [
+   52.585,
+   1.7352
+  ],
+  [
+   52.5725,
+   1.7372
+  ],
+  [
+   52.56,
+   1.735
+  ]
+ ],
+ "river_yare": [
+  [
+   52.62,
+   1.7175
+  ],
+  [
+   52.6115,
+   1.7215
+  ],
+  [
+   52.6066,
+   1.7222
+  ],
+  [
+   52.599,
+   1.7238
+  ],
+  [
+   52.59,
+   1.7262
+  ],
+  [
+   52.582,
+   1.73
+  ],
+  [
+   52.576,
+   1.7335
+  ],
+  [
+   52.5725,
+   1.7372
+  ]
+ ]
 }
