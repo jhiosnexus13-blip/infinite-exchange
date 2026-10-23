@@ -234,18 +234,30 @@ function buildDreamRoom() {
   const panel = new THREE.Group();
   panel.position.set(0, 8, 0);
   const panelBg = new THREE.Mesh(
-    new THREE.PlaneGeometry(6, 3.4),
-    new THREE.MeshBasicMaterial({ color: 0x111111, transparent: true, opacity: 0.7 })
+    new THREE.PlaneGeometry(8, 5),
+    new THREE.MeshBasicMaterial({ color: 0x111111, transparent: true, opacity: 0.75 })
   );
   panel.add(panelBg);
-  const title = labelSprite('DANCE OF THE ANCIENTS', '#ffcc88', 1.6);
-  title.position.y = 0.6;
+  const title = labelSprite('DANCE OF THE ANCIENTS', '#ffcc88', 1.4);
+  title.position.y = 1.2;
   panel.add(title);
-  const sub = labelSprite('a dream in the dark', '#aa8866', 0.7);
-  sub.position.y = -0.8;
-  panel.add(sub);
+  const line1 = labelSprite('Complete darkness. A faint flicker.', '#aa8866', 0.55);
+  line1.position.y = 0.3;
+  panel.add(line1);
+  const line2 = labelSprite('Mongolians, Norse, Sumerians, Egyptians,', '#aa8866', 0.5);
+  line2.position.y = -0.2;
+  panel.add(line2);
+  const line3 = labelSprite('Japanese, Gaelic, Semitic tongues.', '#aa8866', 0.5);
+  line3.position.y = -0.7;
+  panel.add(line3);
+  const line4 = labelSprite('"Om Asato Ma Sadgamaya"', '#ffcc88', 0.65);
+  line4.position.y = -1.3;
+  panel.add(line4);
+  const line5 = labelSprite('Lead Me From Illusion To Truth', '#aa8866', 0.5);
+  line5.position.y = -1.9;
+  panel.add(line5);
   room.add(panel);
-  const hit = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 0.5), new THREE.MeshBasicMaterial({ visible: false }));
+  const hit = new THREE.Mesh(new THREE.BoxGeometry(8, 5, 0.5), new THREE.MeshBasicMaterial({ visible: false }));
   hit.position.set(0, 8, 0);
   hit.userData = { id: 'dance-of-the-ancients', type: 'album' };
   clickables.push(hit);
