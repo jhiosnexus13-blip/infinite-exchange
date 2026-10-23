@@ -30,6 +30,7 @@ body :is(button,a,input,select,[tabindex]):focus-visible{outline:3px solid #ffe1
     { id: 'pad', name: 'Controller', el: () => q('.wgamepad'), modal: true, close() { const e = this.el(); e && e.remove(); } },
     { id: 'video', name: 'Video', el: () => q('.ytbox'), open: () => { const e = q('.ytbox'); return shown(e) && !e.classList.contains('closed') && !e.classList.contains('min'); },
       close: () => q('[data-a=ytstop]') && q('[data-a=ytstop]').click(), min: () => q('.ytbox .ytclose').click(), restore: () => q('.ytbox .ytexp').click(), nochip: true, own: true },
+    { id: 'chat', name: 'Chat', el: () => q('.wchat'), close: () => window.__chat && __chat.close(), restore: () => window.__chat && __chat.open(false) },
     { id: 'playlist', name: 'Playlists', el: () => q('#pbody'), close: () => api.openPanel(false), min: () => api.openPanel(false), restore: () => api.openPanel(true) },
   ];
   const byId = id => W.find(w => w.id === id);
@@ -40,7 +41,7 @@ body :is(button,a,input,select,[tabindex]):focus-visible{outline:3px solid #ffe1
   function chips() { dock.innerHTML = ''; for (const id of mins.keys()) { const w = byId(id); if (!w || w.nochip) continue; const b = document.createElement('button'); b.type = 'button'; b.dataset.chip = id; b.textContent = '▴ ' + w.name; b.setAttribute('aria-label', 'Restore ' + w.name);
       b.addEventListener('pointerdown', e => e.stopPropagation()); b.addEventListener('click', e => { e.stopPropagation(); restore(id); }); dock.appendChild(b); } }
   const ensure = () => { for (const w of W) { if (w.own) continue; const e = w.el(); if (!e || e.querySelector('.wmin')) continue; if (getComputedStyle(e).position === 'static') e.style.position = 'relative';
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'wmin' + (w.id === 'map' || w.id === 'pad' || w.id === 'welcome' ? '' : ' solo'); b.textContent = '–'; b.title = 'Minimise'; b.setAttribute('aria-label', 'Minimise ' + w.name);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wmin' + (w.id === 'map' || w.id === 'pad' || w.id === 'welcome' || w.id === 'chat' ? '' : ' solo'); b.textContent = '–'; b.title = 'Minimise'; b.setAttribute('aria-label', 'Minimise ' + w.name);
       b.addEventListener('pointerdown', ev => ev.stopPropagation()); b.addEventListener('click', ev => { ev.stopPropagation(); minimise(w.id); });
       if (w.id === 'map') b.style.right = '64px'; if (w.id === 'welcome') { (e.querySelector('.wwel-box') || e).style.position = 'relative'; (e.querySelector('.wwel-box') || e).appendChild(b); b.style.right = '6px'; b.classList.add('wmin'); continue; } e.appendChild(b); }
     for (const id of [...mins.keys()]) { const w = byId(id); if (w && isOpen(w)) { mins.delete(id); chips(); } } }; // reopened another way: drop its chip
