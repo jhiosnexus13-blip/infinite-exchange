@@ -1,5 +1,5 @@
 /* JHIOS world v61: text chat + Messenger-style voice notes (hold to record, release to send). No live audio, no WebRTC.
-   - Chat window (minimisable like every window via world-ui.js): last 50 messages / 30 min from /api/chat, polled every 4 s while
+   - Chat window (minimisable like every window via world-ui.js): last 50 messages / 4 hours from /api/chat, polled every 4 s while
      open (20 s while closed, for the unread badge). Anonymous 'visitor-xxxx' handles; everything is rendered with textContent only.
    - Voice notes: the mic is requested only when you first hold the talk button, and released again as soon as the clip is sent
      (nothing is ever left on). MediaRecorder: webm/opus, or mp4/aac on iOS Safari. Max 15 s with a live timer; under 0.4 s is discarded.
@@ -36,7 +36,7 @@ export function initChat(o) {
   const talk = el('button', 'wtalk', touch ? '🎙 Hold' : '🎙 Hold V'); talk.type = 'button'; talk.title = 'Hold to record a voice note (max 15 s), release to send'; talk.setAttribute('aria-label', 'Hold to record a voice note');
   bar.append(chatBtn, talk); document.body.appendChild(bar);
   const box = el('div', 'wchat'); box.hidden = true; box.setAttribute('role', 'dialog'); box.setAttribute('aria-label', 'Chat');
-  const hd = el('div', 'hd', 'CHAT'); const who = el('small', '', 'anonymous · last 30 min'); hd.appendChild(who);
+  const hd = el('div', 'hd', 'CHAT'); const who = el('small', '', 'anonymous · last 4 hours'); hd.appendChild(who);
   const x = el('button', 'x', '×'); x.type = 'button'; x.setAttribute('aria-label', 'Close chat');
   const log = el('div', 'log'); log.setAttribute('aria-live', 'polite');
   const form = el('form'); const inp = el('input'); inp.type = 'text'; inp.maxLength = 200; inp.placeholder = 'Say something…'; inp.setAttribute('aria-label', 'Chat message'); inp.autocomplete = 'off';
@@ -63,7 +63,7 @@ export function initChat(o) {
     if (box.hidden && m.h !== me && last) { unread++; badge.textContent = unread > 9 ? '9+' : String(unread); badge.hidden = false; } }
   async function poll() { if (busy || document.hidden) return; busy = true;
     try { const r = await fetch('/api/chat?sid=' + sid + (last ? '&since=' + encodeURIComponent(last) : ''), { cache: 'no-store' }); if (!r.ok) throw 0; const d = await r.json();
-      if (d.me && d.me !== me) { me = d.me; who.textContent = `you are ${me} · anonymous · last 30 min`; }
+      if (d.me && d.me !== me) { me = d.me; who.textContent = `you are ${me} · anonymous · last 4 hours`; }
       const first = !last; for (const m of d.msgs || []) add(m); if ((d.msgs || []).length) last = d.msgs[d.msgs.length - 1].k; if (first && !last) last = ' ';
       if (first) { unread = 0; badge.hidden = true; } } catch (_) {} finally { busy = false; } }
   const schedule = () => { clearInterval(timer); timer = setInterval(poll, box.hidden ? 20000 : 4000); };
