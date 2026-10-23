@@ -195,90 +195,8 @@ function buildTurntable(col) {
   g.userData.vinyl = vinyl;
   return g;
 }
-/* Dance Of The Ancients — dream room
-   Complete darkness with a faint flicker. Move closer and the figures appear
-   dancing around a mystical fire. Inspired by the dream that made the album. */
-function buildDreamRoom() {
-  const room = new THREE.Group();
-  room.position.set(0, 80, -400);
-  room.name = 'dance-of-the-ancients';
-  const voidMat = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
-  const voidBox = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), voidMat);
-  room.add(voidBox);
-  const flicker = new THREE.PointLight(0xffaa44, 0.4, 30);
-  flicker.position.set(0, 4, -8);
-  room.add(flicker);
-  const fire = new THREE.Group();
-  fire.position.set(0, 0.5, 0);
-  const fireCore = new THREE.Mesh(
-    new THREE.ConeGeometry(0.8, 2.2, 8),
-    new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending })
-  );
-  fireCore.position.y = 1.1;
-  fire.add(fireCore);
-  const fireGlow = new THREE.PointLight(0xff5500, 3, 12);
-  fireGlow.position.y = 1.5;
-  fire.add(fireGlow);
-  room.add(fire);
-  const dancerCount = 6;
-  for (let i = 0; i < dancerCount; i++) {
-    const a = (i / dancerCount) * Math.PI * 2;
-    const d = buildFigure(0xffcc88, i % 2 === 0);
-    d.scale.setScalar(0.7);
-    d.position.set(Math.cos(a) * 4.5, 0, Math.sin(a) * 4.5);
-    d.lookAt(0, 1, 0);
-    d.userData.dancePhase = i;
-    room.add(d);
-  }
-  const panel = new THREE.Group();
-  panel.position.set(0, 8, 0);
-  const panelBg = new THREE.Mesh(
-    new THREE.PlaneGeometry(8, 5),
-    new THREE.MeshBasicMaterial({ color: 0x111111, transparent: true, opacity: 0.75 })
-  );
-  panel.add(panelBg);
-  const title = labelSprite('DANCE OF THE ANCIENTS', '#ffcc88', 1.4);
-  title.position.y = 1.2;
-  panel.add(title);
-  const line1 = labelSprite('Complete darkness. A faint flicker.', '#aa8866', 0.55);
-  line1.position.y = 0.3;
-  panel.add(line1);
-  const line2 = labelSprite('Mongolians, Norse, Sumerians, Egyptians,', '#aa8866', 0.5);
-  line2.position.y = -0.2;
-  panel.add(line2);
-  const line3 = labelSprite('Japanese, Gaelic, Semitic tongues.', '#aa8866', 0.5);
-  line3.position.y = -0.7;
-  panel.add(line3);
-  const line4 = labelSprite('"Om Asato Ma Sadgamaya"', '#ffcc88', 0.65);
-  line4.position.y = -1.3;
-  panel.add(line4);
-  const line5 = labelSprite('Lead Me From Illusion To Truth', '#aa8866', 0.5);
-  line5.position.y = -1.9;
-  panel.add(line5);
-  room.add(panel);
-  const hit = new THREE.Mesh(new THREE.BoxGeometry(8, 5, 0.5), new THREE.MeshBasicMaterial({ visible: false }));
-  hit.position.set(0, 8, 0);
-  hit.userData = { id: 'dance-of-the-ancients', type: 'album' };
-  clickables.push(hit);
-  room.add(hit);
-  return room;
-}
-function animateDream(t) {
-  const room = scene.getObjectByName('dance-of-the-ancients');
-  if (!room) return;
-  room.children.forEach(c => {
-    if (c.userData.dancePhase !== undefined) {
-      const a = (c.userData.dancePhase / 6) * Math.PI * 2 + t * 0.3;
-      c.position.x = Math.cos(a) * 4.5;
-      c.position.z = Math.sin(a) * 4.5;
-      c.lookAt(0, 1, 0);
-      c.position.y = Math.sin(t * 2 + c.userData.dancePhase) * 0.15;
-    }
-  });
-}
 /* ---------- lane plaza ---------- */
 const clickables = [];
-const dreamRoom = buildDreamRoom(); scene.add(dreamRoom);
 const lanes = (C.lanes || []).map((ln, i) => {
   const g = new THREE.Group(); g.position.set(PZ[0] + (i - 1.5) * 8, 0, PZ[1]); scene.add(g);
   const fig = ln.id === 'scr3w' ? makeScr3wfac3Figure(ln.color) : ln.id === 'robot' ? buildRobot(ln.color) : ln.id === 'turntable' ? buildTurntable(ln.color) : buildFigure(ln.color, ln.female);
@@ -323,7 +241,6 @@ function tick() {
   player.pos.x = Math.max(-1600, Math.min(700, player.pos.x)); player.pos.z = Math.max(-4700, Math.min(3600, player.pos.z));
   camera.position.copy(player.pos); camera.rotation.set(player.pitch, player.yaw, 0, 'YXZ');
   animateHolos(clock.elapsedTime, dt);
-  animateDream(clock.elapsedTime);
   renderer.render(scene, camera);
   if (!window.__worldReady) { window.__worldReady = true; document.documentElement.dataset.world = 'ok'; }
 }
