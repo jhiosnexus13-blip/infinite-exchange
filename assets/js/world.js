@@ -35,7 +35,6 @@ const player = { pos: new THREE.Vector3(PZ[0], 1.7, PZ[1] + 22), yaw: 0, pitch: 
 const grid = new THREE.GridHelper(400, 200, 0x00ff9d, 0x0d3326); grid.material.transparent = true; grid.material.opacity = 0.35; scene.add(grid);
 scene.add(new THREE.AmbientLight(0x406060, 1.2));
 const sun = new THREE.PointLight(0x00ff9d, 40, 60); sun.position.set(PZ[0], 12, PZ[1]); scene.add(sun);
-const dreamRoom = buildDreamRoom(); scene.add(dreamRoom);
 
 /* sprite sized to its text: height h world units, width follows the measured text (keeps labels on-screen) */
 function labelSprite(text, color = '#00ff9d', h = 1.1) {
@@ -279,6 +278,7 @@ function animateDream(t) {
 }
 /* ---------- lane plaza ---------- */
 const clickables = [];
+const dreamRoom = buildDreamRoom(); scene.add(dreamRoom);
 const lanes = (C.lanes || []).map((ln, i) => {
   const g = new THREE.Group(); g.position.set(PZ[0] + (i - 1.5) * 8, 0, PZ[1]); scene.add(g);
   const fig = ln.id === 'scr3w' ? makeScr3wfac3Figure(ln.color) : ln.id === 'robot' ? buildRobot(ln.color) : ln.id === 'turntable' ? buildTurntable(ln.color) : buildFigure(ln.color, ln.female);
