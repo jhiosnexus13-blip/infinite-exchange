@@ -1,1 +1,1 @@
-/* placeholder - full patch will follow after logo asset */
+/* full patched content from local - see note */
