@@ -1,0 +1,10 @@
+{
+ "_comment": "v69 hook: bottom-of-Beatty-Road street detail from Joseph's 26 Oct 2026 photos (geo-ref/streetview/beatty-road-bottom-2026-10). Metres east/north from the geo origin, same frame as newtown-streets.json. Edit these numbers to re-detail the corner; world-v69.js reads this file. Positions of the stop / Madden corner are aligned to the OSM Beatty Road + Madden Avenue lines; the stop's exact kerb spot is approximate (status: built, needs Joseph check). No house numbers, no residents.",
+ "status": "built",
+ "busStop": { "e": -216.5, "n": 2596, "face": "west", "sign": "Great Yarmouth, Beatty Road, opp Seymour Avenue", "operator": "First", "ad": "BREAKFAST BAKES", "qr": "Scan me to find out what time the next bus is" },
+ "madden": { "e": -218, "n": 2630, "sign": "MADDEN AVENUE" },
+ "terraceEast": [ { "n0": 2603, "n1": 2616, "col": "#e9dfc4" }, { "n0": 2560, "n1": 2602, "col": "#a9c3d4" } ],
+ "terraceWest": [ { "n0": 2540, "n1": 2575, "col": "#5a3a2c" }, { "n0": 2576, "n1": 2584, "col": "#5f8fbf" }, { "n0": 2585, "n1": 2640, "col": "#62402f" } ],
+ "parked": [ [ -226.2, 2520, 2650, 0.6 ], [ -218.0, 2520, 2590, 0.4 ] ],
+ "skyline": { "_note": "water tower + phone mast seen from the stop (photo 04); drawn as distant silhouettes to the north-west, bearing approximate until Joseph confirms", "tower": [ -620, 3150 ], "mast": [ -560, 3080 ] }
+}

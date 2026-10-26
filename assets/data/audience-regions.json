@@ -1,0 +1,50 @@
+{
+ "_comment": "PLACEHOLDER until real analytics: these values are illustrative, not real audience counts. Joseph: replace 'regions' with country-level aggregate counts from YouTube Studio > Analytics > Audience > Top geographies, then set example:false and source:'youtube-studio'. Never paste per-viewer or private data.",
+ "example": true,
+ "source": "placeholder",
+ "updated": "2026-10-26",
+ "regions": [
+  {
+   "code": "GB",
+   "name": "United Kingdom",
+   "lat": 54,
+   "lon": -2,
+   "value": 100
+  },
+  {
+   "code": "US",
+   "name": "United States",
+   "lat": 39,
+   "lon": -98,
+   "value": 40
+  },
+  {
+   "code": "IE",
+   "name": "Ireland",
+   "lat": 53,
+   "lon": -8,
+   "value": 10
+  },
+  {
+   "code": "DE",
+   "name": "Germany",
+   "lat": 51,
+   "lon": 10,
+   "value": 8
+  },
+  {
+   "code": "NL",
+   "name": "Netherlands",
+   "lat": 52,
+   "lon": 5,
+   "value": 6
+  },
+  {
+   "code": "AU",
+   "name": "Australia",
+   "lat": -25,
+   "lon": 135,
+   "value": 5
+  }
+ ]
+}
