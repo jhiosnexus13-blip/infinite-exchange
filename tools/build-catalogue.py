@@ -23,9 +23,12 @@ def yt(u):
 # Catalogue-driven locations (built in world-fx.js catalogueScreens). Plain neutral keys; private homes are never named or numbered.
 LOCATIONS = {
   'newtown-flats-east': {'lat': 52.624678, 'lon': 1.735020, 'height_m': 12, 'note': 'Above the Beatty Close flats block (east half; the west half already carries the beatty-close-flat screen). Flats model: world-streets.js v57/v60 (e -143..-86, n 2341). No label/name on the building.'},
-  'newtown-park-steps': {'lat': 52.625364, 'lon': 1.735580, 'height_m': 10, 'note': 'Above the steps at the east end of the Newtown Park / Community Centre footpath (world-streets.js v60, e -58.5 n 2416.8).'},
+  'newtown-park-steps': {'lat': 52.625176, 'lon': 1.735524, 'height_m': 10, 'note': 'Above the steps DOWN from the Newtown Park / Community Centre footpath to the lower path (world-v63.js, e -66 n 2412; v63 replaced the v60 stairs up at e -58.5).'},
   'fallen-angels': {'lat': 52.609897, 'lon': 1.736820, 'height_m': 22, 'note': 'Beside the DAM After Dark sign on Fallen Angels, 83 Marine Parade (world-fx.js damSign, 52.609697,1.736920), offset ~22 m north so the logo stays clear. Music placement only: not a licence or partnership.'},
   'gy-train-station': {'lat': 52.612160, 'lon': 1.720886, 'height_m': 12, 'note': 'Great Yarmouth railway station, Acle New Road (NaPTAN 9100YARMTH 52.612160,1.720886; Wikipedia 52.6118,1.7207). Station building itself is not modelled yet.'},
+  'seashore-sign': {'lat': 52.631078, 'lon': 1.739532, 'height_m': 9, 'note': 'Over the Seashore Holiday Park & Seafront sign on North Drive by the Seashore north entrance (OSM node 562733171, 52.631203,1.739301; sign model world-v63.js e205 n3070). Music placement only: not a partnership.'},
+  'jellicoe-bridge-under': {'lat': 52.627643, 'lon': 1.735556, 'height_m': -5.3, 'note': 'Under the Jellicoe Road bridge (OSM ways 231810834/231810835 bridge=yes) on the service lane beneath (OSM way 231810653). Bridge model world-v63.js; screen hangs under the deck (height_m negative = below the default float height).'},
+  'scroby-sands-beach': {'lat': 52.631797, 'lon': 1.742564, 'height_m': 8, 'note': 'North Denes beach opposite the Scroby Sands wind farm (30 turbines modelled from OSM generator:source=wind nodes, world-v63.js).'},
 }
 # Approved placements this batch (Joseph, world wave 26 Oct 2026). Track ids are tracks.json ids.
 PLACEMENTS = {
@@ -33,14 +36,13 @@ PLACEMENTS = {
   'lewi-g': 'newtown-park-steps', 'lewi-g-fr33-pvrty': 'newtown-park-steps',
   'spacexbaby': 'fallen-angels', 'spacexbaby-drum-and-bass-remix': 'fallen-angels', 'spacexbaby-house-remix': 'fallen-angels',
   'kill-me-one-day': 'gy-train-station', 'darkest-parts': 'gy-train-station', 'do-it-alone': 'gy-train-station',
+  # v63 (landmarks now modelled)
+  'last-christmas': 'seashore-sign', 'last-christmas-dnb-mix': 'seashore-sign',
+  'these-streets-done-nuttin-feat-luce-aether': 'jellicoe-bridge-under',
+  'eastern-sunlight': 'scroby-sands-beach', 'big-up-the-eastcoast': 'scroby-sands-beach',
 }
 # Approved but NOT placed: the place is not modelled / not verified in the world code yet (IDs are known).
-DEFERRED = {
-  'last-christmas': 'Approved for the "Seashore Holiday Park & Seafront" sign; the sign is not modelled and its exact spot is unverified.',
-  'last-christmas-dnb-mix': 'Approved for the "Seashore Holiday Park & Seafront" sign; the sign is not modelled and its exact spot is unverified.',
-  'these-streets-done-nuttin-feat-luce-aether': 'Approved for under Jellicoe bridge; no Jellicoe bridge exists in the world code yet and its exact spot is unverified.',
-  'eastern-sunlight': 'Approved for the beach opposite the wind turbines; turbines are not modelled and the exact beach spot is unverified.',
-  'big-up-the-eastcoast': 'Approved for the beach opposite the wind turbines; turbines are not modelled and the exact beach spot is unverified.',
+DEFERRED = {  # v63: all five earlier deferrals are now placed (see PLACEMENTS)
 }
 # Existing world placements (landmark screens built before v62)
 existing = {}
@@ -68,10 +70,10 @@ for t in tracks:
     out.append(e)
 missing = [k for k in list(PLACEMENTS) + list(DEFERRED) if k not in {t['id'] for t in tracks}]
 if missing: sys.exit('unknown track ids: %s' % missing)
-doc = {'version': 62, 'note': 'Central JHIOS music catalogue (v62). YouTube is the playback source; tracks.json stays the player list. worldLocation null = not placed (never guessed). placementStatus: unplaced | placed (built on a branch) | verified (Joseph confirmed). Built by tools/build-catalogue.py.',
+doc = {'version': 63, 'note': 'Central JHIOS music catalogue (v63). YouTube is the playback source; tracks.json stays the player list. worldLocation null = not placed (never guessed). placementStatus: unplaced | placed (built on a branch) | verified (Joseph confirmed). Built by tools/build-catalogue.py.',
        'locations': LOCATIONS, 'tracks': out}
 with open(OUT, 'w') as f: # one track per line: small file, readable diffs
-    f.write('{"version": 62,\n "note": %s,\n "locations": %s,\n "tracks": [\n' % (json.dumps(doc['note'], ensure_ascii=False), json.dumps(LOCATIONS, ensure_ascii=False)))
+    f.write('{"version": 63,\n "note": %s,\n "locations": %s,\n "tracks": [\n' % (json.dumps(doc['note'], ensure_ascii=False), json.dumps(LOCATIONS, ensure_ascii=False)))
     f.write(',\n'.join('  ' + json.dumps(e, ensure_ascii=False, separators=(',', ':')) for e in out)); f.write('\n ]}\n')
 c = {}
 for e in out: c[e['placementStatus']] = c.get(e['placementStatus'], 0) + 1
