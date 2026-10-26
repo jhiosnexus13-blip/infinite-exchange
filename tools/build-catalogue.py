@@ -33,6 +33,10 @@ LOCATIONS = {
   'bure-park-campfire': {'lat': 52.629641, 'lon': 1.725347, 'height_m': 7, 'note': 'Campfire party scaffold in Bure Park (OSM way 200289880, leisure=park), world-v64.js.'},
   'newtown-back-alley': {'lat': 52.62673, 'lon': 1.734821, 'height_m': 6, 'note': 'Plain Newtown back alley (OSM way 231810665, service=alley) with plain fences (world-v64.js). Approximate spot, not a specific property; no names or numbers.'},
   'pembroke-ave-terrace': {'lat': 52.573137, 'lon': 1.713145, 'height_m': 14, 'note': 'Over Pembroke Avenue, Gorleston (OSM way 38689917), above the street centreline; the existing OSM terrace is left plain. No address, name or home label.'},
+  # v65
+  'royal-assembly-rooms': {'lat': 52.599493, 'lon': 1.734612, 'height_m': 16, 'note': 'Royal Assembly Rooms, Albert Square NR30 3JH: the Great Yarmouth Masonic Association hall (public venue; Suffolk/Norfolk PGL listings, visitgreatyarmouth.co.uk; OSM way 176978199). Portico model world-v65.js.'},
+  'assembly-rooms-hatch': {'lat': 52.599413, 'lon': 1.734855, 'height_m': 5, 'note': 'Fictional JHIOS floor hatch beside the Royal Assembly Rooms, plate "JHIOS // VERSIONS OF REALITY · FICTION". Story prop only: not a real facility and not affiliated with CERN.'},
+  'north-denes-beach-campfire': {'lat': 52.627305, 'lon': 1.742710, 'height_m': 8, 'note': 'Beach campfire scaffold on North Denes beach (world-v65.js) for the Dance Of The Ancients album. No lyric captions.'},
   'land-train-north-drive': {'lat': 52.624799, 'lon': 1.738186, 'height_m': 9, 'note': 'Above the land-train route at its North Drive end (world-train.js), the train listening spot.'},
   'scroby-sands-beach': {'lat': 52.631797, 'lon': 1.742564, 'height_m': 8, 'note': 'North Denes beach opposite the Scroby Sands wind farm (30 turbines modelled from OSM generator:source=wind nodes, world-v63.js).'},
 }
@@ -51,13 +55,17 @@ PLACEMENTS = {
   'see-you-on-the-other-side-cover': 'gy-cemetery', 'blood-on-the-mirror': 'gy-cemetery', 'blood-on-the-money': 'gy-cemetery', 'mask-on-mask-off': 'gy-cemetery',
   'nightmare-pool': 'gy-cemetery', 'can-after-can': 'gy-cemetery', 'trauma-doll': 'gy-cemetery', 'children-of-madness': 'gy-cemetery',
   'a-cell-to-rest': 'newtown-back-alley', 'fr33-bird': 'bure-park-campfire', 'luce-aether-s-train': 'land-train-north-drive',
+  # v65
+  'the-great-remembering': 'royal-assembly-rooms', 'cern-versions-of-reality': 'assembly-rooms-hatch', 'brick-your-ears-zip-your-lips': 'bure-park-campfire',
+  # Dance Of The Ancients (album per vault meta), beach campfire, no captions
+  'kamukura-no-kotodama-ii-descent-of-the-kami': 'north-denes-beach-campfire', 'seikilos-i-the-epitaph-flame-mongolian-seikilos': 'north-denes-beach-campfire', 'seikilos-iii-eternal-song': 'north-denes-beach-campfire', 'abwun-dbwashmaya-ii-kingdom-eternal': 'north-denes-beach-campfire', 'ekh-survaljiin-duu-song-of-the-source-i-mongolian-invocation': 'north-denes-beach-campfire', 'enkis-waters-i-abzu-rising-sumerian': 'north-denes-beach-campfire', 'enkis-waters-ii-wisdom-of-ea': 'north-denes-beach-campfire', 'seikilos-ii-the-riddle-of-death': 'north-denes-beach-campfire', 'tyrs-eir-iv-shield-and-fire': 'north-denes-beach-campfire', 'ankh-djed-was-i-life-and-power-egyptian': 'north-denes-beach-campfire', 'ekh-survaljiin-duu-song-of-the-source-ii-eternal-echo': 'north-denes-beach-campfire', 'brigh-an-latha-iii-shadows-depart': 'north-denes-beach-campfire', 'abwun-dbwashmaya-i-heavens-breath-aramaic': 'north-denes-beach-campfire', 'pavamana-mantra-ii-path-of-illusion': 'north-denes-beach-campfire', 'seikilos-iv-dance-of-the-grave': 'north-denes-beach-campfire', 'tyrs-eir-iii-ragnars-call': 'north-denes-beach-campfire', 'brigh-an-latha-i-strength-of-the-day-gaelic': 'north-denes-beach-campfire', 'tyrs-eir-ii-war-of-wires': 'north-denes-beach-campfire', 'kamukura-no-kotodama-i-spirit-of-words-ainu-shinto': 'north-denes-beach-campfire', 'pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation': 'north-denes-beach-campfire', 'tyrs-eir-i-the-blood-oath-norse': 'north-denes-beach-campfire',
   'ios-we-rise': 'pembroke-ave-terrace', 'jhios-we-ride-feat-luce-aether': 'pembroke-ave-terrace',
 }
 # Approved but NOT placed: the place is not modelled / not verified in the world code yet (IDs are known).
 DEFERRED = {  # v64
-  'm7': 'Deferred v64: Joseph gave an old flats block (private; exact location not given, not guessed) and "outside Troll Cart / under Market Gates" (with Rolling Dreams). Troll Cart (OSM 175596035) and Market Gates (OSM 175506393) exist but Rolling Dreams has no ID yet.',
-  'the-great-remembering': 'Deferred v64: Masonic Lodge not found in OSM (local pbf); needs the exact lodge location.',
-  'cern-versions-of-reality': 'Deferred v64: to go with The Great Remembering at the Masonic Lodge (not found in OSM).',
+  'm7': 'Deferred v65: Joseph gave an old flats block (private; location not given, not guessed). Market Gates + Troll Cart are now modelled (world-v65.js) for M7 Rolling Dreams, but no YouTube ID for Rolling Dreams was found in tracks.json, vault meta, the audit CSV or public search.',
+  'higher-realms-rollers-feat-luce-aether': 'Deferred v65: place not given ("confirm place").',
+  'children-of-the-mule': 'Deferred v65: place not given ("confirm").',
   'big-bunda': 'Deferred v64: Fallen Angels area not confirmed by Joseph ("confirm").',
 }
 # Existing world placements (landmark screens built before v62)
@@ -86,10 +94,10 @@ for t in tracks:
     out.append(e)
 missing = [k for k in list(PLACEMENTS) + list(DEFERRED) if k not in {t['id'] for t in tracks}]
 if missing: sys.exit('unknown track ids: %s' % missing)
-doc = {'version': 64, 'note': 'Central JHIOS music catalogue (v64). YouTube is the playback source; tracks.json stays the player list. worldLocation null = not placed (never guessed). placementStatus: unplaced | placed (built on a branch) | verified (Joseph confirmed). Built by tools/build-catalogue.py.',
+doc = {'version': 65, 'note': 'Central JHIOS music catalogue (v65). YouTube is the playback source; tracks.json stays the player list. worldLocation null = not placed (never guessed). placementStatus: unplaced | placed (built on a branch) | verified (Joseph confirmed). Built by tools/build-catalogue.py.',
        'locations': LOCATIONS, 'tracks': out}
 with open(OUT, 'w') as f: # one track per line: small file, readable diffs
-    f.write('{"version": 64,\n "note": %s,\n "locations": %s,\n "tracks": [\n' % (json.dumps(doc['note'], ensure_ascii=False), json.dumps(LOCATIONS, ensure_ascii=False)))
+    f.write('{"version": 65,\n "note": %s,\n "locations": %s,\n "tracks": [\n' % (json.dumps(doc['note'], ensure_ascii=False), json.dumps(LOCATIONS, ensure_ascii=False)))
     f.write(',\n'.join('  ' + json.dumps(e, ensure_ascii=False, separators=(',', ':')) for e in out)); f.write('\n ]}\n')
 c = {}
 for e in out: c[e['placementStatus']] = c.get(e['placementStatus'], 0) + 1
