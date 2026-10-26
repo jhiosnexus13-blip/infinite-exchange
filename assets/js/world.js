@@ -13,7 +13,15 @@ const coarse = matchMedia('(pointer:coarse)').matches;
 const LOW = reduced || /[?&]lq=1/.test(location.search) || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 3;
 document.body.classList.toggle('lq', LOW);
 /* LITE (v33): phones / tablets / low memory get the simplified OSM dataset, 1.5x pixel cap, shorter far plane. ?full=1 forces the full set, ?lite=1 forces lite. */
-const LITE = !/[?&]full=1/.test(location.search) && (/[?&]lite=1/.test(location.search) || (() => { try { return sessionStorage.getItem('jx-lite') === '1'; } catch (_) { return false; } })() || coarse || (navigator.deviceMemory || 8) <= 4 || Math.min(screen.width, screen.height) <= 820);
+/* v80 visitor detail ladder (Joseph t963u), persisted in localStorage 'jx-detail' (URL ?detail=0|1|2 wins, then ?lite=1 / ?full=1):
+   L0 LOOK  = the lite path (simplified OSM set, basic stylised neon/holo lighting; no hardware ray tracing — this is a Three.js raster engine)
+   L1 SOLID = full geometry + solid meshes/collision (desktop default)
+   L2 RICH  = L1 + extra props/street lights, lighter fog (world-v80.js reads window.__detail === 2)
+   No stored choice = the old auto rule (phones / low memory -> L0). */
+const DETAIL = (() => { const q = location.search.match(/[?&]detail=([012])/); if (q) return +q[1]; if (/[?&]lite=1/.test(location.search)) return 0; if (/[?&]full=1/.test(location.search)) return 1;
+  try { const v = localStorage.getItem('jx-detail'); if (v === '0' || v === '1' || v === '2') return +v; if (sessionStorage.getItem('jx-lite') === '1') return 0; } catch (_) {} return null; })();
+const LITE = DETAIL != null ? DETAIL === 0 : (coarse || (navigator.deviceMemory || 8) <= 4 || Math.min(screen.width, screen.height) <= 820);
+window.__detail = DETAIL ?? (LITE ? 0 : 1);
 const werr = m => { try { (window.__werr || console.error)(m); } catch (_) {} };
 const canvas = document.getElementById('scene');
 let renderer;
@@ -25,10 +33,14 @@ function glFallback(e) { try { const d = document.createElement('div'); d.id = '
   d.innerHTML = '<div style="max-width:420px;border:1px solid #00ff9d;border-radius:14px;padding:18px;background:rgba(0,20,14,.9);box-shadow:0 0 24px rgba(0,255,157,.25)"><b style="color:#00ff9d;letter-spacing:.08em">3D WORLD COULD NOT START</b><p>Your browser or device blocked 3D graphics (WebGL). Try lite mode, turn on hardware acceleration, or listen in the vault instead.</p><p style="display:flex;gap:8px;flex-wrap:wrap"><a href="/world?lite=1" style="padding:10px 14px;border:2px solid #00ff9d;border-radius:22px;color:#00ff9d;text-decoration:none">TRY LITE MODE</a><a href="/vault" style="padding:10px 14px;border:2px solid #9d7dff;border-radius:22px;color:#cdbdff;text-decoration:none">OPEN THE VAULT</a><a href="/" style="padding:10px 14px;border:1px solid #445;border-radius:22px;color:#ccd;text-decoration:none">HOME</a></p></div>';
   (document.body ? document.body.appendChild(d) : addEventListener('DOMContentLoaded', () => document.body.appendChild(d))); } catch (_) {} }
 /* v62: visible lite mode: a small chip says when the simplified world is on, with a one-tap switch to full (and back) */
-addEventListener('DOMContentLoaded', () => { try { const c = document.createElement('a'); c.id = 'wlite'; c.href = LITE ? '/world?full=1' : '/world?lite=1';
-  c.textContent = LITE ? 'LITE MODE · tap for full' : 'FULL · lite mode'; c.title = LITE ? 'Simplified world for phones / low memory. Switch to the full world' : 'Switch to the simplified lite world';
-  c.style.cssText = 'position:fixed;left:8px;bottom:calc(var(--player-h,64px) + 26px + env(safe-area-inset-bottom));z-index:24;padding:3px 9px;border-radius:10px;font:600 11px ui-monospace,monospace;letter-spacing:.05em;text-decoration:none;background:rgba(0,10,8,.8);border:1px solid ' + (LITE ? '#ffc84a;color:#ffe7a8' : '#335;color:#99a') + ';opacity:' + (LITE ? '.95' : '.6');
-  c.addEventListener('click', () => { try { if (!LITE) sessionStorage.removeItem('jx-lite'); else sessionStorage.setItem('jx-lite', '0'); } catch (_) {} }); document.body.appendChild(c); } catch (_) {} });
+/* v80: detail chip (replaces the v62 lite chip): L0 LOOK · L1 SOLID · L2 RICH; choice persists, page reloads to rebuild the world */
+addEventListener('DOMContentLoaded', () => { try { const c = document.createElement('div'); c.id = 'wlite'; c.setAttribute('role', 'group'); c.setAttribute('aria-label', 'World detail level');
+  c.style.cssText = 'position:fixed;left:8px;bottom:calc(var(--player-h,64px) + 26px + env(safe-area-inset-bottom));z-index:24;display:flex;gap:2px;padding:2px;border-radius:10px;background:rgba(0,10,8,.82);border:1px solid #2a4a40;font:600 11px ui-monospace,monospace;letter-spacing:.04em';
+  const L = [['L0 LOOK', 'Basic stylised look: simplified world, light on phones (no hardware ray tracing)'], ['L1 SOLID', 'Full geometry with solid buildings and collision'], ['L2 RICH', 'Full world plus extra props, street lights and lighter fog']];
+  L.forEach(([t, ti], i) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.title = ti; const on = window.__detail === i; b.setAttribute('aria-pressed', String(on));
+    b.style.cssText = 'padding:3px 7px;border-radius:8px;border:0;cursor:pointer;font:inherit;' + (on ? 'background:#00ff9d;color:#001a10' : 'background:transparent;color:#9ab');
+    b.addEventListener('click', e => { e.stopPropagation(); if (on) return; try { localStorage.setItem('jx-detail', String(i)); sessionStorage.removeItem('jx-lite'); } catch (_) {} location.href = location.pathname + location.search.replace(/[?&](lite|full|detail)=[012]/g, '').replace(/^&/, '?') + location.hash; });
+    c.appendChild(b); }); c.addEventListener('pointerdown', e => e.stopPropagation()); document.body.appendChild(c); } catch (_) {} });
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); window.__glLost = (window.__glLost || 0) + 1; werr('3D context lost (GPU reset #' + window.__glLost + '), restoring…'); }, false);
 canvas.addEventListener('webglcontextrestored', () => { werr('3D context restored'); setTimeout(() => window.__werr && window.__werr(''), 2500); if (window.__glLost >= 2) { try { sessionStorage.setItem('jx-lite', '1'); } catch (_) {} } }, false);
 const capDPR = () => Math.min(window.devicePixelRatio || 1, LOW ? 1 : (coarse || LITE) ? 1.5 : 2);
@@ -453,14 +465,14 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=79').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=80').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
 /* v58: gamepad (world-gamepad.js) drives the same actions: centre tap = pick(), the same panel / map functions, and the same move/look sums as the touch sticks */
 let pad = { mx: 0, my: 0, lx: 0, ly: 0, sprint: false, poll() { return this; } };
 const nearScreens = () => { const v = new THREE.Vector3(), out = []; for (const o of clickables) { if (o.visible === false || (o.parent && o.parent.visible === false)) continue; o.getWorldPosition(v); const d = Math.hypot(v.x - player.pos.x, v.z - player.pos.z); if (d < 40 && d > 1) out.push({ o, x: v.x, y: v.y, z: v.z, a: Math.atan2(-(v.x - player.pos.x), -(v.z - player.pos.z)) }); } return out.sort((p, q) => p.a - q.a); };
-Promise.all([import('./world-gamepad.js?v=79'), import('./world-ui.js?v=79')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+Promise.all([import('./world-gamepad.js?v=80'), import('./world-ui.js?v=80')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
   pad = m.initGamepad({ ui, pickCentre: h => !!pick(...ctr(), h), peekCentre: () => { if (window.__mapOpen) return null; const h = hitAt(...ctr()); if (!h) return null; const u = h.object.userData, t = u.track && window.JX && JX.tracks.find(x => x.id === u.track);
       return { hit: h, label: u.track ? 'PLAY TRACK' + (t || u.title ? ' · ' + (t ? t.title : u.title) : '') : u.popup ? 'OPEN · ' + (u.title || 'panel') : u.link ? 'OPEN LINK · ' + (u.title || u.label || 'link') : u.lane ? 'PLAY LANE · ' + u.lane : 'USE' }; }, openPanel,
   openMap: () => window.__world.openMap && window.__world.openMap(), closeMap: () => window.__world.closeMap && window.__world.closeMap(), nearScreens,

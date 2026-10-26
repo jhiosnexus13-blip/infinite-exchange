@@ -31,7 +31,7 @@ export function initV77(o) {
   const settle = (k, x, z) => { const d = DECKS[k]; if (!d) return; let n = 0; const t = setInterval(() => { const p = fx.lastJump; const pl = P();
       if (pl && pl.pos && (Math.abs(pl.pos.x - x) > 2.5 || Math.abs(pl.pos.z - z) > 2.5)) { pl.pos.x = x; pl.pos.z = z; pl.yaw = Math.atan2(-(d.sea[0] - x), -(d.sea[1] - z)); }
       if (++n > 8) clearInterval(t); }, 180); };
-  const SPOT = { britannia_pier: [195, -511], wellington_pier: [72, 488] };
+  const SPOT = { britannia_pier: [250, -511], wellington_pier: [112, 488] }; // v80: seaward ON the plank deck, past the root buildings (must match world-fx PJ)
   document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.wmap-jumps [data-jump]'); if (!b) return; const k = b.dataset.jump, before = fx.lastJump && fx.lastJump.join();
     if (SPOT[k]) settle(k, ...SPOT[k]);
     setTimeout(() => { if ((fx.lastJump && fx.lastJump.join()) === before) { const nb = document.querySelector(`.wmap-jumps [data-jump="${k}"]`); if (nb && !nb.dataset.r77) { nb.dataset.r77 = '1'; fx.jBusy = 0; fx.jumpToast && fx.jumpToast(true); nb.click(); setTimeout(() => { delete nb.dataset.r77; }, 1500); } } }, 900); // first-click no-op retry
@@ -61,6 +61,6 @@ export function initV77(o) {
     for (let i = 0; i < 9; i++) { const e = -88 + i * 7 + (i % 2) * 2, n = 2246 - (i % 3) * 2.5, p = at(e, n), h = 3.6 + (i % 3); cyl(0x5a3d22, 0.18, 0.25, h, p.x, h / 2 + 1, p.z, 6); const cr = new T.Mesh(new T.SphereGeometry(2 + (i % 2) * 0.6, 8, 6), M(0x2f6a2a)); cr.position.set(p.x, h + 2, p.z); grp.add(cr); }
     const BN = 2236, BE = -60; bx(0x5a5f66, 9, 0.6, 16, BE, BN, 3.4); bx(0x3a3d42, 5, 0.06, 16, BE, BN, 3.73); for (const s2 of [-1, 1]) { bx(0xa9a49a, 2, 0.18, 16, BE + s2 * 3.5, BN, 3.79); bx(0xb7b2a8, 0.3, 1.0, 16, BE + s2 * 4.4, BN, 4.2); }
     for (const s2 of [-1, 1]) bx(0x9c8f7e, 9.6, 3.2, 1.2, BE, BN + s2 * 8, 1.6);
-    const lb = o.LBL && o.LBL('BARNARD BRIDGE', '#c9d2da', 0.9); if (lb) { const p = at(BE, BN); lb.position.set(p.x, 6, p.z); grp.add(lb); } info.fixes.push('barnard-bank-bridge'); }
+    const lb = o.LBL && o.LBL('BARNARD BRIDGE', '#c9d2da', 1.1); if (lb) { const p = at(BE, BN); lb.position.set(p.x, 8.5, p.z); lb.renderOrder = 5; lb.material.depthTest = false; /* v80: full label clear of the deck/bank (scouts read BARNAR) */ grp.add(lb); } info.fixes.push('barnard-bank-bridge'); }
   fx.v77Info = info; return { info };
 }
