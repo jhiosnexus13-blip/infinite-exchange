@@ -23,9 +23,9 @@ export function initV80(o) {
       acc = Math.max(0, (acc - L) % every); if (acc <= 0) acc += every; }
   };
   const pairs = a => { const o = []; for (let i = 0; i + 1 < a.length; i += 2) o.push([a[i], a[i + 1]]); return o; };
-  fetch('/assets/data/newtown-extra.json?v=80').then(r => r.json()).then(X => { const r = X.north_denes_road && X.north_denes_road.road; if (r && r.length) { paint('North Denes Road', r); info.fixes.push('road:North Denes Road'); } }).catch(e => console.warn('v80 roads', e));
-  fetch('/assets/data/newtown-streets.json?v=80').then(r => r.json()).then(X => { for (const [name, segs] of Object.entries(X.roads || {})) for (const s of segs) paint(name, pairs(s), 0.11, 70); info.fixes.push('road:newtown'); }).catch(e => console.warn('v80 roads', e));
-  fetch('/assets/data/yarmouth-geo' + (LITE ? '-lite' : '') + '.json?v=80').then(r => r.json()).then(G => { const gm = G.golden_mile; if (!gm) return; // Marine Parade = the seafront road between the piers (n ≈ -490 … +520)
+  fetch('/assets/data/newtown-extra.json?v=81').then(r => r.json()).then(X => { const r = X.north_denes_road && X.north_denes_road.road; if (r && r.length) { paint('North Denes Road', r); info.fixes.push('road:North Denes Road'); } }).catch(e => console.warn('v80 roads', e));
+  fetch('/assets/data/newtown-streets.json?v=81').then(r => r.json()).then(X => { for (const [name, segs] of Object.entries(X.roads || {})) for (const s of segs) paint(name, pairs(s), 0.11, 70); info.fixes.push('road:newtown'); }).catch(e => console.warn('v80 roads', e));
+  fetch('/assets/data/yarmouth-geo' + (LITE ? '-lite' : '') + '.json?v=81').then(r => r.json()).then(G => { const gm = G.golden_mile; if (!gm) return; // Marine Parade = the seafront road between the piers (n ≈ -490 … +520)
     const mp = pairs(gm.coords).filter(p => p[1] > -490 && p[1] < 520); if (mp.length > 1) { paint('Marine Parade', mp, 0.12, 110); info.fixes.push('road:Marine Parade'); } }).catch(e => console.warn('v80 roads', e));
   paint('Jellicoe Road', [[-70.5, 2689.6], [-57.5, 2689.6]], 6.47, 9); // on the v63 Jellicoe bridge deck (DT 6.4)
   // ---- 2: Barnard Bridge (world-v77: BE -60, BN 2236, 9 m wide, 16 m long along n, road top ~3.76) walkable + south-bank join ----
@@ -57,6 +57,6 @@ export function initV80(o) {
   { let n = 0; const yd = () => { let k = 0; for (const c of fx.clusters || []) { const p = c.grp.position; if (Math.hypot(p.x + 66, p.z + 2380) < 70 && !c.grp.userData.v80) { c.grp.userData.v80 = 1; c.grp.position.y += 9; c.grp.position.z -= 14; c.grp.scale.setScalar(0.75); k++; } }
       info.youthDeclutter = (info.youthDeclutter || 0) + k; if (++n < 20) setTimeout(yd, 1500); }; setTimeout(yd, 2000); }
   // ---- 7: people, boats, arcade glow ----
-  let npc = null; import('./world-v80-npc.js?v=80').then(m => { npc = m.initNpc(o); info.npc = npc.info; }).catch(e => console.warn('v80 npc', e));
+  let npc = null; import('./world-v80-npc.js?v=81').then(m => { npc = m.initNpc(o); info.npc = npc.info; }).catch(e => console.warn('v80 npc', e));
   fx.v80Info = info; return { info, update(t, dt) { if (npc) npc.update(t, dt); } };
 }
