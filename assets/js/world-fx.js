@@ -719,11 +719,11 @@ function landing(k) { const L = fx.landmarks[k], t = L.pos, ty = L.fy || 10, C =
   const [x, z] = openNear(t.x - 25, t.z + 50); return [x, z, false]; }
 // v79: high-contrast JUMPING… overlay, shown before any heavy work, held >=1.6 s or until landing (whichever is later)
 function jumpToast(on) { let t = fx.jt; if (!t) { t = fx.jt = document.createElement('div'); t.className = 'wjump'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'assertive'); t.innerHTML = '<span class="wjump-sp" aria-hidden="true"></span>JUMPING…'; document.body.appendChild(t); }
-  if (on) { clearTimeout(fx.jtT); t.classList.add('on'); fx.jtUntil = performance.now() + 1600; }
+  if (on) { clearTimeout(fx.jtT); clearTimeout(fx.jtMax); t.classList.add('on'); fx.jtUntil = performance.now() + 1600; fx.jtMax = setTimeout(() => t.classList.remove('on'), 2600); } // hard cap: never hangs, even if a jump fails
   else { clearTimeout(fx.jtT); fx.jtT = setTimeout(() => t.classList.remove('on'), Math.max(0, (fx.jtUntil || 0) - performance.now())); } }
 fx.jumpToast = jumpToast;
 function jumpStart() { const now = performance.now(); if (fx.jBusy && now - fx.jBusy < 700) return false; fx.jBusy = now; jumpToast(true); closeMap(); return true; }
-function teleport(x, z, face, raw) { if (!fx.jPre && !jumpStart()) return; fx.jPre = 0; setTimeout(() => teleport0(x, z, face, raw), 40); } // paint toast + closed map first
+function teleport(x, z, face, raw) { if (!fx.jPre && !jumpStart()) return; fx.jPre = 0; setTimeout(() => { try { teleport0(x, z, face, raw); } catch (e) { console.warn('jump failed', e); jumpToast(false); } }, 40); } // paint toast + closed map first
 function teleport0(x, z, face, raw) { // raw (v73): exact deck spot (piers over water/sea), skip the inland clamp + open-ground spiral
   x = Math.max(MB.x0 + 5, Math.min(MB.x1 - 5, x)); z = Math.max(MB.z0 + 5, Math.min(MB.z1 - 5, z)); if (!raw) { x = landX(x, z); [x, z] = openNear(x, z); }
   const M = fx.bm; M.fade.classList.remove('on'); void M.fade.offsetWidth; M.fade.classList.add('on');
@@ -731,7 +731,7 @@ function teleport0(x, z, face, raw) { // raw (v73): exact deck spot (piers over 
 }
 function jumpTo(k) { if (!jumpStart()) return; fx.jPre = 1; try { return jumpTo0(k); } finally { if (fx.jPre) { fx.jPre = 0; jumpToast(false); } } }
 function jumpTo0(k) {
-  const PJ = { britannia_pier: [195, -511, [320, -511], true], wellington_pier: [72, 488, [190, 488], true], youth_centre: [-66, -2380, [-66, -2412], true], lodge: [-140, 443, [-128, 443], true] }; if (PJ[k]) return teleport(...PJ[k]); // v76: pier decks fixed up front (first jump no longer races the v69 extraJumps load)
+  const PJ = { britannia_pier: [195, -511, [320, -511], true], wellington_pier: [72, 488, [190, 488], true], youth_centre: [-66, -2380, [-66, -2412], true], lodge: [-140, 443, [-128, 443], true], the_stack: [153, -285, [156, -288], true] }; // v79: STACK hatch fixed (no extraJumps/openNear dependency) if (PJ[k]) return teleport(...PJ[k]); // v76: pier decks fixed up front (first jump no longer races the v69 extraJumps load)
   if (fx.extraJumps && fx.extraJumps[k]) { const [x, z, f, raw] = fx.extraJumps[k]; return teleport(x, z, f, raw); }
   if (k === 'plaza') { const [px, pz] = PZ(); return teleport(px, pz + 22, [px, pz - 6]); }
   const L = fx.landmarks && fx.landmarks[k]; if (!L) return; const t = [L.pos.x, L.pos.z];
