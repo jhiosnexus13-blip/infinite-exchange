@@ -35,7 +35,7 @@ LOCATIONS = {
   'pembroke-ave-terrace': {'lat': 52.573137, 'lon': 1.713145, 'height_m': 14, 'note': 'Over Pembroke Avenue, Gorleston (OSM way 38689917), above the street centreline; the existing OSM terrace is left plain. No address, name or home label.'},
   # v65
   'royal-assembly-rooms': {'lat': 52.599493, 'lon': 1.734612, 'height_m': 16, 'note': 'Royal Assembly Rooms, Albert Square NR30 3JH: the Great Yarmouth Masonic Association hall (public venue; Suffolk/Norfolk PGL listings, visitgreatyarmouth.co.uk; OSM way 176978199). Portico model world-v65.js.'},
-  'assembly-rooms-hatch': {'lat': 52.599413, 'lon': 1.734855, 'height_m': 5, 'note': 'Fictional JHIOS floor hatch beside the Royal Assembly Rooms, plate "JHIOS // VERSIONS OF REALITY · FICTION". Story prop only: not a real facility and not affiliated with CERN.'},
+  'assembly-rooms-hatch': {'lat': 52.599305, 'lon': 1.73484, 'height_m': 5, 'note': 'Fictional JHIOS floor hatch beside the Royal Assembly Rooms, plate "JHIOS // VERSIONS OF REALITY · FICTION". Story prop only: not a real facility and not affiliated with CERN.'},
   'north-denes-beach-campfire': {'lat': 52.627305, 'lon': 1.742710, 'height_m': 8, 'note': 'Beach campfire scaffold on North Denes beach (world-v65.js) for the Dance Of The Ancients album. No lyric captions.'},
   'land-train-north-drive': {'lat': 52.624799, 'lon': 1.738186, 'height_m': 9, 'note': 'Above the land-train route at its North Drive end (world-train.js), the train listening spot.'},
   'scroby-sands-beach': {'lat': 52.631797, 'lon': 1.742564, 'height_m': 8, 'note': 'North Denes beach opposite the Scroby Sands wind farm (30 turbines modelled from OSM generator:source=wind nodes, world-v63.js).'},
