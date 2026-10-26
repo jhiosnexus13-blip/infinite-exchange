@@ -62,3 +62,6 @@ body.touch .wcredits{font-size:.5rem;opacity:.8}
 /* v73: day/night + weather chip sit BELOW the minimap so a plain minimap click always opens the jump map */
 #wxhud{top:calc(env(safe-area-inset-top) + 10.5rem)!important}
 @media (max-width:640px){#wxhud{top:calc(env(safe-area-inset-top) + 12.2rem)!important}}
+/* v75: hint strip reads at a glance (M for jump map) */
+#hint{font-size:.9rem;color:#e8fff4;background:rgba(0,14,10,.88)!important;border:1px solid #00ff9d88}
+#hint b{color:#00ff9d}
