@@ -58,5 +58,12 @@ export function initV77(o) {
   { let n = 0; const hb = () => { const hs = fx.harbourSpawn; if (!hs) { if (++n < 30) setTimeout(hb, 1000); return; } let k = 0;
       for (const c of fx.clusters || []) if (c.grp && Math.hypot(c.grp.position.x - hs[0], c.grp.position.z - hs[1]) < 120) { c.grp.scale.setScalar(0.6); c.grp.traverse(m => { if ((m.isLine || m.isLineSegments) && m.material) { m.material.transparent = true; m.material.opacity = 0.3; } }); k++; }
       info.harbourDemoted = k; if (!k && ++n < 30) setTimeout(hb, 1000); }; setTimeout(hb, 1500); info.fixes.push('harbour-demote'); }
+  // ---- P1.5: Barnard Field south: grassy tree bank meeting Barnard Bridge (road + pavements both sides); field loop CE=-60 CN=2280 RN=14 ----
+  { const at = (e, n) => warp(e, n), bx = (c, w, h, d, e, n, y) => { const p = at(e, n); return box(c, w, h, d, p.x, y, p.z); };
+    for (let k = 0; k < 4; k++) bx(0x5f8a3e, 60, 0.8 + k * 0.7, 3, -60, 2252 - k * 3, (0.8 + k * 0.7) / 2); // stepped grass bank, rising south
+    for (let i = 0; i < 9; i++) { const e = -88 + i * 7 + (i % 2) * 2, n = 2246 - (i % 3) * 2.5, p = at(e, n), h = 3.6 + (i % 3); cyl(0x5a3d22, 0.18, 0.25, h, p.x, h / 2 + 1, p.z, 6); const cr = new T.Mesh(new T.SphereGeometry(2 + (i % 2) * 0.6, 8, 6), M(0x2f6a2a)); cr.position.set(p.x, h + 2, p.z); grp.add(cr); }
+    const BN = 2236, BE = -60; bx(0x5a5f66, 9, 0.6, 16, BE, BN, 3.4); bx(0x3a3d42, 5, 0.06, 16, BE, BN, 3.73); for (const s2 of [-1, 1]) { bx(0xa9a49a, 2, 0.18, 16, BE + s2 * 3.5, BN, 3.79); bx(0xb7b2a8, 0.3, 1.0, 16, BE + s2 * 4.4, BN, 4.2); }
+    for (const s2 of [-1, 1]) bx(0x9c8f7e, 9.6, 3.2, 1.2, BE, BN + s2 * 8, 1.6);
+    const lb = o.LBL && o.LBL('BARNARD BRIDGE', '#c9d2da', 0.9); if (lb) { const p = at(BE, BN); lb.position.set(p.x, 6, p.z); grp.add(lb); } info.fixes.push('barnard-bank-bridge'); }
   fx.v77Info = info; return { info };
 }
