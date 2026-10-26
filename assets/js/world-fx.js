@@ -723,6 +723,7 @@ function teleport(x, z, face, raw) { // raw (v73): exact deck spot (piers over w
   closeMap(); setTimeout(() => { P.pos.set(x, P.pos.y, z); if (face) { P.yaw = Math.atan2(-(face[0] - x), -(face[1] - z)); P.pitch = 0.12; } fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }, 180);
 }
 function jumpTo(k) {
+  const PJ = { britannia_pier: [195, -511, [320, -511], true], wellington_pier: [72, 488, [190, 488], true], youth_centre: [-66, -2380, [-66, -2412], true], lodge: [-92, 447.5, [-125, 447.5], true] }; if (PJ[k]) return teleport(...PJ[k]); // v76: pier decks fixed up front (first jump no longer races the v69 extraJumps load)
   if (fx.extraJumps && fx.extraJumps[k]) { const [x, z, f, raw] = fx.extraJumps[k]; return teleport(x, z, f, raw); }
   if (k === 'plaza') { const [px, pz] = PZ(); return teleport(px, pz + 22, [px, pz - 6]); }
   const L = fx.landmarks && fx.landmarks[k]; if (!L) return; const t = [L.pos.x, L.pos.z];
