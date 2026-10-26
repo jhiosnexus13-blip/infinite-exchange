@@ -59,3 +59,6 @@ body.touch .wcredits{font-size:.5rem;opacity:.8}
 .wfade.on{animation:wglitch .55s steps(6) forwards}
 @keyframes wglitch{0%{opacity:0;transform:translateX(0)}20%{opacity:1;transform:translateX(-8px)}45%{opacity:1;transform:translateX(6px) skewX(4deg)}70%{opacity:.7;transform:translateX(-3px)}100%{opacity:0;transform:none}}
 @media (prefers-reduced-motion:reduce){.wfade.on{animation:wfade .4s forwards}@keyframes wfade{0%,100%{opacity:0}40%{opacity:1}}}
+/* v73: day/night + weather chip sit BELOW the minimap so a plain minimap click always opens the jump map */
+#wxhud{top:calc(env(safe-area-inset-top) + 10.5rem)!important}
+@media (max-width:640px){#wxhud{top:calc(env(safe-area-inset-top) + 12.2rem)!important}}

@@ -121,7 +121,7 @@ export function initTrain(o) {
   function exitAt(s) { st.riding = false; st.hop = false; st.mode = 'dwell'; st.wait = 6; st.v = 0; let x, z;
     if (s) { x = s.x + s.nx * 3; z = s.z + s.nz * 3; } else { at(st.s, tmp); let nx = -tmp.dz, nz = tmp.dx; if (nx > 0) { nx = -nx; nz = -nz; } x = tmp.x + nx * 7; z = tmp.z + nz * 7; }
     [x, z] = openNear(x, z); P.pos.set(x, 1.7, z); P.pitch = 0; st.lastSet = null; fx.cullT = 0; }
-  function walkTo(s) { const [x, z] = openNear(s.x + s.nx * 4, s.z + s.nz * 4); P.pos.set(x, 1.7, z); P.yaw = Math.atan2(-(s.rx - x), -(s.rz - z)); P.pitch = 0.05; fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }
+  function walkTo(s) { const hs = s.k === 'harbour_mouth' && fx.harbourSpawn; if (hs) { P.pos.set(hs[0], 1.7 + 2.6, hs[1]); P.yaw = Math.atan2(-(hs[2][0] - hs[0]), -(hs[2][1] - hs[1])); P.pitch = 0.05; fx.cullT = 0; fx.lastJump = [+hs[0].toFixed(1), +hs[1].toFixed(1)]; return; } /* v73: Harbour Mouth stop lands on the South Pier deck */ const [x, z] = openNear(s.x + s.nx * 4, s.z + s.nz * 4); P.pos.set(x, 1.7, z); P.yaw = Math.atan2(-(s.rx - x), -(s.rz - z)); P.pitch = 0.05; fx.cullT = 0; fx.lastJump = [+x.toFixed(1), +z.toFixed(1)]; }
   const seat = {}; let camInit = false;
   function place(dt = 0, t = 0) { const sS = st.s - st.dir * (CARS[0][0] + GAP + 1.0); at(sS, tmp); // front bench of the first open carriage
     const side = (-tmp.dz * st.dir) * 0 + 1, nx = -tmp.dz * st.dir, nz = tmp.dx * st.dir, sea = nx > 0 ? 1 : -1; // nudge 0.5 m toward the sea side of the bench

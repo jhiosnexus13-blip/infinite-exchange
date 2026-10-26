@@ -75,7 +75,7 @@ export function initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P: PL }) {
   /* ---------- Globe: example audience pins + glow + panels ---------- */
   let regions = [], example = true; const GB = window.__globe; let halo = null;
   if (GB) { const pins = new T.Group(); GB.globe.add(pins); halo = new T.Mesh(new T.SphereGeometry(GB.R * 1.08, 24, 16), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.03, depthWrite: false, side: T.BackSide })); GB.globe.add(halo);
-    fetch('/assets/data/audience-regions.json', { cache: 'no-store' }).then(r => (r.ok ? r.json() : Promise.reject())).catch(() => fetch('/assets/data/audience-regions.example.json?v=72').then(r => r.json())).then(d => {
+    fetch('/assets/data/audience-regions.json', { cache: 'no-store' }).then(r => (r.ok ? r.json() : Promise.reject())).catch(() => fetch('/assets/data/audience-regions.example.json?v=73').then(r => r.json())).then(d => {
       example = !!d.example; regions = (d.regions || []).filter(r => isFinite(r.lat) && isFinite(r.lon) && r.value > 0).sort((a, b) => b.value - a.value); const max = regions[0] ? regions[0].value : 1;
       for (const r of regions) { const s = 0.1 + 0.25 * Math.sqrt(r.value / max), m = new T.Mesh(new T.OctahedronGeometry(s), new T.MeshBasicMaterial({ color: 0xffb347 })); m.position.copy(GB.toVec(r.lat, r.lon, GB.R + 0.25)); pins.add(m); }
       if (example && LBL) { try { const l = LBL('PLACEHOLDER DATA · REAL ANALYTICS PENDING', '#ffb347'); if (l) { l.scale.multiplyScalar(0.3); l.position.set(GB.globe.position.x, 1.4, GB.globe.position.z + 5.5); S.add(l); } } catch {} } }).catch(() => {}); }
@@ -143,7 +143,7 @@ export function initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P: PL }) {
     <p class="m">Status: built (panel). Deeper rooms: vision.</p>`); }
   /* ---------- proximity action button ---------- */
   const act = el('<div class="v66b" id="v66act"></div>'); document.body.appendChild(act); let cur = null;
-  const spots = () => [GB && { id: 'globe', p: GB.globe.position, r: 16, t: 'PLAZA GLOBE · regions / names / requests', f: () => globePanel() }, { id: 'arcade', p: ARC, r: 9, t: 'JHIOS ARCADE · PLAY', f: arcadePanel }, { id: 'stack', p: HP, r: 4.5, t: 'OPEN THE STACK', f: stackPanel }].filter(Boolean);
+  const spots = () => [GB && { id: 'globe', p: GB.globe.position, r: 16, t: 'PLAZA GLOBE · regions / names / requests', f: () => globePanel() }, { id: 'arcade', p: ARC, r: 9, t: 'JHIOS ARCADE · PLAY', f: arcadePanel }, { id: 'stack', p: HP, r: 7, t: 'OPEN THE STACK', f: stackPanel }].filter(Boolean);
   act.onclick = () => cur && cur.f();
   addEventListener('keydown', e => { if (e.code !== 'KeyF' || !cur || st.open) return; const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return; cur.f(); });
   let acc = 0;

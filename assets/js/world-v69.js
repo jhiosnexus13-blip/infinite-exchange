@@ -104,7 +104,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hid = new T.MeshBasicMaterial({ visible: false }); city.traverse(o => { if (o.isMesh) { o.material = hid; n++; } else if (o.isLineSegments && o.material) { o.material.opacity = 0.35; } }); info.slabsHidden = n; };
   const step = () => { try { const end = Math.min(B.length, bi + (LITE ? 500 : 1200)); for (; bi < end; bi++) one(B[bi][0], B[bi][1]); if (bi < B.length) return setTimeout(step, 0); for (const t of skinTiles.values()) flushTile(t); info.skinsDone = true; hideSlabs(); } catch (e) { console.warn('v69 skins', e); } };
   let BD = null; const beattyCol = (e, n) => { if (!BD || e < -262 || e > -185 || n < 2500 || n > 2660) return null; const L = e > -222.5 ? BD.terraceEast : BD.terraceWest; const t = (L || []).find(t => n >= t.n0 && n < t.n1); return t ? new T.Color(t.col).getHex() : null; };
-  fetch('/assets/data/beatty-bottom.json?v=72').then(r => r.json()).then(d => { BD = d; }).catch(() => {}).finally(() => setTimeout(step, 50));
+  fetch('/assets/data/beatty-bottom.json?v=73').then(r => r.json()).then(d => { BD = d; }).catch(() => {}).finally(() => setTimeout(step, 50));
   // Newtown fillers + Chaucer/Sturdee shells: swap their flat colours for the facade shader (keeps their colour, adds windows/doors/grime)
   const reskinNT = (tries = 0) => { const ng = S.getObjectByName('newtown-streets'); if (!ng) return tries < 30 && setTimeout(() => reskinNT(tries + 1), 1000); let sw = 0; ng.traverse(o => { if (!o.isMesh || !o.material || !o.material.color) return; const hx = o.material.color.getHex();
       if ([0x8a4e34, 0xa2432b, 0xece4cf, 0xc9d6bf].includes(hx)) { o.material = facade({ color: hx }); sw++; } }); info.newtownReskinned = sw; }; setTimeout(reskinNT, 1500);
@@ -144,9 +144,29 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hb = new T.Mesh(new T.CylinderGeometry(1.2, 4.6, 40, 24, 1, true), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.18, depthWrite: false, side: T.DoubleSide, toneMapped: false })); hb.position.set(156, 20, -288); grp.add(hb);
     const hc = new T.Mesh(new T.CylinderGeometry(0.35, 0.35, 70, 12, 1, true), new T.MeshBasicMaterial({ color: 0x9dffd8, transparent: true, opacity: 0.45, depthWrite: false, toneMapped: false })); hc.position.set(156, 35, -288); grp.add(hc); } // v70: bigger plate/ring + tall light column so scouts spot the hatch
   { const [e, n] = loc(52.604471, 1.736196); AB(0xe7dcc6, 20, 36, 26, e - 4, n, 18); AB(0x4b4f55, 21, 0.8, 27, e - 4, n, 36.4); for (let y = 4; y < 35; y += 3.2) AB(0x2a2f38, 0.3, 1.6, 22, e + 6.1, n, y); } // v70: solid Tower slab to the full landmark height so the cyan wire never reads as the building
-  for (const [lat, lon, dir] of [[52.5730187, 1.7396790, 1], [52.5721123, 1.7381010, -1]]) { const [e, n] = loc(lat, lon); // v70 Harbour Mouth: concrete quay arms west from each pier-head light, kerb, bollards, lamp posts
-    AB(0x8f8c84, 70, 2.2, 9, e - 35, n + dir * 2, 1.1); AB(0x5d5a55, 70, 0.3, 0.5, e - 35, n + dir * 2 - dir * 4.4, 2.35); for (let i = 0; i < 11; i++) { CY(0x1d1f22, 0.32, 0.38, 0.8, e - 4 - i * 6.3, n + dir * 2 - dir * 3.6, 2.6, 8); }
-    for (let i = 0; i < 4; i++) { AB(0x9aa0a6, 0.18, 6, 0.18, e - 8 - i * 18, n + dir * 5.5, 5.2); AB(0xfff2c0, 0.6, 0.3, 0.6, e - 8 - i * 18, n + dir * 5.5, 8.3); } }
+  { // v73 Harbour Mouth (gy-real-refs/harbour-mouth-REAL-WORLD-ADJUST.md P1-P7): two concrete pier arms west of the real pier-head light lat/lons, deck top Y=2.6 m (well above the river/teal),
+    // 10 m wide, round South Pier head, rock armour on the seaward (south) side, coping, black bollards every 15 m, tubular rails, orange lifebuoys, red South Pier light tower, North Pier light.
+    const DY = 2.6, W = 10, LEN = 130, hm = { decks: [] };
+    const wet = new T.Mesh(new T.PlaneGeometry(1, 1), new T.MeshBasicMaterial({ color: 0x3d5148, polygonOffset: true, polygonOffsetFactor: -2 })); // grey-green water demotes the teal to a glow under the piers
+    for (const [lat, lon, dir, nm] of [[52.5730187, 1.7396790, 1, 'north'], [52.5721123, 1.7381010, -1, 'south']]) { const [e, n] = loc(lat, lon); const c = n + dir * 2, ch = c - dir * (W / 2 - 0.6), out = c + dir * (W / 2 - 0.4); // ch = channel edge, out = outer edge
+      AB(0x8f8c84, LEN, DY + 1.2, W, e - LEN / 2, c, (DY - 1.2) / 2); AB(0xa9a69e, LEN, 0.35, 0.9, e - LEN / 2, ch, DY + 0.17); // deck slab + bright coping kerb on the channel edge
+      for (let i = 0; i < 9; i++) AB(0x6f6c66, 6 + (i % 3) * 3, 0.03, 3 + (i % 2) * 2, e - 10 - i * 13, c + (i % 2 ? 1.5 : -1.5), DY + 0.02); // darker wet patches / puddles
+      for (let i = 0; i * 15 < LEN - 5; i++) { CY(0x15171a, 0.3, 0.38, 0.75, e - 6 - i * 15, ch + dir * 0.9, DY + 0.38, 8); CY(0x15171a, 0.42, 0.42, 0.12, e - 6 - i * 15, ch + dir * 0.9, DY + 0.8, 8); } // black cast-iron bollards
+      for (let x = 0; x < LEN; x += 3) AB(0xd9dcde, 0.08, 1.05, 0.08, e - x, out, DY + 0.52); AB(0xd9dcde, LEN, 0.08, 0.08, e - LEN / 2, out, DY + 1.05); AB(0xd9dcde, LEN, 0.07, 0.07, e - LEN / 2, out, DY + 0.55); // tubular rail (outer edge)
+      if (nm === 'south') { CY(0x8f8c84, 7, 7.4, DY + 1.2, e, c, (DY - 1.2) / 2, 32); CY(0xa9a69e, 7.1, 7.1, 0.35, e, c, DY + 0.17, 32); // round pier head
+        for (let i = 0; i < 22; i++) { const r = 1.2 + (i * 37 % 10) / 10; AB(0x6e6f6c, r * 2, r * 1.4, r * 1.8, e - 4 - i * 6, c - W / 2 - 1.8 - (i % 2), 0.6, i * 0.7); } // grey rock armour (seaward)
+        CY(0xc22a2a, 1.3, 1.6, 9, e + 2, c + 1, DY + 4.5, 12); CY(0x2b2f35, 1.6, 1.6, 0.4, e + 2, c + 1, DY + 9.2, 12); CY(0xffe2a0, 0.9, 0.9, 1.4, e + 2, c + 1, DY + 10.1, 12); CY(0xc22a2a, 0, 1.3, 1.2, e + 2, c + 1, DY + 11.4, 12); // red light tower + lantern
+        for (const k of [0, 1]) { const x = e - 18 - k * 34; AB(0x9aa0a6, 0.12, 1.6, 0.12, x, out - dir * 0.4, DY + 0.8); const lb = new T.Mesh(new T.TorusGeometry(0.4, 0.12, 6, 16), new T.MeshBasicMaterial({ color: 0xff7a1a })); const w = warp(x, out - dir * 0.55); lb.position.set(w.x, DY + 1.3, w.z); grp.add(lb); } // orange lifebuoys on posts
+        AB(0x2e2a26, 4, 2.6, 3.4, e - 30, out - dir * 3, DY + 2.4); for (const dx of [-1.6, 1.6]) AB(0x3a3029, 0.3, 1.2, 0.3, e - 30 + dx, out - dir * 3, DY + 0.6); } // coastguard lookout box on timber stilts
+      else { CY(0x8f8c84, 5, 5.4, DY + 1.2, e, c, (DY - 1.2) / 2, 24); CY(0xeeeeea, 1.1, 1.4, 7, e, c, DY + 3.5, 12); CY(0x2fa05a, 1.2, 1.2, 1.2, e, c, DY + 7.6, 12); } // North Pier head + light
+      const a = warp(e - LEN, c - W / 2), b = warp(e + 1, c + W / 2), hw = warp(e, c); hm.decks.push({ x0: Math.min(a.x, b.x), x1: Math.max(a.x, b.x), z0: Math.min(a.z, b.z), z1: Math.max(a.z, b.z), hx: hw.x, hz: hw.z, hr: nm === 'south' ? 7 : 5 });
+      for (let x = 0; x <= LEN; x += 7) { const w = warp(e - x, c); (fx.clear || (fx.clear = [])).push([w.x, w.z, W / 2 + 0.5]); } // deck is walkable over the river collider
+      hm[nm] = { e, n: c, x: hw.x, z: hw.z }; }
+    { const w = warp((hm.north.e + hm.south.e) / 2 - 40, (hm.north.n + hm.south.n) / 2); wet.scale.set(260, 160, 1); wet.rotation.x = -Math.PI / 2; wet.position.set(w.x, 0.25, w.z); wet.raycast = () => {}; grp.add(wet); }
+    (window.__groundParts = window.__groundParts || []).push((x, z) => { for (const d of hm.decks) if ((x > d.x0 && x < d.x1 && z > d.z0 && z < d.z1) || (x - d.hx) ** 2 + (z - d.hz) ** 2 < d.hr * d.hr) return DY; return null; });
+    // spawn: South Pier deck 12 m back from the head, eye 1.7 m above deck, looking NE across the mouth at the North Pier light
+    { const s = hm.south, sp = warp(s.e - 12, s.n + 1.5); hm.spawn = [sp.x, sp.z, [hm.north.x, hm.north.z], true]; fx.harbourSpawn = hm.spawn; info.harbour = { southHead: [+s.x.toFixed(1), +s.z.toFixed(1)], northHead: [+hm.north.x.toFixed(1), +hm.north.z.toFixed(1)], spawn: [+sp.x.toFixed(1), +sp.z.toFixed(1)], deckY: DY }; }
+    (fx.extraJumps || (fx.extraJumps = {})).harbour_mouth = hm.spawn; }
   // ---------- 5. piers: solid decks from OSM pier polygons ----------
   const decks = [];
   for (const pr of (G && G.piers) || []) { const name = pr[1]; if (!/Britannia|Wellington/.test(name || '')) continue; const pts = P2(pr[0]); if (pts.length < 3) continue; const Y = 1.5;
@@ -187,7 +207,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     board('THE IRON DUKE', 12, 1.4, e + 8.3, n, 7.4, Math.PI / 2, '#1f1410', '#f2e6c4', 0.7);
     for (let i = 0; i < 9; i++) { AB(0x22262c, 0.18, 0.9, 0.18, e + 14, n - 16 + i * 4, 0.45); } AB(0x6f6b63, 4, 0.14, 36, e + 11, n, 0.07); }
   // ---------- 7. bottom of Beatty Road (Joseph's photos) ----------
-  fetch('/assets/data/beatty-bottom.json?v=72').then(r => r.json()).then(D => { try {
+  fetch('/assets/data/beatty-bottom.json?v=73').then(r => r.json()).then(D => { try {
     const BE = -222.5; const s = D.busStop; // shelter on the east kerb, facing the road (west)
     AB(0x22262c, 0.12, 2.5, 0.12, s.e, s.n - 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e, s.n + 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e + 1.4, s.n - 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e + 1.4, s.n + 1.8, 1.25);
     const roof = new T.Mesh(new T.BoxGeometry(1.8, 0.12, 4.0), new T.MeshBasicMaterial({ color: 0xf2f2f0 })); const rp = warp(s.e + 0.7, s.n); roof.position.set(rp.x, 2.55, rp.z); grp.add(roof);
@@ -229,7 +249,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
   const add = (k, label, v) => { if (!v) return; J[k] = v; info.jumps++; const nav = document.querySelector('.wmap-jumps'); if (nav && !nav.querySelector(`[data-jump="${k}"]`)) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = k; b.textContent = label; nav.appendChild(b); } };
   const later = () => { const i3 = fx.v63Info || {}, i4 = fx.v64Info || {}, i5 = fx.v65Info || {};
     { const bp = ((G && G.piers) || []).find(p => /Britannia/.test(p[1] || '')); if (bp) { const pts = P2(bp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; J.britannia_pier = wj(e0 + 6, nc - 4, e0 + 120, nc + 6); } }
-    { const wp = ((G && G.piers) || []).find(p => /Wellington/.test(p[1] || '')); if (wp) { const pts = P2(wp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; add('wellington_pier', 'Wellington Pier', wj(e0 - 18, nc - 30, e0 + 20, nc)); } }
+    { const wp = ((G && G.piers) || []).find(p => /Wellington/.test(p[1] || '')); if (wp) { const pts = P2(wp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; { const v = wj(e0 + 22, nc, e0 + 120, nc); v.push(true); add('wellington_pier', 'Wellington Pier', v); } /* v73: feet on the solid OSM deck (raw: skip landX beach clamp) */ } }
     { const [e, n] = loc(52.604471, 1.736196); const pe = Math.max(e + 40, seaE(n) - 45); J.tower_complex = wj(pe, n - 30, e, n); }
     { const [e, n] = loc(52.625267, 1.735168); J.newtown_archive = wj(-152, 2441, e, n); /* v70: further out on the carriageway; scouts landed inside the brick at -136 */ /* on the Sturdee Avenue carriageway, outside the frontage */ }
     add('market_gates', 'Market Gates', wj(-478, 446, -530, 430) /* open ground by the v65 Market Gates bus stands, looking at the centre */);
@@ -244,7 +264,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     add('newtown_park', 'Newtown Park', i3.newtownPath ? wj(i3.newtownPath.top[0] - 20, i3.newtownPath.top[1], i3.newtownPath.top[0] + 30, i3.newtownPath.top[1]) : null);
     add('youth_centre', 'Youth & Community Centre', i3.newtownPath ? wj(i3.newtownPath.bottom[0] - 16, i3.newtownPath.bottom[1] - 12, i3.newtownPath.bottom[0], i3.newtownPath.bottom[1]) : null);
     add('beatty_close', 'Beatty Close', wj(-170, 2318, -115, 2324));
-    add('the_stack', 'THE STACK hatch', [148, -280, [156, -288]]); (fx.mapSpots || (fx.mapSpots = [])).some(m => m.label === 'STACK') || fx.mapSpots.push({ pos: new T.Vector3(156, 0, -288), label: 'STACK', col: '#00ff9d' }); /* v70: minimap / jump-map pin */ /* world x/z from Systems Scout (stack-nav.md) */
+    add('the_stack', 'THE STACK hatch', [153, -285, [156, -288]]); /* v73: land on the plate so F opens LAYER MAP */ (fx.mapSpots || (fx.mapSpots = [])).some(m => m.label === 'STACK') || fx.mapSpots.push({ pos: new T.Vector3(156, 0, -288), label: 'STACK', col: '#00ff9d' }); /* v70: minimap / jump-map pin */ /* world x/z from Systems Scout (stack-nav.md) */
     add('beatty_bottom', 'Beatty Rd bus stop', wj(-226, 2584, -216.5, 2596)); };
   setTimeout(later, 2500); setTimeout(later, 8000);
   flushMB();
