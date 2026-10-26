@@ -24,7 +24,7 @@
   el.innerHTML = `<div class="wwel-box"><h2 id="wwel-t">WELCOME TO GREAT YARMOUTH // 3D</h2><p class="sub">A neon, real-scale Great Yarmouth with local music on every screen. Quick guide:</p>
 <form class="wwel-form" novalidate style="display:grid;gap:.45rem;margin:.5rem 0 .8rem;padding:.6rem;border:1px solid #1d6b4b;border-radius:8px">
   <p style="margin:0;color:#00ff9d;font-size:.78rem;letter-spacing:.08em">OPERATOR SIGN-UP // EMAIL OPTIONAL: SIGN UP FOR UPDATES OR SKIP</p>
-  <label style="display:grid;gap:.2rem">Email <input type="email" name="email" required maxlength="120" autocomplete="email" placeholder="you@example.com" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
+  <label style="display:grid;gap:.2rem">Email <input type="email" name="email" maxlength="120" autocomplete="email" placeholder="you@example.com" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
   <label style="display:grid;gap:.2rem">Call-sign (optional, no real name needed)<input type="text" name="name" maxlength="60" autocomplete="nickname" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
   <p class="note" style="margin:0">Your email is only for JHIOS world updates, events and memberships. It is never shown in the world or shared. <a href="/privacy.html" target="_blank" rel="noopener" style="color:#7dffd0">Privacy</a></p>
   <p class="wwel-err note" style="margin:0;color:#ff6b81" aria-live="polite"></p>
@@ -53,11 +53,11 @@ ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite 
   const okEmail = () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim()) && em.value.length <= 120;
   const sync = () => { window.__jxGate = !member; el.classList.toggle('gated', !member); form.style.display = member ? 'none' : 'grid'; goBtn.disabled = !member && !okEmail(); };
   em.addEventListener('input', () => { err.textContent = ''; sync(); }); form.addEventListener('submit', e => { e.preventDefault(); goBtn.click(); }); sync();
-  const ctlHint = () => { try { if (localStorage.getItem('jx-ctl-hint-off') === '1' || document.querySelector('.wctl69')) return; } catch (_) {}
-    const d = document.createElement('div'); d.className = 'wctl69'; d.setAttribute('role', 'note');
+  const ctlHint = () => { try { if (localStorage.getItem('jx-ctl-hint-off70') === '1' || document.querySelector('.wctl70')) return; } catch (_) {}
+    const d = document.createElement('div'); d.className = 'wctl70'; d.setAttribute('role', 'note');
     d.style.cssText = 'position:fixed;left:10px;bottom:84px;z-index:40;max-width:260px;padding:.45rem .7rem;border:1px solid #1d6b4b;border-radius:8px;background:rgba(2,22,27,.86);color:#d8fff0;font:12px/1.45 system-ui,sans-serif';
-    d.innerHTML = (touch ? '🕹 Left stick moves · drag to look' : '⌨ WASD / arrows move · drag to look') + ' · T or 💬 to chat<br>🗺 ' + (touch ? 'Tap' : 'Click') + ' the minimap (top right) to open the jump map<br>❓ The ? button reopens the full guide <button type="button" aria-label="Dismiss controls hint" style="margin-left:.4rem;background:none;border:0;color:#7dffd0;cursor:pointer">✕</button>';
-    d.querySelector('button').addEventListener('click', () => { d.remove(); try { localStorage.setItem('jx-ctl-hint-off', '1'); } catch (_) {} }); document.body.appendChild(d); };
+    d.innerHTML = (touch ? '🕹 Left stick moves · drag to look' : '⌨ WASD / arrows move · drag to look') + ' · T or 💬 to chat<br>🗺 ' + (touch ? 'Tap' : 'Click') + ' the minimap (top right) to open the jump map<br>🔆 Press F (or ' + (touch ? 'tap' : 'click') + ') near glowing panels to open them<br>❓ The ? button reopens the full guide <button type="button" aria-label="Dismiss controls hint" style="margin-left:.4rem;background:none;border:0;color:#7dffd0;cursor:pointer">✕</button>';
+    d.querySelector('button').addEventListener('click', () => { d.remove(); try { localStorage.setItem('jx-ctl-hint-off70', '1'); } catch (_) {} }); document.body.appendChild(d); };
   const enter = () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); ctlHint(); };
   el.querySelector('.wwel-skip').addEventListener('click', () => enter()); // v69: visible skip (Escape already fail-opens); email stays optional
   const skipB = el.querySelector('.wwel-skip'); const syncSkip = () => { skipB.style.display = member ? 'none' : ''; }; syncSkip();
@@ -67,7 +67,7 @@ ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite 
       if (r.status === 400) { err.textContent = 'That email does not look right.'; goBtn.textContent = 'ENTER THE WORLD'; sync(); return; } if (!r.ok) throw 0; }
     catch (_) { if (++fails < 2) { err.textContent = 'Could not reach the sign-up server. Try again.'; goBtn.textContent = 'ENTER THE WORLD'; sync(); return; } } // after 2 server failures let them in rather than lock everyone out
     member = true; try { localStorage.setItem(MK, '1'); } catch (_) {} goBtn.textContent = 'ENTER THE WORLD'; sync(); enter(); });
-  el.addEventListener('keydown', e => { if (e.key === 'Escape' && member) hide(); e.stopPropagation(); });
+  el.addEventListener('keydown', e => { if (e.key === 'Escape') { if (member) hide(); else enter(); } e.stopPropagation(); }); // v70: Escape always fail-opens
   for (const n of [el, help]) n.addEventListener('pointerdown', e => e.stopPropagation());
   help.addEventListener('click', e => { e.stopPropagation(); show(); });
   // v42: the ? sits in the weather / day-night row (top right) so it never covers the playlists panel; falls back to its own corner until that row exists
