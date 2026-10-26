@@ -1,7 +1,7 @@
 /* Shared helpers for the world chat + voice notes (netlify/functions/chat.mjs, voice.mjs); bundled into each by esbuild. */
 import { getStore } from '@netlify/blobs';
 
-export const TTL_MS = 30 * 60 * 1000, MAX_MSGS = 50, RATE_MS = 2000, MAX_TEXT = 200;
+export const TTL_MS = 4 * 60 * 60 * 1000, MAX_MSGS = 50, RATE_MS = 2000, MAX_TEXT = 200;
 export const json = (b, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 const ctx = () => (process.env.CONTEXT === 'production' ? '' : '-test');
 export const chatStore = () => getStore({ name: 'jhios-chat' + ctx(), consistency: 'strong' });

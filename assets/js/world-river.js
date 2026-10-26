@@ -118,5 +118,53 @@ export function initRiver(o) {
     A(new T.ConeGeometry(1.5, 1.4, 12), 0xb8221c, 0, 19.9, 0); A(new T.SphereGeometry(0.25, 8, 6), 0xb8221c, 0, 20.75, 0);
     for (const [y, a] of [[4, 0.8], [8, 2.6], [12, 4.4], [15, 0.4]]) { const r = 2.6 - (y / 17) * 0.7; A(new T.BoxGeometry(0.5, 0.9, 0.3), 0x22282c, Math.cos(a) * r, y, Math.sin(a) * r, 0, -a + Math.PI / 2); }
     done(); fx.beacon = grp.position.clone().setY(18.3); fx.gorlestonLight = grp.position.clone(); }
+
+  // ---- v62: real 3D bridges: raised decks with thickness, parapets / railings, piers into the water and approach ramps (walkable via fx.groundH) ----
+  // Styles from photos (geo-ref/landmarks/haven-bridge, herring-bridge; Commons/Geograph CC BY-SA) and OSM bridge ways:
+  //  Haven Bridge (1930 bascule): two stone river piers with rounded cutwaters framing the lifting span, blue-grey steel girder fascia, pale balustrade, lamp standards.
+  //  Herring Bridge (2024 twin-leaf bascule): the model above, lifted onto ramped approaches.
+  //  Breydon Bridge (A47 lifting bridge): grey concrete deck on slim piers, steel lifting span. Vauxhall Bridge (Victorian iron bowstring, now foot/cycle).
+  //  Acle New Road over the Bure: concrete deck, brick-capped parapets.
+  const BSTY = { 'Haven Bridge': { H: 2.2, hump: 0.5, piers: [0.3, 0.7], girder: 0x5f7383, deck: 0x6b6f73, rail: 0xe6e8e4, kind: 'haven' },
+    'Herring Bridge': { H: 2.6, hump: 0, piers: [], girder: 0x5e6c78, deck: 0x8c9096, rail: 0xb9c2c9, kind: 'herring' },
+    'Breydon Bridge': { H: 4.0, hump: 0.3, piers: [0.2, 0.4, 0.6, 0.8], girder: 0x56636e, deck: 0x9a9c98, rail: 0xb9c2c9, kind: 'breydon' },
+    'Vauxhall Bridge': { H: 1.6, hump: 0.2, piers: [0.5], girder: 0x4e5a62, deck: 0x6a5e52, rail: 0x3c4a52, kind: 'vauxhall' },
+    'Acle New Road (Bure)': { H: 2.0, hump: 0.2, piers: [0.33, 0.66], girder: 0x8a8c88, deck: 0x9a9c98, rail: 0x8a4a3a, kind: 'acle' } };
+  const sm = x => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+  const decks = [];
+  for (const [la1, lo1, la2, lo2, hw, name] of BRIDGES) { const sty = BSTY[name]; if (!sty) continue;
+    const a = W(la1, lo1), b = W(la2, lo2), dx = b.x - a.x, dz = b.z - a.z, Lb = Math.hypot(dx, dz), R = sty.H * 9, H = sty.H;
+    const hp = s => s < 0 ? H * sm(1 + s / R) : s > Lb ? H * sm(1 - (s - Lb) / R) : H + sty.hump * Math.sin(Math.PI * s / Lb);
+    const d = { a, ux: dx / Lb, uz: dz / Lb, Lb, R, hw: Math.min(hw, 14), hp, name }; decks.push(d);
+    const ry = Math.atan2(-dz, dx), HW = d.hw;
+    const { grp, A, done } = kit('bridge-' + name.split(' ')[0].toLowerCase(), la1, lo1, ry); grp.position.y = 0;
+    const DECKC = sty.deck, ST = 2;
+    for (let s0 = -R; s0 < Lb + R - 0.01; s0 += ST) { const s1 = Math.min(Lb + R, s0 + ST), sm0 = (s0 + s1) / 2, h0 = hp(s0), h1 = hp(s1), hm = (h0 + h1) / 2, sl = Math.atan2(h1 - h0, s1 - s0), len = (s1 - s0) / Math.cos(sl) + 0.05;
+      if (sty.kind === 'herring' && Math.abs(sm0 - Lb / 2) < 64.5) continue; // the Herring model supplies its own span
+      const span = sm0 > 0 && sm0 < Lb;
+      if (span) A(new T.BoxGeometry(len, 1.1, HW * 2), DECKC, sm0, hm - 0.55, 0, 0, 0, sl); // deck slab with thickness
+      else { A(new T.BoxGeometry(len, Math.max(0.2, hm + 0.05), HW * 2 + 1.2), 0x8a8478, sm0, Math.max(0.1, hm + 0.05) / 2 - 0.05, 0, 0, 0, 0); A(new T.BoxGeometry(len, 0.06, HW * 2 - 0.4), 0x4a4c50, sm0, hm + 0.02, 0, 0, 0, sl); } // ramp embankment + its surface
+      for (const z of [-1, 1]) { const zz = z * (HW + (span ? 0 : 0.6)); // parapets / railings either side
+        if (sty.kind === 'acle' || (!span && hm > 0.3)) A(new T.BoxGeometry(len, 1.0, 0.35), sty.kind === 'acle' && span ? 0x9a9c98 : 0x8a8478, sm0, hm + 0.5, zz, 0, 0, sl);
+        if (sty.kind !== 'acle') { A(new T.BoxGeometry(len, 0.08, 0.08), sty.rail, sm0, hm + 1.15, zz, 0, 0, sl); if (span) A(new T.BoxGeometry(len, 0.06, 0.06), sty.rail, sm0, hm + 0.6, zz, 0, 0, sl);
+          for (let k = 0; k < ST; k += (sty.kind === 'haven' ? 0.5 : 1)) A(new T.BoxGeometry(0.08, 1.15, 0.08), sty.rail, s0 + k, hp(s0 + k) + 0.57, zz); }
+        else A(new T.BoxGeometry(len, 0.12, 0.45), 0x8a4a3a, sm0, hm + 1.05, zz, 0, 0, sl); // brick coping
+        if (span && sty.kind !== 'acle') A(new T.BoxGeometry(len, 1.5, 0.3), sty.girder, sm0, hm - 0.85, z * (HW + 0.1), 0, 0, sl); } } // steel girder fascia
+    for (const f of sty.piers) { const s = f * Lb, h = hp(s); // river piers down into the water, with rounded cutwaters
+      const pw = sty.kind === 'haven' ? 7 : 3, ph = h + 4; A(new T.BoxGeometry(pw, ph, HW * 2 + 1), sty.kind === 'haven' ? 0xa49c8c : 0x9a9c98, s, h - 1.1 - ph / 2 + 0.01, 0);
+      for (const z of [-1, 1]) A(new T.CylinderGeometry(pw / 2, pw / 2, ph, 12, 1, false, 0, Math.PI).rotateY(z > 0 ? 0 : Math.PI), sty.kind === 'haven' ? 0xa49c8c : 0x9a9c98, s, h - 1.1 - ph / 2, z * (HW + 0.5));
+      if (sty.kind === 'haven') for (const z of [-1, 1]) { A(new T.BoxGeometry(pw + 0.6, 0.4, 2), 0x8e8676, s, h + 1.3, z * (HW + 0.6)); A(new T.CylinderGeometry(0.1, 0.14, 5, 6), 0x2c3236, s, h + 3.5, z * (HW + 0.6)); A(new T.SphereGeometry(0.35, 8, 6), 0xfff2c0, s, h + 6.1, z * (HW + 0.6)); } } // pier caps + lamp standards
+    for (const s of [0, Lb]) A(new T.BoxGeometry(2.5, hp(s) + 3, HW * 2 + 2), 0x8a8478, s, (hp(s) + 3) / 2 - 3, 0); // abutments at the quays
+    if (sty.kind === 'haven') { const m0 = 0.3 * Lb + 3.5, m1 = 0.7 * Lb - 3.5; A(new T.BoxGeometry(0.5, 0.09, HW * 2), 0xffd24a, (m0 + m1) / 2, hp((m0 + m1) / 2) + 0.03, 0); // bascule leaf joint
+      for (const z of [-1, 1]) for (const x of [m0, m1]) A(new T.BoxGeometry(2.4, 1.4, 1.2), sty.girder, x, hp(x) + 0.7, z * (HW + 0.4)); }
+    if (sty.kind === 'breydon') { const m = Lb * 0.5; A(new T.BoxGeometry(Lb * 0.18, 0.09, HW * 2), 0x3e4a54, m, hp(m) + 0.04, 0); for (const z of [-1, 1]) A(new T.BoxGeometry(4, 5, 3), 0xb9bdb8, m - Lb * 0.12, hp(m) + 2.5, z * (HW + 2.2)); } // lifting span + control houses
+    if (sty.kind === 'vauxhall') for (const z of [-1, 1]) { const N = 14, AH = 4; for (let k = 0; k < N; k++) { const x0 = k / N * Lb, x1 = (k + 1) / N * Lb, y0 = AH * Math.sin(Math.PI * k / N), y1 = AH * Math.sin(Math.PI * (k + 1) / N), sl2 = Math.atan2(y1 - y0, x1 - x0);
+        A(new T.BoxGeometry(Math.hypot(x1 - x0, y1 - y0) + 0.05, 0.35, 0.3), sty.girder, (x0 + x1) / 2, hp((x0 + x1) / 2) + 1.2 + (y0 + y1) / 2, z * HW, 0, 0, sl2); if (k) A(new T.BoxGeometry(0.12, y0 + 1.2, 0.12), sty.girder, x0, hp(x0) + (y0 + 1.2) / 2, z * HW); } } // bowstring trusses
+    done(); }
+  { const hb = S.getObjectByName('herring-bridge'); if (hb) hb.position.y = BSTY['Herring Bridge'].H - 0.28; }
+  // ground height for walking: bridge decks + approach ramps (world x / z)
+  fx.bridgeH = (x, z) => { let g = null; for (const d of decks) { const rx = x - d.a.x, rz = z - d.a.z, s = rx * d.ux + rz * d.uz; if (s < -d.R || s > d.Lb + d.R) continue; if (Math.abs(rx * d.uz - rz * d.ux) > d.hw + 0.3) continue; g = Math.max(g ?? 0, d.hp(s)); } return g; };
+  (window.__groundParts = window.__groundParts || []).push(fx.bridgeH);
+  out.bridges = decks.map(d => ({ name: d.name, len: Math.round(d.Lb), ramp: Math.round(d.R) }));
   return out;
 }
