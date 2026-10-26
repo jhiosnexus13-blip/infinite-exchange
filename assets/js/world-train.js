@@ -51,6 +51,9 @@ export function initTrain(o) {
   const tMat = new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.95, blending: T.AdditiveBlending, depthWrite: false, fog: false });
   const train = new T.LineSegments(tg, tMat); train.frustumCulled = false; train.raycast = () => {}; S.add(train);
   const hit = new T.Mesh(new T.BoxGeometry(CW + 2, CH + 2, 30), new T.MeshBasicMaterial({ visible: false })); S.add(hit);
+  // v62: solid carriage floors (opaque decks under the wire frames, so riding never shows the road through your feet)
+  const floorG = new T.Group(); floorG.name = 'train-floor'; S.add(floorG);
+  const floors = CARS.map(([len, hex]) => { const m = new T.Mesh(new T.BoxGeometry(CW * 2, 0.16, len), new T.MeshBasicMaterial({ color: new T.Color(hex).multiplyScalar(0.18) })); m.raycast = () => {}; floorG.add(m); return m; });
   const TLEN = CARS.reduce((a, c) => a + c[0] + GAP, 0);
   // ---- state ----
   const st = { s: stops[0].s, dir: 1, v: 0, mode: 'dwell', wait: 4, riding: false, target: null, lastSet: null, rideSpeed: L / 48, idleSpeed: LITE ? 14 : 14 };
@@ -74,25 +77,26 @@ export function initTrain(o) {
           L2(P3(-0.03, 0, 3.15), P3(1.03, 0, 3.15)); for (const u of [0, 1]) L2(P3(u, -1, 0.75), P3(u, 1, 0.75));
           for (const u of [0.25, 0.5, 0.75]) { L2(P3(u, -1, 1.65), P3(u, 1, 1.65)); L2(P3(u, -1, 1.1), P3(u, 1, 1.1)); } }
       }
+      { const fl = floors[c]; fl.position.set((fx_ + bx) / 2, 0.68, (fz + bz) / 2); fl.rotation.y = Math.atan2(dx, dz); }
       for (; v < start + SEGS * 2; v += 2) { tp.set([0, -50, 0], v * 3); tp.set([0, -50, 0], v * 3 + 3); } // unused slots parked out of sight
       s = sB - st.dir * GAP; }
     tg.attributes.position.needsUpdate = true;
     at(st.s - st.dir * TLEN / 2, p1); hit.position.set(p1.x, 2, p1.z); hit.rotation.y = Math.atan2(p1.dx, p1.dz); }
   const nearestStop = (x, z) => { let b = null, bd = 1e9; for (const s of stops) { const d = Math.hypot(s.x - x, s.z - z); if (d < bd) { bd = d; b = s; } } return [b, bd]; };
   const trainDist = () => { at(st.s - st.dir * TLEN / 2, p1); return Math.hypot(p1.x - P.pos.x, p1.z - P.pos.z); };
-  const canBoard = () => { const [, d] = nearestStop(P.pos.x, P.pos.z); return d < 45 || trainDist() < 25; };
+  const canBoard = () => { const [, d] = nearestStop(P.pos.x, P.pos.z); return d < 16 || trainDist() < 12; }; // v62: prompt only when you are actually at a stop or beside the train
   // ---- UI: touch-friendly buttons, bottom centre above the player bar ----
   const css = document.createElement('style'); css.textContent = `.wtrain{position:fixed;z-index:26;left:50%;transform:translateX(-50%);bottom:calc(var(--player-h,64px) + 1.4rem + env(safe-area-inset-bottom));display:flex;gap:.4rem;font-family:ui-monospace,monospace}
 .wtrain button{min-height:48px;min-width:48px;padding:0 .9rem;border-radius:24px;border:2px solid #00e5ff;background:rgba(0,10,14,.82);color:#bff8ff;font:inherit;font-size:.8rem;letter-spacing:.05em;cursor:pointer;box-shadow:0 0 10px rgba(0,229,255,.45);touch-action:manipulation}
-.wtrain button:hover,.wtrain button:focus-visible{background:#00e5ff;color:#001014;outline:none}.wtrain .tmain[hidden]{display:none}
+.wtrain button:hover,.wtrain button:focus-visible{background:#00e5ff;color:#001014;outline:none}.wtrain .tmain[hidden],.wtrain .tnext[hidden]{display:none}.wtrain .tnext{align-self:center;padding:.35rem .7rem;border-radius:6px;background:rgba(0,10,14,.82);border:1px solid #ffc84a;color:#ffe7a8;font-size:.75rem;letter-spacing:.06em}.wtrain button.req{border-color:#ffc84a;color:#ffe7a8;box-shadow:0 0 10px rgba(255,200,74,.5)}
 .wtrain-menu{position:fixed;z-index:27;left:50%;transform:translateX(-50%);bottom:calc(var(--player-h,64px) + 5rem + env(safe-area-inset-bottom));background:rgba(0,10,14,.94);border:1px solid #00e5ff;border-radius:8px;padding:.4rem;display:flex;flex-direction:column;gap:.3rem;min-width:220px;font-family:ui-monospace,monospace}
 .wtrain-menu[hidden]{display:none}.wtrain-menu b{color:#00e5ff;font-size:.7rem;padding:.2rem .4rem}.wtrain-menu button{min-height:44px;text-align:left;padding:0 .8rem;border:1px solid rgba(0,229,255,.4);border-radius:6px;background:transparent;color:#dffcff;font:inherit;font-size:.8rem;cursor:pointer}
 .wtrain-menu button:hover,.wtrain-menu button:focus-visible{background:rgba(0,229,255,.2);outline:none}.wtrain-menu button.here{opacity:.5}
 @media (max-width:640px){.wtrain{bottom:calc(var(--player-h,64px) + 7.6rem + env(safe-area-inset-bottom))}.wtrain-menu{bottom:calc(var(--player-h,64px) + 11rem + env(safe-area-inset-bottom))}}`;
   document.head.appendChild(css);
-  const ui = document.createElement('div'); ui.className = 'wtrain'; ui.innerHTML = `<button type="button" class="tmain" hidden>🚂 RIDE TRAIN</button><button type="button" class="tstops" aria-haspopup="true" aria-expanded="false">🚂 STOPS ▾</button>`;
+  const ui = document.createElement('div'); ui.className = 'wtrain'; ui.innerHTML = `<span class="tnext" hidden></span><button type="button" class="tmain" hidden>🚂 BOARD TRAIN</button><button type="button" class="tstops" aria-haspopup="true" aria-expanded="false">🚂 STOPS ▾</button>`;
   const menu = document.createElement('div'); menu.className = 'wtrain-menu'; menu.hidden = true; menu.setAttribute('role', 'menu');
-  document.body.append(ui, menu); const bMain = ui.querySelector('.tmain'), bStops = ui.querySelector('.tstops');
+  document.body.append(ui, menu); const bMain = ui.querySelector('.tmain'), bNext = ui.querySelector('.tnext'), bStops = ui.querySelector('.tstops');
   for (const el of [ui, menu]) el.addEventListener('pointerdown', e => e.stopPropagation());
   function renderMenu() { const ride = st.riding || canBoard(), [here] = nearestStop(P.pos.x, P.pos.z);
     menu.innerHTML = `<b>${st.riding ? 'SEAFRONT TRAIN · CHANGE DESTINATION' : ride ? 'SEAFRONT TRAIN · RIDE TO' : 'SEAFRONT TRAIN · WALK TO STOP'}</b>` +
@@ -103,14 +107,15 @@ export function initTrain(o) {
   bMain.addEventListener('click', e => { e.stopPropagation(); st.riding ? hopOff() : board(null); });
   function setTarget(s) { st.target = s; st.dir = s.s >= st.s ? 1 : -1; st.mode = 'run'; }
   function board(dest) { if (window.__mapOpen) return; const [here, d] = nearestStop(P.pos.x, P.pos.z);
-    if (d < 45) { if (Math.abs(st.s - here.s) > 1) { st.s = here.s; } } // the train pulls up at your stop
-    else if (trainDist() > 25) return;
-    if (!dest || dest === here && d < 45) dest = Math.abs(st.s - stops[0].s) > Math.abs(st.s - stops[stops.length - 1].s) ? stops[0] : stops[stops.length - 1];
+    if (d < 16) { if (Math.abs(st.s - here.s) > 1) { st.s = here.s; } } // the train pulls up at your stop
+    else if (trainDist() > 12) return;
+    if (!dest || dest === here && d < 16) dest = Math.abs(st.s - stops[0].s) > Math.abs(st.s - stops[stops.length - 1].s) ? stops[0] : stops[stops.length - 1];
     if (Math.abs(dest.s - st.s) < 2) return;
     st.riding = true; st.v = 0; setTarget(dest); st.s = st.s + 0; // lead car is where you sit
     P.yaw = Math.atan2(-at(st.s, tmp).dx * st.dir, -tmp.dz * st.dir); P.pitch = -0.04; camInit = false; place(); fx.trainLog = (fx.trainLog || 0) + 1; }
   function hopOff() { if (!st.riding) return; if (st.v < 2) return exitAt(null); // stopped: step off right here
-    const next = st.dir > 0 ? stops.find(s => s.s > st.s + 5) : [...stops].reverse().find(s => s.s < st.s - 5); if (next) setTarget(next); else exitAt(null); st.hop = true; }
+    const next = nextStop(); if (next) setTarget(next); else exitAt(null); st.hop = true; } // v62: REQUEST STOP = alight at the NEXT stop on the line
+  const nextStop = () => st.dir > 0 ? stops.find(s => s.s > st.s + 5) : [...stops].reverse().find(s => s.s < st.s - 5);
   function exitAt(s) { st.riding = false; st.hop = false; st.mode = 'dwell'; st.wait = 6; st.v = 0; let x, z;
     if (s) { x = s.x + s.nx * 3; z = s.z + s.nz * 3; } else { at(st.s, tmp); let nx = -tmp.dz, nz = tmp.dx; if (nx > 0) { nx = -nx; nz = -nz; } x = tmp.x + nx * 7; z = tmp.z + nz * 7; }
     [x, z] = openNear(x, z); P.pos.set(x, 1.7, z); P.pitch = 0; st.lastSet = null; fx.cullT = 0; }
@@ -127,9 +132,10 @@ export function initTrain(o) {
   CV.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
   CV.addEventListener('pointerup', e => { if (!down || window.__mapOpen) return; const ok = Math.hypot(e.clientX - down.x, e.clientY - down.y) < 8 && performance.now() - down.t < 600; down = null; if (!ok) return;
     const r = CV.getBoundingClientRect(); ndc.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1); ray.setFromCamera(ndc, CAM);
-    if (ray.intersectObject(hit, false).length) { if (st.riding) hopOff(); else if (trainDist() < 60) { const [h, d] = nearestStop(P.pos.x, P.pos.z); if (d < 45 || trainDist() < 25) board(null); else if (trainDist() < 60) { st.s = project(P.pos.x, P.pos.z)[0]; board(null); } } } });
+    if (ray.intersectObject(hit, false).length) { if (st.riding) hopOff(); else if (trainDist() < 60) { const [h, d] = nearestStop(P.pos.x, P.pos.z); if (d < 16 || trainDist() < 12) board(null); else if (trainDist() < 60) { st.s = project(P.pos.x, P.pos.z)[0]; board(null); } } } });
   let uiT = 0, lastLabel = '';
   function update(t, dt) {
+    window.__trainRiding = st.riding;
     if (st.riding && st.lastSet && Math.hypot(P.pos.x - st.lastSet[0], P.pos.z - st.lastSet[1]) > 4) { st.riding = false; st.hop = false; st.mode = 'dwell'; st.wait = 3; st.v = 0; P.pos.y = 1.7; st.lastSet = null; } // jumped away via the map
     if (st.riding) { const rem = Math.abs(st.target.s - st.s), vmax = st.rideSpeed, acc = vmax / 6;
       st.v = Math.min(vmax, st.v + acc * dt, Math.sqrt(2 * acc * rem) + 1); st.s += st.dir * Math.min(rem, st.v * dt);
@@ -140,13 +146,15 @@ export function initTrain(o) {
       else { const rem = Math.abs(st.target.s - st.s), v = Math.min(st.idleSpeed, Math.sqrt(rem * 4) + 1); st.s += st.dir * Math.min(rem, v * dt); if (rem <= 0.05 + v * dt) { st.s = st.target.s; st.mode = 'dwell'; st.wait = 8; } } }
     drawTrain();
     const day = fx.env && fx.env.state ? fx.env.state.day : 0.5; tMat.opacity = 0.75 + (1 - day) * 0.25; sMat.opacity = (0.45 + (1 - day) * 0.5) * (0.85 + 0.15 * Math.sin(t * 2));
-    if (t - uiT > 0.25) { uiT = t; const lbl = st.riding ? (st.hop || (st.target && Math.abs(st.target.s - st.s) < 3) ? '⏏ HOPPING OFF…' : `⏏ HOP OFF · → ${st.target.name.toUpperCase()}`) : canBoard() ? '🚂 RIDE TRAIN' : '';
-      if (lbl !== lastLabel) { lastLabel = lbl; bMain.hidden = !lbl; bMain.textContent = lbl; } ui.style.display = window.__mapOpen ? 'none' : ''; }
+    if (t - uiT > 0.25) { uiT = t; const ns = st.riding ? nextStop() : null, lbl = st.riding ? (st.hop ? '🔔 STOP REQUESTED' : '🔔 REQUEST STOP') : canBoard() ? '🚂 BOARD TRAIN' : '';
+      const nx = st.riding ? 'NEXT STOP: ' + ((st.hop ? st.target : ns || st.target) || { name: '—' }).name.toUpperCase() : ''; if (nx !== bNext.textContent) { bNext.textContent = nx; bNext.hidden = !nx; }
+      if (lbl !== lastLabel) { lastLabel = lbl; bMain.hidden = !lbl; bMain.textContent = lbl; bMain.classList.toggle('req', !!st.riding); }
+      floorG.visible = true; ui.style.display = window.__mapOpen ? 'none' : ''; }
   }
   drawTrain();
   const api = { get info() { return { length_m: Math.round(L), points: path.length, streets: ['North Drive', 'Marine Parade', 'South Beach Parade', 'South Denes (harbour spur)'], rideSpeed: +st.rideSpeed.toFixed(1), riding: st.riding, s: +st.s.toFixed(1), v: +st.v.toFixed(1), target: st.target && st.target.k, stops: stops.map(s => ({ k: s.k, name: s.name, s: Math.round(s.s), at: [+s.x.toFixed(1), +s.z.toFixed(1)] })) }; },
     walkTo(k) { walkTo(stops.find(s => s.k === k)); }, board(k) { board(k ? stops.find(s => s.k === k) : null); }, hopOff, target(k) { setTarget(stops.find(s => s.k === k)); }, canBoard,
-    trainAt() { at(st.s - st.dir * TLEN / 2, p1); const v = new T.Vector3(p1.x, 2, p1.z).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; } };
+    get floor() { return floorG; }, get near() { return canBoard(); }, trainAt() { at(st.s - st.dir * TLEN / 2, p1); const v = new T.Vector3(p1.x, 2, p1.z).project(CAM), r = CV.getBoundingClientRect(); return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, visible: v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 }; } };
   return { update, api };
 }
 

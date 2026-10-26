@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=61'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=61' : '/assets/data/yarmouth-geo.json?v=61').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=62'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=62' : '/assets/data/yarmouth-geo.json?v=62').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=61').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=61'), j('/assets/data/newtown-extra.json?v=61')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); import('./world-v60.js?v=61').then(m2 => { fx.v60 = m2.initV60({ T, S, LITE, RED, warp, PZ, fx }, X); }).catch(e => worldErr('v60', e)); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=61').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=61'), j('/assets/data/newtown-streets.json?v=61')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
-      Promise.all([import('./world-pb.js?v=61'), j('/assets/data/pleasure-beach.json?v=61')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=62').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); Promise.all([import('./world-newtown.js?v=62'), j('/assets/data/newtown-extra.json?v=62')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); import('./world-v60.js?v=62').then(m2 => { fx.v60 = m2.initV60({ T, S, LITE, RED, warp, PZ, fx }, X); }).catch(e => worldErr('v60', e)); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=62').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=62'), j('/assets/data/newtown-streets.json?v=62')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=62'), j('/assets/data/pleasure-beach.json?v=62')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=61').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e)).then(() => import('./world-chat.js?v=61')).then(m => m.initChat({ fx, LITE })).catch(e => console.warn('chat', e));
-  import('./world-train.js?v=61').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=62').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e)).then(() => import('./world-chat.js?v=62')).then(m => m.initChat({ fx, LITE })).catch(e => console.warn('chat', e));
+  import('./world-train.js?v=62').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -137,7 +137,7 @@ function skyline(D, grp, noGeo) {
     } else if (L.type === 'minster') { // nave + crossing tower + spire
       box(base, 9, ht * 0.35, 3.5, ry); box(base, 3, ht * 0.7, 3, ry);
       for (const [x, z] of [[-1.5, -1.5], [1.5, -1.5], [1.5, 1.5], [-1.5, 1.5]]) add(base.clone().add(new T.Vector3(x, ht * 0.7, z)), base.clone().setY(ht));
-    } else if (L.type === 'bridge') { const a = warp(l.e - 60, l.n), b = warp(l.e + 60, l.n); a.y = b.y = 1.2; add(a, b); add(a.clone().setY(2.4), b.clone().setY(2.4)); for (let i = 0; i <= 6; i++) { const p = a.clone().lerp(b, i / 6); add(p.clone().setY(0), p.clone().setY(2.4)); } }
+    } else if (L.type === 'bridge') { /* v62: real 3D bridge models live in world-river.js */ }
     else if (L.type === 'tower') { // Tower Complex / Arena: wide low arena block + tall slim tower with a crown (scaled to metres)
       box(base, 40, ht * 0.32, 26, ry); box(base.clone().setY(ht * 0.32), 30, ht * 0.12, 20, ry);
       const tb = base.clone().add(new T.Vector3(Math.cos(ry) * 9, 0, -Math.sin(ry) * 9)); box(tb, 9, ht, 9, ry); box(tb.clone().setY(ht), 12, 5, 12, ry);
@@ -181,6 +181,7 @@ function skyline(D, grp, noGeo) {
   }
   const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(segs, 3)); grp.add(new T.LineSegments(g, mat));
   if (noGeo) sea(coast); // real OSM geography (geo()) normally draws coast, water, roads and buildings
+  catalogueScreens();
   fx.mapLandmarks = Object.values(fx.landmarks);
 }
 
@@ -272,7 +273,7 @@ function geo(G, grp) {
   if (G.golden_mile) goldenMile(G.golden_mile, grp);
   if (G.harbour_spur) goldenMile(G.harbour_spur, grp, true);
   sea(prof);
-  import('./world-river.js?v=61').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
+  import('./world-river.js?v=62').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
 }
 
 /* ---------- Golden Mile: the main explorable route, a glowing gold ribbon on the real OSM road centreline ---------- */
@@ -309,7 +310,25 @@ function featureScreen(L, base, ht) {
   const hit = new T.Mesh(new T.PlaneGeometry(W2 * 1.1, H2 * 1.35), new T.MeshBasicMaterial({ visible: false, side: T.DoubleSide })); hit.userData = scr.userData; grp.add(hit); CL.push(hit);
   loader().load('https://i.ytimg.com/vi/hN8QWPKuDvk/hqdefault.jpg', tex => { tex.colorSpace = T.SRGBColorSpace; mat.map.dispose(); mat.map = tex; mat.needsUpdate = true; fx.featureThumb = true; }, undefined, () => { fx.featureThumb = false; });
   fx.feature = { grp, y0, frMat, glow, key: L.key, track: L.feature_track };
+  viperPanel(grp, H2);
   fx.mapSpots.push({ pos: base, label: 'TOWER', col: '#00ff9d' });
+}
+/* v62: Viper Room GY panel: Joseph's approved logo, hung directly UNDER the "Don't This Remind Ya" card outside the Arena / Empire entrance
+   (rides with the card, faces you). Tap = toon.fm/viper-room-gy in a new tab. A link panel only: no venue interior / underground space is built. */
+const VIPER = { url: 'https://toon.fm/viper-room-gy', label: 'VIPER ROOM GY' };
+function viperPanel(grp, H2) {
+  const g = new T.Group(); g.name = 'viper-room-panel'; g.position.set(0, -H2 / 2 - 9.5, 0.05); grp.add(g);
+  const PW = 13, PH = PW * 250 / 526;
+  g.add(new T.Mesh(new T.PlaneGeometry(PW + 1.4, PH + 1.4), new T.MeshBasicMaterial({ color: 0x07020a, transparent: true, opacity: 0.88, side: T.DoubleSide, fog: false })));
+  const fr = new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(PW + 1.4, PH + 1.4)), new T.LineBasicMaterial({ color: 0xff2e4a, fog: false })); g.add(fr);
+  const mat = new T.MeshBasicMaterial({ transparent: true, opacity: 0, side: T.DoubleSide, fog: false, depthWrite: false });
+  const logo = new T.Mesh(new T.PlaneGeometry(PW, PH), mat); logo.position.z = 0.06; g.add(logo);
+  fx.viper = { url: VIPER.url, loaded: false, grp: g };
+  // logo stored as a data-URL text file (same as the DAM logo) so it travels through text-only commits; source PNG: jhios-vault/assets/viper-room/viper-room-gy-logo.png
+  fetch('/assets/img/viper-room-gy-logo.b64.txt?v=62').then(r => r.ok ? r.text() : Promise.reject(new Error('viper logo ' + r.status))).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.map = t; mat.opacity = 1; mat.needsUpdate = true; fx.viper.loaded = true; }, undefined, () => { fx.viper.loaded = false; fx.viper.error = true; })).catch(() => { fx.viper.error = true; });
+  const lab = LBL('▶ TAP · VIPER ROOM GY EVENTS', '#ff8a9a', 1.3); lab.position.set(0, -PH / 2 - 1.6, 0.1); g.add(lab);
+  const hit = new T.Mesh(new T.PlaneGeometry(PW + 1.6, PH + 3.4), new T.MeshBasicMaterial({ visible: false, side: T.DoubleSide })); hit.position.y = -0.8;
+  hit.userData = { link: VIPER.url, title: VIPER.label, id: 'viper-room' }; g.add(hit); CL.push(hit);
 }
 /* ---------- Pleasure Beach big wheel: one tappable gondola screen per slot, rotating with the rim but kept upright ---------- */
 function wheelScreens(L, wheel, r) {
@@ -348,7 +367,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=61').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=62').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -529,13 +548,21 @@ function arcCinema() {
   g.traverse(o => { o.raycast = () => {}; });
   fx.arcTop = H + 18; // the DAM sign on Fallen Angels rides a mast above this so it clears the Arc from Marine Parade
 }
+/* v62: catalogue-driven placements: /assets/data/music-catalogue.json lists approved world locations (lat/lon) and which tracks sit there.
+   Each location becomes a normal song cluster (same tappable screens, playback still via tracks.json + YouTube). Neutral labels only. */
+function catalogueScreens() {
+  fetch('/assets/data/music-catalogue.json?v=62').then(r => r.json()).then(C => { fx.catalogue = { locations: Object.keys(C.locations || {}), placed: 0 };
+    for (const [key, loc] of Object.entries(C.locations || {})) { const ids = C.tracks.filter(t => (t.worldLocations || []).includes(key) && t.placementStatus !== 'unplaced').map(t => t.id); if (!ids.length) continue;
+      fx.catalogue.placed += ids.length; const base = W(loc.lat, loc.lon), ht = (loc.height_m || 10) * HS;
+      songCluster({ key: 'cat:' + key, type: 'screen', song_ids: ids, cluster_at: [loc.lat, loc.lon] }, base, ht); } }).catch(e => console.warn('catalogue', e));
+}
 /* ---------- song cluster: every matching track from tracks.json as a tappable floating screen over a landmark ---------- */
 fx.clusters = [];
 function songCluster(L, base, ht) {
   const boot = () => window.JX.load().then(() => {
     const m = (L.song_match || '').toLowerCase();
     const rx = (L.song_patterns || []).map(p => new RegExp(p, 'i')), hay = t => [t.title, t.artist, t.album, t.feat, t.featuring, ...(t.tags || [])].filter(Boolean).join(' | ');
-    const list = window.JX.tracks.filter(t => (m && `${t.title} ${t.album || ''}`.toLowerCase().includes(m)) || rx.some(r => r.test(hay(t))) || (L.song_tag && (t.tags || []).includes(L.song_tag)) || (L.song_album && (t.album || '').toLowerCase() === L.song_album.toLowerCase()))
+    const ids = L.song_ids ? new Set(L.song_ids) : null, list = window.JX.tracks.filter(t => (ids && ids.has(t.id)) || (m && `${t.title} ${t.album || ''}`.toLowerCase().includes(m)) || rx.some(r => r.test(hay(t))) || (L.song_tag && (t.tags || []).includes(L.song_tag)) || (L.song_album && (t.album || '').toLowerCase() === L.song_album.toLowerCase()))
       .filter(t => window.JX.ytId(t.youtube_url) || t.audio_url);
     fx.clusterInfo = Object.assign(fx.clusterInfo || {}, { [L.key]: list.map(t => t.id) });
     if (!list.length) return;
@@ -873,6 +900,8 @@ export function updateWorldFX(t, dt) {
   fx.frames = (fx.frames || 0) + 1;
 }
 export const worldDebug = {
+  w62(lat, lon) { const v = W(lat, lon); return [v.x, v.z]; },
+  get v62() { return { viper: fx.viper && { loaded: fx.viper.loaded, error: !!fx.viper.error, url: fx.viper.url, pos: fx.viper.grp.getWorldPosition(new T.Vector3()).toArray().map(Math.round) }, catalogue: fx.catalogue, clusters: Object.fromEntries(Object.entries(fx.clusterInfo || {}).filter(([k]) => k.startsWith('cat:'))), bridges: fx.riverInfo && fx.riverInfo.bridges }; },
   sight(x, z, tx, ty, tz) { return sightClear(x, z, tx, ty, tz); },
   audit() { const V = [], C = window.__collide, wp = new T.Vector3(); if (!C) return ['no collision grid'];
     const items = CL.filter(o => o.visible !== false).map(o => { o.getWorldPosition(wp); return { n: o.userData.title || o.userData.id || o.userData.track || o.name || 'obj', x: wp.x, y: wp.y, z: wp.z, orb: o.parent && o.parent.userData.orbit ? o.parent.position : null, spin: (() => { for (let q = o.parent; q; q = q.parent) if (q.userData.spin) return true; return false; })() }; });

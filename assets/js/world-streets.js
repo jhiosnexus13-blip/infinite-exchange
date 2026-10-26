@@ -259,7 +259,10 @@ export function initStreets(o, X) {
       AB(0x1f5c3a, 0.08, 0.42, 2.0, x0 - 0.08, nc + 1.5, 2.9); AB(WH, 0.06, 0.32, 1.9, x0 - 0.11, nc + 1.5, 2.9); // street-name sign on the west gable
       const bs = LBL('BEATTY CLOSE', '#1f5c3a', 0.5); const bw = warp(x0 - 0.4, nc + 1.5); bs.position.set(bw.x, 3.5, bw.z); S.add(bs);
       AB(0x5a8a3c, 48, 0.06, 38, -116, 2309, 0.05);                                           // the square green behind the flats
-      for (const [ex, w] of [[-148, 10], [-82, 10]]) { AB(0x5e5853, w, 5.4, 38, ex, 2309, 2.7); AB(0x45413e, w + 0.4, 0.3, 38.4, ex, 2309, 5.55); } // dim flanking blocks
+      // v62: the blocks flanking the green WEST + EAST are single-storey bungalows (Joseph: bungalows either side of the green behind the flats, none at its south end).
+      // Three per side, gable roofs, front windows + door facing the green. Plain and unlabelled: no numbers, names or signs.
+      for (const [ex, face] of [[-148, 1], [-82, -1]]) for (const bn of [2297, 2309, 2321]) { AB(0x8e5a40, 9, 2.8, 10.6, ex, bn, 1.4); addG(0x6e3a2a, tri(9.6, 2.2, 11.2), ex, bn, 2.8, 0);
+        const fx0 = ex + face * 4.55; AB(WH, 0.1, 1.1, 1.4, fx0, bn - 2.8, 1.5); AB(WH, 0.1, 1.1, 1.4, fx0, bn + 2.8, 1.5); AB(0x3b4a5a, 0.1, 2, 0.95, fx0, bn, 1.0); }
       for (const bx of [-127, -115, -103]) { const n0 = 2357; AB(0x9a5a3e, 11.6, 2.8, 8, bx, n0, 1.4); addG(0x7a3e2c, tri(8.6, 2.2, 12), bx, n0, 2.8, Math.PI / 2);
         AB(WH, 1.4, 1.1, 0.1, bx - 2.8, n0 - 4.05, 1.5); AB(WH, 1.4, 1.1, 0.1, bx + 2.8, n0 - 4.05, 1.5); AB(0x3b4a5a, 0.95, 2, 0.1, bx, n0 - 4.05, 1.0); } } // bungalows (north side, facing the close)
     // v60 Sturdee Avenue (Joseph's Street View from the north end looking S): cream-render two-storey terraces, grey slate roofs, red-brick stacks
