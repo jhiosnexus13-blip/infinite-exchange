@@ -104,7 +104,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hid = new T.MeshBasicMaterial({ visible: false }); city.traverse(o => { if (o.isMesh) { o.material = hid; n++; } else if (o.isLineSegments && o.material) { o.material.opacity = 0.35; } }); info.slabsHidden = n; };
   const step = () => { try { const end = Math.min(B.length, bi + (LITE ? 500 : 1200)); for (; bi < end; bi++) one(B[bi][0], B[bi][1]); if (bi < B.length) return setTimeout(step, 0); for (const t of skinTiles.values()) flushTile(t); info.skinsDone = true; hideSlabs(); } catch (e) { console.warn('v69 skins', e); } };
   let BD = null; const beattyCol = (e, n) => { if (!BD || e < -262 || e > -185 || n < 2500 || n > 2660) return null; const L = e > -222.5 ? BD.terraceEast : BD.terraceWest; const t = (L || []).find(t => n >= t.n0 && n < t.n1); return t ? new T.Color(t.col).getHex() : null; };
-  fetch('/assets/data/beatty-bottom.json?v=73').then(r => r.json()).then(d => { BD = d; }).catch(() => {}).finally(() => setTimeout(step, 50));
+  fetch('/assets/data/beatty-bottom.json?v=74').then(r => r.json()).then(d => { BD = d; }).catch(() => {}).finally(() => setTimeout(step, 50));
   // Newtown fillers + Chaucer/Sturdee shells: swap their flat colours for the facade shader (keeps their colour, adds windows/doors/grime)
   const reskinNT = (tries = 0) => { const ng = S.getObjectByName('newtown-streets'); if (!ng) return tries < 30 && setTimeout(() => reskinNT(tries + 1), 1000); let sw = 0; ng.traverse(o => { if (!o.isMesh || !o.material || !o.material.color) return; const hx = o.material.color.getHex();
       if ([0x8a4e34, 0xa2432b, 0xece4cf, 0xc9d6bf].includes(hx)) { o.material = facade({ color: hx }); sw++; } }); info.newtownReskinned = sw; }; setTimeout(reskinNT, 1500);
@@ -143,7 +143,9 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hr = new T.Mesh(new T.RingGeometry(4.6, 6.2, 48), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.95, side: T.DoubleSide, toneMapped: false })); hr.rotation.x = -Math.PI / 2; hr.position.set(156, 0.12, -288); grp.add(hr);
     const hb = new T.Mesh(new T.CylinderGeometry(1.2, 4.6, 40, 24, 1, true), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.18, depthWrite: false, side: T.DoubleSide, toneMapped: false })); hb.position.set(156, 20, -288); grp.add(hb);
     const hc = new T.Mesh(new T.CylinderGeometry(0.35, 0.35, 70, 12, 1, true), new T.MeshBasicMaterial({ color: 0x9dffd8, transparent: true, opacity: 0.45, depthWrite: false, toneMapped: false })); hc.position.set(156, 35, -288); grp.add(hc); } // v70: bigger plate/ring + tall light column so scouts spot the hatch
-  { const [e, n] = loc(52.604471, 1.736196); AB(0xe7dcc6, 20, 36, 26, e - 4, n, 18); AB(0x4b4f55, 21, 0.8, 27, e - 4, n, 36.4); for (let y = 4; y < 35; y += 3.2) AB(0x2a2f38, 0.3, 1.6, 22, e + 6.1, n, y); } // v70: solid Tower slab to the full landmark height so the cyan wire never reads as the building
+  { const [e, n] = loc(52.604471, 1.736196); AB(0xe7dcc6, 20, 36, 26, e - 4, n, 18); AB(0x4b4f55, 21, 0.8, 27, e - 4, n, 36.4); for (let y = 4; y < 35; y += 3.2) AB(0x2a2f38, 0.3, 1.6, 22, e + 6.1, n, y);  // v74 observation top (Tower ADJUST 05 drone + 06 360 aerial): octagonal glazed drum, blue mullions, red bracket lights, wide flat cap, silver seamed octagon roof + thin spire, east-slope hatch
+    const te = e - 4; CY(0xd9cfb4, 5.2, 5.2, 2, te, n, 37.8, 8); CY(0x1d3f7a, 6.2, 6.2, 4.2, te, n, 40.9, 8); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + Math.PI / 8; AB(0x2c5fb0, 0.35, 4.3, 0.35, te + Math.cos(a) * 6.25, n + Math.sin(a) * 6.25, 40.9, -a); CY(0xff2a2a, 0.3, 0.3, 0.3, te + Math.cos(a) * 5.6, n + Math.sin(a) * 5.6, 38.6, 6); }
+    CY(0xe9e6de, 8.2, 8.2, 0.6, te, n, 43.3, 8); CY(0xb8bcc2, 1.2, 7.6, 2.4, te, n, 44.8, 8); CY(0xc9ccd1, 0.05, 0.35, 14, te, n, 53, 8); AB(0x8d9196, 1.2, 0.5, 1.2, te + 4, n, 44.4); } // v70: solid Tower slab to the full landmark height so the cyan wire never reads as the building
   { // v73 Harbour Mouth (gy-real-refs/harbour-mouth-REAL-WORLD-ADJUST.md P1-P7): two concrete pier arms west of the real pier-head light lat/lons, deck top Y=2.6 m (well above the river/teal),
     // 10 m wide, round South Pier head, rock armour on the seaward (south) side, coping, black bollards every 15 m, tubular rails, orange lifebuoys, red South Pier light tower, North Pier light.
     const DY = 2.6, W = 10, LEN = 130, hm = { decks: [] };
@@ -166,7 +168,34 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     (window.__groundParts = window.__groundParts || []).push((x, z) => { for (const d of hm.decks) if ((x > d.x0 && x < d.x1 && z > d.z0 && z < d.z1) || (x - d.hx) ** 2 + (z - d.hz) ** 2 < d.hr * d.hr) return DY; return null; });
     // spawn: South Pier deck 12 m back from the head, eye 1.7 m above deck, looking NE across the mouth at the North Pier light
     { const s = hm.south, sp = warp(s.e - 12, s.n + 1.5); hm.spawn = [sp.x, sp.z, [hm.north.x, hm.north.z], true]; fx.harbourSpawn = hm.spawn; info.harbour = { southHead: [+s.x.toFixed(1), +s.z.toFixed(1)], northHead: [+hm.north.x.toFixed(1), +hm.north.z.toFixed(1)], spawn: [+sp.x.toFixed(1), +sp.z.toFixed(1)], deckY: DY }; }
-    (fx.extraJumps || (fx.extraJumps = {})).harbour_mouth = hm.spawn; }
+    (fx.extraJumps || (fx.extraJumps = {})).harbour_mouth = hm.spawn;
+    { const s0 = hm.south, nn = hm.north, sh = warp(s0.e + 2, s0.n + 1), nh = warp(nn.e, nn.n); let tries = 0; const pin = () => { // v74: neon gate / 3 TRACKS cluster onto the South Pier head; red + green beacons onto the real light towers
+        let done = 0; for (const c of fx.clusters || []) if (c.grp && Math.hypot(c.grp.position.x - s0.x, c.grp.position.z - s0.z) < 160) { c.grp.position.set(s0.x - 10, DY, s0.z); done++; }
+        const lm = fx.harbourLm || []; for (const b of lm) { const red = b.material.color.r > b.material.color.g; b.position.set(red ? sh.x : nh.x, red ? DY + 13 : DY + 9, red ? sh.z : nh.z); }
+        if ((!done || !lm.length) && ++tries < 30) setTimeout(pin, 700); }; setTimeout(pin, 500); } }
+  { // v74 Royal Assembly Rooms REAL massing (seafront-sv/JOSEPH-lodge-cluster-ADJUST + lodge-assembly-2026-10/02, 03 colour): white ground storey, brown-brick upper with 5 white blind arches,
+    // white cornice, slate roof, white-capped chimneys, 5-bay front (3 open arches on grey columns + 2 outer arched windows with ROYAL ASSEMBLY ROOMS lunettes and square & compass panes),
+    // yellow corner quoins (01), tarmac apron with bays + NO PARKING, square & compass either side of the car-park signs (Joseph addendum). Versions hatch stays beside the building (v65). Front faces east at e=-115.
+    const F = -115.2, B = -156.5, S0 = -458, S1 = -437, NC = (S0 + S1) / 2, D = F - B, Wd = S1 - S0, E = Math.PI / 2;
+    const emb = (w, h, e, n, y, bg, fg) => { const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'); g.fillStyle = bg; g.fillRect(0, 0, 256, 256); g.strokeStyle = fg; g.lineWidth = 14; g.lineCap = 'round';
+      g.beginPath(); g.moveTo(128, 40); g.lineTo(60, 210); g.moveTo(128, 40); g.lineTo(196, 210); g.stroke(); g.beginPath(); g.arc(128, 40, 14, 0, Math.PI * 2); g.stroke(); g.beginPath(); g.moveTo(50, 120); g.lineTo(128, 200); g.lineTo(206, 120); g.stroke(); // compass over square
+      g.font = 'bold 60px Georgia,serif'; g.fillStyle = fg; g.textAlign = 'center'; g.fillText('G', 128, 150); const tx = new T.CanvasTexture(c); if (T.SRGBColorSpace) tx.colorSpace = T.SRGBColorSpace;
+      const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: tx, side: T.DoubleSide })); const p = warp(e, n); m.position.set(p.x, y, p.z); m.rotation.y = E; grp.add(m); };
+    AB(0xf2f0ea, D, 7, Wd, (F + B) / 2, NC, 3.5); AB(0x7a4632, D, 6.5, Wd, (F + B) / 2, NC, 10.25); AB(0xf4f2ec, D + 0.8, 0.7, Wd + 0.8, (F + B) / 2, NC, 13.85); // ground / brick upper / cornice
+    { const g = new T.CylinderGeometry(0.01, Wd / 2 + 0.3, 3, 4, 1); g.rotateY(Math.PI / 4); g.scale(D * 0.72 / (Wd / 2 + 0.3), 1, 1); const p = warp((F + B) / 2, NC); g.translate(p.x, 15.7, p.z); put(0x3e434a, g); } // slate hipped roof
+    for (const dn of [-Wd / 2 + 1.5, Wd / 2 - 1.5]) { AB(0x7a4632, 1.4, 3.4, 1.4, F - 6, NC + dn, 15.6); AB(0xf4f2ec, 1.7, 0.4, 1.7, F - 6, NC + dn, 17.5); } // chimneys, white caps
+    for (const dn of [-Wd / 2, Wd / 2]) for (let y = 0.6; y < 14; y += 1.2) AB(0xe2b83a, 0.6, 0.55, 0.6 + (Math.round(y / 1.2) % 2) * 0.6, F + 0.05, NC + dn, y); // yellow corner quoins
+    for (let i = 0; i < 5; i++) { const n = S0 + Wd * (i + 0.5) / 5, outer = i === 0 || i === 4;
+      AB(0xd9cba8, 0.4, 0.6, 3.2, F + 0.25, n, 6.1); AB(0xd9cba8, 0.5, 0.5, 0.5, F + 0.3, n, 6.5); // beige arch head + keystone
+      AB(0xf4f2ec, 0.15, 3.6, 2.4, F + 0.08, n, 10.4); AB(0x7a4632, 0.16, 3.2, 1.9, F + 0.09, n, 10.3); AB(0xf4f2ec, 0.17, 0.9, 2.4, F + 0.1, n, 12.2); // white blind arch panel upper
+      if (outer) { AB(0x203046, 0.1, 4.6, 2.8, F + 0.12, n, 3.3); board('ROYAL ASSEMBLY ROOMS', 2.8, 0.7, F + 0.2, n, 5.5, E, '#1a2638', '#f1e6c4'); emb(1.3, 1.3, F + 0.2, n, 3.2, '#203046', '#e9dcb6'); }
+      else { AB(0x1a1d22, 0.1, 5.2, 2.8, F - 1.8, n, 2.6); AB(0x2b4058, 0.1, 3.6, 1.6, F - 1.7, n, 1.9); CY(0x2e5a2e, 0.5, 0.4, 1.0, F + 0.8, n, 0.5, 8); } } // recessed arched glazed door + topiary pot
+    for (let i = 1; i < 5; i++) { if (i === 1 || i === 4) continue; } for (const i of [1, 2, 3, 4]) CY(0x9a9ea3, 0.35, 0.4, 5.8, F + 0.6, S0 + Wd * i / 5, 2.9, 12); // grey Tuscan columns between the bays
+    for (let i = 0; i < 6; i++) CY(0x15171a, 0.12, 0.12, 0.6, F + 0.3, S0 + 1 + i * (Wd - 2) / 5, 14.6, 6); // parapet lamps
+    AB(0x2c2f33, 14, 0.05, Wd + 8, F + 7.2, NC, 0.04); for (let i = 0; i <= 6; i++) AB(0xf2f0ea, 5, 0.03, 0.12, F + 9, S0 - 4 + i * (Wd + 8) / 6, 0.08); // tarmac apron + bay lines
+    board('NO PARKING', 4, 0.8, F + 3.2, NC, 0.07, E, '#2c2f33', '#f2d23a').rotation.set(-Math.PI / 2, 0, E); // painted on the apron
+    for (const dn of [-6, 6]) { const sn = NC + dn; CY(0x6b6f74, 0.05, 0.05, 2.2, F + 13, sn, 1.1, 6); board('PRIVATE CAR PARK', 1.4, 0.6, F + 13.06, sn, 2.0, E, '#ffffff', '#1a2638'); for (const ds of [-1.1, 1.1]) emb(0.7, 0.7, F + 13.06, sn + ds, 2.0, '#1a2638', '#e9dcb6'); } // car-park signs with square & compass either side
+    fx.addSolid && fx.addSolid([[B, S0], [F + 0.4, S0], [F + 0.4, S1], [B, S1]]); info.lodgeV74 = { front: F, n: [S0, S1] }; }
   // ---------- 5. piers: solid decks from OSM pier polygons ----------
   const decks = [];
   for (const pr of (G && G.piers) || []) { const name = pr[1]; if (!/Britannia|Wellington/.test(name || '')) continue; const pts = P2(pr[0]); if (pts.length < 3) continue; const Y = 1.5;
@@ -207,7 +236,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     board('THE IRON DUKE', 12, 1.4, e + 8.3, n, 7.4, Math.PI / 2, '#1f1410', '#f2e6c4', 0.7);
     for (let i = 0; i < 9; i++) { AB(0x22262c, 0.18, 0.9, 0.18, e + 14, n - 16 + i * 4, 0.45); } AB(0x6f6b63, 4, 0.14, 36, e + 11, n, 0.07); }
   // ---------- 7. bottom of Beatty Road (Joseph's photos) ----------
-  fetch('/assets/data/beatty-bottom.json?v=73').then(r => r.json()).then(D => { try {
+  fetch('/assets/data/beatty-bottom.json?v=74').then(r => r.json()).then(D => { try {
     const BE = -222.5; const s = D.busStop; // shelter on the east kerb, facing the road (west)
     AB(0x22262c, 0.12, 2.5, 0.12, s.e, s.n - 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e, s.n + 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e + 1.4, s.n - 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e + 1.4, s.n + 1.8, 1.25);
     const roof = new T.Mesh(new T.BoxGeometry(1.8, 0.12, 4.0), new T.MeshBasicMaterial({ color: 0xf2f2f0 })); const rp = warp(s.e + 0.7, s.n); roof.position.set(rp.x, 2.55, rp.z); grp.add(roof);
@@ -248,7 +277,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
   const J = fx.extraJumps || (fx.extraJumps = {}); const wj = (e, n, fe, fn) => { const a = warp(e, n), b = warp(fe, fn); return [a.x, a.z, [b.x, b.z]]; };
   const add = (k, label, v) => { if (!v) return; J[k] = v; info.jumps++; const nav = document.querySelector('.wmap-jumps'); if (nav && !nav.querySelector(`[data-jump="${k}"]`)) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = k; b.textContent = label; nav.appendChild(b); } };
   const later = () => { const i3 = fx.v63Info || {}, i4 = fx.v64Info || {}, i5 = fx.v65Info || {};
-    { const bp = ((G && G.piers) || []).find(p => /Britannia/.test(p[1] || '')); if (bp) { const pts = P2(bp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; J.britannia_pier = wj(e0 + 6, nc - 4, e0 + 120, nc + 6); } }
+    { const bp = ((G && G.piers) || []).find(p => /Britannia/.test(p[1] || '')); if (bp) { const pts = P2(bp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; J.britannia_pier = wj(e0 + 26, nc, e0 + 140, nc + 2); J.britannia_pier.push(true); /* v74: exact spot on the solid OSM deck */ } }
     { const wp = ((G && G.piers) || []).find(p => /Wellington/.test(p[1] || '')); if (wp) { const pts = P2(wp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; { const v = wj(e0 + 22, nc, e0 + 120, nc); v.push(true); add('wellington_pier', 'Wellington Pier', v); } /* v73: feet on the solid OSM deck (raw: skip landX beach clamp) */ } }
     { const [e, n] = loc(52.604471, 1.736196); const pe = Math.max(e + 40, seaE(n) - 45); J.tower_complex = wj(pe, n - 30, e, n); }
     { const [e, n] = loc(52.625267, 1.735168); J.newtown_archive = wj(-152, 2441, e, n); /* v70: further out on the carriageway; scouts landed inside the brick at -136 */ /* on the Sturdee Avenue carriageway, outside the frontage */ }

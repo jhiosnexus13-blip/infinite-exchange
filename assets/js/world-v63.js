@@ -22,20 +22,10 @@ export function initV63(o) {
   const foot = y => (y == null ? 1.7 : y) - 1.7;
 
   // ---------- 1. Newtown path levels ----------
-  { const D = 1.8, EA = -67.6, EB = -64.4, EC = (EA + EB) / 2, NT = 2415.5, NS = 2408.5, NR = 2362, NB = 2348, STEPS = 9;
-    const hAt = n => n >= NT ? 0 : n >= NS ? -Math.min(D, Math.ceil((NT - n) / ((NT - NS) / STEPS)) * D / STEPS) : n >= NR ? -D : n >= NB ? -D * (n - NB) / (NR - NB) : 0;
-    parts.push((x, z) => { const e = x, n = -z; if (e < EA || e > EB || n < NB || n > NT) return null; return hAt(n); });
-    for (let i = 0; i < STEPS; i++) { const n1 = NT - i * (NT - NS) / STEPS, n0 = n1 - (NT - NS) / STEPS, top = -(i + 1) * D / STEPS; AB(0x8c8780, EB - EA, 0.12, n1 - n0, EC, (n0 + n1) / 2, top - 0.06); AB(0x6f6a64, EB - EA, 0.04, 0.08, EC, n0 + 0.04, top + 0.02); }
-    AB(0x6a6560, EB - EA, 0.1, NS - NR, EC, (NS + NR) / 2, -D - 0.05);                                // lower path
-    { const L = Math.hypot(NR - NB, D), a = Math.atan2(D, NR - NB); AB(0x726c66, EB - EA, 0.1, L, EC, (NR + NB) / 2, -D / 2 - 0.05, 0, a); } // ramp up (south end)
-    AB(0x6a6560, 15, 0.06, 4.2, -71.8, 2345.6, 0.07);                                                  // link to the east end of Beatty Close
-    for (const [ew, s] of [[EA - 0.18, -1], [EB + 0.18, 1]]) { // retaining walls (brick) with coping + railings, earth bank behind
-      AB(0x7c4030, 0.36, D + 0.3, NT - NR, ew, (NT + NR) / 2, -D / 2 + 0.15); AB(0xa7a29a, 0.5, 0.08, NT - NB, ew, (NT + NB) / 2, 0.34);
-      { const L = NR - NB; for (let k = 0; k < 4; k++) { const n0 = NB + k * L / 4, n1 = n0 + L / 4, hh = D * ((n0 + n1) / 2 - NB) / L; AB(0x7c4030, 0.36, hh + 0.3, L / 4, ew, (n0 + n1) / 2, -hh / 2 + 0.15); } }
-      AB(0x5a7a3a, 1.6, 0.06, NT - NB, ew + s * 1.0, (NT + NB) / 2, 0.08);
-      for (const y of [0.65, 1.2]) AB(0xa9b0b6, 0.05, 0.05, NT - NB, ew, (NT + NB) / 2, y); for (let n = NB; n <= NT; n += 2) AB(0xa9b0b6, 0.06, 0.9, 0.06, ew, n, 0.8);
-      solid(s < 0 ? ew - 2.2 : ew - 0.2, NB + 2, s < 0 ? ew + 0.2 : ew + 2.2, NT, -9, 9); } // wall + bank: 2.4 m deep so a fast walker can't step through
-    for (const e of [EA + 0.15, EB - 0.15]) { const L = Math.hypot(NT - NS, D), a = -Math.atan2(D, NT - NS); AB(0xa9b0b6, 0.05, 0.05, L, e, (NT + NS) / 2, -D / 2 + 0.95, 0, -a); } // stair handrails
+  { const D = 0, EA = -67.6, EB = -64.4, EC = (EA + EB) / 2, NT = 2415.5, NB = 2348, STEPS = 0; // v74 (north-youth-beatty ADJUST): REAL path is FLAT at grade; no sunken stair. 2.2 m grey concrete slab path + bow-top rail, link slab to Beatty Close
+    for (let n = NB; n < NT; n += 2.4) AB(n % 4.8 < 2.4 ? 0x9a978f : 0x8f8c85, 2.2, 0.05, 2.35, EC, n + 1.2, 0.04); AB(0x9a978f, 15, 0.05, 2.2, -71.8, 2345.6, 0.04);
+    for (let n = NB; n <= NT; n += 2) AB(0x6f757a, 0.05, 0.9, 0.05, EB + 0.4, n, 0.45); AB(0x6f757a, 0.05, 0.05, NT - NB, EB + 0.4, (NT + NB) / 2, 0.88);
+    for (let n = NB; n <= NT; n += 2.5) AB(0x6b4a32, 0.08, 1.8, 2.4, EA - 0.4, n, 0.9); solid(EA - 0.6, NB, EA - 0.3, NT, -9, 9); // brown close-board fences to the back gardens
     info.newtownPath = { depth: D, steps: STEPS, top: [EC, NT], bottom: [EC, NB], link: [-78.6, 2345.6] }; }
 
   // ---------- 2. Beatty Road east side: continuous frontage south of The Avenue ----------
