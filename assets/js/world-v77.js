@@ -26,18 +26,15 @@ export function initV77(o) {
     info.fixes.push('wellington-pierhead'); }
   info.fixes.push('pier-decks');
   // ---- 6 + settle: wrap teleport via jump buttons ----
-  const toast = document.createElement('div'); toast.textContent = 'jumping…'; toast.setAttribute('role', 'status');
-  toast.style.cssText = 'position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:9999;padding:8px 16px;border-radius:18px;background:rgba(10,14,22,.85);color:#9dffb0;font:600 15px system-ui;letter-spacing:.06em;pointer-events:none;opacity:0;transition:opacity .2s';
-  document.body.appendChild(toast);
+  // v79: the old faint toast moved to world-fx (.wjump, shown by jumpTo/teleport itself)
   const P = () => o.P || null;
   const settle = (k, x, z) => { const d = DECKS[k]; if (!d) return; let n = 0; const t = setInterval(() => { const p = fx.lastJump; const pl = P();
       if (pl && pl.pos && (Math.abs(pl.pos.x - x) > 2.5 || Math.abs(pl.pos.z - z) > 2.5)) { pl.pos.x = x; pl.pos.z = z; pl.yaw = Math.atan2(-(d.sea[0] - x), -(d.sea[1] - z)); }
       if (++n > 8) clearInterval(t); }, 180); };
   const SPOT = { britannia_pier: [195, -511], wellington_pier: [72, 488] };
   document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.wmap-jumps [data-jump]'); if (!b) return; const k = b.dataset.jump, before = fx.lastJump && fx.lastJump.join();
-    toast.style.opacity = '1'; setTimeout(() => { toast.style.opacity = '0'; }, 1100);
     if (SPOT[k]) settle(k, ...SPOT[k]);
-    setTimeout(() => { if ((fx.lastJump && fx.lastJump.join()) === before) { const nb = document.querySelector(`.wmap-jumps [data-jump="${k}"]`); if (nb && !nb.dataset.r77) { nb.dataset.r77 = '1'; nb.click(); setTimeout(() => { delete nb.dataset.r77; }, 1500); } } }, 900); // first-click no-op retry
+    setTimeout(() => { if ((fx.lastJump && fx.lastJump.join()) === before) { const nb = document.querySelector(`.wmap-jumps [data-jump="${k}"]`); if (nb && !nb.dataset.r77) { nb.dataset.r77 = '1'; fx.jBusy = 0; fx.jumpToast && fx.jumpToast(true); nb.click(); setTimeout(() => { delete nb.dataset.r77; }, 1500); } } }, 900); // first-click no-op retry
   }, true);
   info.fixes.push('jumping-toast', 'settle-lock');
   // ---- 5: jump order ----

@@ -65,3 +65,10 @@ body.touch .wcredits{font-size:.5rem;opacity:.8}
 /* v75: hint strip reads at a glance (M for jump map) */
 #hint{font-size:.9rem;color:#e8fff4;background:rgba(0,14,10,.88)!important;border:1px solid #00ff9d88}
 #hint b{color:#00ff9d}
+
+/* v79 jumping overlay */
+.wjump{position:fixed;left:50%;top:22%;transform:translate(-50%,-8px);z-index:2147483000;display:flex;align-items:center;gap:12px;padding:16px 30px;border:2px solid #00ff9d;border-radius:12px;background:#05080d;color:#fff;font:800 22px/1 system-ui,sans-serif;letter-spacing:.14em;box-shadow:0 0 0 4px rgba(0,0,0,.6),0 0 28px rgba(0,255,157,.55);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .15s,transform .15s,visibility 0s .15s}
+.wjump.on{opacity:1;visibility:visible;transform:translate(-50%,0);transition:opacity .1s,transform .1s}
+.wjump-sp{width:18px;height:18px;border:3px solid rgba(0,255,157,.3);border-top-color:#00ff9d;border-radius:50%;animation:wjsp .7s linear infinite}
+@keyframes wjsp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.wjump-sp{animation:none}}
