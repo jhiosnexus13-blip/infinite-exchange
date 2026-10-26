@@ -49,11 +49,11 @@ export function initV63(o) {
     info.beattyRoad = { pairs: rows.length + 1, gapsClosed: 4 }; }
 
   // ---------- 3. Jellicoe Road bridge over the service lane ----------
-  { const N0 = 2680.6, N1 = 2694.6, NC = (N0 + N1) / 2, DW = N1 - N0, DT = 6.4, AW = -70.5, AE = -57.5, RW = 45;
+  { const N0 = 2682.6, N1 = 2696.6, /* v77: nudged ~2 m off the road line (Joseph REAL note) */ NC = (N0 + N1) / 2, DW = N1 - N0, DT = 6.4, AW = -70.5, AE = -57.5, RW = 45;
     const hAt = e => e >= AW - 1 && e <= AE + 1 ? DT : e < AW - 1 ? Math.max(0, DT * (1 - (AW - 1 - e) / RW)) : Math.max(0, DT * (1 - (e - AE - 1) / RW));
     parts.push((x, z, y) => { const e = x, n = -z; if (n < N0 || n > N1 || e < AW - 1 - RW || e > AE + 1 + RW) return null; const h = hAt(e); if (h <= 0.02) return null; return foot(y) >= h - 1.1 ? h : null; });
     AB(0x5a5f66, AE - AW + 2.4, 0.8, DW, (AW + AE) / 2, NC, DT - 0.4);                                     // deck slab
-    AB(0x3a3d42, AE - AW + 2.4, 0.06, DW - 1, (AW + AE) / 2, NC, DT + 0.02);                               // road surface
+    AB(0x3a3d42, AE - AW + 2.4, 0.06, DW - 5, (AW + AE) / 2, NC, DT + 0.02); for (const pn of [N0 + 1.6, N1 - 1.6]) AB(0xa9a49a, AE - AW + 2.4, 0.18, 2.2, (AW + AE) / 2, pn, DT + 0.09); // v77: road + pavements both sides
     AB(0xd9d9d0, AE - AW + 2.4, 0.04, 0.15, (AW + AE) / 2, NC, DT + 0.06);                                // centre line
     for (const nn of [N0 + 0.2, N1 - 0.2]) { AB(0xb7b2a8, AE - AW + 2.4, 1.1, 0.4, (AW + AE) / 2, nn, DT + 0.55); solid(AW - 1.2, nn - 0.2, AE + 1.2, nn + 0.2, DT - 1.5, 99); }
     for (const ea of [AW, AE]) { AB(0x9c8f7e, 1.6, DT - 0.8, DW + 3, ea, NC, (DT - 0.8) / 2); solid(ea - 0.8, N0 - 1.5, ea + 0.8, N1 + 1.5, -9, DT - 1.2); }
