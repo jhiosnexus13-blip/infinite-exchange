@@ -23,7 +23,7 @@
   const el = document.createElement('div'); el.className = 'wwel'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'wwel-t');
   el.innerHTML = `<div class="wwel-box"><h2 id="wwel-t">WELCOME TO GREAT YARMOUTH // 3D</h2><p class="sub">A neon, real-scale Great Yarmouth with local music on every screen. Quick guide:</p>
 <form class="wwel-form" novalidate style="display:grid;gap:.45rem;margin:.5rem 0 .8rem;padding:.6rem;border:1px solid #1d6b4b;border-radius:8px">
-  <p style="margin:0;color:#00ff9d;font-size:.78rem;letter-spacing:.08em">OPERATOR SIGN-UP // ENTER YOUR EMAIL TO ROAM</p>
+  <p style="margin:0;color:#00ff9d;font-size:.78rem;letter-spacing:.08em">OPERATOR SIGN-UP // EMAIL OPTIONAL: SIGN UP FOR UPDATES OR SKIP</p>
   <label style="display:grid;gap:.2rem">Email <input type="email" name="email" required maxlength="120" autocomplete="email" placeholder="you@example.com" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
   <label style="display:grid;gap:.2rem">Call-sign (optional, no real name needed)<input type="text" name="name" maxlength="60" autocomplete="nickname" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
   <p class="note" style="margin:0">Your email is only for JHIOS world updates, events and memberships. It is never shown in the world or shared. <a href="/privacy.html" target="_blank" rel="noopener" style="color:#7dffd0">Privacy</a></p>
@@ -32,7 +32,7 @@
 ${move}
 ${li('▶', `<b>${tap} a glowing screen</b> or hologram to play its songs (YouTube, so turn your sound on). The ♫ PLAYLISTS button lists every track.`)}
 ${li('🗺', `<b>${tap} the minimap</b> (top right) to open the jump map, then ${touch ? 'tap' : 'click'} anywhere to jump there. ${touch ? 'Pinch' : 'Scroll'} to zoom the map.`)}
-${li('🚂', `<b>Seafront train</b> runs from North Drive to the Harbour Mouth, stopping at Britannia Pier, Tower Complex, Wellington Pier and Pleasure Beach. At a stop press <b>RIDE TRAIN</b> (or ${tap.toLowerCase()} the train), choose a stop from <b>STOPS ▾</b>, and press <b>HOP OFF</b> to get out at the next stop.`)}
+${li('🚂', `<b>Seafront train</b> runs from North Drive to the Harbour Mouth, stopping at Britannia Pier, Tower Complex, Wellington Pier and Pleasure Beach. At a stop press <b>BOARD TRAIN</b> (or ${tap.toLowerCase()} the train), and press <b>REQUEST STOP</b> to get off at the next stop. <b>STOPS ▾</b> jumps you straight to a stop.`)}
 ${li('☾', '<b>Sun / moon button</b> switches day and night. The weather is live Great Yarmouth weather.')}
 ${li('👥', 'Other visitors show up as <b>glowing silhouettes</b>, and the counter shows how many are here now. Nobody sees a name.')}
 ${li('💬', '<b>Chat</b>: press <b>T</b> (or the 💬 button) to chat. Everyone is an anonymous visitor-xxxx; links are removed.')}
@@ -41,7 +41,7 @@ ${li('🎧', 'Headphones recommended.')}
 ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite ? '' : ' If it runs slowly, add <b>?lite=1</b> to the address for a lighter version.'}`) : ''}
 </ul><p class="note">Live features (other visitors, chat and voice notes) work best on a stable Wi-Fi connection; mobile data may not connect. Messages and voice notes disappear after 30 minutes.</p>
 <p class="note">Work in progress: more local artists are on the way.</p>
-<button type="button" class="wwel-go">ENTER THE WORLD</button><label><input type="checkbox" class="wwel-off"> Don't show this again</label>${(window.JHIOS_CONFIG || {}).KOFI_URL ? `<a class="wwel-kofi" href="${JHIOS_CONFIG.KOFI_URL}" target="_blank" rel="noopener" title="${JHIOS_CONFIG.KOFI_LABEL}" aria-label="${JHIOS_CONFIG.KOFI_LABEL}">☕ Support on Ko-fi</a>` : ''}</div>`;
+<button type="button" class="wwel-go">ENTER THE WORLD</button> <button type="button" class="wwel-skip" style="min-height:36px;padding:.3rem .8rem;border-radius:6px;border:1px solid #2f6a75;background:transparent;color:#7dffd0;cursor:pointer">Skip, enter without email</button><label><input type="checkbox" class="wwel-off"> Don't show this again</label>${(window.JHIOS_CONFIG || {}).KOFI_URL ? `<a class="wwel-kofi" href="${JHIOS_CONFIG.KOFI_URL}" target="_blank" rel="noopener" title="${JHIOS_CONFIG.KOFI_LABEL}" aria-label="${JHIOS_CONFIG.KOFI_LABEL}">☕ Support on Ko-fi</a>` : ''}</div>`;
   const help = document.createElement('button'); help.type = 'button'; help.className = 'whelp'; help.textContent = '?'; help.setAttribute('aria-label', 'How to use the world'); help.title = 'Help';
   let off = false; try { off = localStorage.getItem(KEY) === '1'; } catch (_) {}
   const unlock = () => { try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { const c = window.__jxAC || (window.__jxAC = new AC()); c.resume && c.resume(); const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } } catch (_) {} };
@@ -53,7 +53,14 @@ ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite 
   const okEmail = () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim()) && em.value.length <= 120;
   const sync = () => { window.__jxGate = !member; el.classList.toggle('gated', !member); form.style.display = member ? 'none' : 'grid'; goBtn.disabled = !member && !okEmail(); };
   em.addEventListener('input', () => { err.textContent = ''; sync(); }); form.addEventListener('submit', e => { e.preventDefault(); goBtn.click(); }); sync();
-  const enter = () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); };
+  const ctlHint = () => { try { if (localStorage.getItem('jx-ctl-hint-off') === '1' || document.querySelector('.wctl69')) return; } catch (_) {}
+    const d = document.createElement('div'); d.className = 'wctl69'; d.setAttribute('role', 'note');
+    d.style.cssText = 'position:fixed;left:10px;bottom:84px;z-index:40;max-width:260px;padding:.45rem .7rem;border:1px solid #1d6b4b;border-radius:8px;background:rgba(2,22,27,.86);color:#d8fff0;font:12px/1.45 system-ui,sans-serif';
+    d.innerHTML = (touch ? '🕹 Left stick moves · drag to look' : '⌨ WASD / arrows move · drag to look') + ' · T or 💬 to chat<br>🗺 ' + (touch ? 'Tap' : 'Click') + ' the minimap (top right) to open the jump map<br>❓ The ? button reopens the full guide <button type="button" aria-label="Dismiss controls hint" style="margin-left:.4rem;background:none;border:0;color:#7dffd0;cursor:pointer">✕</button>';
+    d.querySelector('button').addEventListener('click', () => { d.remove(); try { localStorage.setItem('jx-ctl-hint-off', '1'); } catch (_) {} }); document.body.appendChild(d); };
+  const enter = () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); ctlHint(); };
+  el.querySelector('.wwel-skip').addEventListener('click', () => enter()); // v69: visible skip (Escape already fail-opens); email stays optional
+  const skipB = el.querySelector('.wwel-skip'); const syncSkip = () => { skipB.style.display = member ? 'none' : ''; }; syncSkip();
   el.querySelector('.wwel-go').addEventListener('click', async () => { if (member) return enter(); if (!okEmail()) { err.textContent = 'Enter a valid email to enter.'; return; }
     goBtn.disabled = true; goBtn.textContent = 'SIGNING UP…';
     try { const r = await fetch('/api/members', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: em.value.trim(), name: form.name.value.trim() }) });

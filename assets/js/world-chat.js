@@ -103,7 +103,7 @@ export function initChat(o) {
   for (const b of [talk, mic2]) { b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); try { b.setPointerCapture(e.pointerId); } catch (_) {} start(); });
     for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) b.addEventListener(ev, () => stop()); b.addEventListener('contextmenu', e => e.preventDefault());
     b.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); start(); } }); b.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') stop(); }); }
-  const typing = e => /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '') || (e.target && e.target.isContentEditable);
+  const typing = e => { const a = document.activeElement; return /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '') || (e.target && e.target.isContentEditable) || !!(a && (/INPUT|TEXTAREA|SELECT/.test(a.tagName) || a.isContentEditable)); }; // v69: T/V never steal keys from Operator / name / request inputs
   addEventListener('keydown', e => { if (typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.code === 'KeyV') { e.preventDefault(); if (!e.repeat) start(); } else if (e.code === 'KeyT' && !e.repeat) { e.preventDefault(); open(true); } });
   addEventListener('keyup', e => { if (e.code === 'KeyV') stop(); });
