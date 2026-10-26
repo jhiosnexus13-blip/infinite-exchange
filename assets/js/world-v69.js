@@ -104,7 +104,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hid = new T.MeshBasicMaterial({ visible: false }); city.traverse(o => { if (o.isMesh) { o.material = hid; n++; } else if (o.isLineSegments && o.material) { o.material.opacity = 0.35; } }); info.slabsHidden = n; };
   const step = () => { try { const end = Math.min(B.length, bi + (LITE ? 500 : 1200)); for (; bi < end; bi++) one(B[bi][0], B[bi][1]); if (bi < B.length) return setTimeout(step, 0); for (const t of skinTiles.values()) flushTile(t); info.skinsDone = true; hideSlabs(); } catch (e) { console.warn('v69 skins', e); } };
   let BD = null; const beattyCol = (e, n) => { if (!BD || e < -262 || e > -185 || n < 2500 || n > 2660) return null; const L = e > -222.5 ? BD.terraceEast : BD.terraceWest; const t = (L || []).find(t => n >= t.n0 && n < t.n1); return t ? new T.Color(t.col).getHex() : null; };
-  fetch('/assets/data/beatty-bottom.json?v=70').then(r => r.json()).then(d => { BD = d; }).catch(() => {}).finally(() => setTimeout(step, 50));
+  fetch('/assets/data/beatty-bottom.json?v=71').then(r => r.json()).then(d => { BD = d; }).catch(() => {}).finally(() => setTimeout(step, 50));
   // Newtown fillers + Chaucer/Sturdee shells: swap their flat colours for the facade shader (keeps their colour, adds windows/doors/grime)
   const reskinNT = (tries = 0) => { const ng = S.getObjectByName('newtown-streets'); if (!ng) return tries < 30 && setTimeout(() => reskinNT(tries + 1), 1000); let sw = 0; ng.traverse(o => { if (!o.isMesh || !o.material || !o.material.color) return; const hx = o.material.color.getHex();
       if ([0x8a4e34, 0xa2432b, 0xece4cf, 0xc9d6bf].includes(hx)) { o.material = facade({ color: hx }); sw++; } }); info.newtownReskinned = sw; }; setTimeout(reskinNT, 1500);
@@ -187,7 +187,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     board('THE IRON DUKE', 12, 1.4, e + 8.3, n, 7.4, Math.PI / 2, '#1f1410', '#f2e6c4', 0.7);
     for (let i = 0; i < 9; i++) { AB(0x22262c, 0.18, 0.9, 0.18, e + 14, n - 16 + i * 4, 0.45); } AB(0x6f6b63, 4, 0.14, 36, e + 11, n, 0.07); }
   // ---------- 7. bottom of Beatty Road (Joseph's photos) ----------
-  fetch('/assets/data/beatty-bottom.json?v=70').then(r => r.json()).then(D => { try {
+  fetch('/assets/data/beatty-bottom.json?v=71').then(r => r.json()).then(D => { try {
     const BE = -222.5; const s = D.busStop; // shelter on the east kerb, facing the road (west)
     AB(0x22262c, 0.12, 2.5, 0.12, s.e, s.n - 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e, s.n + 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e + 1.4, s.n - 1.8, 1.25); AB(0x22262c, 0.12, 2.5, 0.12, s.e + 1.4, s.n + 1.8, 1.25);
     const roof = new T.Mesh(new T.BoxGeometry(1.8, 0.12, 4.0), new T.MeshBasicMaterial({ color: 0xf2f2f0 })); const rp = warp(s.e + 0.7, s.n); roof.position.set(rp.x, 2.55, rp.z); grp.add(roof);
