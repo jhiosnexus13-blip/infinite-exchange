@@ -31,7 +31,7 @@
 </form><ul>
 ${move}
 ${li('▶', `<b>${tap} a glowing screen</b> or hologram to play its songs (YouTube, so turn your sound on). The ♫ PLAYLISTS button lists every track.`)}
-${li('🗺', `<b>${tap} the minimap</b> (top right) to open the jump map, then ${touch ? 'tap' : 'click'} anywhere to jump there. ${touch ? 'Pinch' : 'Scroll'} to zoom the map.`)}
+${li('🗺', `<b>${tap} the minimap</b> (lower left; the top-right corner is day / night) to open the jump map, then ${touch ? 'tap' : 'click'} anywhere to jump there. ${touch ? 'Pinch' : 'Scroll'} to zoom the map.`)}
 ${li('🚂', `<b>Seafront train</b> runs from North Drive to the Harbour Mouth, stopping at Britannia Pier, Tower Complex, Wellington Pier and Pleasure Beach. At a stop press <b>BOARD TRAIN</b> (or ${tap.toLowerCase()} the train), and press <b>REQUEST STOP</b> to get off at the next stop. <b>STOPS ▾</b> jumps you straight to a stop.`)}
 ${li('☾', '<b>Sun / moon button</b> switches day and night. The weather is live Great Yarmouth weather.')}
 ${li('👥', 'Other visitors show up as <b>glowing silhouettes</b>, and the counter shows how many are here now. Nobody sees a name.')}
@@ -56,7 +56,7 @@ ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite 
   const ctlHint = () => { try { if (localStorage.getItem('jx-ctl-hint-off70') === '1' || document.querySelector('.wctl70')) return; } catch (_) {}
     const d = document.createElement('div'); d.className = 'wctl70'; d.setAttribute('role', 'note');
     d.style.cssText = 'position:fixed;left:10px;bottom:84px;z-index:40;max-width:260px;padding:.45rem .7rem;border:1px solid #1d6b4b;border-radius:8px;background:rgba(2,22,27,.86);color:#d8fff0;font:12px/1.45 system-ui,sans-serif';
-    d.innerHTML = (touch ? '🕹 Left stick moves · drag to look' : '⌨ WASD / arrows move · drag to look') + ' · T or 💬 to chat<br>🗺 ' + (touch ? 'Tap' : 'Click') + ' the minimap (top right) to open the jump map<br>🔆 Press F (or ' + (touch ? 'tap' : 'click') + ') near glowing panels to open them<br>❓ The ? button reopens the full guide <button type="button" aria-label="Dismiss controls hint" style="margin-left:.4rem;background:none;border:0;color:#7dffd0;cursor:pointer">✕</button>';
+    d.innerHTML = (touch ? '🕹 Left stick moves · drag to look' : '⌨ WASD / arrows move · drag to look') + ' · T or 💬 to chat<br>🗺 ' + (touch ? 'Tap' : 'Click') + ' the minimap (lower left) to open the jump map · top-right corner is day / night<br>🔆 Press F (or ' + (touch ? 'tap' : 'click') + ') near glowing panels to open them<br>❓ The ? button reopens the full guide <button type="button" aria-label="Dismiss controls hint" style="margin-left:.4rem;background:none;border:0;color:#7dffd0;cursor:pointer">✕</button>';
     d.querySelector('button').addEventListener('click', () => { d.remove(); try { localStorage.setItem('jx-ctl-hint-off70', '1'); } catch (_) {} }); document.body.appendChild(d); };
   const enter = () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); ctlHint(); };
   el.querySelector('.wwel-skip').addEventListener('click', () => enter()); // v69: visible skip (Escape already fail-opens); email stays optional

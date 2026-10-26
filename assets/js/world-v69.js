@@ -45,13 +45,13 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
           else { vec2 t = normalize(vec2(-nn.z, nn.x)); float s = dot(vW69.xz, t); float y = vW69.y;
             float fl = floor(y / 3.0), fy = fract(y / 3.0), cx = floor(s / 3.4), fs = fract(s / 3.4); float rnd = h69(vec2(cx, fl) + floor(vW69.xz / 40.0));
             float shade = 0.78 + 0.22 * abs(nn.x); vec3 col = base * shade;
-            col *= 0.86 + 0.14 * h69(floor(vW69.xz * 0.9) + fl);                 // weathered patches
+            col *= 0.96 + 0.04 * h69(floor(vW69.xz * 0.25) + fl);                 // weathered patches
             col *= mix(0.62, 1.0, smoothstep(0.0, 1.6, y));                        // grime at street level
             bool win = fy > 0.36 && fy < 0.82 && fs > 0.22 && fs < 0.72 && y > 0.4;
             bool door = fl < 0.5 && fy < 0.7 && fs > 0.38 && fs < 0.62 && rnd > 0.72;
             if (door) col = mix(vec3(0.42, 0.08, 0.07), vec3(0.12, 0.16, 0.22), step(0.86, rnd));
-            else if (win) { col = vec3(0.07, 0.09, 0.11) + vec3(0.05) * fs; if (rnd < 0.16) col = vec3(0.85, 0.6, 0.28); if (fy < 0.4 || fy > 0.78 || fs < 0.26 || fs > 0.68) col = vec3(0.86, 0.85, 0.8); }
-            float aa = clamp(1.6 - max(fwidth(s), fwidth(y)) * 2.2, 0.0, 1.0); diffuseColor.rgb = mix(base * shade * 0.82, col, aa); } }`); };
+            else if (win) { col = vec3(0.07, 0.09, 0.11) + vec3(0.05) * fs; if (rnd < 0.08) col = vec3(0.6, 0.45, 0.24); if (fy < 0.4 || fy > 0.78 || fs < 0.26 || fs > 0.68) col = mix(base * shade, vec3(0.8, 0.79, 0.75), 0.35); }
+            float aa = clamp(1.6 - max(fwidth(s), fwidth(y)) * 5.0, 0.0, 1.0); diffuseColor.rgb = mix(base * shade * 0.82, col, aa); } }`); };
     m.customProgramCacheKey = () => 'facade69' + (opts.vc ? 'v' : 'c'); return m; };
   fx.facade69 = facade;
 
@@ -143,6 +143,10 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hr = new T.Mesh(new T.RingGeometry(4.6, 6.2, 48), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.95, side: T.DoubleSide, toneMapped: false })); hr.rotation.x = -Math.PI / 2; hr.position.set(156, 0.12, -288); grp.add(hr);
     const hb = new T.Mesh(new T.CylinderGeometry(1.2, 4.6, 40, 24, 1, true), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.18, depthWrite: false, side: T.DoubleSide, toneMapped: false })); hb.position.set(156, 20, -288); grp.add(hb);
     const hc = new T.Mesh(new T.CylinderGeometry(0.35, 0.35, 70, 12, 1, true), new T.MeshBasicMaterial({ color: 0x9dffd8, transparent: true, opacity: 0.45, depthWrite: false, toneMapped: false })); hc.position.set(156, 35, -288); grp.add(hc); } // v70: bigger plate/ring + tall light column so scouts spot the hatch
+  { const [e, n] = loc(52.604471, 1.736196); AB(0xe7dcc6, 20, 36, 26, e - 4, n, 18); AB(0x4b4f55, 21, 0.8, 27, e - 4, n, 36.4); for (let y = 4; y < 35; y += 3.2) AB(0x2a2f38, 0.3, 1.6, 22, e + 6.1, n, y); } // v70: solid Tower slab to the full landmark height so the cyan wire never reads as the building
+  for (const [lat, lon, dir] of [[52.5730187, 1.7396790, 1], [52.5721123, 1.7381010, -1]]) { const [e, n] = loc(lat, lon); // v70 Harbour Mouth: concrete quay arms west from each pier-head light, kerb, bollards, lamp posts
+    AB(0x8f8c84, 70, 2.2, 9, e - 35, n + dir * 2, 1.1); AB(0x5d5a55, 70, 0.3, 0.5, e - 35, n + dir * 2 - dir * 4.4, 2.35); for (let i = 0; i < 11; i++) { CY(0x1d1f22, 0.32, 0.38, 0.8, e - 4 - i * 6.3, n + dir * 2 - dir * 3.6, 2.6, 8); }
+    for (let i = 0; i < 4; i++) { AB(0x9aa0a6, 0.18, 6, 0.18, e - 8 - i * 18, n + dir * 5.5, 5.2); AB(0xfff2c0, 0.6, 0.3, 0.6, e - 8 - i * 18, n + dir * 5.5, 8.3); } }
   // ---------- 5. piers: solid decks from OSM pier polygons ----------
   const decks = [];
   for (const pr of (G && G.piers) || []) { const name = pr[1]; if (!/Britannia|Wellington/.test(name || '')) continue; const pts = P2(pr[0]); if (pts.length < 3) continue; const Y = 1.5;
