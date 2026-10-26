@@ -453,14 +453,14 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=62').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=63').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
 /* v58: gamepad (world-gamepad.js) drives the same actions: centre tap = pick(), the same panel / map functions, and the same move/look sums as the touch sticks */
 let pad = { mx: 0, my: 0, lx: 0, ly: 0, sprint: false, poll() { return this; } };
 const nearScreens = () => { const v = new THREE.Vector3(), out = []; for (const o of clickables) { if (o.visible === false || (o.parent && o.parent.visible === false)) continue; o.getWorldPosition(v); const d = Math.hypot(v.x - player.pos.x, v.z - player.pos.z); if (d < 40 && d > 1) out.push({ o, x: v.x, y: v.y, z: v.z, a: Math.atan2(-(v.x - player.pos.x), -(v.z - player.pos.z)) }); } return out.sort((p, q) => p.a - q.a); };
-Promise.all([import('./world-gamepad.js?v=62'), import('./world-ui.js?v=62')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+Promise.all([import('./world-gamepad.js?v=63'), import('./world-ui.js?v=63')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
   pad = m.initGamepad({ ui, pickCentre: h => !!pick(...ctr(), h), peekCentre: () => { if (window.__mapOpen) return null; const h = hitAt(...ctr()); if (!h) return null; const u = h.object.userData, t = u.track && window.JX && JX.tracks.find(x => x.id === u.track);
       return { hit: h, label: u.track ? 'PLAY TRACK' + (t || u.title ? ' · ' + (t ? t.title : u.title) : '') : u.popup ? 'OPEN · ' + (u.title || 'panel') : u.link ? 'OPEN LINK · ' + (u.title || u.label || 'link') : u.lane ? 'PLAY LANE · ' + u.lane : 'USE' }; }, openPanel,
   openMap: () => window.__world.openMap && window.__world.openMap(), closeMap: () => window.__world.closeMap && window.__world.closeMap(), nearScreens,
@@ -479,11 +479,12 @@ function tick() {
   fwd.set(-Math.sin(player.yaw), 0, -Math.cos(player.yaw)); right.set(Math.cos(player.yaw), 0, -Math.sin(player.yaw));
   const SPD = (gp.sprint ? 2 : 1) * MOVE * (1 + Math.min(5, Math.max(0, (Math.hypot(player.pos.x - PZ[0], player.pos.z - PZ[1]) - 60) / 40))); // stroll in the lane plaza, cruise speed out in the real-scale town
   if (window.__mapOpen) { mv = 0; st = 0; } // jump map overlay is up: no walking under it
+  window.__footY = player.pos.y - 1.7; // v63: collide() uses it for height-banded solids (bridge decks / embankments)
   { const dx = (fwd.x * mv + right.x * st) * SPD * dt, dz = (fwd.z * mv + right.z * st) * SPD * dt, C = window.__collide, px = player.pos.x, pz = player.pos.z;
     if (C && (dx || dz) && !C(px, pz)) { if (!C(px + dx, pz + dz)) player.pos.x += dx, player.pos.z += dz; else if (!C(px + dx, pz)) player.pos.x += dx; else if (!C(px, pz + dz)) player.pos.z += dz; } // slide along walls; already inside (after a jump) = free to walk out
     else { player.pos.x += dx; player.pos.z += dz; } }
   /* v62: walkable levels: bridge decks / ramps and the sunken Newtown path (modules push height functions into window.__groundParts) */
-  if (!window.__trainRiding) { let g = 0; for (const f of window.__groundParts || []) { const v = f(player.pos.x, player.pos.z); if (v != null) { g = v; break; } } window.__groundNow = g; const want = 1.7 + g; player.pos.y += (want - player.pos.y) * Math.min(1, dt * 12); if (Math.abs(want - player.pos.y) > 6) player.pos.y = want; }
+  if (!window.__trainRiding) { let g = 0; for (const f of window.__groundParts || []) { const v = f(player.pos.x, player.pos.z, player.pos.y); if (v != null) { g = v; break; } } window.__groundNow = g; const want = 1.7 + g; player.pos.y += (want - player.pos.y) * Math.min(1, dt * 12); if (Math.abs(want - player.pos.y) > 6) player.pos.y = want; }
   player.pos.x = Math.max(-1600, Math.min(700, player.pos.x)); player.pos.z = Math.max(-4700, Math.min(3600, player.pos.z)); // real-scale Great Yarmouth: Breydon side to the piers, Caister road to Gorleston
   camera.position.copy(player.pos); camera.rotation.set(player.pitch, player.yaw, 0, 'YXZ');
   if (!reduced) { globe.rotation.y += dt * 0.12; ring.rotation.z += dt * 0.3; }

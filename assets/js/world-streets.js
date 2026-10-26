@@ -185,17 +185,15 @@ export function initStreets(o, X) {
     L2(-3.8, 0.55, -6.2, fence, B(4.4, 1.1, 0.08)); L2(3.8, 0.55, -6.2, fence, B(4.4, 1.1, 0.08)); for (const x of [-6, 6]) L2(x, 0.55, -2.6, fence, B(0.08, 1.1, 7.2));
     boxes.push([-184, 2376, -166, 2394]); }
   // v60: Newtown Park / Community Centre footpath (Joseph's Street View looking E): paved path between the park railings (N) and the centre (S),
-  // grey metal railings + grass verge on the centre side, small railed bin enclosure, a short flight of stairs at the far east end, and a plain
+  // grey metal railings + grass verge on the centre side, small railed bin enclosure, (v63: the old stairs up at the far east end are replaced by steps DOWN to the lower path, world-v63.js), and a plain
   // dim detached house on the right (south) beside the stairs. No label, name or number on that house.
   { const M = c => new T.MeshBasicMaterial({ color: c }), rail = M(0xa9b0b6), at = (e, n, y, m, g) => { const ms = new T.Mesh(g, m); const w = warp(e, n); ms.position.set(w.x, y, w.z); grp.add(ms); return ms; }, B = (w, h, d) => new T.BoxGeometry(w, h, d);
     const PN = 2416.8, E0 = -98, E1 = -61;
-    at((E0 + E1) / 2, 2414.4, 0.09, M(0x5f8a3e), B(E1 - E0, 0.05, 2.2));                    // grass verge (centre side)
+    for (const [a, b] of [[E0, -68], [-64, E1]]) at((a + b) / 2, 2414.4, 0.09, M(0x5f8a3e), B(b - a, 0.05, 2.2)); // grass verge (centre side); v63: gap for the steps down
     at(-63.5, PN, 0.1, M(0x6a6560), B(6, 0.05, 2.2));                                          // path continues to the stairs
-    for (const y of [0.25, 1.0]) at((E0 + E1) / 2, PN - 1.25, y, rail, B(E1 - E0, 0.05, 0.05)); // railing along the path
-    for (let e = E0; e <= E1; e += 2) at(e, PN - 1.25, 0.5, rail, B(0.06, 1.0, 0.06));
+    for (const [a, b] of [[E0, -68], [-64, E1]]) for (const y of [0.25, 1.0]) at((a + b) / 2, PN - 1.25, y, rail, B(b - a, 0.05, 0.05)); // railing along the path (v63: opening at the steps down)
+    for (let e = E0; e <= E1; e += 2) if (e < -68 || e > -64) at(e, PN - 1.25, 0.5, rail, B(0.06, 1.0, 0.06));
     { const c = [-72, 2421.5]; at(c[0], c[1], 0.5, M(0x1c1c1c), B(0.9, 1.1, 0.8)); for (const [dx, dn, w, d] of [[0, -1.1, 2.4, 0.05], [0, 1.1, 2.4, 0.05], [-1.2, 0, 0.05, 2.2], [1.2, 0, 0.05, 2.2]]) at(c[0] + dx, c[1] + dn, 0.55, rail, B(w, 1.1, d)); } // bin enclosure
-    for (let i = 0; i < 7; i++) at(-59.6 + i * 0.4, PN, 0.09 + i * 0.18, M(0x8c8780), B(0.4, 0.18 + i * 0.36, 2.2).translate(0, -(i * 0.18), 0)); // stairs up at the end
-    for (const dn of [-1.15, 1.15]) at(-58.4, PN + dn, 1.3, rail, B(3.0, 0.05, 0.05)).rotation.z = 0.42;
     at(-57, 2406, 2.8, M(0x7a5a4a), B(9, 5.6, 8.5)); { const g = new T.ExtrudeGeometry(new T.Shape([new T.Vector2(-4.9, 0), new T.Vector2(4.9, 0), new T.Vector2(0, 3)]), { depth: 9.4, bevelEnabled: false }); g.translate(0, 0, -4.7); at(-57, 2406, 5.6, M(0x4a4c50), g); }
     at(-59, 2406, 9.2, M(0x7a4a36), B(0.7, 1.6, 0.8));
     boxes.push([-62, 2401, -52, 2411]); }
