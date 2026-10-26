@@ -94,7 +94,7 @@ for t in tracks:
     out.append(e)
 missing = [k for k in list(PLACEMENTS) + list(DEFERRED) if k not in {t['id'] for t in tracks}]
 if missing: sys.exit('unknown track ids: %s' % missing)
-doc = {'version': 65, 'note': 'Central JHIOS music catalogue (v65). YouTube is the playback source; tracks.json stays the player list. worldLocation null = not placed (never guessed). placementStatus: unplaced | placed (built on a branch) | verified (Joseph confirmed). Built by tools/build-catalogue.py.',
+doc = {'version': 66, 'note': 'Central JHIOS music catalogue (v66). YouTube is the playback source; tracks.json stays the player list. worldLocation null = not placed (never guessed). placementStatus: unplaced | placed (built on a branch) | verified (Joseph confirmed). Built by tools/build-catalogue.py.',
        'locations': LOCATIONS, 'tracks': out}
 with open(OUT, 'w') as f: # one track per line: small file, readable diffs
     f.write('{"version": 65,\n "note": %s,\n "locations": %s,\n "tracks": [\n' % (json.dumps(doc['note'], ensure_ascii=False), json.dumps(LOCATIONS, ensure_ascii=False)))
