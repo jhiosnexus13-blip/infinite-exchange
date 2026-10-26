@@ -93,8 +93,8 @@ export function initV63(o) {
   { const P = [[3243, 2856], [2736, 2861], [2793, 3236], [3293, 3231], [3843, 3218], [2850, 3601], [3347, 3598], [3852, 3586], [3411, 3971], [3912, 3957], [3972, 4330],
       [2868, 6213], [3362, 6195], [3863, 6199], [4277, 6200], [4217, 5820], [3810, 5825], [3372, 5836], [2932, 5836], [3006, 5464], [3618, 5450], [4058, 5447],
       [4112, 5084], [3084, 5087], [3026, 4723], [3438, 4768], [3954, 4716], [3421, 4334], [2967, 4346], [2909, 3969]];
-    const HUB = 60, BL = 40, bm = new T.MeshBasicMaterial({ color: 0xf2f4f6, fog: false });
-    const blade = new T.BoxGeometry(2.2, BL, 0.5).translate(0, BL / 2, 0), bg = []; for (let k = 0; k < 3; k++) bg.push(blade.clone().rotateZ(k * 2.094).toNonIndexed());
+    const HUB = 60, BL = 40, bm = new T.MeshBasicMaterial({ color: 0xffffff, fog: false, toneMapped: false }); // v64: pure white, wider blades so they read at night
+    const blade = new T.BoxGeometry(3.4, BL, 0.8).translate(0, BL / 2, 0), bg = []; for (let k = 0; k < 3; k++) bg.push(blade.clone().rotateZ(k * 2.094).toNonIndexed());
     const rg = mergeGeo(T, bg);
     for (const [e, n] of P) { const p = warp(e, n), tw = new T.CylinderGeometry(1.6, 2.4, HUB, 8).toNonIndexed(); tw.translate(p.x, HUB / 2, p.z); put(0xe9ecef, tw);
       AB(0xe9ecef, 3, 3, 8, e, n, HUB, Math.PI / 2); AB(0xf0c419, 5, 0.3, 5, e, n, 0.5); // nacelle (facing the shore), yellow transition piece
