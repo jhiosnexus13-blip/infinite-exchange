@@ -112,7 +112,9 @@ export function initTrain(o) {
     if (!dest || dest === here && d < 16) dest = Math.abs(st.s - stops[0].s) > Math.abs(st.s - stops[stops.length - 1].s) ? stops[0] : stops[stops.length - 1];
     if (Math.abs(dest.s - st.s) < 2) return;
     st.riding = true; st.v = 0; setTarget(dest); st.s = st.s + 0; // lead car is where you sit
-    P.yaw = Math.atan2(-at(st.s, tmp).dx * st.dir, -tmp.dz * st.dir); P.pitch = -0.04; camInit = false; place(); fx.trainLog = (fx.trainLog || 0) + 1; }
+    P.yaw = Math.atan2(-at(st.s, tmp).dx * st.dir, -tmp.dz * st.dir); P.pitch = -0.04; camInit = false; place(); fx.trainLog = (fx.trainLog || 0) + 1;
+    // v65: boarding starts Luce Aether's Train if nothing else is playing (never interrupts music the visitor already chose)
+    try { const J = window.JX; if (J && J.tracks && !J.playing) { const tr = J.tracks.find(x => x.id === 'luce-aether-s-train'); if (tr) { J.play(tr, [tr]); fx.trainTrack = tr.id; } } } catch (e) { console.warn('train track', e); } }
   function hopOff() { if (!st.riding) return; if (st.v < 2) return exitAt(null); // stopped: step off right here
     const next = nextStop(); if (next) setTarget(next); else exitAt(null); st.hop = true; } // v62: REQUEST STOP = alight at the NEXT stop on the line
   const nextStop = () => st.dir > 0 ? stops.find(s => s.s > st.s + 5) : [...stops].reverse().find(s => s.s < st.s - 5);
