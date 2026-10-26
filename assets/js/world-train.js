@@ -99,7 +99,7 @@ export function initTrain(o) {
   document.body.append(ui, menu); const bMain = ui.querySelector('.tmain'), bNext = ui.querySelector('.tnext'), bStops = ui.querySelector('.tstops');
   for (const el of [ui, menu]) el.addEventListener('pointerdown', e => e.stopPropagation());
   function renderMenu() { const ride = st.riding || canBoard(), [here] = nearestStop(P.pos.x, P.pos.z);
-    menu.innerHTML = `<b>${st.riding ? 'SEAFRONT TRAIN · CHANGE DESTINATION' : ride ? 'SEAFRONT TRAIN · RIDE TO' : 'SEAFRONT TRAIN · WALK TO STOP'}</b>` +
+    menu.innerHTML = `<b>${st.riding ? 'SEAFRONT TRAIN · CHANGE DESTINATION' : ride ? 'SEAFRONT TRAIN · RIDE TO' : 'SEAFRONT TRAIN · JUMP TO STOP'}</b>` +
       stops.map(s => `<button type="button" role="menuitem" data-stop="${s.k}" class="${!st.riding && ride && s === here ? 'here' : ''}">${ride ? '▶' : '⌖'} ${s.name}${st.target === s && st.riding ? ' ·  next' : ''}</button>`).join(''); }
   bStops.addEventListener('click', e => { e.stopPropagation(); menu.hidden = !menu.hidden; bStops.setAttribute('aria-expanded', String(!menu.hidden)); if (!menu.hidden) renderMenu(); });
   menu.addEventListener('click', e => { const b = e.target.closest('[data-stop]'); if (!b) return; e.stopPropagation(); const s = stops.find(x => x.k === b.dataset.stop); menu.hidden = true; bStops.setAttribute('aria-expanded', 'false');

@@ -227,7 +227,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     { const bp = ((G && G.piers) || []).find(p => /Britannia/.test(p[1] || '')); if (bp) { const pts = P2(bp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; J.britannia_pier = wj(e0 + 6, nc - 4, e0 + 120, nc + 6); } }
     { const wp = ((G && G.piers) || []).find(p => /Wellington/.test(p[1] || '')); if (wp) { const pts = P2(wp[0]), e0 = Math.min(...pts.map(p => p[0])), nc = pts.reduce((s, p) => s + p[1], 0) / pts.length; add('wellington_pier', 'Wellington Pier', wj(e0 - 18, nc - 30, e0 + 20, nc)); } }
     { const [e, n] = loc(52.604471, 1.736196); const pe = Math.max(e + 40, seaE(n) - 45); J.tower_complex = wj(pe, n - 30, e, n); }
-    { const [e, n] = loc(52.625267, 1.735168); J.newtown_archive = wj(-136, 2441, e, n); /* on the Sturdee Avenue carriageway, outside the frontage */ }
+    { const [e, n] = loc(52.625267, 1.735168); J.newtown_archive = wj(-152, 2441, e, n); /* v70: further out on the carriageway; scouts landed inside the brick at -136 */ /* on the Sturdee Avenue carriageway, outside the frontage */ }
     add('market_gates', 'Market Gates', wj(-478, 446, -530, 430) /* open ground by the v65 Market Gates bus stands, looking at the centre */);
     add('troll_cart', 'Troll Cart', i5.trollCart && wj(i5.trollCart[0] - 14, i5.trollCart[1] - 10, i5.trollCart[0], i5.trollCart[1]));
     add('cemetery', 'Cemetery', wj(-509, 880, -509, 930));
@@ -240,7 +240,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     add('newtown_park', 'Newtown Park', i3.newtownPath ? wj(i3.newtownPath.top[0] - 20, i3.newtownPath.top[1], i3.newtownPath.top[0] + 30, i3.newtownPath.top[1]) : null);
     add('youth_centre', 'Youth & Community Centre', i3.newtownPath ? wj(i3.newtownPath.bottom[0] - 16, i3.newtownPath.bottom[1] - 12, i3.newtownPath.bottom[0], i3.newtownPath.bottom[1]) : null);
     add('beatty_close', 'Beatty Close', wj(-170, 2318, -115, 2324));
-    add('the_stack', 'THE STACK hatch', [148, -280, [156, -288]]); /* world x/z from Systems Scout (stack-nav.md) */
+    add('the_stack', 'THE STACK hatch', [148, -280, [156, -288]]); (fx.mapSpots || (fx.mapSpots = [])).some(m => m.label === 'STACK') || fx.mapSpots.push({ pos: new T.Vector3(156, 0, -288), label: 'STACK', col: '#00ff9d' }); /* v70: minimap / jump-map pin */ /* world x/z from Systems Scout (stack-nav.md) */
     add('beatty_bottom', 'Beatty Rd bus stop', wj(-226, 2584, -216.5, 2596)); };
   setTimeout(later, 2500); setTimeout(later, 8000);
   flushMB();
