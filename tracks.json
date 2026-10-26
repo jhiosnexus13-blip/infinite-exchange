@@ -5188,6 +5188,81 @@
    "tags": [
     "racecourse-edge"
    ]
+  },
+  {
+   "id": "trauma-doll",
+   "title": "Trauma Doll",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/RuPZa4mGnJY",
+   "tags": [
+    "vault-audit-2026-10-20"
+   ]
+  },
+  {
+   "id": "blood-on-the-money",
+   "title": "Blood On The Money",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/Qdkn8DNrWp0",
+   "tags": [
+    "vault-audit-2026-10-20"
+   ]
+  },
+  {
+   "id": "children-of-madness",
+   "title": "Children of Madness",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/zQJUMJ7dbeQ",
+   "tags": [
+    "vault-audit-2026-10-20"
+   ]
+  },
+  {
+   "id": "fr33-bird",
+   "title": "Fr33 Bird",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/sTx3mTgAqy4",
+   "tags": [
+    "vault-audit-2026-10-20"
+   ]
+  },
+  {
+   "id": "ios-we-rise",
+   "title": "IOS We Rise",
+   "artist": "",
+   "lane": "Unsorted",
+   "album": "",
+   "release_date": "",
+   "duration_s": null,
+   "audio_url": "",
+   "artwork_url": "",
+   "youtube_url": "https://youtu.be/U_79RsCInYA",
+   "tags": [
+    "vault-audit-2026-10-20"
+   ]
   }
  ]
 }
