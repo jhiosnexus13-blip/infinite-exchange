@@ -20,7 +20,7 @@ body :is(button,a,input,select,[tabindex]):focus-visible{outline:3px solid #ffe1
   const dock = document.createElement('div'); dock.className = 'wchips'; dock.setAttribute('aria-label', 'Minimised windows'); document.body.appendChild(dock);
   const mins = new Map(); // id -> saved state
   const W = [ // el(): the window element, open(), close(), min()/restore() default to hide/show
-    { id: 'welcome', name: 'Guide', el: () => q('.wwel'), modal: true, close() { const e = this.el(); e.hidden = true; window.__welcomeOpen = false; } },
+    { id: 'welcome', name: 'Guide', el: () => q('.wwel'), modal: true, close() { if (window.__jxGate) return; const e = this.el(); e.hidden = true; window.__welcomeOpen = false; } },
     { id: 'map', name: 'Map', el: () => q('#wmap'), modal: true, open: () => !!(window.__mapApi && __mapApi.open), close: () => __mapApi.closeMap(),
       min() { mins.set('map', __mapApi.state); __mapApi.closeMap(); }, restore() { const s = mins.get('map'); __mapApi.openMap(); if (s) __mapApi.state = s; }, anchor: '.wmap-close' },
     { id: 'queue', name: 'Queue', el: () => q('.queue'), modal: true, close: () => q('[data-a=queue]') && q('[data-a=queue]').click(), restore() { const b = q('[data-a=queue]'); if (b && this.el().hidden) b.click(); } },
@@ -35,7 +35,7 @@ body :is(button,a,input,select,[tabindex]):focus-visible{outline:3px solid #ffe1
   ];
   const byId = id => W.find(w => w.id === id);
   const isOpen = w => w.open ? w.open() : shown(w.el());
-  const minimise = id => { const w = byId(id); if (!w || !isOpen(w)) return false; if (w.min) w.min(); else { if (id !== 'map') mins.set(id, 1); w.el().hidden = true; } if (!w.nochip) { mins.set(id, mins.get(id) || 1); chips(); } return true; };
+  const minimise = id => { if (id === 'welcome' && window.__jxGate) return false; const w = byId(id); if (!w || !isOpen(w)) return false; if (w.min) w.min(); else { if (id !== 'map') mins.set(id, 1); w.el().hidden = true; } if (!w.nochip) { mins.set(id, mins.get(id) || 1); chips(); } return true; };
   const restore = id => { const w = byId(id); if (!w) return; if (w.restore) w.restore(); else { const e = w.el(); if (e) e.hidden = false; if (id === 'welcome') window.__welcomeOpen = true; } mins.delete(id); chips(); };
   const close = id => { const w = byId(id); if (w) { w.close(); mins.delete(id); chips(); } };
   function chips() { dock.innerHTML = ''; for (const id of mins.keys()) { const w = byId(id); if (!w || w.nochip) continue; const b = document.createElement('button'); b.type = 'button'; b.dataset.chip = id; b.textContent = '▴ ' + w.name; b.setAttribute('aria-label', 'Restore ' + w.name);

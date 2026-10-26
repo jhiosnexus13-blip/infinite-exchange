@@ -9,7 +9,7 @@
 .wwel h2{margin:0 0 .2rem;font-size:1.05rem;letter-spacing:.12em;color:#00ff9d;text-shadow:2px 0 #ff2e4d,-2px 0 #00e5ff}.wwel .sub{margin:0 0 .7rem;font-size:.72rem;color:#7fa99a}
 .wwel ul{list-style:none;margin:0;padding:0;display:grid;gap:.42rem;font-size:.78rem;line-height:1.35}.wwel li{display:grid;grid-template-columns:1.7rem 1fr;gap:.3rem}.wwel li b{color:#fff}.wwel .ic{text-align:center}
 .wwel .note{margin:.7rem 0 0;font-size:.68rem;color:#7fa99a}.wwel-go{display:block;width:100%;min-height:54px;margin:.9rem 0 .5rem;border:2px solid #00ff9d;border-radius:28px;background:#00ff9d;color:#001a10;font:700 1rem ui-monospace,monospace;letter-spacing:.1em;cursor:pointer}
-.wwel-go:hover,.wwel-go:focus-visible{background:#fff;outline:none}.wwel label{display:flex;gap:.45rem;align-items:center;font-size:.72rem;color:#9cc;cursor:pointer;min-height:32px}.wwel input{width:18px;height:18px;accent-color:#00ff9d}
+.wwel-go:hover,.wwel-go:focus-visible{background:#fff;outline:none}.wwel.gated .wmin{display:none}.wwel-go:disabled{opacity:.45;cursor:not-allowed;background:#00ff9d}.wwel label{display:flex;gap:.45rem;align-items:center;font-size:.72rem;color:#9cc;cursor:pointer;min-height:32px}.wwel input{width:18px;height:18px;accent-color:#00ff9d}
 .whelp{position:fixed;z-index:31;top:calc(3.3rem + env(safe-area-inset-top));left:calc(.5rem + env(safe-area-inset-left));width:44px;height:44px;border-radius:50%;border:1px solid #00ff9d;background:rgba(0,0,0,.7);color:#00ff9d;font:700 1.1rem ui-monospace,monospace;cursor:pointer}
 .wwel-kofi{display:block;margin:.7rem auto 0;width:max-content;font-size:.75rem;color:#9adfc4;opacity:.8;text-decoration:none;border-bottom:1px dotted currentColor}.wwel-kofi:hover,.wwel-kofi:focus-visible{opacity:1;color:#00ff9d}
 .whelp:hover,.whelp:focus-visible{background:#00ff9d;color:#000;outline:none}
@@ -21,7 +21,14 @@
                      : li('⌨', '<b>Move</b> with WASD or the arrow keys (Q / E to step sideways). <b>Look</b> by dragging with the mouse.');
   const tap = touch ? 'Tap' : 'Click';
   const el = document.createElement('div'); el.className = 'wwel'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-labelledby', 'wwel-t');
-  el.innerHTML = `<div class="wwel-box"><h2 id="wwel-t">WELCOME TO GREAT YARMOUTH // 3D</h2><p class="sub">A neon, real-scale Great Yarmouth with local music on every screen. Quick guide:</p><ul>
+  el.innerHTML = `<div class="wwel-box"><h2 id="wwel-t">WELCOME TO GREAT YARMOUTH // 3D</h2><p class="sub">A neon, real-scale Great Yarmouth with local music on every screen. Quick guide:</p>
+<form class="wwel-form" novalidate style="display:grid;gap:.45rem;margin:.5rem 0 .8rem;padding:.6rem;border:1px solid #1d6b4b;border-radius:8px">
+  <p style="margin:0;color:#00ff9d;font-size:.78rem;letter-spacing:.08em">OPERATOR SIGN-UP // ENTER YOUR EMAIL TO ROAM</p>
+  <label style="display:grid;gap:.2rem">Email <input type="email" name="email" required maxlength="120" autocomplete="email" placeholder="you@example.com" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
+  <label style="display:grid;gap:.2rem">Call-sign (optional, no real name needed)<input type="text" name="name" maxlength="60" autocomplete="nickname" style="width:100%;min-height:36px;padding:.3rem .5rem;border-radius:6px;border:1px solid #2f6a75;background:#02161b;color:#e8feff"></label>
+  <p class="note" style="margin:0">Your email is only for JHIOS world updates, events and memberships. It is never shown in the world or shared. <a href="/privacy.html" target="_blank" rel="noopener" style="color:#7dffd0">Privacy</a></p>
+  <p class="wwel-err note" style="margin:0;color:#ff6b81" aria-live="polite"></p>
+</form><ul>
 ${move}
 ${li('▶', `<b>${tap} a glowing screen</b> or hologram to play its songs (YouTube, so turn your sound on). The ♫ PLAYLISTS button lists every track.`)}
 ${li('🗺', `<b>${tap} the minimap</b> (top right) to open the jump map, then ${touch ? 'tap' : 'click'} anywhere to jump there. ${touch ? 'Pinch' : 'Scroll'} to zoom the map.`)}
@@ -40,13 +47,25 @@ ${touch || small ? li('📱', `On a phone, landscape gives you more room.${lite 
   const unlock = () => { try { const AC = window.AudioContext || window.webkitAudioContext; if (AC) { const c = window.__jxAC || (window.__jxAC = new AC()); c.resume && c.resume(); const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } } catch (_) {} };
   const show = () => { el.hidden = false; el.querySelector('.wwel-off').checked = off; window.__welcomeOpen = true; setTimeout(() => el.querySelector('.wwel-go').focus(), 50); };
   const hide = () => { el.hidden = true; window.__welcomeOpen = false; const c = document.getElementById('scene'); c && c.focus({ preventScroll: true }); };
-  el.querySelector('.wwel-go').addEventListener('click', () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); });
-  el.addEventListener('keydown', e => { if (e.key === 'Escape') hide(); e.stopPropagation(); });
+  // v68 email sign-up gate (from main 42e373b): a valid email is required before roaming; posts to /api/members once per browser
+  const MK = 'jx-member-ok'; let member = false; try { member = localStorage.getItem(MK) === '1'; } catch (_) {}
+  const form = el.querySelector('.wwel-form'), em = form.querySelector('[name=email]'), goBtn = el.querySelector('.wwel-go'), err = el.querySelector('.wwel-err'); let fails = 0;
+  const okEmail = () => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em.value.trim()) && em.value.length <= 120;
+  const sync = () => { window.__jxGate = !member; el.classList.toggle('gated', !member); form.style.display = member ? 'none' : 'grid'; goBtn.disabled = !member && !okEmail(); };
+  em.addEventListener('input', () => { err.textContent = ''; sync(); }); form.addEventListener('submit', e => { e.preventDefault(); goBtn.click(); }); sync();
+  const enter = () => { unlock(); off = el.querySelector('.wwel-off').checked; try { off ? localStorage.setItem(KEY, '1') : localStorage.removeItem(KEY); } catch (_) {} hide(); hideHint(); };
+  el.querySelector('.wwel-go').addEventListener('click', async () => { if (member) return enter(); if (!okEmail()) { err.textContent = 'Enter a valid email to enter.'; return; }
+    goBtn.disabled = true; goBtn.textContent = 'SIGNING UP…';
+    try { const r = await fetch('/api/members', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email: em.value.trim(), name: form.name.value.trim() }) });
+      if (r.status === 400) { err.textContent = 'That email does not look right.'; goBtn.textContent = 'ENTER THE WORLD'; sync(); return; } if (!r.ok) throw 0; }
+    catch (_) { if (++fails < 2) { err.textContent = 'Could not reach the sign-up server. Try again.'; goBtn.textContent = 'ENTER THE WORLD'; sync(); return; } } // after 2 server failures let them in rather than lock everyone out
+    member = true; try { localStorage.setItem(MK, '1'); } catch (_) {} goBtn.textContent = 'ENTER THE WORLD'; sync(); enter(); });
+  el.addEventListener('keydown', e => { if (e.key === 'Escape' && member) hide(); e.stopPropagation(); });
   for (const n of [el, help]) n.addEventListener('pointerdown', e => e.stopPropagation());
   help.addEventListener('click', e => { e.stopPropagation(); show(); });
   // v42: the ? sits in the weather / day-night row (top right) so it never covers the playlists panel; falls back to its own corner until that row exists
   const dock = () => { const dn = document.getElementById('daynight'); if (!dn) return false; help.classList.add('docked'); dn.parentNode.appendChild(help); return true; };
   const hideHint = () => setTimeout(() => { const h = document.getElementById('hint'); if (h) h.classList.add('gone'); }, 9000); // the welcome screen covers the controls, so the top hint fades out
-  const mount = () => { document.body.append(el, help); let n = 0; const iv = setInterval(() => { if (dock() || ++n > 60) clearInterval(iv); }, 250); if (off || /[?&]nowelcome=1/.test(location.search)) { el.hidden = true; window.__welcomeOpen = false; hideHint(); } else show(); };
+  const mount = () => { document.body.append(el, help); let n = 0; const iv = setInterval(() => { if (dock() || ++n > 60) clearInterval(iv); }, 250); if (member && (off || /[?&]nowelcome=1/.test(location.search))) { el.hidden = true; window.__welcomeOpen = false; hideHint(); } else show(); };
   document.body ? mount() : addEventListener('DOMContentLoaded', mount);
 })();
