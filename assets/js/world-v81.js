@@ -1,4 +1,4 @@
-/* JHIOS world v81 — fat preview pass on the ?v=81 re-grade FAILs (Joseph prefers fat). Preview only.
+/* JHIOS world v81 — fat preview pass on the ?v=82 re-grade FAILs (Joseph prefers fat). Preview only.
    P0 1 Lodge: 8-track cluster brought down to eye level in front of the Royal Assembly Rooms (east apron), jump faces it square-on; full one-line ROYAL ASSEMBLY ROOMS fascia.
    P0 2 Youth Centre: music panels within 90 m of the landing relocated behind the visitor + shrunk; first look = path + Centre massing.
    P0 3 Barnard Bridge: tarmac carriageway + pavements either side over deck and gentle ramps, grass blend on the south bank; spawn on the road facing along the bridge.

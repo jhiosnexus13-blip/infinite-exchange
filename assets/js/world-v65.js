@@ -24,12 +24,16 @@ export function initV65(o) {
   // 1. Royal Assembly Rooms + fiction hatch
   { const LODGE = [[-134.1,-467.3],[-142.5,-466.5],[-142.6,-467.3],[-152.0,-466.4],[-152.2,-467.7],[-157.6,-467.1],[-157.0,-460.7],[-151.4,-461.3],[-150.9,-455.6],[-154.4,-455.2],[-153.8,-449.5],[-145.3,-450.3],[-145.1,-447.7],[-144.4,-440.1],[-132.4,-441.3],[-132.0,-436.6],[-127.2,-437.0],[-127.1,-435.9],[-122.7,-436.3],[-121.8,-436.4],[-121.9,-437.0],[-116.7,-437.5],[-117.3,-443.4],[-114.0,-443.7],[-115.5,-459.2],[-118.5,-458.9],[-119.3,-466.9],[-121.4,-466.7],[-129.1,-466.0],[-129.2,-467.1],[-134.0,-466.6],[-134.1,-467.3]]; solidP(LODGE);
     const fe = -121.2, n0 = -458, n1 = -438, nc = (n0 + n1) / 2;
+    /* v82 WASTE PRUNE: the original v65 portico (entablature, 6 columns, pediment, steps, fascia board) sat INSIDE the v74 REAL massing
+       (world-v69.js, front e=-115.2). Gated off; set window.IE_V65_LODGE_PORTICO = true to restore. Collision footprint + fiction hatch kept. */
+    if (window.IE_V65_LODGE_PORTICO) {
     AB(0xe8e2d3, 4.2, 0.6, n1 - n0 + 1, fe + 2.1, nc, 9.2); // entablature
     for (let i = 0; i < 6; i++) { const n = n0 + 1 + i * (n1 - n0 - 2) / 5; CY(0xf1ece0, 0.42, 0.48, 8.6, fe + 3.6, n, 4.6); }
     { const g = new T.BufferGeometry(), p = warp(fe + 4.2, n0), q = warp(fe + 4.2, n1), m = warp(fe + 4.2, nc), y0 = 9.5, y1 = 12;
       g.setAttribute('position', new T.Float32BufferAttribute([p.x, y0, p.z, q.x, y0, q.z, m.x, y1, m.z], 3)); put(0xe8e2d3, g); } // pediment
     AB(0xd9d3c4, 5, 0.3, n1 - n0, fe + 2.5, nc, 0.15); for (let s = 0; s < 3; s++) AB(0xcfc9b9, 0.5, 0.15 * (3 - s), n1 - n0 - 4, fe + 5 + s * 0.5, nc, 0.075 * (3 - s)); // steps
     board('ROYAL ASSEMBLY ROOMS', 12, 1.1, fe + 4.3, nc, 8.4, E, '#1c2330', '#e9dfc4');
+    }
     const he = fe + 9, hn = n0 - 6; AB(0x55606b, 2.6, 0.25, 2.6, he, hn, 0.12); AB(0x8a96a3, 2.2, 0.08, 2.2, he, hn, 0.29); AB(0x2f3740, 0.15, 0.1, 1.4, he + 0.6, hn, 0.38);
     board('JHIOS // VERSIONS OF REALITY · FICTION', 2.4, 0.3, he, hn - 1.45, 0.7, 0, '#06140c', '#3dff9a'); CY(0x2f3740, 0.04, 0.04, 0.7, he - 1.1, hn - 1.45, 0.35, 6); CY(0x2f3740, 0.04, 0.04, 0.7, he + 1.1, hn - 1.45, 0.35, 6);
     info.lodge = [fe, nc]; info.hatch = [he, hn]; }
