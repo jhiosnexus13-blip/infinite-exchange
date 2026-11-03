@@ -23,7 +23,7 @@ export function initV85({ T, S, LBL, LITE, warp, fx }) {
     ls.forEach((l, i) => { let s = px; g.font = `bold ${s}px Arial, sans-serif`; while (g.measureText(l).width > c.width * 0.92 && s > 8) g.font = `bold ${--s}px Arial, sans-serif`; g.fillText(l, c.width / 2, c.height * (i + 0.5) / ls.length); });
     const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: new T.CanvasTexture(c), side: T.DoubleSide })); const p = warp(e, n); m.position.set(p.x, y, p.z); m.rotation.y = ry; grp.add(m); return m; };
   const W_ = -Math.PI / 2; // board facing west (Marine Parade side)
-  fetch('/assets/data/v85-geo.json?v=85').then(r => r.json()).then(D => {
+  fetch('/assets/data/v85-geo.json?v=86').then(r => r.json()).then(D => {
     const run = (k, f) => { try { f(); } catch (e) { console.warn('v85 ' + k, e); info[k + 'Err'] = String(e); } };
     run('wheel', () => wheel(D)); if (window.IE_V85_JOYLAND !== false) run('joyland', () => joyland(D)); run('waterways', () => waterways(D)); run('parade', () => parade(D)); if (window.IE_V85_NELSON_OLD !== true) run('nelson', () => nelson(D));
     grp.traverse(o => { if (o.isMesh && !o.userData.hit) o.raycast = () => {}; });
@@ -58,7 +58,7 @@ export function initV85({ T, S, LBL, LITE, warp, fx }) {
     for (const [e, n] of D.huts) { box(0xd8cfb8, 3.2, 2.4, 3.2, e, n, 1.2); cyl(L2 ? 0x8a6a3a : 0x6b5a45, 0.3, 3.4, 2.6, e, n, 3.7, L2 ? 14 : 6); info.huts++; } // thatched cone shelters (aerial 8)
     if (window.IE_V85_WATERWAYS_WIRE !== true && fx.wwWire) fx.wwWire.visible = false; }
 
-  function parade(D) { if (!L1) return; for (const p of D.shelters) { let e0 = 1e9, e1 = -1e9, n0 = 1e9, n1 = -1e9; for (const [e, n] of p) { e0 = Math.min(e0, e); e1 = Math.max(e1, e); n0 = Math.min(n0, n); n1 = Math.max(n1, n); }
+  function parade(D) { if (!L1 && window.IE_V86_SHELTER_L0 === false) return; /* v86: canopies show at L0 too */ for (const p of D.shelters) { let e0 = 1e9, e1 = -1e9, n0 = 1e9, n1 = -1e9; for (const [e, n] of p) { e0 = Math.min(e0, e); e1 = Math.max(e1, e); n0 = Math.min(n0, n); n1 = Math.max(n1, n); }
       const e = (e0 + e1) / 2, n = (n0 + n1) / 2, len = n1 - n0, wid = e1 - e0, q = warp(e, n);
       const g = new T.CylinderGeometry(wid * 0.75, wid * 0.75, len, 14, 1, true, -Math.PI * 0.32, Math.PI * 0.64); g.rotateX(Math.PI / 2); const m = mesh(g, 0xf7f7f4, { side: T.DoubleSide }); m.position.set(q.x, 3.3 - wid * 0.75, q.z); // white sail canopy
       for (const dn of [-len / 2 + 0.6, len / 2 - 0.6]) box(0xdfe3e6, 0.18, 3.1, 0.18, e + wid * 0.35, n + dn, 1.55); if (L2) box(0x5a4632, wid * 0.6, 0.12, 0.45, e + wid * 0.2, n, 0.5); info.shelters++; }
