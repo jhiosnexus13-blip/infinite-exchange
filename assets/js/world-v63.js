@@ -49,7 +49,8 @@ export function initV63(o) {
     info.beattyRoad = { pairs: rows.length + 1, gapsClosed: 4 }; }
 
   // ---------- 3. Jellicoe Road bridge over the service lane ----------
-  { const N0 = 2682.6, N1 = 2696.6, /* v77: nudged ~2 m off the road line (Joseph REAL note) */ NC = (N0 + N1) / 2, DW = N1 - N0, DT = 6.4, AW = -70.5, AE = -57.5, RW = 45;
+  { const OLD = window.IE_V63_JELLICOE_OLD === true; /* v83: re-sited onto the OSM dual carriageway (yarmouth-geo roads: bridge ways e-72..-54 at n2665 + n2671/2672; catalogue jellicoe-bridge-under = n2668.8). Revert: window.IE_V63_JELLICOE_OLD=true or git 09db4b9 */
+    const N0 = OLD ? 2682.6 : 2662.4, N1 = OLD ? 2696.6 : 2674.6, NC = (N0 + N1) / 2, DW = N1 - N0, DT = 6.4, AW = OLD ? -70.5 : -72, AE = OLD ? -57.5 : -54, RW = 45;
     const hAt = e => e >= AW - 1 && e <= AE + 1 ? DT : e < AW - 1 ? Math.max(0, DT * (1 - (AW - 1 - e) / RW)) : Math.max(0, DT * (1 - (e - AE - 1) / RW));
     parts.push((x, z, y) => { const e = x, n = -z; if (n < N0 || n > N1 || e < AW - 1 - RW || e > AE + 1 + RW) return null; const h = hAt(e); if (h <= 0.02) return null; return foot(y) >= h - 1.1 ? h : null; });
     AB(0x5a5f66, AE - AW + 2.4, 0.8, DW, (AW + AE) / 2, NC, DT - 0.4);                                     // deck slab
@@ -61,10 +62,10 @@ export function initV63(o) {
       const e0 = s < 0 ? AW - 1 - (k + 1) * RW / 9 : AE + 1 + k * RW / 9, e1 = e0 + RW / 9, h = hAt((e0 + e1) / 2);
       AB(0x6f7a4a, e1 - e0, h, DW + 2, (e0 + e1) / 2, NC, h / 2); AB(0x3a3d42, e1 - e0, 0.06, DW - 1, (e0 + e1) / 2, NC, h + 0.03);
       if (h > 0.9) { solid(e0, N0 - 1, e1, N1 + 1, -9, h - 1.2); for (const nn of [N0 + 0.2, N1 - 0.2]) { AB(0xb7b2a8, e1 - e0, 1.0, 0.3, (e0 + e1) / 2, nn, h + 0.5); solid(e0, nn - 0.2, e1, nn + 0.2, h - 0.8, 99); } } }
-    AB(0x4a4d52, 6, 0.05, 90, -63.8, 2687, 0.05);                                                         // the lane underneath
+    AB(0x4a4d52, 6, 0.05, 90, -63.8, OLD ? 2687 : NC, 0.05); if (!OLD) { AB(0x3a3f45, 126, 0.03, 9.6, 55, 2668.4, 0.06); for (let e = -4; e < 116; e += 6) AB(0xd9d9d0, 3, 0.02, 0.15, e, 2668.4, 0.08); } // v83: Jellicoe Road east of the bridge joins the OSM line (e-54 -> 118)                                                         // the lane underneath
     for (const nn of [N0 - 0.5, N1 + 0.5]) AB(0x2a2a2a, AE - AW - 1.6, 0.5, 0.2, (AW + AE) / 2, nn, DT - 1.0); // soffit shadow edge
-    const lb = LBL('JELLICOE ROAD', '#c9d2da', 0.9); const lw = warp((AW + AE) / 2, N1 + 0.5); lb.position.set(lw.x, DT + 1.9, lw.z); S.add(lb);
-    info.jellicoe = { deck: DT, span: [AW, AE], under: [-63.8, 2687] }; }
+    const lb = LBL('JELLICOE ROAD', '#c9d2da', 0.9); const lw = warp((AW + AE) / 2, N1 + 0.5); lb.position.set(lw.x, DT + 4.2, lw.z); S.add(lb);
+    info.jellicoe = { deck: DT, span: [AW, AE], under: [-63.8, OLD ? 2687 : NC], N: [N0, N1] }; }
 
   // ---------- 4. Seashore Holiday Park & Seafront sign (North Drive, by the north entrance) ----------
   { const e = 205, n = 3070, c = document.createElement('canvas'); c.width = 1024; c.height = 384; const x = c.getContext('2d');

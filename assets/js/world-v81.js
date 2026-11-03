@@ -1,4 +1,4 @@
-/* JHIOS world v81 — fat preview pass on the ?v=82 re-grade FAILs (Joseph prefers fat). Preview only.
+/* JHIOS world v81 — fat preview pass on the ?v=83 re-grade FAILs (Joseph prefers fat). Preview only.
    P0 1 Lodge: 8-track cluster brought down to eye level in front of the Royal Assembly Rooms (east apron), jump faces it square-on; full one-line ROYAL ASSEMBLY ROOMS fascia.
    P0 2 Youth Centre: music panels within 90 m of the landing relocated behind the visitor + shrunk; first look = path + Centre massing.
    P0 3 Barnard Bridge: tarmac carriageway + pavements either side over deck and gentle ramps, grass blend on the south bank; spawn on the road facing along the bridge.
@@ -33,7 +33,7 @@ export function initV81(o) {
   { const BE = -60, BN = 2236, TOP = 3.8, HALF = 8, RAMP = 10, tar = M(0x2b2e33, { polygonOffset: true, polygonOffsetFactor: -3 }), pav = M(0xa8a49c, { polygonOffset: true, polygonOffsetFactor: -3 }), grass = M(0x5f8a3e);
     const strip = (mat, w, e, n0, n1, y0, y1, th = 0.12) => { const a = warp(e, n0), b = warp(e, n1), L = Math.hypot(b.x - a.x, b.z - a.z, y1 - y0); const m = new T.Mesh(new T.BoxGeometry(w, th, L), mat);
       m.position.set((a.x + b.x) / 2, (y0 + y1) / 2 + th / 2, (a.z + b.z) / 2); m.rotation.order = 'YXZ'; m.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); m.rotation.x = -Math.atan2(y1 - y0, Math.hypot(b.x - a.x, b.z - a.z)); grp.add(m); };
-    for (const [w, off, mat, dy] of [[5.6, 0, tar, 0.04], [1.5, 3.6, pav, 0.14], [1.5, -3.6, pav, 0.14]]) { const e = BE + off;
+    for (const [w, off, mat, dy] of [[5.6, 0, tar, 0.04], [1.4, 3.5, pav, 0.14], [1.4, -3.5, pav, 0.14]] /* v83: pavements 2.8..4.2 m, inside the 4.4 m parapets */) { const e = BE + off;
       strip(mat, w, e, BN - HALF, BN + HALF, TOP + dy, TOP + dy); strip(mat, w, e, BN + HALF, BN + HALF + RAMP, TOP + dy, dy); strip(mat, w, e, BN - HALF - RAMP, BN - HALF, dy, TOP + dy); }
     for (const s of [-1, 1]) { strip(grass, 30, BE, BN + s * (HALF + RAMP), BN + s * (HALF + RAMP + 12), 0.02, 0.02, 0.05); } // grass verges meeting the road ends
     for (const s of [-1, 1]) for (let i = 0; i < 9; i++) { const n = BN + s * (HALF + 1 + i * 1.1); strip(M(0xffffff), 0.15, BE, n, n + s * 0.6, TOP * Math.max(0, 1 - i * 1.1 / RAMP) + 0.07, TOP * Math.max(0, 1 - (i * 1.1 + 0.6) / RAMP) + 0.07, 0.02); }
@@ -77,7 +77,7 @@ export function initV81(o) {
     S.traverse(m => { if (!(m.isLine || m.isLineSegments) || !m.visible) return; const cc = col(m); if (!cc) return; const h = {}; cc.getHSL(h); if (h.h > 0.8 && h.h < 0.95 && h.s > 0.5) { const p = m.getWorldPosition(new T.Vector3()); if (Math.hypot(p.x - hs[0], p.z - hs[1]) < 200) { m.visible = false; w++; } } });
     info.harbourWires = w; info.harbourPanelsHidden = c; return w + c > 0; }, 20, 1500); info.fixes.push('harbour-declutter');
   // Tower: opaque octagon drum under the cab (v77 translucent drum r11.2 h7.5 at y42.5)
-  retry(() => { let d = null; S.traverse(m => { const g = m.geometry; if (!d && m.isMesh && g && g.type === 'CylinderGeometry' && g.parameters.radiusTop === 11.2 && g.parameters.height === 7.5) d = m; }); if (!d) return false;
+  if (window.IE_V81_TOWER_OCTAGON === true) /* v83 waste gate: overlay on the v77 drum, both superseded by world-v69 v74/v76 octagon; revert flag */ retry(() => { let d = null; S.traverse(m => { const g = m.geometry; if (!d && m.isMesh && g && g.type === 'CylinderGeometry' && g.parameters.radiusTop === 11.2 && g.parameters.height === 7.5) d = m; }); if (!d) return false;
     const p = d.getWorldPosition(new T.Vector3()), U = { fog: false, toneMapped: false }; const oc = new T.Mesh(new T.CylinderGeometry(10.8, 10.8, 7.2, 8), M(0x6fb8f0, U)); oc.position.set(p.x, 42.5, p.z); oc.rotation.y = Math.PI / 8; grp.add(oc);
     for (const y of [38.6, 46.3]) { const r = new T.Mesh(new T.CylinderGeometry(11.6, 11.6, 0.7, 8), M(0x1d2c44, U)); r.position.set(p.x, y, p.z); r.rotation.y = Math.PI / 8; grp.add(r); }
     for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2, e = new T.Mesh(new T.BoxGeometry(0.6, 7.4, 0.6), M(0xf2f4f8, U)); e.position.set(p.x + Math.cos(a) * 10.9, 42.5, p.z + Math.sin(a) * 10.9); grp.add(e); }
