@@ -22,7 +22,7 @@ export function initV65(o) {
   const E = Math.PI / 2; // a plane facing +x (east) uses ry = +pi/2
 
   // 1. Royal Assembly Rooms + fiction hatch
-  { const LODGE = [[-134.1,-467.3],[-142.5,-466.5],[-142.6,-467.3],[-152.0,-466.4],[-152.2,-467.7],[-157.6,-467.1],[-157.0,-460.7],[-151.4,-461.3],[-150.9,-455.6],[-154.4,-455.2],[-153.8,-449.5],[-145.3,-450.3],[-145.1,-447.7],[-144.4,-440.1],[-132.4,-441.3],[-132.0,-436.6],[-127.2,-437.0],[-127.1,-435.9],[-122.7,-436.3],[-121.8,-436.4],[-121.9,-437.0],[-116.7,-437.5],[-117.3,-443.4],[-114.0,-443.7],[-115.5,-459.2],[-118.5,-458.9],[-119.3,-466.9],[-121.4,-466.7],[-129.1,-466.0],[-129.2,-467.1],[-134.0,-466.6],[-134.1,-467.3]]; solidP(LODGE);
+  { const LODGE = [[-134.1,-467.3],[-142.5,-466.5],[-142.6,-467.3],[-152.0,-466.4],[-152.2,-467.7],[-157.6,-467.1],[-157.0,-460.7],[-151.4,-461.3],[-150.9,-455.6],[-154.4,-455.2],[-153.8,-449.5],[-145.3,-450.3],[-145.1,-447.7],[-144.4,-440.1],[-132.4,-441.3],[-132.0,-436.6],[-127.2,-437.0],[-127.1,-435.9],[-122.7,-436.3],[-121.8,-436.4],[-121.9,-437.0],[-116.7,-437.5],[-117.3,-443.4],[-114.0,-443.7],[-115.5,-459.2],[-118.5,-458.9],[-119.3,-466.9],[-121.4,-466.7],[-129.1,-466.0],[-129.2,-467.1],[-134.0,-466.6],[-134.1,-467.3]]; if (window.IE_V65_LODGE_SOLID === true) solidP(LODGE); /* v90: OSM footprint solid blocked walking the SE/left apron; v74 box is the collider. Set IE_V65_LODGE_SOLID=true to restore. */
     const fe = -121.2, n0 = -458, n1 = -438, nc = (n0 + n1) / 2;
     /* v82 WASTE PRUNE: the original v65 portico (entablature, 6 columns, pediment, steps, fascia board) sat INSIDE the v74 REAL massing
        (world-v69.js, front e=-115.2). Gated off; set window.IE_V65_LODGE_PORTICO = true to restore. Collision footprint + fiction hatch kept. */
@@ -34,12 +34,12 @@ export function initV65(o) {
     AB(0xd9d3c4, 5, 0.3, n1 - n0, fe + 2.5, nc, 0.15); for (let s = 0; s < 3; s++) AB(0xcfc9b9, 0.5, 0.15 * (3 - s), n1 - n0 - 4, fe + 5 + s * 0.5, nc, 0.075 * (3 - s)); // steps
     board('ROYAL ASSEMBLY ROOMS', 12, 1.1, fe + 4.3, nc, 8.4, E, '#1c2330', '#e9dfc4');
     }
-    /* v89: hatch sat at fe+9/n0-6 (~1.8 m off OSM edge) — flat grey 2.6 m plate vanished into apron. Pull clear of facade (east+south) + STACK-bright marker. CERN door still reads fx.v65Info.hatch. */
-    const he = -105.2, hn = -468;
+    /* v90: hatch on apron centre (F+10, NC) so Lodge jump faces it; SE spot was easy to miss + OSM solid blocked the left walk. */
+    const he = -105.2, hn = -447.5;
     AB(0x1b1f24, 5.2, 0.12, 5.2, he, hn, 0.08); AB(0x55606b, 4.4, 0.2, 4.4, he, hn, 0.22); AB(0x8a96a3, 3.6, 0.08, 3.6, he, hn, 0.36);
     CY(0x3dff9a, 3.0, 3.0, 0.06, he, hn, 0.42, 40); /* glow ring */
     AB(0x2f3740, 0.2, 0.12, 1.8, he + 0.9, hn, 0.55); /* handle */
-    board('JHIOS // VERSIONS OF REALITY · FICTION', 5.2, 0.7, he, hn - 3.2, 1.4, 0, '#06140c', '#3dff9a');
+    board('JHIOS // VERSIONS OF REALITY · FICTION', 5.2, 0.7, he + 3.4, hn, 1.6, Math.PI / 2, '#06140c', '#3dff9a'); /* face east toward jumper */
     CY(0x3dff9a, 0.12, 0.12, 8, he, hn, 4.2, 8); /* tall light so you spot it from Lodge jump */
     info.lodge = [fe, nc]; info.hatch = [he, hn]; }
 

@@ -220,7 +220,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     AB(0x2c2f33, 14, 0.05, Wd + 8, F + 7.2, NC, 0.04); for (let i = 0; i <= 6; i++) AB(0xf2f0ea, 5, 0.03, 0.12, F + 9, S0 - 4 + i * (Wd + 8) / 6, 0.08); // tarmac apron + bay lines
     board('NO PARKING', 4, 0.8, F + 3.2, NC, 0.07, E, '#2c2f33', '#f2d23a').rotation.set(-Math.PI / 2, 0, E); // painted on the apron
     for (const dn of [-6, 6]) { const sn = NC + dn; CY(0x6b6f74, 0.07, 0.07, 2.6, F + 13, sn, 1.3, 6); board('PRIVATE CAR PARK', 2.4, 0.9, F + 13.06, sn, 2.3, E, '#ffffff', '#1a2638'); for (const ds of [-1.9, 1.9]) emb(1.3, 1.3, F + 13.06, sn + ds, 2.3, '#0f1a2a', '#ffd76a'); } // car-park signs with square & compass either side
-    fx.addSolid && fx.addSolid([[B, S0], [F + 0.4, S0], [F + 0.4, S1], [B, S1]]); info.lodgeV74 = { front: F, n: [S0, S1] };
+    fx.addSolid && fx.addSolid([[B, S0], [F - 1.2, S0], [F - 1.2, S1], [B, S1]]); /* v90: was F+0.4 — blocked walking the east front/left corner */ info.lodgeV74 = { front: F, n: [S0, S1] };
     { const fc = warp(F, NC), to = warp(F + 34, NC + 4); let k = 0; const mv = () => { let d = 0; for (const c of fx.clusters || []) if (c.grp && Math.hypot(c.grp.position.x - fc.x, c.grp.position.z - fc.z) < 40) { c.grp.position.x = to.x; c.grp.position.z = to.z; d++; } if (!d && ++k < 30) setTimeout(mv, 700); }; setTimeout(mv, 600); } } // v75: pink song panels off the facade, out past the apron so the 5-bay front + lettering read from the hatch
   // ---------- 5. piers: solid decks from OSM pier polygons ----------
   const decks = [];
