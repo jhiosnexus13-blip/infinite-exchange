@@ -1,5 +1,6 @@
 /* JHIOS world v87 — enterable pocket rooms (preview only; live stays ?v=81).
    window.IE_V87_ROOMS = false disables every room (no prompts, no meshes). Per-room gates: IE_V87_CERN / IE_V87_DANCE / IE_V87_VIPER = false.
+   v104: art() ytId accepts youtu.be/shorts/embed (Dance covers were grey); Dance exitR 10->4.5 (no EXIT tip on spawn); Viper crowd centre aisle |x|>=1.8 + pushed 0.8 m south for DJ sightline.
    v102 Viper FX flags (default ON): IE_V87_DJ=false hides DJ, IE_V87_CROWD=false hides crowd, IE_V87_STROBE=false / IE_V87_LASERS=false turn those off (both only build at L1+ / DET>=1).
    v102 sizes: CERN 40x40x6.5 @x-1560, Dance 42x42x12 @x-1490, Viper 24x18x6 @x-1420 (all z -4600, inside world.js clamp x>=-1600, z>=-4700).
    Rooms are built OFF-MAP (far SW corner x -1580..-1408, z -4600, inside the world.js walk clamp, floor y = -200; collisions there swapped off via fx.clear while inside) — no real GY mesh is cut.
@@ -21,7 +22,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     ls.forEach((l, i) => { let s = px; k.font = `bold ${s}px Arial, sans-serif`; while (k.measureText(l).width > c.width * 0.92 && s > 8) k.font = `bold ${--s}px Arial, sans-serif`; k.fillText(l, c.width / 2, c.height * (i + 0.5) / ls.length); });
     const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: new T.CanvasTexture(c), side: T.DoubleSide, fog: false })); m.position.set(x, y, z); m.rotation.y = ry; g.add(m); return m; };
   const art = (g, id, w, x, y, z, ry) => { const m = new T.Mesh(new T.PlaneGeometry(w, w * 9 / 16), new T.MeshBasicMaterial({ color: 0x333344, side: T.DoubleSide, fog: false })); m.position.set(x, y, z); m.rotation.y = ry; g.add(m);
-    const go = () => { const t = window.JX && JX.tracks && JX.tracks.find(q => q.id === id); const yt = t && /[?&]v=([\w-]{6,})/.exec(t.youtube_url || ''); const u = t && (t.artwork_url || (yt && `https://i.ytimg.com/vi/${yt[1]}/mqdefault.jpg`));
+    const go = () => { const t = window.JX && JX.tracks && JX.tracks.find(q => q.id === id); const yt = t && /(?:v=|youtu\.be\/|shorts\/|embed\/)([\w-]{11})/.exec(t.youtube_url || ''); const u = t && (t.artwork_url || (yt && `https://i.ytimg.com/vi/${yt[1]}/mqdefault.jpg`));
       if (u) new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; m.material.map = tx; m.material.color.set(0xffffff); m.material.needsUpdate = true; }); };
     window.JX ? JX.load().then(go).catch(() => {}) : 0; return m; };
   const FICTION = 'FICTION \u00b7 JHIOS world art \u00b7 not a real venue or facility';
@@ -131,7 +132,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     fiction(g, 0, 0.7, 20.2, Math.PI);
     r.spawn = [ox, oz + 9]; r.yaw = 0; r.track = 'pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation';
     const em = new T.Mesh(new T.CircleGeometry(1.8, 28), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); em.rotation.x = -Math.PI / 2; em.position.set(0, 0.04, 17.5); g.add(em);
-    r.exits = [[ox, oz + 17.5]]; r.exitR = 10;
+    r.exits = [[ox, oz + 17.5]]; r.exitR = 4.5; // v104: was 10 (covered spawn at z+9)
     r.door = () => { const p = warp(420, 2650); return [p.x, p.z, 14]; };
     r.out = () => { const p = warp(436, 2650), q = warp(520, 2650); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER THE DREAM — tap'; }
 
@@ -158,7 +159,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const s of [-9.5, 9.5]) { box(g, 0x2a2a34, 1.8, 3.6, 1.6, s, 1.8, -7.4); box(g, 0x777788, 1.2, 1.2, 0.05, s, 2.4, -6.58); box(g, 0x777788, 0.7, 0.7, 0.05, s, 1.0, -6.58); box(g, 0xff2e4a, 1.8, 0.06, 0.06, s, 3.62, -6.58); }
     // back wall: logo high and clear (v102: nothing overlaps it), title board above
     const logoM = new T.Mesh(new T.PlaneGeometry(7.2, 3.1), mat(0x220810)); logoM.position.set(0, 3.55, NW + 0.05); g.add(logoM);
-    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=103').then(r => r.text()).then(b64 => {
+    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=104').then(r => r.text()).then(b64 => {
       const u = b64.trim().startsWith('data:') ? b64.trim() : 'data:image/png;base64,' + b64.trim();
       new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; logoM.material = new T.MeshBasicMaterial({ map: tx, transparent: true, fog: false, toneMapped: false }); });
     }).catch(() => {});
@@ -180,7 +181,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const s of [-10.6, 10.6]) { box(g, 0x2a1a22, 1.0, 1.1, 5, s, 0.55, 4.5); box(g, 0xff2e4a, 1.0, 0.05, 5, s, 1.12, 4.5); for (let b = 0; b < 4; b++) box(g, b % 2 ? 0x55ffcc : 0xffc83a, 0.12, 0.35, 0.12, s + Math.sign(s) * 0.3, 1.3, 2.8 + b * 1.1); }
     // small crowd (IE_V87_CROWD=false hides): ~15 silhouettes on the floor facing the stage, bob + glowsticks
     r.crowd = []; if (window.IE_V87_CROWD !== false) { const n = L1 ? 16 : 10;
-      for (let i = 0; i < n; i++) { const row = i % 3, x = -5.2 + ((i * 2.3) % 10.6) + (row - 1) * 0.4, z = -2.6 + row * 1.9 + ((i * 0.7) % 0.8), hgt = 1.45 + ((i * 37) % 5) * 0.08;
+      for (let i = 0; i < n; i++) { const row = i % 3, x0 = -5.2 + ((i * 2.3) % 10.6) + (row - 1) * 0.4, x = Math.abs(x0) < 1.8 ? Math.sign(x0 || 1) * (1.8 + Math.abs(x0) * 0.5) : x0, z = -1.8 + row * 1.9 + ((i * 0.7) % 0.8), hgt = 1.45 + ((i * 37) % 5) * 0.08;
         const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = Math.sin(i) * 0.3; g.add(p); box(p, 0x24161e, 0.42, hgt, 0.28, 0, hgt / 2, 0); box(p, 0x1c1018, 0.26, 0.26, 0.26, 0, hgt + 0.15, 0);
         if (i % 3 === 0) box(p, i % 2 ? 0x55ffcc : 0xff2e4a, 0.06, 0.4, 0.06, 0.3, hgt + 0.35, 0);
         r.crowd.push([p, i * 1.7]); } }
