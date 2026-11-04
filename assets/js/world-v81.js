@@ -24,6 +24,20 @@ export function initV81(o) {
         const s = main ? 0.8 : 0.5; c.grp.scale.setScalar(s); c.grp.position.set(cc.x, lo < 1e8 ? 4.2 - lo * s : 0, main ? cc.z : cc.z - 38); c.spin = main ? 0.02 : 0.05; c.grp.userData.v81 = 1; k++; }
       info.lodgeCluster = k; return k >= 2; }); info.fixes.push('lodge-eye-level'); }
 
+  // ---- Versions Of Reality hatch (apron, east of music cluster so Lodge jump sees it) ----
+  { const he = -70, hn = -447.5, hp = warp(he, hn), E = Math.PI / 2;
+    const mk = (geo, c, y) => { const m = new T.Mesh(geo, M(c, { fog: false, toneMapped: false })); m.position.set(hp.x, y, hp.z); grp.add(m); return m; };
+    mk(new T.CylinderGeometry(3.4, 3.4, 0.12, 40), 0x1b1f24, 0.1);
+    mk(new T.CylinderGeometry(2.8, 2.8, 0.1, 40), 0x55606b, 0.22);
+    mk(new T.CylinderGeometry(3.2, 3.2, 0.05, 40), 0x3dff9a, 0.3);
+    mk(new T.CylinderGeometry(0.15, 0.15, 10, 8), 0x3dff9a, 5.2);
+    board('JHIOS // VERSIONS OF REALITY · FICTION', 6.5, 0.85, hp.x + 0.2, 1.8, hp.z, E, '#06140c', '#3dff9a');
+    const lb = LBL && LBL('VERSIONS HATCH', '#3dff9a', 1.1); if (lb) { lb.position.set(hp.x, 7.5, hp.z); grp.add(lb); }
+    fx.v65Info = fx.v65Info || {}; fx.v65Info.hatch = [he, hn];
+    PJ.versions_hatch = [warp(he + 16, hn).x, warp(he + 16, hn).z, [hp.x, hp.z, 0.1]];
+    addJumpBtn('versions_hatch', 'Versions Of Reality hatch', 'lodge');
+    info.fixes.push('versions-hatch'); info.versionsHatch = [he, hn]; }
+
   // ---- P0 2: Youth Centre declutter (landing -66,-2380 looking -z) ----
   retry(() => { let k = 0, i = 0; for (const c of fx.clusters || []) { const p = c.grp.position; if (c.grp.userData.v81y) continue; if (Math.hypot(p.x + 66, p.z + 2380) < 90) {
       c.grp.userData.v81y = 1; c.grp.position.set(-66 + ((i++ % 5) - 2) * 26, Math.max(0, p.y - 9), -2380 + 55 + Math.floor(i / 5) * 20); c.grp.scale.setScalar(0.6); k++; } }

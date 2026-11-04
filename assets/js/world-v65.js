@@ -35,7 +35,7 @@ export function initV65(o) {
     board('ROYAL ASSEMBLY ROOMS', 12, 1.1, fe + 4.3, nc, 8.4, E, '#1c2330', '#e9dfc4');
     }
     /* v90: hatch on apron centre (F+10, NC) so Lodge jump faces it; SE spot was easy to miss + OSM solid blocked the left walk. */
-    const he = -105.2, hn = -447.5;
+    const he = -70, hn = -447.5; /* aligned with v81 apron hatch */
     AB(0x1b1f24, 5.2, 0.12, 5.2, he, hn, 0.08); AB(0x55606b, 4.4, 0.2, 4.4, he, hn, 0.22); AB(0x8a96a3, 3.6, 0.08, 3.6, he, hn, 0.36);
     CY(0x3dff9a, 3.0, 3.0, 0.06, he, hn, 0.42, 40); /* glow ring */
     AB(0x2f3740, 0.2, 0.12, 1.8, he + 0.9, hn, 0.55); /* handle */
