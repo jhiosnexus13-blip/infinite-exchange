@@ -6,7 +6,7 @@
    P1 Beatty Close jump + label (OSM beatty_close), Britannia overhead blue slab hidden, Wellington cream slab hidden + spawn nudged, harbour magenta wire killed + clutter capped,
       Tower opaque octagon drum, Jellicoe road text shrunk, NPC count reported. */
 export function initV81(o) {
-  const { T, S, warp, fx, LBL } = o, grp = new T.Group(); grp.name = 'v81'; S.add(grp); const info = { fixes: [] };
+  const { T, S, warp, fx, LBL, P } = o, grp = new T.Group(); grp.name = 'v81'; S.add(grp); const info = { fixes: [] };
   const M = (c, x = {}) => new T.MeshBasicMaterial(Object.assign({ color: c }, x));
   const retry = (fn, n = 30, ms = 1000) => { let k = 0; const go = () => { let ok = false; try { ok = fn(); } catch (e) { console.warn('v81', e); } if (!ok && ++k < n) setTimeout(go, ms); }; setTimeout(go, ms); };
   const addJumpBtn = (key, label, afterKey) => retry(() => { const nav = document.querySelector('.wmap-jumps'); if (!nav) return false; if (!nav.querySelector(`[data-jump="${key}"]`)) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = key; b.textContent = label; const a = afterKey && nav.querySelector(`[data-jump="${afterKey}"]`); a ? a.after(b) : nav.appendChild(b); } return true; });
@@ -36,6 +36,17 @@ export function initV81(o) {
     fx.v65Info = fx.v65Info || {}; fx.v65Info.hatch = [he, hn];
     PJ.versions_hatch = [warp(he + 16, hn).x, warp(he + 16, hn).z, [hp.x, hp.z, 0.1]];
     addJumpBtn('versions_hatch', 'Versions Of Reality hatch', 'lodge');
+    // click / proximity backup if v87 prompt is late
+    const pads = []; grp.traverse(o => { if (o.isMesh) pads.push(o); });
+    const tip = document.createElement('button'); tip.type = 'button'; tip.textContent = 'ENTER HATCH · VERSIONS OF REALITY [E]';
+    tip.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:121;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
+    document.body.appendChild(tip);
+    const goIn = () => { if (fx.enterRoom) fx.enterRoom('cern'); else if (window.__fx87 && fx.v87 && fx.v87.enterRoom) fx.v87.enterRoom('cern'); };
+    tip.onclick = goIn;
+    addEventListener('keydown', e => { if (e.code === 'KeyE' && tip.style.display === 'block') { e.preventDefault(); goIn(); } });
+    const tick = () => { const p = P && P.pos; let near = false;
+      if (p) near = Math.hypot(p.x - hp.x, p.z - hp.z) < 14; tip.style.display = near && !(fx.v87Info && fx.v87Info.inside) ? 'block' : 'none';
+      requestAnimationFrame(tick); }; requestAnimationFrame(tick);
     info.fixes.push('versions-hatch'); info.versionsHatch = [he, hn]; }
 
   // ---- P0 2: Youth Centre declutter (landing -66,-2380 looking -z) ----

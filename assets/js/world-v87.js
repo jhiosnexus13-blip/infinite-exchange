@@ -38,7 +38,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       P.pos.set(o[0], 1.7 + (o[3] || 0), o[1]); P.yaw = Math.atan2(-(o[2][0] - o[0]), -(o[2][1] - o[1])); P.pitch = 0.05; fx.cullT = 0; busy = 0; }, 180); }
   fx.enterRoom = enterRoom; fx.exitRoom = exitRoom;
   // prompt (E key or tap)
-  const btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; btn.style.cssText = 'position:fixed;left:50%;bottom:22%;transform:translateX(-50%);z-index:60;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
+  const btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; btn.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:120;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
   document.body.appendChild(btn); let act = null; btn.onclick = () => act && act();
   addEventListener('keydown', e => { if (e.code !== 'KeyE' || btn.style.display !== 'block') return; const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return; act && act(); });
   const show = (txt, fn) => { act = fn; if (btn.textContent !== txt) btn.textContent = txt; btn.style.display = 'block'; };
@@ -64,7 +64,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (let y = 0.3; y < 4; y += 0.45) box(g, 0x8a96a3, 0.9, 0.06, 0.06, 0, y, -10.9); // ladder
     r.spawn = [ox, oz - 10.2]; r.yaw = Math.PI / 2 + 0.6; r.track = 'cern-versions-of-reality';
     r.exits = [[ox + px, oz + pz], [ox, oz - 10.9]];
-    r.door = () => { const h = fx.v65Info && fx.v65Info.hatch; if (!h) return null; const p = warp(h[0], h[1]); return [p.x, p.z, 4.5]; };
+    r.door = () => { const h = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5]; const p = warp(h[0], h[1]); return [p.x, p.z, 14]; }; /* v92 hatch apron; wide so ENTER shows */
     r.out = () => { const h = fx.v65Info.hatch, p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY [E]';
  }
 
