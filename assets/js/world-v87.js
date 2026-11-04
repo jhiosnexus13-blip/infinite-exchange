@@ -30,13 +30,13 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
   const fadeOn = () => { const f = fx.bm && fx.bm.fade; if (f) { f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } };
   // ground override: first in the list, only answers while inside a room
   (window.__groundParts = window.__groundParts || []).unshift((x, z) => cur ? FY : null);
-  function enterRoom(key) { const r = R[key]; if (!r || cur || busy) return; busy = 1; fadeOn(); info.enters++;
+  let exitT = 0; function enterRoom(key) { const r = R[key]; if (!r || cur || busy) return; busy = 1; try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch (_) {} fadeOn(); info.enters++;
     setTimeout(() => { r.from = [P.pos.x, P.pos.z]; cur = r; info.inside = key; P.pos.set(r.spawn[0], FY + 1.7, r.spawn[1]); P.yaw = r.yaw; P.pitch = 0.02;
       fx.clear = fx.clear || []; r.clr = [r.spawn[0], r.spawn[1], 40]; fx.clear.push(r.clr); // collider swap: world solids off, room clamp on
       if (r.track) music.play(r.track); fx.cullT = 0; busy = 0; }, 180); }
   function exitRoom() { const r = cur; if (!r || busy) return; busy = 1; fadeOn(); info.exits++;
     setTimeout(() => { music.stop(); const o = r.out(); cur = null; info.inside = null; if (fx.clear) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
-      P.pos.set(o[0], 1.7 + (o[3] || 0), o[1]); P.yaw = Math.atan2(-(o[2][0] - o[0]), -(o[2][1] - o[1])); P.pitch = 0.05; fx.cullT = 0; busy = 0; }, 180); }
+      P.pos.set(o[0], 1.7 + (o[3] || 0), o[1]); P.yaw = Math.atan2(-(o[2][0] - o[0]), -(o[2][1] - o[1])); P.pitch = 0.05; fx.cullT = 0; busy = 0; exitT = performance.now(); btn.style.display = 'none'; }, 180); }
   fx.enterRoom = enterRoom; fx.exitRoom = exitRoom;
   // prompt: high z so HUD/player never steal the tap; Enter / F / tap
   let btn = document.getElementById('v87act');
@@ -118,11 +118,11 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     box(g, 0xff2e4a, 4.2, 0.06, 1.4, 0, 1.58, -3.5);
     for (const s of [-1.1, 1.1]) box(g, 0x2a2a30, 0.7, 0.05, 0.55, s, 1.62, -3.5);
     // speakers
-    for (const s of [-5.2, 5.2]) { box(g, 0x121214, 1.1, 2.4, 1.1, s, 1.4, -3.6); box(g, 0x333338, 0.9, 0.9, 0.05, s, 1.8, -3.0); }
+    for (const s of [-5.2, 5.2]) { box(g, 0x2a2a34, 1.4, 2.8, 1.3, s, 1.4, -3.6); box(g, 0x777788, 1.0, 1.0, 0.05, s, 1.8, -2.93); box(g, 0xff2e4a, 1.4, 0.06, 0.06, s, 2.82, -2.93); }
     // side LED strips
     for (const s of [-6.8, 6.8]) box(g, 0xff2e4a, 0.08, 4.0, 0.08, s, 2.2, 0);
     // crowd silhouettes (venue vibe)
-    for (let i = 0; i < 7; i++) { const x = -4.5 + i * 1.5; box(g, 0x0a0608, 0.55, 1.5 + (i % 3) * 0.2, 0.35, x, 0.85, 2.8); }
+    for (let i = 0; i < 7; i++) { const x = -4.5 + i * 1.5; box(g, 0x2a1a24, 0.55, 1.5 + (i % 3) * 0.2, 0.35, x, 0.85, 2.8); }
     board(g, 'VIPER ROOM GY', 6.5, 1.1, 0, 3.6, -4.85, 0, '#07020a', '#ff2e4a');
     // logo plane from site asset
     const logoM = new T.Mesh(new T.PlaneGeometry(5.5, 2.4), mat(0x220810)); logoM.position.set(0, 2.5, -4.7); g.add(logoM);
@@ -135,17 +135,26 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     fiction(g, 0, 3.9, 4.85, Math.PI);
     board(g, 'EXIT \u00b7 ARENA APRON', 4.0, 0.55, 0, 2.8, 4.85, Math.PI, '#07020a', '#3dff9a');
     const st = new T.Mesh(new T.PlaneGeometry(13.5, 9.2), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, side: T.DoubleSide, depthWrite: false })); st.rotation.x = Math.PI / 2; st.position.y = 4.3; g.add(st); r.strobe = L1 ? st : null;
-    r.spawn = [ox, oz + 2.4]; r.yaw = 0; r.track = 'manhattan-shuffle-dub-dance-version'; r.loop = true; r.events = ev;
+    // v100 fatten: bright fill strips, floor grid, wall wash so the room reads at any angle
+    for (const s of [-6.85, 6.85]) { for (const y of [0.6, 3.9]) box(g, 0xff2e4a, 0.06, 0.1, 9.6, s, y, 0); box(g, 0x2a0a14, 0.05, 4.3, 9.8, s * 1.005, 2.2, 0); }
+    for (const y of [0.6, 3.9]) box(g, 0xff6a2e, 13.6, 0.1, 0.06, 0, y, 4.88);
+    for (let i = -6; i <= 6; i += 2) box(g, 0x3a0c18, 0.06, 0.02, 9.6, i, 0.02, 0);
+    for (let i = -4; i <= 4; i += 2) box(g, 0x3a0c18, 13.6, 0.02, 0.06, 0, 0.02, i);
+    for (const s of [-3.5, 0, 3.5]) box(g, 0xffd0d8, 1.6, 0.05, 0.3, s, 4.42, 0); // ceiling light bars
+    for (let i = 0; i < 7; i++) box(g, i % 2 ? 0x55ffcc : 0xff2e4a, 0.5, 0.08, 0.3, -4.5 + i * 1.5, 1.7 + (i % 3) * 0.2, 2.8); // crowd glowsticks
+    for (const s of [-6, 6]) { box(g, 0x2a1a22, 1.6, 1.0, 0.8, s, 0.5, 3.6); box(g, 0xff2e4a, 1.6, 0.05, 0.8, s, 1.02, 3.6); } // bar counters
+    r.spawn = [ox, oz + 3.6]; r.yaw = 0; r.track = 'manhattan-shuffle-dub-dance-version'; r.loop = true; r.events = ev;
     r.exits = [[ox, oz + 4.2]];
     const vbase = () => (fx.feature && fx.feature.grp) ? fx.feature.grp.position : (fx.viper && fx.viper.grp && fx.viper.grp.getWorldPosition(new T.Vector3()));
     r.door = () => { const p = vbase(); if (!p) return null; return [p.x, p.z, 22]; };
-    r.out = () => { const p = vbase() || { x: 0, z: 0 }; return [p.x + 14, p.z + 8, [p.x, p.z]]; }; r.label = 'ENTER VIPER ROOM GY — tap'; }
+    r.out = () => { const p = vbase() || { x: 0, z: 0 }; return [p.x + 22, p.z + 15, [p.x, p.z]]; }; /* v100: ~27m out, clear apron beyond the 22m door radius */ r.label = 'ENTER VIPER ROOM GY — tap'; }
 
   try {
     const PJ = window.__pjumps || (window.__pjumps = {});
-    const dp = warp(420, 2650); PJ.dance_ancients = [dp.x, dp.z, [dp.x, dp.z, 0.2]];
+    const dp = warp(420, 2650); const dl = warp(420, 2632); PJ.dance_ancients = [dl.x, dl.z, [dp.x, dp.z, 0.1]];
+    fx.pj81 = fx.pj81 || {}; fx.pj81.dance_ancients = PJ.dance_ancients; // v100: jumpTo0 reads fx.pj81, not __pjumps
     const addJ = (key, label, after) => { const nav = document.querySelector('.wmap-jumps'); if (!nav || nav.querySelector('[data-jump="' + key + '"]')) return; const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = key; b.textContent = label; const a = after && nav.querySelector('[data-jump="' + after + '"]'); a ? a.after(b) : nav.appendChild(b); };
-    const waitJ = () => { if (!document.querySelector('.wmap-jumps')) return setTimeout(waitJ, 400); addJ('dance_ancients', 'Dance Of The Ancients', 'pleasure_beach'); };
+    const waitJ = () => { if (!document.querySelector('.wmap-jumps')) return setTimeout(waitJ, 400); addJ('dance_ancients', 'Dance Of The Ancients', 'pleasure_beach'); const vh = document.querySelector('.wmap-jumps [data-jump="versions_hatch"]'); if (vh) vh.textContent = 'CERN / Versions Of Reality hatch'; else addJ('versions_hatch', 'CERN / Versions Of Reality hatch', 'dance_ancients'); };
     waitJ();
   } catch (_) {}
 
@@ -158,7 +167,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       addEventListener('keydown', e => { if (tip.style.display !== 'block') return; if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'KeyF') { e.preventDefault(); go(e); } });
     }
     const tick = () => { const r = R[key], p = P && P.pos; let near = false;
-      if (r && r.door && p && !cur) { const d = r.door(); if (d) near = Math.hypot(p.x - d[0], p.z - d[1]) < d[2] && p.y < 12; }
+      if (r && r.door && p && !cur && performance.now() - exitT > 1200) { const d = r.door(); if (d) near = Math.hypot(p.x - d[0], p.z - d[1]) < d[2] && p.y < 12; }
       tip.style.display = near ? 'block' : 'none'; if (near) tip.textContent = text; requestAnimationFrame(tick); };
     requestAnimationFrame(tick);
   };
@@ -178,7 +187,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < 3.8);
       if (r.key === 'viper' && Math.hypot(P.pos.x - (r.ox - 5.4), P.pos.z - r.oz) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
       else if (near) show('EXIT — tap / Enter / F', exitRoom); else btn.style.display = 'none'; return; }
-    if (t - tk < 0.2) return; tk = t; let hit = null;
+    if (t - tk < 0.2) return; tk = t; if (performance.now() - exitT < 1200) { btn.style.display = 'none'; return; } let hit = null;
     for (const k in R) { const d = R[k].door && R[k].door(); if (d && Math.hypot(P.pos.x - d[0], P.pos.z - d[1]) < d[2] && P.pos.y < 12) { hit = R[k]; break; } }
     if (hit && !tipOwns()) show(hit.label, () => enterRoom(hit.key)); else if (!cur) btn.style.display = 'none';
   }
