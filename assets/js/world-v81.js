@@ -38,12 +38,12 @@ export function initV81(o) {
     addJumpBtn('versions_hatch', 'Versions Of Reality hatch', 'lodge');
     // click / proximity backup if v87 prompt is late
     const pads = []; grp.traverse(o => { if (o.isMesh) pads.push(o); });
-    const tip = document.createElement('button'); tip.type = 'button'; tip.textContent = 'ENTER HATCH · VERSIONS OF REALITY [E]';
+    const tip = document.createElement('button'); tip.type = 'button'; tip.textContent = 'ENTER HATCH · VERSIONS OF REALITY — tap here';
     tip.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:121;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
     document.body.appendChild(tip);
-    const goIn = () => { if (fx.enterRoom) fx.enterRoom('cern'); else if (window.__fx87 && fx.v87 && fx.v87.enterRoom) fx.v87.enterRoom('cern'); };
+    const goIn = () => { const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom); if (fn) fn('cern'); else { tip.textContent = 'Loading room… tap again'; setTimeout(() => { const f2 = fx.enterRoom || (fx.v87 && fx.v87.enterRoom); if (f2) f2('cern'); tip.textContent = 'ENTER HATCH · VERSIONS OF REALITY — tap here'; }, 800); } };
     tip.onclick = goIn;
-    addEventListener('keydown', e => { if (e.code === 'KeyE' && tip.style.display === 'block') { e.preventDefault(); goIn(); } });
+    addEventListener('keydown', e => { if (tip.style.display !== 'block') return; if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'KeyF') { e.preventDefault(); goIn(); } });
     const tick = () => { const p = P && P.pos; let near = false;
       if (p) near = Math.hypot(p.x - hp.x, p.z - hp.z) < 14; tip.style.display = near && !(fx.v87Info && fx.v87Info.inside) ? 'block' : 'none';
       requestAnimationFrame(tick); }; requestAnimationFrame(tick);

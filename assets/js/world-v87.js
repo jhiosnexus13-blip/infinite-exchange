@@ -40,7 +40,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
   // prompt (E key or tap)
   const btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; btn.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:120;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
   document.body.appendChild(btn); let act = null; btn.onclick = () => act && act();
-  addEventListener('keydown', e => { if (e.code !== 'KeyE' || btn.style.display !== 'block') return; const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return; act && act(); });
+  addEventListener('keydown', e => { if (btn.style.display !== 'block') return; if (e.code !== 'Enter' && e.code !== 'NumpadEnter' && e.code !== 'KeyF') return; const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return; e.preventDefault(); act && act(); });
   const show = (txt, fn) => { act = fn; if (btn.textContent !== txt) btn.textContent = txt; btn.style.display = 'block'; };
   // room builder: axis-aligned box in world x/z, origin (ox, oz), size w (x) by d (z)
   const room = (key, ox, oz, w, d, h, wall, floor) => { const g = new T.Group(); g.name = 'v87-' + key; g.position.set(ox, FY, oz); grp.add(g); g.visible = false;
@@ -65,7 +65,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     r.spawn = [ox, oz - 10.2]; r.yaw = Math.PI / 2 + 0.6; r.track = 'cern-versions-of-reality';
     r.exits = [[ox + px, oz + pz], [ox, oz - 10.9]];
     r.door = () => { const h = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5]; const p = warp(h[0], h[1]); return [p.x, p.z, 14]; }; /* v92 hatch apron; wide so ENTER shows */
-    r.out = () => { const h = fx.v65Info.hatch, p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY [E]';
+    r.out = () => { const h = fx.v65Info.hatch, p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY — tap';
  }
 
   // 2. Dance dream box (removed with the v86 ring)
@@ -78,7 +78,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     const em = new T.Mesh(new T.CircleGeometry(1.2, 24), mat(0x66ffcc, { transparent: true, opacity: 0.5 })); em.rotation.x = -Math.PI / 2; em.position.set(0, 0.03, 12); g.add(em);
     r.exits = [[ox, oz + 12]];
     r.door = () => { const p = warp(420, 2650); return [p.x, p.z, 2]; };
-    r.out = () => { const p = warp(436, 2650), q = warp(520, 2650); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER THE DREAM [E]'; }
+    r.out = () => { const p = warp(436, 2650), q = warp(520, 2650); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER THE DREAM — tap'; }
 
   // 3. Viper Room GY (full)
   if (window.IE_V87_VIPER !== false) { const ox = -1395, oz = -4600, r = room('viper', ox, oz, 12, 8, 4, 0x07020a, 0x111014); const g = r.g;
@@ -94,7 +94,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     const vp = () => fx.viper && fx.viper.grp && fx.viper.grp.getWorldPosition(new T.Vector3());
     const vn = () => new T.Vector3(0, 0, 1).applyQuaternion(fx.viper.grp.getWorldQuaternion(new T.Quaternion())).setY(0).normalize();
     r.door = () => { const p = vp(); if (!p) return null; const n = vn(); return [p.x + n.x * 6, p.z + n.z * 6, 6]; };
-    r.out = () => { const p = vp(), n = vn(); return [p.x + n.x * 12, p.z + n.z * 12, [p.x + n.x * 30, p.z + n.z * 30]]; }; r.label = 'ENTER VIPER ROOM GY [E]'; }
+    r.out = () => { const p = vp(), n = vn(); return [p.x + n.x * 12, p.z + n.z * 12, [p.x + n.x * 30, p.z + n.z * 30]]; }; r.label = 'ENTER VIPER ROOM GY — tap'; }
 
   let tk = 0;
   function update(t, dt) {
