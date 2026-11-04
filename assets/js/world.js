@@ -423,12 +423,13 @@ const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
 function hitAt(x, y) { // v59: one raycast shared by tap / click, the centre pointer's highlight and its 'do it' action
   const r = canvas.getBoundingClientRect(); ndc.set((x - r.left) / r.width * 2 - 1, -(y - r.top) / r.height * 2 + 1);
   ray.setFromCamera(ndc, camera); const hits = ray.intersectObjects(clickables, false).filter(h => h.object.visible !== false && (!h.object.parent || h.object.parent.visible !== false));
-  return hits.find(h => h.object.userData.feature) || hits.find(h => h.object.userData.track) || hits[0] || null; // the giant featured skyline screen wins, then album-art screens, then hit-boxes
+  return hits.find(h => typeof h.object.userData.action === 'function') || hits.find(h => h.object.userData.feature) || hits.find(h => h.object.userData.track) || hits[0] || null;
 }
 function pick(x, y, hit0) {
   if (window.__mapOpen) return;
   const hit = hit0 || hitAt(x, y);
   if (!hit) return false; const u = hit.object.userData;
+  if (typeof u.action === 'function') { try { u.action(); return true; } catch (e) { console.warn('click action', e); } }
   if (u.track) { if (window.JX) JX.load().then(() => { const t = JX.tracks.find(x => x.id === u.track); if (t) { JX.play(t, JX.byLane(t.lane)); selectLane(t.lane); openPanel(true); } }); return true; }
   if (u.popup) { window.__lastOpen = 'popup:' + (u.id || ''); u.popup(); return true; }
   if (u.link) { window.__lastOpen = u.link; window.open(u.link, '_blank', 'noopener'); } else playLane(u.lane); return true;
@@ -465,14 +466,14 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=96').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-fx.js?v=97').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
 /* v58: gamepad (world-gamepad.js) drives the same actions: centre tap = pick(), the same panel / map functions, and the same move/look sums as the touch sticks */
 let pad = { mx: 0, my: 0, lx: 0, ly: 0, sprint: false, poll() { return this; } };
 const nearScreens = () => { const v = new THREE.Vector3(), out = []; for (const o of clickables) { if (o.visible === false || (o.parent && o.parent.visible === false)) continue; o.getWorldPosition(v); const d = Math.hypot(v.x - player.pos.x, v.z - player.pos.z); if (d < 40 && d > 1) out.push({ o, x: v.x, y: v.y, z: v.z, a: Math.atan2(-(v.x - player.pos.x), -(v.z - player.pos.z)) }); } return out.sort((p, q) => p.a - q.a); };
-Promise.all([import('./world-gamepad.js?v=96'), import('./world-ui.js?v=96')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+Promise.all([import('./world-gamepad.js?v=97'), import('./world-ui.js?v=97')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
   pad = m.initGamepad({ ui, pickCentre: h => !!pick(...ctr(), h), peekCentre: () => { if (window.__mapOpen) return null; const h = hitAt(...ctr()); if (!h) return null; const u = h.object.userData, t = u.track && window.JX && JX.tracks.find(x => x.id === u.track);
       return { hit: h, label: u.track ? 'PLAY TRACK' + (t || u.title ? ' · ' + (t ? t.title : u.title) : '') : u.popup ? 'OPEN · ' + (u.title || 'panel') : u.link ? 'OPEN LINK · ' + (u.title || u.label || 'link') : u.lane ? 'PLAY LANE · ' + u.lane : 'USE' }; }, openPanel,
   openMap: () => window.__world.openMap && window.__world.openMap(), closeMap: () => window.__world.closeMap && window.__world.closeMap(), nearScreens,

@@ -45,7 +45,7 @@ export function initV81(o) {
       tip.textContent = 'Opening CERN…';
       try {
         if (!fx.enterRoom) {
-          const m = await import('/assets/js/world-v87.js?v=96');
+          const m = await import('/assets/js/world-v87.js?v=97');
           if (!fx.v87) fx.v87 = m.initV87({ T, S, LITE: !!(window.__lite), warp, fx, P });
         }
         const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom);
@@ -60,7 +60,7 @@ export function initV81(o) {
     tip.onclick = goIn;
     addEventListener('keydown', e => { if (tip.style.display !== 'block') return; if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'KeyF') { e.preventDefault(); goIn(); } });
     const tick = () => { const p = P && P.pos; let near = false;
-      if (p) near = Math.hypot(p.x - hp.x, p.z - hp.z) < 14; tip.style.display = near && !(fx.v87Info && fx.v87Info.inside) ? 'block' : 'none';
+      if (p) near = Math.hypot(p.x - hp.x, p.z - hp.z) < 14; const other = ['v87tip-dance','v87tip-viper','v87act'].some(id => { const el = document.getElementById(id); return el && el.style.display === 'block' && id !== 'v87act'; }); tip.style.display = near && !other && !(fx.v87Info && fx.v87Info.inside) ? 'block' : 'none';
       requestAnimationFrame(tick); }; requestAnimationFrame(tick);
     info.fixes.push('versions-hatch'); info.versionsHatch = [he, hn]; }
 

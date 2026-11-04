@@ -7,8 +7,9 @@
    3. Viper: venue-like club (logo, stage, LEDs, speakers), DJ booth, strobe, events wall.
    Track picks (tracks.json): cern-versions-of-reality, dunes-and-the-sand-trance-techno-version (dance), manhattan-shuffle-dub-dance-version (viper). */
 export function initV87({ T, S, LITE, warp, fx, P }) {
-  const info = { rooms: [], inside: null, enters: 0, exits: 0 }; fx.v87Info = info; window.__fx87 = info;
-  if (window.IE_V87_ROOMS === false) { info.off = true; return { info, update() {} }; }
+  if (fx.v87 && fx.v87Info && fx.v87Info.ready) return fx.v87;
+  const info = { rooms: [], inside: null, enters: 0, exits: 0, ready: false }; fx.v87Info = info; window.__fx87 = info;
+  if (window.IE_V87_ROOMS === false) { info.off = true; info.ready = true; return { info, update() {} }; }
   const DET = window.__detail ?? (LITE ? 0 : 1), L1 = DET >= 1, FY = -200;
   const grp = new T.Group(); grp.name = 'v87-rooms'; S.add(grp);
   const MC = new Map(), mat = (c, o = {}) => { const k = c + JSON.stringify(o); if (!MC.has(k)) MC.set(k, new T.MeshBasicMaterial(Object.assign({ color: c, fog: false }, o))); return MC.get(k); };
@@ -37,9 +38,13 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     setTimeout(() => { music.stop(); const o = r.out(); cur = null; info.inside = null; if (fx.clear) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
       P.pos.set(o[0], 1.7 + (o[3] || 0), o[1]); P.yaw = Math.atan2(-(o[2][0] - o[0]), -(o[2][1] - o[1])); P.pitch = 0.05; fx.cullT = 0; busy = 0; }, 180); }
   fx.enterRoom = enterRoom; fx.exitRoom = exitRoom;
-  // prompt (E key or tap)
-  const btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; btn.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:120;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
-  document.body.appendChild(btn); let act = null; btn.onclick = () => act && act();
+  // prompt: high z so HUD/player never steal the tap; Enter / F / tap
+  let btn = document.getElementById('v87act');
+  if (!btn) { btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; document.body.appendChild(btn); }
+  btn.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:140;display:none;padding:12px 20px;font:bold 16px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-user-select:none;user-select:none';
+  let act = null;
+  const fire = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } if (act) act(); };
+  btn.onclick = fire; btn.ontouchend = fire;
   addEventListener('keydown', e => { if (btn.style.display !== 'block') return; if (e.code !== 'Enter' && e.code !== 'NumpadEnter' && e.code !== 'KeyF') return; const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return; e.preventDefault(); act && act(); });
   const show = (txt, fn) => { act = fn; if (btn.textContent !== txt) btn.textContent = txt; btn.style.display = 'block'; };
   // room builder: axis-aligned box in world x/z, origin (ox, oz), size w (x) by d (z)
@@ -102,7 +107,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     r.spawn = [ox, oz + 5]; r.yaw = 0; r.track = 'dunes-and-the-sand-trance-techno-version';
     const em = new T.Mesh(new T.CircleGeometry(1.4, 28), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); em.rotation.x = -Math.PI / 2; em.position.set(0, 0.04, 13); g.add(em);
     r.exits = [[ox, oz + 13]];
-    r.door = () => { const p = warp(420, 2650); return [p.x, p.z, 2.5]; };
+    r.door = () => { const p = warp(420, 2650); return [p.x, p.z, 14]; };
     r.out = () => { const p = warp(436, 2650), q = warp(520, 2650); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER THE DREAM — tap'; }
 
   // 3. Viper Room GY — dark club / venue look (logo + red stage)
@@ -132,24 +137,50 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     const st = new T.Mesh(new T.PlaneGeometry(13.5, 9.2), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, side: T.DoubleSide, depthWrite: false })); st.rotation.x = Math.PI / 2; st.position.y = 4.3; g.add(st); r.strobe = L1 ? st : null;
     r.spawn = [ox, oz + 2.4]; r.yaw = 0; r.track = 'manhattan-shuffle-dub-dance-version'; r.loop = true; r.events = ev;
     r.exits = [[ox, oz + 4.2]];
-    const vp = () => fx.viper && fx.viper.grp && fx.viper.grp.getWorldPosition(new T.Vector3());
-    const vn = () => new T.Vector3(0, 0, 1).applyQuaternion(fx.viper.grp.getWorldQuaternion(new T.Quaternion())).setY(0).normalize();
-    r.door = () => { const p = vp(); if (!p) return null; const n = vn(); return [p.x + n.x * 6, p.z + n.z * 6, 6]; };
-    r.out = () => { const p = vp(), n = vn(); return [p.x + n.x * 12, p.z + n.z * 12, [p.x + n.x * 30, p.z + n.z * 30]]; }; r.label = 'ENTER VIPER ROOM GY — tap'; }
+    const vbase = () => (fx.feature && fx.feature.grp) ? fx.feature.grp.position : (fx.viper && fx.viper.grp && fx.viper.grp.getWorldPosition(new T.Vector3()));
+    r.door = () => { const p = vbase(); if (!p) return null; return [p.x, p.z, 22]; };
+    r.out = () => { const p = vbase() || { x: 0, z: 0 }; return [p.x + 14, p.z + 8, [p.x, p.z]]; }; r.label = 'ENTER VIPER ROOM GY — tap'; }
 
+  try {
+    const PJ = window.__pjumps || (window.__pjumps = {});
+    const dp = warp(420, 2650); PJ.dance_ancients = [dp.x, dp.z, [dp.x, dp.z, 0.2]];
+    const addJ = (key, label, after) => { const nav = document.querySelector('.wmap-jumps'); if (!nav || nav.querySelector('[data-jump="' + key + '"]')) return; const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = key; b.textContent = label; const a = after && nav.querySelector('[data-jump="' + after + '"]'); a ? a.after(b) : nav.appendChild(b); };
+    const waitJ = () => { if (!document.querySelector('.wmap-jumps')) return setTimeout(waitJ, 400); addJ('dance_ancients', 'Dance Of The Ancients', 'pleasure_beach'); };
+    waitJ();
+  } catch (_) {}
+
+  const tipFor = (key, text, col) => {
+    const id = 'v87tip-' + key; let tip = document.getElementById(id);
+    if (!tip) { tip = document.createElement('button'); tip.type = 'button'; tip.id = id; document.body.appendChild(tip);
+      tip.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:141;display:none;padding:12px 20px;font:bold 16px Arial,sans-serif;background:#07020a;color:' + col + ';border:2px solid ' + col + ';border-radius:8px;cursor:pointer;pointer-events:auto;touch-action:manipulation';
+      const go = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } tip.textContent = 'Opening...'; try { enterRoom(key); tip.style.display = 'none'; } catch (err) { console.warn(key, err); tip.textContent = 'Enter failed — tap to retry'; } };
+      tip.onclick = go; tip.ontouchend = go;
+      addEventListener('keydown', e => { if (tip.style.display !== 'block') return; if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'KeyF') { e.preventDefault(); go(e); } });
+    }
+    const tick = () => { const r = R[key], p = P && P.pos; let near = false;
+      if (r && r.door && p && !cur) { const d = r.door(); if (d) near = Math.hypot(p.x - d[0], p.z - d[1]) < d[2] && p.y < 12; }
+      tip.style.display = near ? 'block' : 'none'; if (near) tip.textContent = text; requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  };
+  if (R.dance) tipFor('dance', 'ENTER THE DREAM — tap / Enter / F', '#ffc83a');
+  if (R.viper) tipFor('viper', 'ENTER VIPER ROOM GY — tap / Enter / F', '#ff2e4a');
+  const tipOwns = () => ['v87tip-dance', 'v87tip-viper'].some(id => { const el = document.getElementById(id); return el && el.style.display === 'block'; });
+
+  info.ready = true;
   let tk = 0;
   function update(t, dt) {
+
     for (const k in R) R[k].g.visible = cur === R[k];
     if (cur) { const r = cur; P.pos.x = Math.max(r.x0, Math.min(r.x1, P.pos.x)); P.pos.z = Math.max(r.z0, Math.min(r.z1, P.pos.z)); if (P.pos.y < FY + 1) P.pos.y = FY + 1.7; // no fall-through
       if (r.spin) r.spin.forEach((m, i) => { m.rotation.z = t * (0.6 + i); m.scale.y = 1 + 0.12 * Math.sin(t * (6 + i * 3)); });
       if (r.strobe) r.strobe.material.opacity = (Math.sin(t * 22) > 0.85 ? 0.35 : 0) * (window.__beat ? __beat() : 1);
       if (r.loop && window.JX && JX.current && JX.current.id === r.track && !JX.playing && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
-      const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < 2.2);
+      const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < 3.8);
       if (r.key === 'viper' && Math.hypot(P.pos.x - (r.ox - 5.4), P.pos.z - r.oz) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
       else if (near) show('EXIT — tap / Enter / F', exitRoom); else btn.style.display = 'none'; return; }
     if (t - tk < 0.2) return; tk = t; let hit = null;
     for (const k in R) { const d = R[k].door && R[k].door(); if (d && Math.hypot(P.pos.x - d[0], P.pos.z - d[1]) < d[2] && P.pos.y < 12) { hit = R[k]; break; } }
-    if (hit) show(hit.label, () => enterRoom(hit.key)); else btn.style.display = 'none';
+    if (hit && !tipOwns()) show(hit.label, () => enterRoom(hit.key)); else if (!cur) btn.style.display = 'none';
   }
   return { info, update, enterRoom, exitRoom };
 }
