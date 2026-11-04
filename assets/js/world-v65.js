@@ -34,8 +34,13 @@ export function initV65(o) {
     AB(0xd9d3c4, 5, 0.3, n1 - n0, fe + 2.5, nc, 0.15); for (let s = 0; s < 3; s++) AB(0xcfc9b9, 0.5, 0.15 * (3 - s), n1 - n0 - 4, fe + 5 + s * 0.5, nc, 0.075 * (3 - s)); // steps
     board('ROYAL ASSEMBLY ROOMS', 12, 1.1, fe + 4.3, nc, 8.4, E, '#1c2330', '#e9dfc4');
     }
-    const he = fe + 9, hn = n0 - 6; AB(0x55606b, 2.6, 0.25, 2.6, he, hn, 0.12); AB(0x8a96a3, 2.2, 0.08, 2.2, he, hn, 0.29); AB(0x2f3740, 0.15, 0.1, 1.4, he + 0.6, hn, 0.38);
-    board('JHIOS // VERSIONS OF REALITY · FICTION', 2.4, 0.3, he, hn - 1.45, 0.7, 0, '#06140c', '#3dff9a'); CY(0x2f3740, 0.04, 0.04, 0.7, he - 1.1, hn - 1.45, 0.35, 6); CY(0x2f3740, 0.04, 0.04, 0.7, he + 1.1, hn - 1.45, 0.35, 6);
+    /* v89: hatch sat at fe+9/n0-6 (~1.8 m off OSM edge) — flat grey 2.6 m plate vanished into apron. Pull clear of facade (east+south) + STACK-bright marker. CERN door still reads fx.v65Info.hatch. */
+    const he = -105.2, hn = -468;
+    AB(0x1b1f24, 5.2, 0.12, 5.2, he, hn, 0.08); AB(0x55606b, 4.4, 0.2, 4.4, he, hn, 0.22); AB(0x8a96a3, 3.6, 0.08, 3.6, he, hn, 0.36);
+    CY(0x3dff9a, 3.0, 3.0, 0.06, he, hn, 0.42, 40); /* glow ring */
+    AB(0x2f3740, 0.2, 0.12, 1.8, he + 0.9, hn, 0.55); /* handle */
+    board('JHIOS // VERSIONS OF REALITY · FICTION', 5.2, 0.7, he, hn - 3.2, 1.4, 0, '#06140c', '#3dff9a');
+    CY(0x3dff9a, 0.12, 0.12, 8, he, hn, 4.2, 8); /* tall light so you spot it from Lodge jump */
     info.lodge = [fe, nc]; info.hatch = [he, hn]; }
 
   // 2. Market Gates
