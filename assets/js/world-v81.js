@@ -45,7 +45,7 @@ export function initV81(o) {
       tip.textContent = 'Opening CERN…';
       try {
         if (!fx.enterRoom) {
-          const m = await import('/assets/js/world-v87.js?v=101');
+          const m = await import('/assets/js/world-v87.js?v=102');
           if (!fx.v87) fx.v87 = m.initV87({ T, S, LITE: !!(window.__lite), warp, fx, P });
         }
         const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom);
@@ -97,7 +97,7 @@ export function initV81(o) {
 
   // ---- P1 5: Beatty Close (OSM beatty_close; label_at -172.4,2376.6; flats blocks north side) ----
   { const sp = warp(-112, 2347.5), lk = warp(-150, 2379), lp = warp(-130, 2349); PJ.beatty_close = [sp.x, sp.z, [lk.x, lk.z, 0.08]];
-    const lb = LBL && LBL('BEATTY CLOSE', '#c4ccd4', 1.0); if (lb) { lb.position.set(lp.x, 6, lp.z); grp.add(lb); } addJumpBtn('beatty_close', 'Beatty Close', 'barnard_bridge'); info.fixes.push('beatty-close-jump'); }
+    /* v102: duplicate floating BEATTY CLOSE label removed; the gable plaque (world-streets) is the sign */ addJumpBtn('beatty_close', 'Beatty Close', 'barnard_bridge'); info.fixes.push('beatty-close-jump'); }
 
   // ---- P1 scene scans (after modules load) ----
   const col = m => m.material && m.material.color ? m.material.color : null, bb = new T.Box3(), sz = new T.Vector3();

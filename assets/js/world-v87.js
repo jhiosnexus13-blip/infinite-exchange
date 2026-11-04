@@ -1,6 +1,8 @@
 /* JHIOS world v87 — enterable pocket rooms (preview only; live stays ?v=81).
    window.IE_V87_ROOMS = false disables every room (no prompts, no meshes). Per-room gates: IE_V87_CERN / IE_V87_DANCE / IE_V87_VIPER = false.
-   Rooms are built OFF-MAP (far SW corner x -1500..-1390, z -4600, inside the world.js walk clamp, floor y = -200; collisions there swapped off via fx.clear while inside) — no real GY mesh is cut.
+   v102 Viper FX flags (default ON): IE_V87_DJ=false hides DJ, IE_V87_CROWD=false hides crowd, IE_V87_STROBE=false / IE_V87_LASERS=false turn those off (both only build at L1+ / DET>=1).
+   v102 sizes: CERN 40x40x6.5 @x-1560, Dance 42x42x12 @x-1490, Viper 24x18x6 @x-1420 (all z -4600, inside world.js clamp x>=-1600, z>=-4700).
+   Rooms are built OFF-MAP (far SW corner x -1580..-1408, z -4600, inside the world.js walk clamp, floor y = -200; collisions there swapped off via fx.clear while inside) — no real GY mesh is cut.
    Shared enterRoom()/exitRoom(): fade, teleport, collider swap (room box clamp + ground override), music stop on exit.
    1. CERN: Hadron-style ring + Shiva portal face (fiction) + Versions Of Reality track.
    2. Dance dream: cover-art ring (Dance Of The Ancients vibe), fire, dusk void.
@@ -53,117 +55,136 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const [sx, sz, ww, dd] of [[0, -d / 2, w, 0.2], [0, d / 2, w, 0.2], [-w / 2, 0, 0.2, d], [w / 2, 0, 0.2, d]]) box(g, wall, ww, h, dd, sx, h / 2, sz, { side: T.DoubleSide });
     const r = R[key] = { key, g, ox, oz, x0: ox - w / 2 + 0.6, x1: ox + w / 2 - 0.6, z0: oz - d / 2 + 0.6, z1: oz + d / 2 - 0.6, exitAt: null, spawn: [ox, oz], yaw: 0 }; info.rooms.push(key); return r; };
 
-  // 1. CERN — Hadron-style ring corridor; main face = Shiva portal (fiction)
-  if (window.IE_V87_CERN !== false) { const ox = -1500, oz = -4600, r = room('cern', ox, oz, 28, 28, 5.2, 0x070c12, 0x121820); const g = r.g;
-    // LHC-ish dual beam pipes + magnet shells on a 3/4 ring
-    for (let i = 0; i <= 20; i++) { const a = -Math.PI / 2 + i / 20 * Math.PI * 1.35;
-      for (const rr of [7.4, 11.6]) { const m = box(g, 0x2a3a48, 2.2, 3.6, 0.35, Math.cos(a) * rr, 1.9, Math.sin(a) * rr); m.rotation.y = -a + Math.PI / 2; }
-      box(g, 0x2f6a80, 1.4, 1.4, 1.4, Math.cos(a) * 9.5, 1.9, Math.sin(a) * 9.5); // magnet block (brighter v101)
-      { const fs = box(g, i % 2 ? 0x3dff9a : 0x33e0ff, 1.6, 0.04, 0.35, Math.cos(a) * 9.5, 0.03, Math.sin(a) * 9.5); fs.rotation.y = -a; } // emissive floor strip
-      if (L1 && i % 2 === 0) { const lg = box(g, 0x3dff9a, 0.2, 0.08, 0.2, Math.cos(a) * 9.5, 3.8, Math.sin(a) * 9.5); }
-      // inner cyan beam glow
-      const bm = new T.Mesh(new T.CylinderGeometry(0.12, 0.12, 2.0, 8), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); bm.position.set(Math.cos(a) * 9.5, 1.9, Math.sin(a) * 9.5); bm.rotation.z = Math.PI / 2; bm.rotation.y = -a; g.add(bm); }
-    box(g, 0x3a4550, 2.2, 5.0, 2.2, 0, 2.5, -11.2, { wireframe: true }); // arrival shaft cage
-    for (let y = 0.2; y < 5; y += 0.4) box(g, 0x8a96a3, 1.0, 0.06, 0.06, 0, y, -11.9); // ladder
-    // v101 soft fill planes so the hall never reads as void
-    for (const [x, z, ry] of [[0, -13.8, 0], [0, 13.8, Math.PI], [-13.8, 0, Math.PI / 2], [13.8, 0, -Math.PI / 2]]) { const f = new T.Mesh(new T.PlaneGeometry(27, 4.6), mat(0x123a4a, { transparent: true, opacity: 0.85, side: T.DoubleSide })); f.position.set(x, 2.5, z); f.rotation.y = ry; g.add(f); }
-    { const fr = new T.Mesh(new T.RingGeometry(3.2, 3.6, 48), mat(0x33e0ff, { transparent: true, opacity: 0.5, side: T.DoubleSide })); fr.rotation.x = -Math.PI / 2; fr.position.y = 0.03; g.add(fr); }
-    const pa = -Math.PI / 2 + Math.PI * 1.35, px = Math.cos(pa) * 10.0, pz = Math.sin(pa) * 10.0;
-    // Shiva portal face (procedural canvas — fiction, not a real deity photo)
+  // 1. CERN — Hadron-style ring corridor; main face = Shiva portal (fiction). v102: 40x40x6.5 (k scales every v101 radius/position)
+  if (window.IE_V87_CERN !== false) { const k = 40 / 28, ox = -1560, oz = -4600, HC = 6.5, r = room('cern', ox, oz, 40, 40, HC, 0x070c12, 0x121820); const g = r.g;
+    const R1 = 7.4 * k, R2 = 11.6 * k, RM = 9.5 * k;
+    for (let i = 0; i <= 20; i++) { const a = -Math.PI / 2 + i / 20 * Math.PI * 1.35; const nearPortal = i >= 19; // v102: no magnet/beam block in front of the Shiva portal
+      for (const rr of [R1, R2]) { const m = box(g, 0x2a3a48, 2.2 * k, 4.4, 0.35, Math.cos(a) * rr, 2.2, Math.sin(a) * rr); m.rotation.y = -a + Math.PI / 2; }
+      { const fs = box(g, i % 2 ? 0x3dff9a : 0x33e0ff, 1.6 * k, 0.04, 0.35, Math.cos(a) * RM, 0.03, Math.sin(a) * RM); fs.rotation.y = -a; }
+      if (L1 && i % 2 === 0) box(g, 0x3dff9a, 0.25, 0.08, 0.25, Math.cos(a) * RM, HC - 0.4, Math.sin(a) * RM);
+      if (nearPortal) continue;
+      box(g, 0x2f6a80, 1.6, 1.6, 1.6, Math.cos(a) * RM, 2.2, Math.sin(a) * RM);
+      const bm = new T.Mesh(new T.CylinderGeometry(0.14, 0.14, 2.6, 8), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); bm.position.set(Math.cos(a) * RM, 2.2, Math.sin(a) * RM); bm.rotation.z = Math.PI / 2; bm.rotation.y = -a; g.add(bm); }
+    const SZ = -11.2 * k; box(g, 0x3a4550, 2.6, HC - 0.2, 2.6, 0, (HC - 0.2) / 2, SZ, { wireframe: true }); // arrival shaft cage
+    for (let y = 0.2; y < HC - 0.2; y += 0.4) box(g, 0x8a96a3, 1.0, 0.06, 0.06, 0, y, SZ - 0.8); // ladder
+    const W2 = 19.7; for (const [x, z, ry] of [[0, -W2, 0], [0, W2, Math.PI], [-W2, 0, Math.PI / 2], [W2, 0, -Math.PI / 2]]) { const f = new T.Mesh(new T.PlaneGeometry(39, HC - 0.6), mat(0x123a4a, { transparent: true, opacity: 0.85, side: T.DoubleSide })); f.position.set(x, HC / 2, z); f.rotation.y = ry; g.add(f); }
+    { const fr = new T.Mesh(new T.RingGeometry(3.2 * k, 3.6 * k, 48), mat(0x33e0ff, { transparent: true, opacity: 0.5, side: T.DoubleSide })); fr.rotation.x = -Math.PI / 2; fr.position.y = 0.03; g.add(fr); }
+    const pa = -Math.PI / 2 + Math.PI * 1.35, px = Math.cos(pa) * 10.0 * k, pz = Math.sin(pa) * 10.0 * k;
     const sc = document.createElement('canvas'); sc.width = 1024; sc.height = 1024; const sk = sc.getContext('2d');
     const grd = sk.createRadialGradient(512, 520, 40, 512, 512, 500); grd.addColorStop(0, '#fff6c8'); grd.addColorStop(0.25, '#ff7a1a'); grd.addColorStop(0.55, '#3dff9a'); grd.addColorStop(1, '#061018');
     sk.fillStyle = grd; sk.fillRect(0, 0, 1024, 1024);
-    sk.strokeStyle = '#e8fff2'; sk.lineWidth = 8; sk.beginPath(); sk.arc(512, 480, 160, 0, 7); sk.stroke(); // halo
-    sk.fillStyle = '#0a1018'; sk.beginPath(); sk.ellipse(512, 560, 90, 140, 0, 0, 7); sk.fill(); // torso
-    sk.beginPath(); sk.arc(512, 400, 70, 0, 7); sk.fill(); // head
-    sk.fillStyle = '#3dff9a'; sk.beginPath(); sk.arc(512, 385, 10, 0, 7); sk.fill(); // third eye
+    sk.strokeStyle = '#e8fff2'; sk.lineWidth = 8; sk.beginPath(); sk.arc(512, 480, 160, 0, 7); sk.stroke();
+    sk.fillStyle = '#0a1018'; sk.beginPath(); sk.ellipse(512, 560, 90, 140, 0, 0, 7); sk.fill();
+    sk.beginPath(); sk.arc(512, 400, 70, 0, 7); sk.fill();
+    sk.fillStyle = '#3dff9a'; sk.beginPath(); sk.arc(512, 385, 10, 0, 7); sk.fill();
     for (const [ang, len] of [[-1.1, 220], [-0.55, 240], [0.55, 240], [1.1, 220], [-1.6, 180], [1.6, 180]]) {
       sk.strokeStyle = '#ffd76a'; sk.lineWidth = 14; sk.beginPath(); sk.moveTo(512, 520); sk.lineTo(512 + Math.cos(ang - Math.PI / 2) * len, 520 + Math.sin(ang - Math.PI / 2) * len); sk.stroke(); }
     sk.fillStyle = '#e8fff2'; sk.font = 'bold 42px Arial'; sk.textAlign = 'center'; sk.fillText('SHIVA PORTAL', 512, 920); sk.font = '28px Arial'; sk.fillText('FICTION · Versions Of Reality', 512, 970);
     const shiva = new T.Mesh(new T.CircleGeometry(2.8, 48), new T.MeshBasicMaterial({ map: new T.CanvasTexture(sc), side: T.DoubleSide, fog: false, toneMapped: false }));
-    shiva.position.set(px, 2.2, pz); shiva.rotation.y = -pa; g.add(shiva);
+    shiva.position.set(px, 2.9, pz); shiva.rotation.y = -pa; g.add(shiva);
     const portal = new T.Mesh(new T.TorusGeometry(3.05, 0.22, 12, 48), mat(0x3dff9a)); portal.position.copy(shiva.position); portal.rotation.y = -pa; g.add(portal);
     const ring2 = new T.Mesh(new T.TorusGeometry(3.5, 0.08, 8, 48), mat(0xff7a1a, { transparent: true, opacity: 0.7 })); ring2.position.copy(shiva.position); ring2.rotation.y = -pa; g.add(ring2);
     r.spin = [portal, ring2, shiva];
-    board(g, 'VERSIONS OF REALITY\n\u25b6 CERN // Versions Of Reality', 6.2, 1.8, -7, 3.6, -11.5, 0, '#06140c', '#e8fff2');
-    art(g, 'cern-versions-of-reality', 6.2, 7, 3.4, -11.5, 0);
-    fiction(g, 0, 4.4, -11.4, 0); fiction(g, px * 0.75, 4.5, pz * 0.75, -pa + Math.PI / 2);
-    board(g, 'EXIT \u00b7 SHIVA PORTAL / LADDER', 4.2, 0.55, px, 4.9, pz, -pa, '#07020a', '#3dff9a');
-    // v101: entry wall copies of VERSIONS board + art so they sit in FOV on spawn
-    board(g, 'VERSIONS OF REALITY\n\u25b6 CERN // Versions Of Reality', 4.6, 1.3, -13.3, 4.0, -1.5, Math.PI / 2, '#06140c', '#e8fff2');
-    art(g, 'cern-versions-of-reality', 4.6, -13.3, 2.0, -1.5, Math.PI / 2);
-    // v101 spawn: in the ring gap corridor (clear of shaft cage + slabs), facing the Shiva portal
-    { const sa = Math.PI * 1.2, sx = Math.cos(sa) * 9.5, sz = Math.sin(sa) * 9.5; r.spawn = [ox + sx, oz + sz]; r.yaw = Math.atan2(-(px - sx), -(pz - sz)); }
-    r.x0 = ox - 13.6; r.x1 = ox + 13.6; r.z0 = oz - 13.6; r.z1 = oz + 13.6;
+    board(g, 'VERSIONS OF REALITY\n\u25b6 CERN // Versions Of Reality', 6.2, 1.8, -7 * k, 4.4, SZ - 0.3, 0, '#06140c', '#e8fff2');
+    art(g, 'cern-versions-of-reality', 6.2, 7 * k, 4.2, SZ - 0.3, 0);
+    fiction(g, 0, HC - 0.8, SZ - 0.2, 0); fiction(g, px * 0.75, 5.2, pz * 0.75, -pa + Math.PI / 2);
+    board(g, 'EXIT \u00b7 SHIVA PORTAL / LADDER', 4.2, 0.55, px, 5.8, pz, -pa, '#07020a', '#3dff9a');
+    board(g, 'VERSIONS OF REALITY\n\u25b6 CERN // Versions Of Reality', 4.6, 1.3, -19.3, 4.8, -2, Math.PI / 2, '#06140c', '#e8fff2');
+    art(g, 'cern-versions-of-reality', 4.6, -19.3, 2.4, -2, Math.PI / 2);
+    // v101 spawn logic kept: ring gap corridor at RM (clear of shaft cage + slabs), facing the Shiva portal
+    { const sa = Math.PI * 1.2, sx = Math.cos(sa) * RM, sz = Math.sin(sa) * RM; r.spawn = [ox + sx, oz + sz]; r.yaw = Math.atan2(-(px - sx), -(pz - sz)); }
+    r.x0 = ox - 19.4; r.x1 = ox + 19.4; r.z0 = oz - 19.4; r.z1 = oz + 19.4;
     r.track = 'cern-versions-of-reality';
-    r.exits = [[ox + px, oz + pz], [ox, oz - 11.9]];
+    r.exits = [[ox + px, oz + pz], [ox, oz + SZ - 0.8]]; r.exitR = 7; // v102: EXIT shows from ~7 m (was 3.8, felt back-door only)
     r.door = () => { const h = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5]; const p = warp(h[0], h[1]); return [p.x, p.z, 14]; };
     r.out = () => { const h = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5], p = warp(h[0] + 4.5, h[1] + 1.5), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY — tap';
- }
+  }
 
-  // 2. Dance dream box — Dance Of The Ancients cover-art ring
-  if (window.IE_V87_DANCE !== false && window.IE_V86_DANCE !== false) { const ox = -1440, oz = -4600, r = room('dance', ox, oz, 32, 32, 10, 0x3a1a4a, 0x2a1830); const g = r.g;
-    box(g, 0x5a2a6a, 31.5, 9.5, 31.5, 0, 4.8, 0, { side: T.BackSide, transparent: true, opacity: 0.92 });
-    // soft dream haze discs
-    for (const [rad, y, op] of [[14, 0.05, 0.25], [10, 0.08, 0.2], [6, 0.12, 0.3]]) { const d = new T.Mesh(new T.CircleGeometry(rad, 40), mat(0xff7a1a, { transparent: true, opacity: op })); d.rotation.x = -Math.PI / 2; d.position.y = y; g.add(d); }
-    const fl = []; for (const [c, s, y] of [[0xff7a1a, 1.4, 1.2], [0xffc83a, 0.85, 1.5], [0xffeed0, 0.45, 1.9]]) { const m = new T.Mesh(new T.ConeGeometry(s, 2.4 * s + 0.5, 8), mat(c, { transparent: true, opacity: 0.92 })); m.position.set(0, y, 0); g.add(m); fl.push(m); } r.spin = fl;
+  // 2. Dance dream box — Dance Of The Ancients cover-art ring. v102: 42x42x12 (k scales v101 layout)
+  if (window.IE_V87_DANCE !== false && window.IE_V86_DANCE !== false) { const k = 42 / 32, ox = -1490, oz = -4600, HD = 12, r = room('dance', ox, oz, 42, 42, HD, 0x3a1a4a, 0x2a1830); const g = r.g;
+    box(g, 0x5a2a6a, 41.5, HD - 0.5, 41.5, 0, HD / 2 - 0.2, 0, { side: T.BackSide, transparent: true, opacity: 0.92 });
+    for (const [rad, y, op] of [[14 * k, 0.05, 0.25], [10 * k, 0.08, 0.2], [6 * k, 0.12, 0.3]]) { const d = new T.Mesh(new T.CircleGeometry(rad, 40), mat(0xff7a1a, { transparent: true, opacity: op })); d.rotation.x = -Math.PI / 2; d.position.y = y; g.add(d); }
+    const fl = []; for (const [c, s, y] of [[0xff7a1a, 1.8, 1.5], [0xffc83a, 1.1, 1.9], [0xffeed0, 0.6, 2.4]]) { const m = new T.Mesh(new T.ConeGeometry(s, 2.4 * s + 0.5, 8), mat(c, { transparent: true, opacity: 0.92 })); m.position.set(0, y, 0); g.add(m); fl.push(m); } r.spin = fl;
     const covers = ['dunes-and-the-sand-trance-techno-version', 'dunes-and-the-sand-drum-and-bass-version', 'kamukura-no-kotodama-i-spirit-of-words-ainu-shinto', 'kamukura-no-kotodama-ii-descent-of-the-kami', 'seikilos-iv-dance-of-the-grave', 'cern-versions-of-reality', 'manhattan-shuffle-tribal-psy-trance-version', 'down-and-dirty'];
+    const RC = 12.4 * k;
     for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; const id = covers[i];
-      { const fr = box(g, [0xff7a1a, 0xffc83a, 0x66ffcc, 0xff4fd8][i % 4], 6.3, 3.75, 0.05, Math.cos(a) * 12.4, 3.6, Math.sin(a) * 12.4); fr.rotation.y = -a - Math.PI / 2; } // glowing fallback frame
-      box(g, 0xffb040, 0.5, 0.15, 0.5, Math.cos(a) * 8, 9.6, Math.sin(a) * 8); // ceiling ember light
-      art(g, id, 5.8, Math.cos(a) * 12.2, 3.6, Math.sin(a) * 12.2, -a - Math.PI / 2);
-      // square cover plate behind (album vibe)
-      box(g, 0x2a1830, 6.0, 6.0, 0.08, Math.cos(a) * 12.55, 3.6, Math.sin(a) * 12.55); }
-    // v101: dusk haze, floor glow ring, second fire + embers
-    { const hz = new T.Mesh(new T.CylinderGeometry(15, 15, 9, 32, 1, true), mat(0xff8a5a, { transparent: true, opacity: 0.12, side: T.BackSide })); hz.position.y = 4.5; g.add(hz);
-      const rg = new T.Mesh(new T.RingGeometry(10.5, 11.2, 64), mat(0xffc83a, { transparent: true, opacity: 0.6, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; rg.position.y = 0.06; g.add(rg);
-      for (const [c, s, y] of [[0xff4f1a, 0.8, 0.8], [0xffd76a, 0.45, 1.1]]) { const m = new T.Mesh(new T.ConeGeometry(s, 2.2 * s + 0.4, 8), mat(c, { transparent: true, opacity: 0.9 })); m.position.set(-5, y, -5); g.add(m); fl.push(m); }
-      for (let e = 0; e < 24; e++) box(g, e % 2 ? 0xffc83a : 0xff7a1a, 0.12, 0.12, 0.12, Math.sin(e * 2.3) * 4, 2 + (e * 0.37) % 6, Math.cos(e * 1.7) * 4); }
-    board(g, 'EXIT \u2193 behind you \u00b7 south door (glowing disc) \u00b7 tap EXIT', 6.4, 0.7, 0, 5.6, -3, 0, '#07020a', '#3dff9a');
-    board(g, 'EXIT \u00b7 BEACH', 4.0, 0.7, 0, 3.0, 15.7, Math.PI, '#07020a', '#3dff9a');
-    board(g, 'DANCE OF THE ANCIENTS\n\u25b6 dream box \u00b7 cover art', 7.2, 1.4, 0, 8.2, 0, 0, '#1a0820', '#ffc83a');
-    fiction(g, 0, 0.7, 15.2, Math.PI);
-    r.spawn = [ox, oz + 5]; r.yaw = 0; r.track = 'dunes-and-the-sand-trance-techno-version';
-    const em = new T.Mesh(new T.CircleGeometry(1.4, 28), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); em.rotation.x = -Math.PI / 2; em.position.set(0, 0.04, 13); g.add(em);
-    r.exits = [[ox, oz + 13]]; r.exitR = 10;
+      { const fr = box(g, [0xff7a1a, 0xffc83a, 0x66ffcc, 0xff4fd8][i % 4], 7.6, 4.5, 0.05, Math.cos(a) * RC, 4.4, Math.sin(a) * RC); fr.rotation.y = -a - Math.PI / 2; }
+      box(g, 0xffb040, 0.6, 0.15, 0.6, Math.cos(a) * 8 * k, HD - 0.4, Math.sin(a) * 8 * k);
+      art(g, id, 7.0, Math.cos(a) * (RC - 0.2), 4.4, Math.sin(a) * (RC - 0.2), -a - Math.PI / 2);
+      box(g, 0x2a1830, 7.2, 7.2, 0.08, Math.cos(a) * (RC + 0.15), 4.4, Math.sin(a) * (RC + 0.15)); }
+    { const hz = new T.Mesh(new T.CylinderGeometry(15 * k, 15 * k, HD - 1, 32, 1, true), mat(0xff8a5a, { transparent: true, opacity: 0.12, side: T.BackSide })); hz.position.y = (HD - 1) / 2; g.add(hz);
+      const rg = new T.Mesh(new T.RingGeometry(10.5 * k, 11.2 * k, 64), mat(0xffc83a, { transparent: true, opacity: 0.6, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; rg.position.y = 0.06; g.add(rg);
+      for (const [fx2, fz2] of [[-5 * k, -5 * k], [5 * k, -5 * k]]) for (const [c, s, y] of [[0xff4f1a, 0.9, 0.9], [0xffd76a, 0.5, 1.2]]) { const m = new T.Mesh(new T.ConeGeometry(s, 2.2 * s + 0.4, 8), mat(c, { transparent: true, opacity: 0.9 })); m.position.set(fx2, y, fz2); g.add(m); fl.push(m); }
+      for (let e = 0; e < 32; e++) box(g, e % 2 ? 0xffc83a : 0xff7a1a, 0.14, 0.14, 0.14, Math.sin(e * 2.3) * 5.5, 2 + (e * 0.37) % 8, Math.cos(e * 1.7) * 5.5); }
+    board(g, 'EXIT \u2193 behind you \u00b7 south door (glowing disc) \u00b7 tap EXIT', 6.4, 0.7, 0, 6.6, -4, 0, '#07020a', '#3dff9a');
+    board(g, 'EXIT \u00b7 BEACH', 4.0, 0.7, 0, 3.0, 20.7, Math.PI, '#07020a', '#3dff9a');
+    board(g, 'DANCE OF THE ANCIENTS\n\u25b6 dream box \u00b7 cover art', 7.2, 1.4, 0, 9.8, 0, 0, '#1a0820', '#ffc83a');
+    fiction(g, 0, 0.7, 20.2, Math.PI);
+    r.spawn = [ox, oz + 7]; r.yaw = 0; r.track = 'dunes-and-the-sand-trance-techno-version';
+    const em = new T.Mesh(new T.CircleGeometry(1.8, 28), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); em.rotation.x = -Math.PI / 2; em.position.set(0, 0.04, 17.5); g.add(em);
+    r.exits = [[ox, oz + 17.5]]; r.exitR = 10;
     r.door = () => { const p = warp(420, 2650); return [p.x, p.z, 14]; };
     r.out = () => { const p = warp(436, 2650), q = warp(520, 2650); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER THE DREAM — tap'; }
 
-  // 3. Viper Room GY — dark club / venue look (logo + red stage)
-  if (window.IE_V87_VIPER !== false) { const ox = -1395, oz = -4600, r = room('viper', ox, oz, 14, 10, 4.5, 0x050208, 0x0c0a10); const g = r.g;
-    // stage riser + LED bar
-    box(g, 0x1a1218, 10, 0.35, 3.2, 0, 0.2, -3.2); box(g, 0xff2e4a, 10, 0.08, 0.12, 0, 0.42, -1.55);
-    box(g, 0x151018, 4.2, 1.2, 1.4, 0, 0.95, -3.5); // booth
-    box(g, 0xff2e4a, 4.2, 0.06, 1.4, 0, 1.58, -3.5);
-    for (const s of [-1.1, 1.1]) box(g, 0x2a2a30, 0.7, 0.05, 0.55, s, 1.62, -3.5);
-    // speakers
-    for (const s of [-5.2, 5.2]) { box(g, 0x2a2a34, 1.4, 2.8, 1.3, s, 1.4, -3.6); box(g, 0x777788, 1.0, 1.0, 0.05, s, 1.8, -2.93); box(g, 0xff2e4a, 1.4, 0.06, 0.06, s, 2.82, -2.93); }
-    // side LED strips
-    for (const s of [-6.8, 6.8]) box(g, 0xff2e4a, 0.08, 4.0, 0.08, s, 2.2, 0);
-    // crowd silhouettes (venue vibe)
-    for (let i = 0; i < 7; i++) { const x = -4.5 + i * 1.5; box(g, 0x2a1a24, 0.55, 1.5 + (i % 3) * 0.2, 0.35, x, 0.85, 2.8); }
-    board(g, 'VIPER ROOM GY', 6.5, 1.1, 0, 3.6, -4.85, 0, '#07020a', '#ff2e4a');
-    // logo plane from site asset
-    const logoM = new T.Mesh(new T.PlaneGeometry(5.5, 2.4), mat(0x220810)); logoM.position.set(0, 2.5, -4.7); g.add(logoM);
-    fetch('/assets/img/viper-room-gy-logo.b64.txt').then(r => r.text()).then(b64 => {
+  // 3. Viper Room GY — v102: 24x18x6 club. Stage north (z -), DJ on booth, crowd mid, bars on side walls, spawn + exit south.
+  if (window.IE_V87_VIPER !== false) { const ox = -1420, oz = -4600, VW = 24, VD = 18, VH = 6, r = room('viper', ox, oz, VW, VD, VH, 0x050208, 0x0c0a10); const g = r.g;
+    const NW = -VD / 2 + 0.15, SW = VD / 2 - 0.15, EW = VW / 2 - 0.15; // wall faces
+    // stage riser + LED lip
+    box(g, 0x1a1218, 16, 0.6, 4.6, 0, 0.3, -6.4); box(g, 0xff2e4a, 16, 0.08, 0.12, 0, 0.62, -4.1);
+    // DJ booth (bigger) + decks + mixer
+    box(g, 0x151018, 5.6, 1.1, 1.6, 0, 1.15, -5.6); box(g, 0xff2e4a, 5.6, 0.06, 1.6, 0, 1.72, -5.6); box(g, 0xff2e4a, 5.6, 0.12, 0.05, 0, 0.9, -4.79);
+    const decks = []; for (const s of [-1.6, 1.6]) { box(g, 0x2a2a30, 1.0, 0.06, 0.8, s, 1.76, -5.7); const pl = new T.Mesh(new T.CylinderGeometry(0.36, 0.36, 0.03, 20), mat(0x111114)); pl.position.set(s, 1.8, -5.7); g.add(pl); decks.push(pl); { const mk = box(g, 0xffffff, 0.3, 0.035, 0.04, 0, 0, 0); pl.add(mk); mk.position.set(0.15, 0.03, 0); } }
+    box(g, 0x222230, 0.9, 0.08, 0.7, 0, 1.78, -5.7); for (let i = 0; i < 4; i++) box(g, i % 2 ? 0x55ffcc : 0xff2e4a, 0.08, 0.03, 0.08, -0.3 + i * 0.2, 1.84, -5.6);
+    // DJ silhouette (IE_V87_DJ=false hides)
+    r.dj = null; if (window.IE_V87_DJ !== false) { const dj = new T.Group(); dj.position.set(0, 0.6, -6.5); g.add(dj); const C = 0x2a1622;
+      box(dj, C, 0.22, 0.9, 0.22, -0.16, 0.45, 0); box(dj, C, 0.22, 0.9, 0.22, 0.16, 0.45, 0);
+      const up = new T.Group(); up.position.y = 0.9; dj.add(up); box(up, C, 0.62, 0.75, 0.32, 0, 0.38, 0); box(up, 0x1a0c14, 0.32, 0.32, 0.32, 0, 0.95, 0);
+      box(up, 0xff2e4a, 0.42, 0.08, 0.1, 0, 0.98, 0); // headphones band glow
+      const armL = new T.Group(); armL.position.set(-0.4, 0.68, 0); up.add(armL); box(armL, C, 0.16, 0.16, 0.62, 0, 0, 0.3);
+      const armR = new T.Group(); armR.position.set(0.4, 0.68, 0); up.add(armR); box(armR, C, 0.16, 0.6, 0.16, 0, 0.3, 0);
+      r.dj = { up, armL, armR, decks }; }
+    // NOW PLAYING strip on booth front
+    board(g, 'NOW PLAYING \u00b7 MANHATTAN SHUFFLE (DUB DANCE)', 5.2, 0.32, 0, 1.25, -4.76, 0, '#07020a', '#55ffcc');
+    // speakers stacks either side of stage
+    for (const s of [-9.5, 9.5]) { box(g, 0x2a2a34, 1.8, 3.6, 1.6, s, 1.8, -7.4); box(g, 0x777788, 1.2, 1.2, 0.05, s, 2.4, -6.58); box(g, 0x777788, 0.7, 0.7, 0.05, s, 1.0, -6.58); box(g, 0xff2e4a, 1.8, 0.06, 0.06, s, 3.62, -6.58); }
+    // back wall: logo high and clear (v102: nothing overlaps it), title board above
+    const logoM = new T.Mesh(new T.PlaneGeometry(7.2, 3.1), mat(0x220810)); logoM.position.set(0, 3.55, NW + 0.05); g.add(logoM);
+    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=102').then(r => r.text()).then(b64 => {
       const u = b64.trim().startsWith('data:') ? b64.trim() : 'data:image/png;base64,' + b64.trim();
       new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; logoM.material = new T.MeshBasicMaterial({ map: tx, transparent: true, fog: false, toneMapped: false }); });
     }).catch(() => {});
-    const ev = board(g, 'EVENTS \u00b7 toon.fm/viper-room-gy\n(tap wall / Enter)', 5.6, 1.7, -6.85, 2.3, 0, Math.PI / 2, '#120308', '#ff8a9a');
-    art(g, 'manhattan-shuffle-dub-dance-version', 5.6, 6.85, 2.3, 0, -Math.PI / 2);
-    fiction(g, 0, 3.9, 4.85, Math.PI);
-    board(g, 'EXIT \u00b7 ARENA APRON', 4.0, 0.55, 0, 2.8, 4.85, Math.PI, '#07020a', '#3dff9a');
-    const st = new T.Mesh(new T.PlaneGeometry(13.5, 9.2), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, side: T.DoubleSide, depthWrite: false })); st.rotation.x = Math.PI / 2; st.position.y = 4.3; g.add(st); r.strobe = L1 ? st : null;
-    // v100 fatten: bright fill strips, floor grid, wall wash so the room reads at any angle
-    for (const s of [-6.85, 6.85]) { for (const y of [0.6, 3.9]) box(g, 0xff2e4a, 0.06, 0.1, 9.6, s, y, 0); box(g, 0x2a0a14, 0.05, 4.3, 9.8, s * 1.005, 2.2, 0); }
-    for (const y of [0.6, 3.9]) box(g, 0xff6a2e, 13.6, 0.1, 0.06, 0, y, 4.88);
-    for (let i = -6; i <= 6; i += 2) box(g, 0x3a0c18, 0.06, 0.02, 9.6, i, 0.02, 0);
-    for (let i = -4; i <= 4; i += 2) box(g, 0x3a0c18, 13.6, 0.02, 0.06, 0, 0.02, i);
-    for (const s of [-3.5, 0, 3.5]) box(g, 0xffd0d8, 1.6, 0.05, 0.3, s, 4.42, 0); // ceiling light bars
-    for (let i = 0; i < 7; i++) box(g, i % 2 ? 0x55ffcc : 0xff2e4a, 0.5, 0.08, 0.3, -4.5 + i * 1.5, 1.7 + (i % 3) * 0.2, 2.8); // crowd glowsticks
-    for (const s of [-6, 6]) { box(g, 0x2a1a22, 1.6, 1.0, 0.8, s, 0.5, 3.6); box(g, 0xff2e4a, 1.6, 0.05, 0.8, s, 1.02, 3.6); } // bar counters
-    r.spawn = [ox, oz + 3.6]; r.yaw = 0; r.track = 'manhattan-shuffle-dub-dance-version'; r.loop = true; r.events = ev;
-    r.exits = [[ox, oz + 4.2]];
+    board(g, 'VIPER ROOM GY', 6.5, 0.7, 0, 5.5, NW + 0.04, 0, '#07020a', '#ff2e4a');
+    const ev = board(g, 'EVENTS \u00b7 toon.fm/viper-room-gy\n(tap wall / Enter)', 5.6, 1.7, -EW, 2.6, -1, Math.PI / 2, '#120308', '#ff8a9a');
+    art(g, 'manhattan-shuffle-dub-dance-version', 5.6, EW, 2.9, -1, -Math.PI / 2);
+    fiction(g, 0, 4.8, SW, Math.PI);
+    board(g, 'EXIT \u00b7 ARENA APRON', 4.0, 0.55, 0, 3.2, SW, Math.PI, '#07020a', '#3dff9a');
+    // club lighting: wall LED strips, wall wash, floor grid, ceiling bars + truss
+    for (const s of [-EW, EW]) { for (const y of [0.6, VH - 0.5]) box(g, 0xff2e4a, 0.06, 0.1, VD - 0.4, s, y, 0); box(g, 0x2a0a14, 0.05, VH - 0.3, VD - 0.2, s * 1.003, VH / 2, 0); }
+    for (const y of [0.6, VH - 0.5]) box(g, 0xff6a2e, VW - 0.4, 0.1, 0.06, 0, y, SW + 0.02);
+    for (let i = -10; i <= 10; i += 2) box(g, 0x3a0c18, 0.06, 0.02, VD - 0.4, i, 0.02, 0);
+    for (let i = -8; i <= 8; i += 2) box(g, 0x3a0c18, VW - 0.4, 0.02, 0.06, 0, 0.02, i);
+    for (const s of [-7, -3.5, 0, 3.5, 7]) for (const z of [-2, 4]) box(g, 0xffd0d8, 1.6, 0.05, 0.3, s, VH - 0.08, z);
+    box(g, 0x3a3a44, VW - 2, 0.15, 0.15, 0, VH - 0.6, -3.6); box(g, 0x3a3a44, VW - 2, 0.15, 0.15, 0, VH - 0.6, 1.5); // light truss
+    // dancefloor glow pad
+    { const df = new T.Mesh(new T.PlaneGeometry(12, 6.5), mat(0x3a0a24, { transparent: true, opacity: 0.8 })); df.rotation.x = -Math.PI / 2; df.position.set(0, 0.03, 0); g.add(df); }
+    // bars on side walls
+    for (const s of [-10.6, 10.6]) { box(g, 0x2a1a22, 1.0, 1.1, 5, s, 0.55, 4.5); box(g, 0xff2e4a, 1.0, 0.05, 5, s, 1.12, 4.5); for (let b = 0; b < 4; b++) box(g, b % 2 ? 0x55ffcc : 0xffc83a, 0.12, 0.35, 0.12, s + Math.sign(s) * 0.3, 1.3, 2.8 + b * 1.1); }
+    // small crowd (IE_V87_CROWD=false hides): ~15 silhouettes on the floor facing the stage, bob + glowsticks
+    r.crowd = []; if (window.IE_V87_CROWD !== false) { const n = L1 ? 16 : 10;
+      for (let i = 0; i < n; i++) { const row = i % 3, x = -5.2 + ((i * 2.3) % 10.6) + (row - 1) * 0.4, z = -2.6 + row * 1.9 + ((i * 0.7) % 0.8), hgt = 1.45 + ((i * 37) % 5) * 0.08;
+        const p = new T.Group(); p.position.set(x, 0, z); p.rotation.y = Math.sin(i) * 0.3; g.add(p); box(p, 0x24161e, 0.42, hgt, 0.28, 0, hgt / 2, 0); box(p, 0x1c1018, 0.26, 0.26, 0.26, 0, hgt + 0.15, 0);
+        if (i % 3 === 0) box(p, i % 2 ? 0x55ffcc : 0xff2e4a, 0.06, 0.4, 0.06, 0.3, hgt + 0.35, 0);
+        r.crowd.push([p, i * 1.7]); } }
+    // strobe (IE_V87_STROBE=false off; default on at L1+)
+    const st = new T.Mesh(new T.PlaneGeometry(VW - 0.6, VD - 0.6), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, side: T.DoubleSide, depthWrite: false })); st.rotation.x = Math.PI / 2; st.position.y = VH - 0.15; g.add(st);
+    r.strobe = (L1 && window.IE_V87_STROBE !== false) ? st : null; if (!r.strobe) st.visible = false;
+    // lasers (IE_V87_LASERS=false off; default on at L1+): thin additive cylinders hung from the truss, slow sweep
+    r.lasers = []; if (L1 && window.IE_V87_LASERS !== false) { const LL = 7;
+      for (let i = 0; i < 6; i++) { const piv = new T.Group(); piv.position.set(-7.5 + i * 3, VH - 0.6, -3.6); g.add(piv);
+        const b = new T.Mesh(new T.CylinderGeometry(0.025, 0.025, LL, 4, 1, true), new T.MeshBasicMaterial({ color: i % 2 ? 0x33e0ff : 0xff2040, transparent: true, opacity: 0.7, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
+        b.position.y = -LL / 2; piv.add(b); piv.rotation.x = -0.9; r.lasers.push([piv, i]); } }
+    r.spawn = [ox, oz + 6.8]; r.yaw = 0; r.track = 'manhattan-shuffle-dub-dance-version'; r.loop = true; r.events = ev;
+    r.exits = [[ox, oz + 7.6]]; r.evAt = [ox - EW + 1.2, oz - 1];
     const vbase = () => (fx.feature && fx.feature.grp) ? fx.feature.grp.position : (fx.viper && fx.viper.grp && fx.viper.grp.getWorldPosition(new T.Vector3()));
     r.door = () => { const p = vbase(); if (!p) return null; return [p.x, p.z, 22]; };
     r.out = () => { const p = vbase() || { x: 0, z: 0 }; return [p.x + 22, p.z + 15, [p.x, p.z]]; }; /* v100: ~27m out, clear apron beyond the 22m door radius */ r.label = 'ENTER VIPER ROOM GY — tap'; }
@@ -202,9 +223,12 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     if (cur) { const r = cur; P.pos.x = Math.max(r.x0, Math.min(r.x1, P.pos.x)); P.pos.z = Math.max(r.z0, Math.min(r.z1, P.pos.z)); if (P.pos.y < FY + 1) P.pos.y = FY + 1.7; // no fall-through
       if (r.spin) r.spin.forEach((m, i) => { m.rotation.z = t * (0.6 + i); m.scale.y = 1 + 0.12 * Math.sin(t * (6 + i * 3)); });
       if (r.strobe) r.strobe.material.opacity = (Math.sin(t * 22) > 0.85 ? 0.35 : 0) * (window.__beat ? __beat() : 1);
+      if (r.dj) { const d = r.dj; d.up.rotation.z = 0.08 * Math.sin(t * 4.2); d.up.position.y = 0.9 + 0.05 * Math.abs(Math.sin(t * 4.2)); d.armL.rotation.y = 0.3 * Math.sin(t * 2.1); d.armR.rotation.x = -0.4 + 0.5 * Math.sin(t * 8.4); d.decks.forEach(p => p.rotation.y = t * 3.5); }
+      if (r.crowd) for (const [p, ph] of r.crowd) p.position.y = 0.08 * Math.abs(Math.sin(t * 4.2 + ph));
+      if (r.lasers) for (const [p, i] of r.lasers) { p.rotation.z = 0.5 * Math.sin(t * 0.6 + i * 0.9); p.rotation.x = -0.9 + 0.25 * Math.sin(t * 0.4 + i); }
       if (r.loop && window.JX && JX.current && JX.current.id === r.track && !JX.playing && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < (r.exitR || 3.8));
-      if (r.key === 'viper' && Math.hypot(P.pos.x - (r.ox - 5.4), P.pos.z - r.oz) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
+      if (r.key === 'viper' && r.evAt && Math.hypot(P.pos.x - r.evAt[0], P.pos.z - r.evAt[1]) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
       else if (near) show('EXIT — tap / Enter / F', exitRoom); else btn.style.display = 'none'; return; }
     if (t - tk < 0.2) return; tk = t; if (performance.now() - exitT < 1200) { btn.style.display = 'none'; return; } let hit = null;
     for (const k in R) { const d = R[k].door && R[k].door(); if (d && Math.hypot(P.pos.x - d[0], P.pos.z - d[1]) < d[2] && P.pos.y < 12) { hit = R[k]; break; } }
