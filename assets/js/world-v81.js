@@ -41,7 +41,22 @@ export function initV81(o) {
     const tip = document.createElement('button'); tip.type = 'button'; tip.textContent = 'ENTER HATCH · VERSIONS OF REALITY — tap here';
     tip.style.cssText = 'position:fixed;left:50%;bottom:28%;transform:translateX(-50%);z-index:121;display:none;padding:10px 18px;font:bold 15px Arial,sans-serif;background:#07020a;color:#3dff9a;border:2px solid #3dff9a;border-radius:8px;cursor:pointer';
     document.body.appendChild(tip);
-    const goIn = () => { const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom); if (fn) fn('cern'); else { tip.textContent = 'Loading room… tap again'; setTimeout(() => { const f2 = fx.enterRoom || (fx.v87 && fx.v87.enterRoom); if (f2) f2('cern'); tip.textContent = 'ENTER HATCH · VERSIONS OF REALITY — tap here'; }, 800); } };
+    const goIn = async () => {
+      tip.textContent = 'Opening CERN…';
+      try {
+        if (!fx.enterRoom) {
+          const m = await import('/assets/js/world-v87.js?v=95');
+          if (!fx.v87) fx.v87 = m.initV87({ T, S, LITE: !!(window.__lite), warp, fx, P });
+        }
+        const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom);
+        if (!fn) throw new Error('enterRoom missing after init');
+        fn('cern');
+        tip.style.display = 'none';
+      } catch (err) {
+        console.warn('cern enter', err);
+        tip.textContent = 'Enter failed — tap to retry';
+      }
+    };
     tip.onclick = goIn;
     addEventListener('keydown', e => { if (tip.style.display !== 'block') return; if (e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'KeyF') { e.preventDefault(); goIn(); } });
     const tick = () => { const p = P && P.pos; let near = false;

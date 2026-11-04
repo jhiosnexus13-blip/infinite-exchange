@@ -65,7 +65,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     r.spawn = [ox, oz - 10.2]; r.yaw = Math.PI / 2 + 0.6; r.track = 'cern-versions-of-reality';
     r.exits = [[ox + px, oz + pz], [ox, oz - 10.9]];
     r.door = () => { const h = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5]; const p = warp(h[0], h[1]); return [p.x, p.z, 14]; }; /* v92 hatch apron; wide so ENTER shows */
-    r.out = () => { const h = fx.v65Info.hatch, p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY — tap';
+    r.out = () => { const h = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5], p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY — tap';
  }
 
   // 2. Dance dream box (removed with the v86 ring)
