@@ -64,8 +64,12 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (let y = 0.3; y < 4; y += 0.45) box(g, 0x8a96a3, 0.9, 0.06, 0.06, 0, y, -10.9); // ladder
     r.spawn = [ox, oz - 10.2]; r.yaw = Math.PI / 2 + 0.6; r.track = 'cern-versions-of-reality';
     r.exits = [[ox + px, oz + pz], [ox, oz - 10.9]];
-    r.door = () => { const h = fx.v65Info && fx.v65Info.hatch; if (!h) return null; const p = warp(h[0], h[1]); return [p.x, p.z, 2.2]; };
-    r.out = () => { const h = fx.v65Info.hatch, p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY [E]'; }
+    r.door = () => { const h = fx.v65Info && fx.v65Info.hatch; if (!h) return null; const p = warp(h[0], h[1]); return [p.x, p.z, 4.5]; };
+    r.out = () => { const h = fx.v65Info.hatch, p = warp(h[0] + 3, h[1]), q = warp(h[0], h[1]); return [p.x, p.z, [q.x, q.z]]; }; r.label = 'ENTER HATCH \u00b7 VERSIONS OF REALITY [E]';
+    // map jump so browser/scouts land on the hatch (Albert Square east of Lodge) not only the fascia apron
+    try { const PJ = fx.pj81 = fx.pj81 || {}; const h = () => { const hh = fx.v65Info && fx.v65Info.hatch; if (!hh) return setTimeout(h, 400); const a = warp(hh[0] + 4, hh[1] - 2), f = warp(hh[0], hh[1]); PJ.versions_hatch = [a.x, a.z, [f.x, f.z, 0.2]];
+      const go = () => { const nav = document.querySelector('.wmap-jumps'); if (!nav) return setTimeout(go, 800); if (!nav.querySelector('[data-jump="versions_hatch"]')) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = 'versions_hatch'; b.textContent = 'Versions Of Reality hatch'; const x = nav.querySelector('[data-jump="lodge"]'); x ? x.after(b) : nav.appendChild(b); } }; setTimeout(go, 900); }; h(); } catch (e) { console.warn('v87 hatch jump', e); }
+ }
 
   // 2. Dance dream box (removed with the v86 ring)
   if (window.IE_V87_DANCE !== false && window.IE_V86_DANCE !== false) { const ox = -1440, oz = -4600, r = room('dance', ox, oz, 30, 30, 9, 0x1a1030, 0x241a2a); const g = r.g;
