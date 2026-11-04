@@ -7,7 +7,7 @@
    1. CERN: Hadron-style ring + Shiva portal face (fiction) + Versions Of Reality track.
    2. Dance dream: cover-art ring (Dance Of The Ancients vibe), fire, dusk void.
    3. Viper: venue-like club (logo, stage, LEDs, speakers), DJ booth, strobe, events wall.
-   Track picks (tracks.json): cern-versions-of-reality, dunes-and-the-sand-trance-techno-version (dance), manhattan-shuffle-dub-dance-version (viper). */
+   Track picks (tracks.json): cern-versions-of-reality, pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation (dance, v103 album-only), manhattan-shuffle-dub-dance-version (viper). */
 export function initV87({ T, S, LITE, warp, fx, P }) {
   if (fx.v87 && fx.v87Info && fx.v87Info.ready) return fx.v87;
   const info = { rooms: [], inside: null, enters: 0, exits: 0, ready: false }; fx.v87Info = info; window.__fx87 = info;
@@ -105,13 +105,22 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     box(g, 0x5a2a6a, 41.5, HD - 0.5, 41.5, 0, HD / 2 - 0.2, 0, { side: T.BackSide, transparent: true, opacity: 0.92 });
     for (const [rad, y, op] of [[14 * k, 0.05, 0.25], [10 * k, 0.08, 0.2], [6 * k, 0.12, 0.3]]) { const d = new T.Mesh(new T.CircleGeometry(rad, 40), mat(0xff7a1a, { transparent: true, opacity: op })); d.rotation.x = -Math.PI / 2; d.position.y = y; g.add(d); }
     const fl = []; for (const [c, s, y] of [[0xff7a1a, 1.8, 1.5], [0xffc83a, 1.1, 1.9], [0xffeed0, 0.6, 2.4]]) { const m = new T.Mesh(new T.ConeGeometry(s, 2.4 * s + 0.5, 8), mat(c, { transparent: true, opacity: 0.92 })); m.position.set(0, y, 0); g.add(m); fl.push(m); } r.spin = fl;
-    const covers = ['dunes-and-the-sand-trance-techno-version', 'dunes-and-the-sand-drum-and-bass-version', 'kamukura-no-kotodama-i-spirit-of-words-ainu-shinto', 'kamukura-no-kotodama-ii-descent-of-the-kami', 'seikilos-iv-dance-of-the-grave', 'cern-versions-of-reality', 'manhattan-shuffle-tribal-psy-trance-version', 'down-and-dirty'];
-    const RC = 12.4 * k;
-    for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; const id = covers[i];
-      { const fr = box(g, [0xff7a1a, 0xffc83a, 0x66ffcc, 0xff4fd8][i % 4], 7.6, 4.5, 0.05, Math.cos(a) * RC, 4.4, Math.sin(a) * RC); fr.rotation.y = -a - Math.PI / 2; }
-      box(g, 0xffb040, 0.6, 0.15, 0.6, Math.cos(a) * 8 * k, HD - 0.4, Math.sin(a) * 8 * k);
-      art(g, id, 7.0, Math.cos(a) * (RC - 0.2), 4.4, Math.sin(a) * (RC - 0.2), -a - Math.PI / 2);
-      box(g, 0x2a1830, 7.2, 7.2, 0.08, Math.cos(a) * (RC + 0.15), 4.4, Math.sin(a) * (RC + 0.15)); }
+    // v103: Dance Of The Ancients album ONLY (music-catalogue worldLocation north-denes-beach-campfire) — 24 tracks, 2 rows x 12
+    const covers = ['kamukura-no-kotodama-ii-descent-of-the-kami', 'seikilos-i-the-epitaph-flame-mongolian-seikilos', 'seikilos-iii-eternal-song', 'abwun-dbwashmaya-ii-kingdom-eternal', 'ekh-survaljiin-duu-song-of-the-source-i-mongolian-invocation', 'enkis-waters-i-abzu-rising-sumerian', 'enkis-waters-ii-wisdom-of-ea', 'seikilos-ii-the-riddle-of-death', 'tyrs-eir-iv-shield-and-fire', 'ankh-djed-was-i-life-and-power-egyptian', 'ekh-survaljiin-duu-song-of-the-source-ii-eternal-echo', 'brigh-an-latha-iii-shadows-depart', 'abwun-dbwashmaya-i-heavens-breath-aramaic', 'pavamana-mantra-ii-path-of-illusion', 'seikilos-iv-dance-of-the-grave', 'tyrs-eir-iii-ragnars-call', 'brigh-an-latha-i-strength-of-the-day-gaelic', 'tyrs-eir-ii-war-of-wires', 'kamukura-no-kotodama-i-spirit-of-words-ainu-shinto', 'pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation', 'tyrs-eir-i-the-blood-oath-norse', 'ankh-djed-was-ii-the-temple-pillars', 'brigh-an-latha-ii-fire-awakens', 'brigh-an-latha-iv-dawn-of-the-druids'];
+    const RC = 12.4 * k, NP = 12;
+    for (let i = 0; i < covers.length; i++) { const row = Math.floor(i / NP), a = ((i % NP) + row * 0.5) / NP * 6.283, y = row ? 7.4 : 3.1, id = covers[i];
+      { const fr = box(g, [0xff7a1a, 0xffc83a, 0x66ffcc, 0xff4fd8][i % 4], 6.0, 3.6, 0.05, Math.cos(a) * RC, y, Math.sin(a) * RC); fr.rotation.y = -a - Math.PI / 2; }
+      if (i < NP) box(g, 0xffb040, 0.6, 0.15, 0.6, Math.cos(a) * 8 * k, HD - 0.4, Math.sin(a) * 8 * k);
+      art(g, id, 5.6, Math.cos(a) * (RC - 0.2), y, Math.sin(a) * (RC - 0.2), -a - Math.PI / 2); }
+    // v103: FICTION figures dancing around the fire (IE_V87_DANCE_FIGURES=false hides) — neon-edged silhouettes, not the album painting
+    r.figs = []; if (window.IE_V87_DANCE_FIGURES !== false) { const NF = 8, FR = 5.2 * k, cols = [0xff7a1a, 0x3dff9a, 0xffc83a, 0x33e0ff, 0xff4fd8, 0x66ffcc, 0xffd76a, 0xff2e4a];
+      for (let i = 0; i < NF; i++) { const a = i / NF * 6.283, hgt = 1.5 + (i % 3) * 0.12, c = cols[i];
+        const p = new T.Group(); p.position.set(Math.cos(a) * FR, 0, Math.sin(a) * FR); p.rotation.y = -a - Math.PI / 2; g.add(p);
+        box(p, 0x120810, 0.46, hgt, 0.3, 0, hgt / 2, 0); box(p, c, 0.52, hgt + 0.06, 0.24, 0, hgt / 2, 0, { wireframe: true });
+        box(p, 0x120810, 0.3, 0.3, 0.3, 0, hgt + 0.2, 0); box(p, c, 0.36, 0.36, 0.24, 0, hgt + 0.2, 0, { wireframe: true });
+        const arm = (s) => { const q = new T.Group(); q.position.set(s * 0.3, hgt - 0.1, 0); p.add(q); box(q, c, 0.08, 0.7, 0.08, 0, 0.3, 0); q.rotation.z = s * 0.6; return q; };
+        r.figs.push([p, i * 0.8, a, FR, arm(-1), arm(1)]); }
+      fiction(g, 0, 0.4, -FR - 1.2, 0); }
     { const hz = new T.Mesh(new T.CylinderGeometry(15 * k, 15 * k, HD - 1, 32, 1, true), mat(0xff8a5a, { transparent: true, opacity: 0.12, side: T.BackSide })); hz.position.y = (HD - 1) / 2; g.add(hz);
       const rg = new T.Mesh(new T.RingGeometry(10.5 * k, 11.2 * k, 64), mat(0xffc83a, { transparent: true, opacity: 0.6, side: T.DoubleSide })); rg.rotation.x = -Math.PI / 2; rg.position.y = 0.06; g.add(rg);
       for (const [fx2, fz2] of [[-5 * k, -5 * k], [5 * k, -5 * k]]) for (const [c, s, y] of [[0xff4f1a, 0.9, 0.9], [0xffd76a, 0.5, 1.2]]) { const m = new T.Mesh(new T.ConeGeometry(s, 2.2 * s + 0.4, 8), mat(c, { transparent: true, opacity: 0.9 })); m.position.set(fx2, y, fz2); g.add(m); fl.push(m); }
@@ -120,7 +129,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     board(g, 'EXIT \u00b7 BEACH', 4.0, 0.7, 0, 3.0, 20.7, Math.PI, '#07020a', '#3dff9a');
     board(g, 'DANCE OF THE ANCIENTS\n\u25b6 dream box \u00b7 cover art', 7.2, 1.4, 0, 9.8, 0, 0, '#1a0820', '#ffc83a');
     fiction(g, 0, 0.7, 20.2, Math.PI);
-    r.spawn = [ox, oz + 7]; r.yaw = 0; r.track = 'dunes-and-the-sand-trance-techno-version';
+    r.spawn = [ox, oz + 9]; r.yaw = 0; r.track = 'pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation';
     const em = new T.Mesh(new T.CircleGeometry(1.8, 28), mat(0x66ffcc, { transparent: true, opacity: 0.55 })); em.rotation.x = -Math.PI / 2; em.position.set(0, 0.04, 17.5); g.add(em);
     r.exits = [[ox, oz + 17.5]]; r.exitR = 10;
     r.door = () => { const p = warp(420, 2650); return [p.x, p.z, 14]; };
@@ -149,7 +158,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const s of [-9.5, 9.5]) { box(g, 0x2a2a34, 1.8, 3.6, 1.6, s, 1.8, -7.4); box(g, 0x777788, 1.2, 1.2, 0.05, s, 2.4, -6.58); box(g, 0x777788, 0.7, 0.7, 0.05, s, 1.0, -6.58); box(g, 0xff2e4a, 1.8, 0.06, 0.06, s, 3.62, -6.58); }
     // back wall: logo high and clear (v102: nothing overlaps it), title board above
     const logoM = new T.Mesh(new T.PlaneGeometry(7.2, 3.1), mat(0x220810)); logoM.position.set(0, 3.55, NW + 0.05); g.add(logoM);
-    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=102').then(r => r.text()).then(b64 => {
+    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=103').then(r => r.text()).then(b64 => {
       const u = b64.trim().startsWith('data:') ? b64.trim() : 'data:image/png;base64,' + b64.trim();
       new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; logoM.material = new T.MeshBasicMaterial({ map: tx, transparent: true, fog: false, toneMapped: false }); });
     }).catch(() => {});
@@ -225,6 +234,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       if (r.strobe) r.strobe.material.opacity = (Math.sin(t * 22) > 0.85 ? 0.35 : 0) * (window.__beat ? __beat() : 1);
       if (r.dj) { const d = r.dj; d.up.rotation.z = 0.08 * Math.sin(t * 4.2); d.up.position.y = 0.9 + 0.05 * Math.abs(Math.sin(t * 4.2)); d.armL.rotation.y = 0.3 * Math.sin(t * 2.1); d.armR.rotation.x = -0.4 + 0.5 * Math.sin(t * 8.4); d.decks.forEach(p => p.rotation.y = t * 3.5); }
       if (r.crowd) for (const [p, ph] of r.crowd) p.position.y = 0.08 * Math.abs(Math.sin(t * 4.2 + ph));
+      if (r.figs) for (const [p, ph, a0, fr, aL, aR] of r.figs) { const a = a0 + t * 0.15; p.position.set(Math.cos(a) * fr, 0.12 * Math.abs(Math.sin(t * 3.6 + ph)), Math.sin(a) * fr); p.rotation.y = -a - Math.PI / 2 + 0.3 * Math.sin(t * 1.8 + ph); aL.rotation.z = -0.6 - 0.7 * Math.abs(Math.sin(t * 3.6 + ph)); aR.rotation.z = 0.6 + 0.7 * Math.abs(Math.sin(t * 3.6 + ph + 1)); }
       if (r.lasers) for (const [p, i] of r.lasers) { p.rotation.z = 0.5 * Math.sin(t * 0.6 + i * 0.9); p.rotation.x = -0.9 + 0.25 * Math.sin(t * 0.4 + i); }
       if (r.loop && window.JX && JX.current && JX.current.id === r.track && !JX.playing && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < (r.exitR || 3.8));
