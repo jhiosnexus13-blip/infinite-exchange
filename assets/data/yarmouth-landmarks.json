@@ -34,12 +34,12 @@
   },
   {
    "key": "pleasure_beach",
-   "name": "Great Yarmouth Pleasure Beach (big wheel)",
+   "name": "Giant Wheel (Sea Life Centre Gardens)",
    "lat": 52.5937437,
    "lon": 1.73595,
    "type": "wheel",
-   "height_m": 45,
-   "crosscheck": "OSM has no attraction=big_wheel/wheel feature within 600 m. The pin lies inside OSM theme_park 'Pleasure Beach' (way 179321094 / 358642188, Wikidata Q3115993, bbox 52.59123-52.59527 / 1.73541-1.73656) on its Marine Parade (west) frontage; postcodes.io NR30 3EH 52.594522,1.736190.",
+   "height_m": 50,
+   "crosscheck": "v99: wheel is in Sea Life Centre Gardens (OSM node 9160612437, repositioned by world-v85); this pin is the old Pleasure Beach guess, kept only as the landmark key. OSM has no attraction=big_wheel/wheel feature within 600 m. The pin lies inside OSM theme_park 'Pleasure Beach' (way 179321094 / 358642188, Wikidata Q3115993, bbox 52.59123-52.59527 / 1.73541-1.73656) on its Marine Parade (west) frontage; postcodes.io NR30 3EH 52.594522,1.736190.",
    "wheel_slots": 5,
    "wheel_track_ids": [
     "pleasure-bitch-original-version",

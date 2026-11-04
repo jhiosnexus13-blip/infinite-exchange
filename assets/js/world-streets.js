@@ -255,7 +255,8 @@ export function initStreets(o, X) {
       for (let x = x0 + 1; x <= x1; x += 6.4) AB(CR, 0.25, 2.8, 0.25, x, nf + 1.55, 1.4);
       for (const sx of [x0 + 5, x1 - 9]) { AB(CR, 1.6, 0.25, 1.6, sx - 0.8, nf + 2.6, 2.9); AB(GR, Math.hypot(4, 2.9), 0.18, 1.1, sx + 2, nf + 2.6, 1.45, 0, 0, Math.atan2(2.9, 4)); AB(CR, 0.2, 1.1, 1.6, sx - 1.6, nf + 2.6, 2.4); }
       AB(0x1f5c3a, 0.08, 0.42, 2.0, x0 - 0.08, nc + 1.5, 2.9); AB(WH, 0.06, 0.32, 1.9, x0 - 0.11, nc + 1.5, 2.9); // street-name sign on the west gable
-      const bs = LBL('BEATTY CLOSE', '#1f5c3a', 0.5); const bw = warp(x0 - 0.4, nc + 1.5); bs.position.set(bw.x, 3.5, bw.z); S.add(bs);
+      { const c = document.createElement('canvas'); c.width = 512; c.height = 86; const k = c.getContext('2d'); k.fillStyle = '#f4f4ee'; k.fillRect(0, 0, 512, 86); k.fillStyle = '#1f5c3a'; k.font = 'bold 54px Arial,sans-serif'; k.textAlign = 'center'; k.textBaseline = 'middle'; k.fillText('BEATTY CLOSE', 256, 46);
+        const tx = new T.CanvasTexture(c); tx.colorSpace = T.SRGBColorSpace; const bs = new T.Mesh(new T.PlaneGeometry(1.88, 0.31), new T.MeshBasicMaterial({ map: tx, side: T.DoubleSide })); const bw = warp(x0 - 0.15, nc + 1.5); bs.position.set(bw.x, 2.9, bw.z); bs.rotation.y = -Math.PI / 2; S.add(bs); } // v102: text baked onto the existing gable plaque (was a floating sprite 0.6 m above/off it)
       AB(0x5a8a3c, 48, 0.06, 38, -116, 2309, 0.05);                                           // the square green behind the flats
       // v62: the blocks flanking the green WEST + EAST are single-storey bungalows (Joseph: bungalows either side of the green behind the flats, none at its south end).
       // Three per side, gable roofs, front windows + door facing the green. Plain and unlabelled: no numbers, names or signs.

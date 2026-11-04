@@ -27,13 +27,13 @@ export function buildEnvironment(o) {
   ({ THREE: T, scene: S, camera: CAM, player: P, holos: H, clickables: CL, labelSprite: LBL, canvas: CV, LOW, reduced: RED, HOLO_OBJS: OBJS, getPlaying } = o); LITE = !!o.LITE;
   safe('minimap', minimap); safe('sky', sky); safe('rain', rain); safe('paths', paths); safe('map', bigMap); safe('cards', cards); safe('screens', orbitScreens); safe('volume', proximity);
   const j = u => fetch(u).then(r => r.json());
-  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=81'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=81' : '/assets/data/yarmouth-geo.json?v=81').catch(e => (console.warn('geo', e), null))])
+  Promise.all([j('/assets/data/yarmouth-landmarks.json?v=104'), j(LITE ? '/assets/data/yarmouth-geo-lite.json?v=104' : '/assets/data/yarmouth-geo.json?v=104').catch(e => (console.warn('geo', e), null))])
     .then(([D, G]) => { ORG = D.origin; const grp = new T.Group(); grp.name = 'skyline'; S.add(grp); fx.skyline = grp; if (G && /[?&]nogeo=1/.test(location.search)) G = null; if (G) safe('geo', () => { fx.G = G; G.keepPts = D.landmarks.filter(l => l.type !== 'screen' && !l.use_footprint).map(l => { const q = local(l.lat, l.lon); return [q.e, q.n]; }); G.keepScreen = D.landmarks.filter(l => l.type === 'screen').map(l => { const q = local(l.lat, l.lon); return { key: l.key, e: q.e, n: q.n }; }); G.keep = D.landmarks.filter(l => l.type === 'archive' || l.type === 'waterways').map(l => { const q = local(l.lat, l.lon); return [q.e, q.n, l.type === 'archive' ? 22 : 0]; }); geo(G, grp); });
-      import('./world-env.js?v=81').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); import('./world-v66.js?v=81').then(m => { fx.v66 = m.initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P }); }).catch(e => worldErr('v66', e)); import('./world-v69.js?v=81').then(m => { fx.v69 = m.initV69({ T, S, LBL, LITE, warp, fx, G }); }).catch(e => worldErr('v69', e)); Promise.all([import('./world-newtown.js?v=81'), j('/assets/data/newtown-extra.json?v=81')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); import('./world-v60.js?v=81').then(m2 => { fx.v60 = m2.initV60({ T, S, LITE, RED, warp, PZ, fx }, X); }).catch(e => worldErr('v60', e)); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=81').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=81'), j('/assets/data/newtown-streets.json?v=81')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
-      Promise.all([import('./world-pb.js?v=81'), j('/assets/data/pleasure-beach.json?v=81')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
+      import('./world-env.js?v=104').then(m => { fx.env = m.initEnv({ THREE: T, T, S, CAM, P, fx, LITE, RED, warp, G }); }).catch(e => worldErr('world-env', e)); import('./world-v66.js?v=104').then(m => { fx.v66 = m.initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P }); }).catch(e => worldErr('v66', e)); import('./world-v69.js?v=104').then(m => { fx.v69 = m.initV69({ T, S, LBL, LITE, warp, fx, G }); }).catch(e => worldErr('v69', e)); Promise.all([import('./world-newtown.js?v=104'), j('/assets/data/newtown-extra.json?v=104')]).then(([m, X]) => { fx.newtown = m.initNewtown({ T, S, LBL, LITE, warp, fx }, X); import('./world-v60.js?v=104').then(m2 => { fx.v60 = m2.initV60({ T, S, LITE, RED, warp, PZ, fx }, X); }).catch(e => worldErr('v60', e)); }).catch(e => worldErr('newtown', e)); if (G && G.golden_mile) import('./world-train.js?v=104').then(m => { fx.train = m.initTrain({ T, S, CAM, P, LBL, LITE, RED, fx, warp, openNear, CV, G, ORG }); }).catch(e => worldErr('seafront train', e)); safe('landmarks', () => skyline(D, grp, !fx.coastE)); safe('fallen angels', fallenAngels); safe('waterways gate', waterwaysGate); safe('waterways north drive gate', waterwaysDriveGate); safe('dam sign', damSign); safe('food basket', foodBasket); Promise.all([import('./world-streets.js?v=104'), j('/assets/data/newtown-streets.json?v=104')]).then(([m, X]) => { fx.streets = m.initStreets({ T, S, LBL, LITE, warp, G }, X); }).catch(e => worldErr('newtown streets', e)); 
+      Promise.all([import('./world-pb.js?v=104'), j('/assets/data/pleasure-beach.json?v=104')]).then(([m, PB]) => { fx.pbUpd = m.initPB({ T, S, W, LBL, LITE, fx }, PB); }).catch(e => worldErr('pleasure beach', e)); }).catch(e => worldErr('map data', e));
   swapModels().catch(e => worldErr('models', e));
-  import('./world-presence.js?v=81').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e)).then(() => import('./world-chat.js?v=81')).then(m => m.initChat({ fx, LITE })).catch(e => console.warn('chat', e));
-  import('./world-train.js?v=81').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
+  import('./world-presence.js?v=104').then(m => { fx.pres = m.initPresence({ T, S, P, LITE, fx }); }).catch(e => console.warn('presence', e)).then(() => import('./world-chat.js?v=104')).then(m => m.initChat({ fx, LITE })).catch(e => console.warn('chat', e));
+  import('./world-train.js?v=104').then(m => { fx.gulls = m.initGulls({ T, S, CAM, LITE, RED }); }).catch(e => worldErr('gulls', e));
 }
 
 /* ---------- sky sphere: slowly shifting gradient + faint scanlines ---------- */
@@ -110,7 +110,7 @@ function skyline(D, grp, noGeo) {
   for (const L of D.landmarks) {
     const l = local(L.lat, L.lon), base = warp(l.e, l.n), ht = (L.height_m || 10) * HS, ry = yaw(base);
     const tag = LBL(L.name.split(' (')[0], '#5dffc0', 7); if (L.no_label || L.key === 'the_avenues') tag.visible = false; // v57: only the pub's own 'THE AVENUE' sign shows tag.position.copy(base).setY(ht + (L.use_footprint ? 8 : L.song_match || L.song_tag || L.song_patterns ? 34 : L.type === 'tower' ? 20 : L.type === 'wheel' ? 22 : 9)); if (L.type === 'tower') tag.scale.multiplyScalar(1.25); grp.add(tag);
-    fx.landmarks[L.key] = { pos: base, name: L.name, fy: ht + 6, land: L.land_offset }; (fx.clear || (fx.clear = [[PZ()[0], PZ()[1], PLAZA]])).push([base.x, base.z, L.type === 'tower' ? 30 : L.type === 'wheel' ? 26 : 12]); // approach radius never blocked by colliders
+    fx.landmarks[L.key] = { pos: base, name: L.name, fy: ht + 6, land: L.land_offset }; (fx.clear || (fx.clear = [[PZ()[0], PZ()[1], PLAZA]])).push([base.x, base.z, L.type === 'tower' ? 30 : L.type === 'wheel' ? 31 : 12]); // approach radius never blocked by colliders
     if (L.song_match || L.song_tag || L.song_patterns) songCluster(L, base, ht);
     if (L.type === 'pier') { // deck from the coast out to sea (east), legs, pavilion at the head
       const ce = coastE(l.n), root = warp(ce, l.n), tip = warp(ce + L.length_m, l.n), N = 10;
@@ -118,7 +118,7 @@ function skyline(D, grp, noGeo) {
         a.y = b.y = 1.4; add(a, b); add(a.clone().setZ(a.z - 0.8), b.clone().setZ(b.z - 0.8)); add(a, a.clone().setY(0)); add(a.clone().setZ(a.z - 0.8), a.clone().setZ(a.z - 0.8).setY(0)); }
       const head = tip.clone(); head.y = 1.4; box(head, 4, ht * 0.6, 3, 0); box(head.clone().setY(1.4 + ht * 0.6), 2.6, ht * 0.35, 2, 0);
       add(head.clone().setY(1.4 + ht * 0.95), head.clone().setY(1.4 + ht * 1.3));
-    } else if (L.type === 'column') { // Norfolk Naval Pillar: plinth, fluted column, Britannia on a globe
+    } else if (L.type === 'column' && window.IE_V85_NELSON_OLD === true) { // v85: solid column in world-v85.js replaces this wire stand-in // Norfolk Naval Pillar: plinth, fluted column, Britannia on a globe
       box(base, 3, 1.6, 3, ry); box(base.clone().setY(1.6), 2, 1.2, 2, ry);
       for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2, d = new T.Vector3(Math.cos(a) * 0.6, 0, Math.sin(a) * 0.6); add(base.clone().add(d).setY(2.8), base.clone().add(d.multiplyScalar(0.8)).setY(ht)); }
       box(base.clone().setY(ht), 1.8, 0.6, 1.8, ry);
@@ -127,10 +127,10 @@ function skyline(D, grp, noGeo) {
     } else if (L.type === 'wheel') {
       const r = ht / 2, wg = new T.Group(); wg.position.copy(base).setY(r + 12); wg.rotation.y = L.rot_y ?? 0.35; // raised on a plinth: the lowest gondola screen clears the neighbouring Pleasure Beach roofs (v39 audit) // faces the promenade / spawn side
       const rim = new T.LineLoop(new T.BufferGeometry().setFromPoints(Array.from({ length: 48 }, (_, i) => new T.Vector3(Math.cos(i / 48 * 6.283) * r, Math.sin(i / 48 * 6.283) * r, 0))), mat);
-      const sp = []; for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283; sp.push(0, 0, 0, Math.cos(a) * r, Math.sin(a) * r, 0); }
+      const sp = []; for (let i = 0; i < 18; i++) { const a = i / 18 * 6.283; sp.push(0, 0, 0, Math.cos(a) * r, Math.sin(a) * r, 0); }
       const spg = new T.BufferGeometry(); spg.setAttribute('position', new T.Float32BufferAttribute(sp, 3));
       const wheel = new T.Group(); wheel.add(rim, new T.LineSegments(spg, mat)); wheel.userData.spin = true;
-      for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283, gd = new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(0.7, 0.7, 0.7)), mat); gd.position.set(Math.cos(a) * r, Math.sin(a) * r, 0); wheel.add(gd); }
+      for (let i = 0; i < 36; i++) { const a = i / 36 * 6.283, gd = new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(0.7, 0.7, 0.7)), mat); gd.position.set(Math.cos(a) * r, Math.sin(a) * r, 0); wheel.add(gd); }
       wg.add(wheel); grp.add(wg); fx.wheel = wheel; fx.wheelGrp = wg;
       if (L.wheel_slots) wheelScreens(L, wheel, r);
       add(base.clone().add(new T.Vector3(1.5, 0, 0)), base.clone().setY(r + 1)); add(base.clone().add(new T.Vector3(-1.5, 0, 0)), base.clone().setY(r + 1));
@@ -140,8 +140,7 @@ function skyline(D, grp, noGeo) {
     } else if (L.type === 'bridge') { /* v62: real 3D bridge models live in world-river.js */ }
     else if (L.type === 'tower') { // Tower Complex / Arena: wide low arena block + tall slim tower with a crown (scaled to metres)
       box(base, 40, ht * 0.32, 26, ry); box(base.clone().setY(ht * 0.32), 30, ht * 0.12, 20, ry);
-      const tb = base.clone().add(new T.Vector3(Math.cos(ry) * 9, 0, -Math.sin(ry) * 9)); box(tb, 9, ht, 9, ry); box(tb.clone().setY(ht), 12, 5, 12, ry);
-      add(tb.clone().setY(ht + 5), tb.clone().setY(ht + 14));
+      const tb = base.clone().add(new T.Vector3(Math.cos(ry) * 9, 0, -Math.sin(ry) * 9)); box(tb, 9, ht, 9, ry); if (window.IE_V84_TOWER_OLD === true) { box(tb.clone().setY(ht), 12, 5, 12, ry); add(tb.clone().setY(ht + 5), tb.clone().setY(ht + 14)); } // v84: old wire crown + spire gated (read as a second crown through the v84 octagon); revert flag
       // v43 (Street View 25 Marine Parade): ground-floor frontage signs on the prom (east) face, north to south
       if (!LITE) for (const [t2, c2, dz] of [['JURASSIC JOURNEY', '#5fdc6a', -14], ['SUBWAY', '#3fbf4f', -6.5], ['THE BUDDHA CLUB', '#e8eef0', 1.5], ['THE TOWER · PUBLIC HOUSE', '#6f8cff', 11]]) {
         const sg = LBL(t2, c2, 1.5); sg.position.copy(base).add(new T.Vector3(21, 4.4, dz)); grp.add(sg); }
@@ -154,9 +153,9 @@ function skyline(D, grp, noGeo) {
       add(base.clone().add(new T.Vector3(-4.2, ht + 4, 0)), base.clone().add(new T.Vector3(4.2, ht + 4, 0)));
       box(base.clone().add(new T.Vector3(8, 5, 0)), 0.3, 3, 2.4, ry); fx.mapSpots.push({ pos: base, label: L.name.replace(/^The /, '').toUpperCase(), col: '#ffcc66' });
     }
-    else if (L.type === 'waterways') { // boating-lake loop marker + little bridges
-      const r = 18; for (let k = 0; k < 24; k++) { const a = k / 24 * 6.283, b = (k + 1) / 24 * 6.283; add(base.clone().add(new T.Vector3(Math.cos(a) * r, 0.6, Math.sin(a) * r * 3)), base.clone().add(new T.Vector3(Math.cos(b) * r, 0.6, Math.sin(b) * r * 3))); }
-      for (const z of [-30, 0, 30]) { const a = base.clone().add(new T.Vector3(-8, 1.5, z)), b = base.clone().add(new T.Vector3(8, 1.5, z)); add(a, b); add(a, a.clone().setY(0)); add(b, b.clone().setY(0)); }
+    else if (L.type === 'waterways') { // boating-lake loop marker + little bridges (v85: gated; OSM islets/bridges in world-v85.js; IE_V85_WATERWAYS_WIRE=true restores)
+      if (window.IE_V85_WATERWAYS_WIRE === true) { const r = 18; for (let k = 0; k < 24; k++) { const a = k / 24 * 6.283, b = (k + 1) / 24 * 6.283; add(base.clone().add(new T.Vector3(Math.cos(a) * r, 0.6, Math.sin(a) * r * 3)), base.clone().add(new T.Vector3(Math.cos(b) * r, 0.6, Math.sin(b) * r * 3))); }
+      for (const z of [-30, 0, 30]) { const a = base.clone().add(new T.Vector3(-8, 1.5, z)), b = base.clone().add(new T.Vector3(8, 1.5, z)); add(a, b); add(a, a.clone().setY(0)); add(b, b.clone().setY(0)); } }
       fx.mapSpots.push({ pos: base, label: 'WATERWAYS', col: '#00c8ff' });
     }
     else if (L.type === 'archive') archive(L, base, ht);
@@ -278,8 +277,8 @@ function geo(G, grp) {
   if (G.golden_mile) goldenMile(G.golden_mile, grp);
   if (G.harbour_spur) goldenMile(G.harbour_spur, grp, true);
   sea(prof);
-  import('./world-v63.js?v=81').then(m => { fx.v63 = m.initV63({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('v63', e)); import('./world-v64.js?v=81').then(m => { fx.v64 = m.initV64({ T, S, LITE, warp, fx }); }).catch(e => worldErr('v64', e)); import('./world-v76.js?v=81').then(m => { fx.v76 = m.initV76({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('v76', e));  import('./world-v80.js?v=81').then(m => { fx.v80 = m.initV80({ T, S, LBL, LITE, warp, fx, P }); }).catch(e => worldErr('world-v80', e)); import('./world-v81.js?v=81').then(m => { fx.v81 = m.initV81({ T, S, LBL, LITE, warp, fx, P, CAM }); }).catch(e => worldErr('world-v81', e)); import('./world-v77.js?v=81').then(m => { fx.v77 = m.initV77({ T, S, LBL, LITE, warp, fx, P }); }).catch(e => worldErr('v77', e)); import('./world-v65.js?v=81').then(m => { fx.v65 = m.initV65({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('v65', e)); // v65: Royal Assembly Rooms + fiction hatch, Market Gates, Troll Cart, bus stops/buses, beach campfire // v64: station, cemetery, Bure Park campfire, alley // v63: Newtown path levels, Beatty Rd frontage, Jellicoe bridge, Seashore sign, Scroby Sands
-  import('./world-river.js?v=81').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
+  import('./world-v63.js?v=104').then(m => { fx.v63 = m.initV63({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('v63', e)); import('./world-v64.js?v=104').then(m => { fx.v64 = m.initV64({ T, S, LITE, warp, fx }); }).catch(e => worldErr('v64', e)); import('./world-v76.js?v=104').then(m => { fx.v76 = m.initV76({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('v76', e));  import('./world-v80.js?v=104').then(m => { fx.v80 = m.initV80({ T, S, LBL, LITE, warp, fx, P }); }).catch(e => worldErr('world-v80', e)); import('./world-v81.js?v=104').then(m => { fx.v81 = m.initV81({ T, S, LBL, LITE, warp, fx, P, CAM }); }).catch(e => worldErr('world-v81', e)); import('./world-v83.js?v=104').then(m => { fx.v83 = m.initV83({ T, S, fx }); }).catch(e => worldErr('world-v83', e)); import('./world-v85.js?v=104').then(m => { fx.v85 = m.initV85({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('world-v85', e)); import('./world-v86.js?v=104').then(m => { fx.v86 = m.initV86({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('world-v86', e)); if (window.IE_V87_ROOMS !== false) import('./world-v87.js?v=104').then(m2 => { if (!fx.v87) fx.v87 = m2.initV87({ T, S, LITE, warp, fx, P }); console.info('[IE] v98 rooms ready', fx.v87Info); }).catch(e => worldErr('world-v87', e)); import('./world-v99.js?v=104').then(m => { fx.v99 = m.initV99({ T, S, LBL, LITE, warp, fx, P }); }).catch(e => worldErr('world-v99', e)); /* v98: v87 import was trapped behind the v85 line comment below (rooms only loaded via CERN hatch tap) */ safe('ground posters', groundPosters); // v85: aerial geo pass (wheel, Joyland, Waterways, parade shelters, Nelson's Monument) import('./world-v77.js?v=104').then(m => { fx.v77 = m.initV77({ T, S, LBL, LITE, warp, fx, P }); }).catch(e => worldErr('v77', e)); import('./world-v65.js?v=104').then(m => { fx.v65 = m.initV65({ T, S, LBL, LITE, warp, fx }); }).catch(e => worldErr('v65', e)); if (window.IE_V87_ROOMS !== false) import('./world-v87.js?v=104').then(m2 => { fx.v87 = m2.initV87({ T, S, LITE, warp, fx, P }); console.info('[IE] v87 rooms ready', fx.v87Info); }).catch(e => worldErr('world-v87', e)); // v65 first so hatch exists; then v87 CERN/Dance/Viper rooms // v64: station, cemetery, Bure Park campfire, alley // v63: Newtown path levels, Beatty Rd frontage, Jellicoe bridge, Seashore sign, Scroby Sands
+  import('./world-river.js?v=104').then(m => { fx.riverInfo = m.initRiver({ T, S, W, LBL, LITE, LOW, fx, warp, local, G }); }).catch(e => worldErr('river', e)); // v58: textured, animated, unwalkable river + harbour landmarks
 }
 
 /* ---------- Golden Mile: the main explorable route, a glowing gold ribbon on the real OSM road centreline ---------- */
@@ -306,8 +305,8 @@ function featureScreen(L, base, ht) {
   const mat = new T.MeshBasicMaterial({ map: titleTex(titleText, '#00ff9d'), transparent: true, opacity: 0.95, side: T.DoubleSide, fog: false });
   const scr = new T.Mesh(new T.PlaneGeometry(W2, H2), mat); grp.add(scr);
   const frMat = new T.LineBasicMaterial({ color: 0x00ff9d, transparent: true, blending: T.AdditiveBlending, fog: false });
-  for (const k of [1, 1.03, 1.06]) { const f = new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(W2 * k, H2 * k)), frMat); grp.add(f); }
-  const glow = new T.Mesh(new T.PlaneGeometry(W2 * 1.25, H2 * 1.25), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.12, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
+  for (const k of [1]) { const f = new T.LineSegments(new T.EdgesGeometry(new T.PlaneGeometry(W2 * k, H2 * k)), frMat); grp.add(f); }
+  const glow = new T.Mesh(new T.PlaneGeometry(W2 * 1.25, H2 * 1.25), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.05, blending: T.AdditiveBlending, depthWrite: false, fog: false })); /* v102: 0.12 washed the card text */
   glow.position.z = -0.2; grp.add(glow);
   const lab = LBL(titleText.toUpperCase(), '#00ff9d', 3.2); lab.position.set(0, H2 / 2 + 2.6, 0); grp.add(lab);
   const sub = LBL('▶ TAP TO PLAY // SCR3WFAC3', '#b9ffe0', 1.6); sub.position.set(0, -H2 / 2 - 1.8, 0); grp.add(sub);
@@ -331,12 +330,12 @@ function viperPanel(grp, H2) {
   const logo = new T.Mesh(new T.PlaneGeometry(PW, PH), mat); logo.position.z = 0.06; g.add(logo);
   fx.viper = { url: VIPER.url, loaded: false, grp: g };
   // logo stored as a data-URL text file (same as the DAM logo) so it travels through text-only commits; source PNG: jhios-vault/assets/viper-room/viper-room-gy-logo.png
-  fetch('/assets/img/viper-room-gy-logo.b64.txt?v=81').then(r => r.ok ? r.text() : Promise.reject(new Error('viper logo ' + r.status))).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.map = t; mat.opacity = 1; mat.needsUpdate = true; fx.viper.loaded = true; }, undefined, () => { fx.viper.loaded = false; fx.viper.error = true; })).catch(() => { fx.viper.error = true; });
-  const lab = LBL('▶ TAP · VIPER ROOM GY EVENTS', '#ff8a9a', 1.3); lab.position.set(0, -PH / 2 - 1.6, 0.1); g.add(lab);
+  fetch('/assets/img/viper-room-gy-logo.b64.txt?v=104').then(r => r.ok ? r.text() : Promise.reject(new Error('viper logo ' + r.status))).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.map = t; mat.opacity = 1; mat.needsUpdate = true; fx.viper.loaded = true; }, undefined, () => { fx.viper.loaded = false; fx.viper.error = true; })).catch(() => { fx.viper.error = true; });
+  const lab = LBL('▶ TAP · ENTER VIPER ROOM GY', '#ff8a9a', 1.3); lab.position.set(0, -PH / 2 - 1.6, 0.1); g.add(lab);
   const hit = new T.Mesh(new T.PlaneGeometry(PW + 1.6, PH + 3.4), new T.MeshBasicMaterial({ visible: false, side: T.DoubleSide })); hit.position.y = -0.8;
-  hit.userData = { link: VIPER.url, title: VIPER.label, id: 'viper-room' }; g.add(hit); CL.push(hit);
+  hit.userData = { title: VIPER.label, id: 'viper-room', link: VIPER.url, action() { const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom); if (fn) { fn('viper'); return true; } open(VIPER.url, '_blank', 'noopener'); return true; } }; g.add(hit); CL.push(hit);
 }
-/* ---------- Pleasure Beach big wheel: one tappable gondola screen per slot, rotating with the rim but kept upright ---------- */
+/* ---------- Giant Wheel (Sea Life Centre Gardens, v85 OSM): one tappable gondola screen per slot, rotating with the rim but kept upright ---------- */
 function wheelScreens(L, wheel, r) {
   const boot = () => window.JX.load().then(() => {
     const ids = (L.wheel_track_ids || []).slice(); while (ids.length < (L.wheel_slots || 0)) ids.push(null); // more ids than slots = more gondolas
@@ -364,6 +363,28 @@ function neonPint() {
   g.traverse(o => { o.raycast = () => {}; }); g.name = 'neon-pint'; return g;
 }
 
+
+/* v98: ground/door-level poster cards for the high signs (Viper under the Tower feature card, DAM roof sign). Eye level ~0.4–3.4 m, double-sided, tappable. */
+function posterTex(lines, bg, fg) { const c = document.createElement('canvas'); c.width = 512; c.height = 683; const g = c.getContext('2d'); g.fillStyle = bg; g.fillRect(0, 0, 512, 683); g.strokeStyle = fg; g.lineWidth = 14; g.strokeRect(10, 10, 492, 663);
+  g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; lines.forEach(([t, px, y]) => { let s = px; g.font = `bold ${s}px Arial,sans-serif`; while (g.measureText(t).width > 460 && s > 10) g.font = `bold ${--s}px Arial,sans-serif`; g.fillText(t, 256, y); });
+  const tx = new T.CanvasTexture(c); tx.colorSpace = T.SRGBColorSpace; return tx; }
+function poster(x, z, faceX, faceZ, lines, bg, fg, ud, name) {
+  const g = new T.Group(); g.name = name; g.position.set(x, 0, z); g.rotation.y = Math.atan2(faceX - x, faceZ - z); S.add(g);
+  const m = new T.Mesh(new T.PlaneGeometry(2.4, 3.2), new T.MeshBasicMaterial({ map: posterTex(lines, bg, fg), side: T.DoubleSide, fog: false, toneMapped: false })); m.position.y = 1.9; m.userData = ud; g.add(m); CL.push(m);
+  const pm = new T.MeshBasicMaterial({ color: 0x222228 }); for (const sx of [-1.3, 1.3]) { const post = new T.Mesh(new T.BoxGeometry(0.12, 3.6, 0.12), pm); post.position.set(sx, 1.8, -0.05); g.add(post); }
+  return g; }
+function groundPosters() {
+  let k = 0; const go = () => { const F = fx.feature && fx.feature.grp;
+    if (F && !fx.viperPoster) { const p = F.position, px = p.x + 8, pz = p.z + 5;
+      fx.viperPoster = poster(px, pz, p.x + 14, p.z + 8, [['VIPER ROOM GY', 64, 140], ['LIVE CLUB · DJ ROOM', 34, 250], ['▶ TAP TO ENTER', 52, 400], ['or walk up: Enter / F', 30, 480], ['FICTION · GAME ROOM', 26, 620]], '#07020a', '#ff2e4a',
+        { title: 'Viper Room GY — enter', id: 'viper-poster', link: VIPER.url, action() { const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom); if (fn) { fn('viper'); return true; } open(VIPER.url, '_blank', 'noopener'); return true; } }, 'viper-ground-poster'); }
+    if (fx.dam && !fx.damPoster) { const [dx, dz] = fx.dam.pos;
+      fx.damPoster = poster(dx - 1.5, dz, dx - 20, dz, [['DAM', 120, 150], ['AFTER DARK', 60, 270], ['Fallen Angels · Marine Pde', 30, 360], ['▶ TAP · TikTok', 50, 470], ['@damafterdark.ent', 30, 560]], '#0a0206', '#ff5a6a',
+        { link: DAM.url, title: DAM.label, id: 'dam-poster' }, 'dam-ground-poster'); }
+    if ((!fx.viperPoster || !fx.damPoster) && k++ < 60) setTimeout(go, 1000); };
+  go();
+}
+
 /* v45: DAM After Dark sign on the Marine Parade (west) face of Fallen Angels (roof-mounted, faces the viewer), east side of the Golden Mile, 83 Marine Parade (OSM way 175855364, next to the Arc Cinema).
    Logo texture (512 px jpeg as data URL text, black background -> additive so only the neon shows), pulses with the shared beat uniform; tap opens their TikTok. */
 const DAM = { lat: 52.609697, lon: 1.736920, url: 'https://www.tiktok.com/@damafterdark.ent', label: 'DAM After Dark on TikTok' };
@@ -373,7 +394,7 @@ function damSign() {
     uniforms: { map: { value: null }, uG: window.__glowU || { value: 1 }, uOn: { value: 0 } },
     vertexShader: `varying vec2 vU; void main(){ vU = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
     fragmentShader: `uniform sampler2D map; uniform float uG; uniform float uOn; varying vec2 vU; void main(){ vec3 c = texture2D(map, vU).rgb * uOn; gl_FragColor = vec4(c * (1.7 + 0.5 * (uG - 1.0) * 3.0), 1.0); }` });
-  fetch('/assets/img/dam-after-dark.b64.txt?v=81').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
+  fetch('/assets/img/dam-after-dark.b64.txt?v=104').then(r => r.text()).then(u => loader().load(u.trim(), t => { t.colorSpace = T.SRGBColorSpace; mat.uniforms.map.value = t; mat.uniforms.uOn.value = 1; })).catch(() => {}); // logo stored as a data URL text file (512 px jpeg)
   const sign = new T.Mesh(new T.PlaneGeometry(13, 13), mat); sign.position.y = 13; g.add(sign);
   sign.userData = { link: DAM.url, title: DAM.label, id: 'dam-after-dark' }; CL.push(sign);
   // v47: no frame box (tap area = the logo plane itself)
@@ -557,7 +578,7 @@ function arcCinema() {
 /* v62: catalogue-driven placements: /assets/data/music-catalogue.json lists approved world locations (lat/lon) and which tracks sit there.
    Each location becomes a normal song cluster (same tappable screens, playback still via tracks.json + YouTube). Neutral labels only. */
 function catalogueScreens() {
-  fetch('/assets/data/music-catalogue.json?v=81').then(r => r.json()).then(C => { fx.catalogue = { locations: Object.keys(C.locations || {}), placed: 0 };
+  fetch('/assets/data/music-catalogue.json?v=104').then(r => r.json()).then(C => { fx.catalogue = { locations: Object.keys(C.locations || {}), placed: 0 };
     for (const [key, loc] of Object.entries(C.locations || {})) { const ids = C.tracks.filter(t => (t.worldLocations || []).includes(key) && t.placementStatus !== 'unplaced').map(t => t.id); if (!ids.length) continue;
       fx.catalogue.placed += ids.length; const base = W(loc.lat, loc.lon), ht = (loc.height_m || 10) * HS;
       songCluster({ key: 'cat:' + key, type: 'screen', song_ids: ids, cluster_at: [loc.lat, loc.lon] }, base, ht); } }).catch(e => console.warn('catalogue', e));
@@ -614,7 +635,7 @@ function archive(L, base, ht) {
 /* ---------- jump-on-map: full-screen overlay of the whole mapped area; tap = teleport, quick-jump list ---------- */
 const MB = { x0: -1600, x1: 700, z0: -4700, z1: 3600 }; // walkable bounds (mirrors the clamp in world.js)
 const JUMPS = [['plaza', 'Beach plaza (spawn)'], ['pleasure_beach', 'Pleasure Beach'], ['tower_complex', 'Tower Complex'], ['britannia_pier', 'Britannia Pier'], ['arc_cinema', 'Arc Cinema'],
-  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth'], ['police_investigation_centre', 'Police Investigation Centre'], ['racecourse', 'Racecourse']];
+  ['venetian_waterways', 'Venetian Waterways'], ['newtown_archive', 'Newtown Archive'], ['iron_duke', 'The Iron Duke'], ['the_avenues', 'The Avenues'], ['harbour_mouth', 'Harbour Mouth'], ['police_investigation_centre', 'Police Investigation Centre'], ['racecourse', 'Racecourse'], ['versions_hatch', 'Versions Of Reality hatch']];
 function bigMap() {
   const el = document.createElement('div'); el.id = 'wmap'; el.className = 'wmap'; el.hidden = true; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Map of Great Yarmouth: tap to jump');
   el.innerHTML = `<canvas class="wmap-cv" aria-hidden="true"></canvas><div class="wmap-top"><span class="wmap-title">GREAT YARMOUTH // JUMP MAP</span><span class="wmap-hint">tap to jump · drag to pan · pinch / scroll to zoom</span></div>
@@ -739,8 +760,9 @@ function jumpTo(k) { if (!jumpStart()) return; fx.jPre = 1; try { return jumpTo0
 function jumpTo0(k) {
   /* v80: PJ table restored (v79 comment had swallowed the return, so every PJ jump fell through to the older extraJumps spots). [x, z, [lookX, lookZ, pitch?], raw]
      piers: spawn OUT on the plank deck past the root buildings, facing seaward; lodge: east of the Albert Square apron looking west-up at the 8-track orbit centre (-127.6, 443, y~24) */
-  const PJ = { britannia_pier: [250, -511, [330, -511, 0.05], true], wellington_pier: [112, 488, [214, 488, 0.05], true], youth_centre: [-66, -2380, [-66, -2412], true], lodge: [-66, 447, [-127.6, 443, 0.36]], the_stack: [153, -285, [156, -288], true], jellicoe_deck: [-66, -2689.6, [-40, -2689.6, 0.02, 6.45], 2] };
+  const PJ = { britannia_pier: [250, -511, [330, -511, 0.05], true], wellington_pier: [112, 488, [214, 488, 0.05], true], youth_centre: [-66, -2380, [-66, -2412], true], lodge: [-66, 447, [-127.6, 443, 0.36]], the_stack: [153, -285, [156, -288], true], jellicoe_deck: window.IE_V63_JELLICOE_OLD === true ? [-66, -2689.6, [-40, -2689.6, 0.02, 6.45], 2] : [-66, -2668.5, [-40, -2668.5, 0.02, 6.45], 2] };
   if (fx.pj81 && fx.pj81[k]) return teleport(...fx.pj81[k]); // v81 overrides (lodge eye-level, barnard road, beatty close, wellington nudge)
+  if (k === 'versions_hatch') { const hh = (fx.v65Info && fx.v65Info.hatch) || [-70, -447.5]; const a = warp(hh[0] + 16, hh[1]), f = warp(hh[0], hh[1]); return teleport(a.x, a.z, [f.x, f.z, 0.1]); }
   if (PJ[k]) return teleport(...PJ[k]); // v76: fixed spots up front (first jump no longer races the v69 extraJumps load)
   if (fx.extraJumps && fx.extraJumps[k]) { const [x, z, f, raw] = fx.extraJumps[k]; return teleport(x, z, f, raw); }
   if (k === 'plaza') { const [px, pz] = PZ(); return teleport(px, pz + 22, [px, pz - 6]); }
@@ -900,7 +922,7 @@ export function updateWorldFX(t, dt) {
     fx.rain.pts.geometry.attributes.position.needsUpdate = true; }
   if (fx.skyMesh) fx.skyMesh.position.copy(CAM.position);
   if (fx.feature) { const f = fx.feature; f.grp.position.y = f.y0 + (RED ? 0 : Math.sin(t * 0.8) * 1.2); f.grp.lookAt(CAM.position.x, f.grp.position.y, CAM.position.z);
-    const on = window.JX && JX.playing && JX.current && JX.current.id === f.track; f.frMat.opacity = on ? 0.6 + 0.4 * (window.__beat ? __beat() : 1) : 0.75 + 0.2 * Math.sin(t * 2); f.glow.material.opacity = on ? 0.25 : 0.12; }
+    const on = window.JX && JX.playing && JX.current && JX.current.id === f.track; f.frMat.opacity = on ? 0.6 + 0.4 * (window.__beat ? __beat() : 1) : 0.75 + 0.2 * Math.sin(t * 2); f.glow.material.opacity = on ? 0.08 : 0.05; } /* v102: dimmer aura so card text stays sharp */
   if (fx.chunks && t - (fx.cullT || 0) > 0.25) { fx.cullT = t; const far = LOW ? 900 : 1800, edge = LOW ? 0 : 700; // distance culling per 320 m chunk
     for (const c of fx.chunks) { const d = Math.hypot(c.c.x - P.pos.x, c.c.z - P.pos.z) - c.r; c.o[0].visible = d < far; if (c.edge) c.edge.visible = d < edge; } }
   if (fx.policeBar) fx.policeBar.material.color.setHex(Math.floor(t * 3) % 2 ? 0x3b7bff : 0xff3b3b);
@@ -925,6 +947,7 @@ export function updateWorldFX(t, dt) {
   if (!window.__trainRiding && t - (fx.unT || 0) > 0.5) { fx.unT = t; const C = window.__collide; if (C && C(P.pos.x, P.pos.z, 0.1) && solidAt(P.pos.x, P.pos.z) && (fx.stuckN = (fx.stuckN || 0) + 1) > 3) { fx.stuckN = 0; const [nx, nz] = openNear(P.pos.x, P.pos.z); if (nx !== P.pos.x || nz !== P.pos.z) { P.pos.x = nx; P.pos.z = nz; fx.unstuck = (fx.unstuck || 0) + 1; } } else if (C && !solidAt(P.pos.x, P.pos.z)) fx.stuckN = 0; }
   if (fx.v80) { try { fx.v80.update(t, dt); } catch (e) { worldErr('v80', e); fx.v80 = null; } }
   if (fx.v81) { try { fx.v81.update(t, dt); } catch (e) { worldErr('v81', e); fx.v81 = null; } }
+  if (fx.v87) { try { fx.v87.update(t, dt); } catch (e) { worldErr('v87', e); fx.v87 = null; } }
   if (fx.train) { try { fx.train.update(t, dt); } catch (e) { worldErr('seafront train', e); fx.train = null; } }
   if (fx.pres) { try { fx.pres.update(t, dt); } catch (e) { console.warn('presence', e); fx.pres = null; } }
   if (fx.gulls) { try { fx.gulls.update(t, dt, fx.env && fx.env.state ? fx.env.state.day : 0.5); } catch (e) { worldErr('gulls', e); fx.gulls = null; } }
