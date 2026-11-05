@@ -34,7 +34,7 @@
   class YouTubeSource {
     constructor(box) { this.box = box; this.p = null; this.state = -1; }
     async load(t) {
-      const id = ytId(t.youtube_url); this.box.hidden = false; document.body.classList.add('yt-on'); this.box.classList.remove('min', 'closed'); document.body.classList.remove('yt-closed'); document.body.classList.remove('yt-min'); for (const k of ['top', 'left', 'right', 'bottom']) this.box.style.removeProperty(k); // a new screen replaces the track and shows the panel again
+      const id = ytId(t.youtube_url); const keep = this.box.classList.contains('closed') || this.box.classList.contains('min') || document.body.classList.contains('yt-closed') || document.body.classList.contains('yt-min'); this.box.hidden = false; document.body.classList.add('yt-on'); if (!keep) for (const k of ['top', 'left', 'right', 'bottom']) this.box.style.removeProperty(k); // v106: closed stays closed, mini stays mini across track changes (only the video swaps); expand/stop buttons unchanged
       await loadYT();
       if (!this.p) {
         await new Promise(res => {
