@@ -28,20 +28,27 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     window.JX ? JX.load().then(go).catch(() => {}) : 0; return m; };
   const FICTION = 'FICTION \u00b7 JHIOS world art \u00b7 not a real venue or facility';
   const fiction = (g, x, y, z, ry) => board(g, FICTION, 4.4, 0.5, x, y, z, ry, '#06140c', '#3dff9a');
-  const music = { play(id) { const J = window.JX; if (!J) return; J.load().then(() => { const t = J.tracks.find(q => q.id === id); if (t) { J.play(t, [t]); info.track = id; } }).catch(() => {}); },
-    stop() { const J = window.JX; if (J && J.playing && J.toggle) J.toggle(); info.track = null; } };
+  /* v109: room owns only the track it started; stop/pause never kills a visitor-picked song.
+     Auto-loop listens for JX 'state' pause vs natural end — deliberate pause must stick. */
+  const music = { owned: null, hold: 0,
+    play(id) { const J = window.JX; if (!J) return; J.load().then(() => { const t = J.tracks.find(q => q.id === id); if (t) { music.owned = id; music.hold = 0; info.track = id; J.play(t, [t]); } }).catch(() => {}); },
+    stop() { const J = window.JX; if (J && music.owned && J.current && J.current.id === music.owned && J.playing && J.toggle) J.toggle(); music.owned = null; music.hold = 0; info.track = null; },
+    bind() { const J = window.JX; if (!J || !J.on || music._bound) return; music._bound = 1; J.on('state', d => { if (!music.owned || !d || !d.track || d.track.id !== music.owned) return; if (!d.playing) music.hold = 1; else music.hold = 0; }); } };
   const R = {}; let cur = null, busy = 0;
   const fadeOn = () => { const f = fx.bm && fx.bm.fade; if (f) { f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } };
   // ground override: first in the list, only answers while inside a room
   (window.__groundParts = window.__groundParts || []).unshift((x, z) => cur ? FY : null);
   let exitT = 0; function enterRoom(key) { const r = R[key]; if (!r || cur || busy) return; busy = 1; try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch (_) {} fadeOn(); info.enters++;
-    setTimeout(() => { r.from = [P.pos.x, P.pos.z]; cur = r; info.inside = key; P.pos.set(r.spawn[0], FY + 1.7, r.spawn[1]); P.yaw = r.yaw; P.pitch = 0.02;
+    setTimeout(() => { music.bind(); r.from = [P.pos.x, P.pos.z]; cur = r; info.inside = key; P.pos.set(r.spawn[0], FY + 1.7, r.spawn[1]); P.yaw = r.yaw; P.pitch = 0.02;
       fx.clear = fx.clear || []; r.clr = [r.spawn[0], r.spawn[1], 40]; fx.clear.push(r.clr); // collider swap: world solids off, room clamp on
       if (r.track) music.play(r.track); fx.cullT = 0; busy = 0; }, 180); }
+  /* v109: clear interior state WITHOUT moving the player — used by map teleport so outdoor jumps actually land */
+  function clearRoomState() { const r = cur; if (!r) return false; music.stop(); cur = null; info.inside = null; if (fx.clear && r.clr) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
+    if (r.ui) r.ui.style.display = 'none'; for (const k in R) R[k].g.visible = false; btn.style.display = 'none'; act = null; busy = 0; exitT = performance.now(); fx.cullT = 0; return true; }
   function exitRoom() { const r = cur; if (!r || busy) return; busy = 1; fadeOn(); info.exits++;
     setTimeout(() => { music.stop(); const o = r.out(); cur = null; info.inside = null; if (fx.clear) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
       P.pos.set(o[0], 1.7 + (o[3] || 0), o[1]); P.yaw = Math.atan2(-(o[2][0] - o[0]), -(o[2][1] - o[1])); P.pitch = 0.05; fx.cullT = 0; busy = 0; exitT = performance.now(); btn.style.display = 'none'; }, 180); }
-  fx.enterRoom = enterRoom; fx.exitRoom = exitRoom;
+  fx.enterRoom = enterRoom; fx.exitRoom = exitRoom; fx.clearRoomState = clearRoomState;
   // prompt: high z so HUD/player never steal the tap; Enter / F / tap
   let btn = document.getElementById('v87act');
   if (!btn) { btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; document.body.appendChild(btn); }
@@ -247,7 +254,9 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       if (r.crowd) for (const [p, ph] of r.crowd) p.position.y = 0.08 * Math.abs(Math.sin(t * 4.2 + ph));
       if (r.figs) for (const [p, ph, a0, fr, aL, aR] of r.figs) { const a = a0 + t * 0.15; p.position.set(Math.cos(a) * fr, 0.12 * Math.abs(Math.sin(t * 3.6 + ph)), Math.sin(a) * fr); p.rotation.y = -a - Math.PI / 2 + 0.3 * Math.sin(t * 1.8 + ph); aL.rotation.z = -0.6 - 0.7 * Math.abs(Math.sin(t * 3.6 + ph)); aR.rotation.z = 0.6 + 0.7 * Math.abs(Math.sin(t * 3.6 + ph + 1)); }
       if (r.lasers && r.laserG.visible) for (const [p, i] of r.lasers) { p.rotation.z = 0.95 * Math.sin(t * 0.9 + i * 0.7); p.rotation.x = -1.1 + 0.45 * Math.sin(t * 0.55 + i * 1.3); }
-      if (r.loop && window.JX && JX.current && JX.current.id === r.track && !JX.playing && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
+      /* v109: only re-queue after a natural end (hold cleared / track dropped), never override deliberate pause */
+      if (r.loop && music.owned === r.track && window.JX && JX.current && JX.current.id === r.track && !JX.playing && !music.hold && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
+      else if (r.loop && music.owned === r.track && window.JX && (!JX.current || JX.current.id !== r.track) && !music.hold && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < (r.exitR || 3.8));
       if (r.key === 'viper' && r.evAt && Math.hypot(P.pos.x - r.evAt[0], P.pos.z - r.evAt[1]) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
       else if (near) show('EXIT — tap / Enter / F', exitRoom); else btn.style.display = 'none'; return; }
@@ -255,5 +264,5 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const k in R) { const d = R[k].door && R[k].door(); if (d && Math.hypot(P.pos.x - d[0], P.pos.z - d[1]) < d[2] && P.pos.y < 12) { hit = R[k]; break; } }
     if (hit && !tipOwns()) show(hit.label, () => enterRoom(hit.key)); else if (!cur) btn.style.display = 'none';
   }
-  return { info, update, enterRoom, exitRoom };
+  return { info, update, enterRoom, exitRoom, clearRoomState };
 }
