@@ -72,3 +72,7 @@ body.touch .wcredits{font-size:.5rem;opacity:.8}
 .wjump-sp{width:18px;height:18px;border:3px solid rgba(0,255,157,.3);border-top-color:#00ff9d;border-radius:50%;animation:wjsp .7s linear infinite}
 @keyframes wjsp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.wjump-sp{animation:none}}
+
+/* v113: CSS3D stage under transparent WebGL canvas */
+body.viper-stage-on #scene{background:transparent!important}
+#v87stage-css3d{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}

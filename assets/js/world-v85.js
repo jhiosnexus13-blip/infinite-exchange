@@ -23,7 +23,7 @@ export function initV85({ T, S, LBL, LITE, warp, fx }) {
     ls.forEach((l, i) => { let s = px; g.font = `bold ${s}px Arial, sans-serif`; while (g.measureText(l).width > c.width * 0.92 && s > 8) g.font = `bold ${--s}px Arial, sans-serif`; g.fillText(l, c.width / 2, c.height * (i + 0.5) / ls.length); });
     const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: new T.CanvasTexture(c), side: T.DoubleSide })); const p = warp(e, n); m.position.set(p.x, y, p.z); m.rotation.y = ry; grp.add(m); return m; };
   const W_ = -Math.PI / 2; // board facing west (Marine Parade side)
-  fetch('/assets/data/v85-geo.json?v=107').then(r => r.json()).then(D => {
+  fetch('/assets/data/v85-geo.json?v=108').then(r => r.json()).then(D => {
     const run = (k, f) => { try { f(); } catch (e) { console.warn('v85 ' + k, e); info[k + 'Err'] = String(e); } };
     run('wheel', () => wheel(D)); if (window.IE_V85_JOYLAND !== false) run('joyland', () => joyland(D)); run('waterways', () => waterways(D)); run('parade', () => parade(D)); if (window.IE_V85_NELSON_OLD !== true) run('nelson', () => nelson(D));
     grp.traverse(o => { if (o.isMesh && !o.userData.hit) o.raycast = () => {}; });

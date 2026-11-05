@@ -9,7 +9,8 @@
    1. CERN: Hadron-style ring + Shiva portal face (fiction) + Versions Of Reality track.
    2. Dance dream: cover-art ring (Dance Of The Ancients vibe), fire, dusk void.
    3. Viper: venue-like club (logo, stage, LEDs, speakers), DJ booth, strobe, events wall.
-   Track picks (tracks.json): cern-versions-of-reality, pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation (dance, v103 album-only), manhattan-shuffle-dub-dance-version (viper). */
+   Track picks (tracks.json): cern-versions-of-reality, pavamana-mantra-i-om-asato-ma-sadgamaya-sanskrit-invocation (dance, v103 album-only), manhattan-shuffle-dub-dance-version (viper).
+   v113: Viper stage widescreen YouTube CSS3D (JUjbods6cWw) behind DJ — stage IS the room soundtrack (no Manhattan Shuffle). IE_V87_VIPER_STAGE=false disables. */
 export function initV87({ T, S, LITE, warp, fx, P }) {
   if (fx.v87 && fx.v87Info && fx.v87Info.ready) return fx.v87;
   const info = { rooms: [], inside: null, enters: 0, exits: 0, ready: false }; fx.v87Info = info; window.__fx87 = info;
@@ -28,20 +29,188 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     window.JX ? JX.load().then(go).catch(() => {}) : 0; return m; };
   const FICTION = 'FICTION \u00b7 JHIOS world art \u00b7 not a real venue or facility';
   const fiction = (g, x, y, z, ry) => board(g, FICTION, 4.4, 0.5, x, y, z, ry, '#06140c', '#3dff9a');
-  const music = { play(id) { const J = window.JX; if (!J) return; J.load().then(() => { const t = J.tracks.find(q => q.id === id); if (t) { J.play(t, [t]); info.track = id; } }).catch(() => {}); },
-    stop() { const J = window.JX; if (J && J.playing && J.toggle) J.toggle(); info.track = null; } };
+  /* v109: room owns only the track it started; stop/pause never kills a visitor-picked song.
+     Auto-loop listens for JX 'state' pause vs natural end — deliberate pause must stick. */
+  const music = {
+    owned: null, hold: 0, token: 0,
+    play(id) {
+      const J = window.JX; if (!J) return;
+      const token = ++music.token;
+      J.load().then(() => {
+        if (token !== music.token || !cur || cur.track !== id) return;
+        const track = J.tracks.find(q => q.id === id); if (!track) return;
+        music.owned = id; music.hold = 0; info.track = id;
+        J.play(track, [track]);
+      }).catch(() => {});
+    },
+    stop() {
+      const J = window.JX, id = music.owned;
+      ++music.token; music.owned = null; music.hold = 0; info.track = null;
+      if (J && id && J.current && J.current.id === id && J.playing && J.toggle) J.toggle();
+    },
+    bind() {
+      const J = window.JX; if (!J || !J.on || music._bound) return;
+      music._bound = 1;
+      J.on('state', d => {
+        if (!music.owned || !d || !d.track) return;
+        if (d.track.id !== music.owned) {
+          ++music.token; music.owned = null; music.hold = 0; info.track = null;
+          return;
+        }
+        music.hold = d.playing ? 0 : 1;
+      });
+      J.on('ended', d => {
+        const id = music.owned, token = music.token;
+        if (!id || !cur || !cur.loop || cur.track !== id || !d || !d.track || d.track.id !== id) return;
+        Promise.resolve().then(() => {
+          if (token === music.token && music.owned === id && cur && cur.loop && cur.track === id) music.play(id);
+        });
+      });
+    }
+  };
+
+  /* v113: Viper stage widescreen — CSS3D YouTube iframe behind DJ. Stage owns in-room audio; manhattan-shuffle is not started. */
+  const STAGE_YT = 'JUjbods6cWw';
+  const stage = {
+    on: false, ready: false, css: null, scene: null, obj: null, hole: null, iframe: null, fail: null, pausedJx: null, ytReady: false,
+    async ensure() {
+      if (window.IE_V87_VIPER_STAGE === false) return false;
+      if (stage.ready) return true;
+      try {
+        const mod = await import('three/addons/renderers/CSS3DRenderer.js');
+        const { CSS3DRenderer } = mod;
+        const css = new CSS3DRenderer();
+        css.setSize(innerWidth, innerHeight);
+        css.domElement.id = 'v87stage-css3d';
+        css.domElement.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;display:none;overflow:hidden';
+        const canvas = document.getElementById('scene');
+        if (canvas && canvas.parentNode) canvas.parentNode.insertBefore(css.domElement, canvas);
+        else document.body.appendChild(css.domElement);
+        if (canvas) { canvas.style.zIndex = '1'; canvas.style.background = 'transparent'; }
+        stage.css = css; stage.scene = new T.Scene();
+        window.__css3dResize = (w, h) => { try { css.setSize(w || innerWidth, h || innerHeight); } catch (_) {} };
+        window.__css3dRender = (cam) => {
+          if (!stage.on || !css || !stage.scene || !cam) return;
+          try { cam.updateMatrixWorld(); css.render(stage.scene, cam); } catch (_) {}
+        };
+        stage.ready = true;
+      } catch (e) { console.warn('viper stage CSS3D', e); stage.ready = false; }
+      return stage.ready;
+    },
+    build(r) {
+      if (!r || r.stageBuilt || window.IE_V87_VIPER_STAGE === false) return;
+      const g = r.g, SW = 8, SH = 4.5, sx = 0, sy = 3.2, sz = -8.65;
+      // bezel sitting just behind the punch plane
+      box(g, 0x1a0a12, SW + 0.4, SH + 0.4, 0.1, sx, sy, sz - 0.06);
+      box(g, 0xff2e4a, SW + 0.5, 0.07, 0.07, sx, sy + SH / 2 + 0.14, sz);
+      box(g, 0xff2e4a, SW + 0.5, 0.07, 0.07, sx, sy - SH / 2 - 0.14, sz);
+      // Proven punch: NoBlending + opacity 0 writes transparent pixels + depth (colorWrite:false alone is unreliable on mobile GPUs)
+      const holeMat = new T.MeshBasicMaterial({ color: 0x000000, opacity: 0, transparent: true, blending: T.NoBlending, depthWrite: true, fog: false, toneMapped: false });
+      const hole = new T.Mesh(new T.PlaneGeometry(SW, SH), holeMat);
+      hole.position.set(sx, sy, sz); hole.renderOrder = 1; g.add(hole); stage.hole = hole; r.stageHole = hole;
+      const fail = new T.Mesh(new T.PlaneGeometry(SW, SH), mat(0x120810));
+      fail.position.set(sx, sy, sz + 0.02); fail.visible = false; g.add(fail); stage.fail = fail;
+      r.stageBuilt = true; r.stagePos = { sx, sy, sz, SW, SH };
+    },
+    ytCmd(func, args) {
+      try {
+        const win = stage.iframe && stage.iframe.contentWindow;
+        if (!win) return;
+        win.postMessage(JSON.stringify({ event: 'command', func, args: args || [] }), '*');
+      } catch (_) {}
+    },
+    pauseJx() {
+      const J = window.JX;
+      stage.pausedJx = null;
+      if (!J) return;
+      try {
+        if (J.playing && J.current) { stage.pausedJx = J.current.id; if (J.toggle) J.toggle(); }
+      } catch (_) {}
+    },
+    resumeJx() {
+      const J = window.JX, id = stage.pausedJx;
+      stage.pausedJx = null;
+      if (!J || !id) return;
+      try {
+        // Only resume if still the same track and currently paused (visitor may have picked something else)
+        if (J.current && J.current.id === id && !J.playing && J.toggle) J.toggle();
+      } catch (_) {}
+    },
+    async show(r) {
+      if (window.IE_V87_VIPER_STAGE === false || !r || r.key !== 'viper') return;
+      stage.build(r);
+      const ok = await stage.ensure();
+      if (!ok || !stage.css || !stage.scene) { if (stage.fail) stage.fail.visible = true; console.warn('viper stage: CSS3D unavailable'); return; }
+      if (stage.obj) { try { stage.scene.remove(stage.obj); } catch (_) {} stage.obj = null; }
+      if (stage.iframe) { try { stage.iframe.src = 'about:blank'; } catch (_) {} stage.iframe = null; }
+      const { sx, sy, sz, SW, SH } = r.stagePos;
+      const Wpx = 800, Hpx = 450; // 16:9
+      const wrap = document.createElement('div');
+      wrap.style.cssText = `width:${Wpx}px;height:${Hpx}px;background:#050208;overflow:hidden;border:0;box-sizing:border-box;`;
+      const iframe = document.createElement('iframe');
+      iframe.title = 'Viper Room GY stage set';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.style.cssText = 'width:100%;height:100%;border:0;display:block;pointer-events:none';
+      // Start muted for autoplay policy, then unMute+play via API (enter was a user gesture; JX also uses delayed play successfully)
+      iframe.src = `https://www.youtube-nocookie.com/embed/${STAGE_YT}?autoplay=1&mute=1&controls=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${STAGE_YT}&enablejsapi=1&origin=${encodeURIComponent(location.origin)}`;
+      wrap.appendChild(iframe);
+      const { CSS3DObject } = await import('three/addons/renderers/CSS3DRenderer.js');
+      const obj = new CSS3DObject(wrap);
+      wrap.style.pointerEvents = 'none';
+      // World position matching room group (ox, FY, oz) + local screen
+      obj.position.set(r.ox + sx, FY + sy, r.oz + sz);
+      obj.scale.set(SW / Wpx, SH / Hpx, 1);
+      stage.scene.add(obj);
+      stage.obj = obj; stage.iframe = iframe; stage.ytReady = false;
+      // Pause bottom-player so Manhattan / visitor track does not fight the stage set
+      stage.pauseJx();
+      // Bump room music token so a late music.play from a prior enter cannot reclaim
+      try { music.token++; music.owned = null; music.hold = 0; info.track = null; } catch (_) {}
+      try { if (typeof window.__viperStageClear === 'function') window.__viperStageClear(true); } catch (_) {}
+      document.body.classList.add('viper-stage-on');
+      stage.css.domElement.style.display = 'block';
+      stage.on = true;
+      if (stage.fail) stage.fail.visible = false;
+      info.stage = { yt: STAGE_YT, muted: false, audio: 'stage' };
+      // Force play + unmute shortly after iframe loads (and again once for slow mobiles)
+      const kick = () => { stage.ytCmd('playVideo'); stage.ytCmd('unMute'); stage.ytCmd('setVolume', [100]); };
+      iframe.addEventListener('load', () => { stage.ytReady = true; setTimeout(kick, 200); setTimeout(kick, 1200); });
+      setTimeout(kick, 800);
+      setTimeout(kick, 2500);
+    },
+    hide() {
+      const was = stage.on;
+      stage.on = false;
+      if (stage.css) stage.css.domElement.style.display = 'none';
+      if (stage.obj && stage.scene) { try { stage.scene.remove(stage.obj); } catch (_) {} stage.obj = null; }
+      if (stage.iframe) { try { stage.ytCmd('pauseVideo'); stage.iframe.src = 'about:blank'; } catch (_) {} stage.iframe = null; }
+      if (stage.fail) stage.fail.visible = false;
+      try { if (typeof window.__viperStageClear === 'function') window.__viperStageClear(false); } catch (_) {}
+      document.body.classList.remove('viper-stage-on');
+      info.stage = null;
+      if (was) stage.resumeJx();
+    }
+  };
+  // Warm CSS3D import so first Viper enter is snappy / failures surface early
+  if (window.IE_V87_VIPER_STAGE !== false) setTimeout(() => { stage.ensure().catch(() => {}); }, 1200);
+
   const R = {}; let cur = null, busy = 0;
   const fadeOn = () => { const f = fx.bm && fx.bm.fade; if (f) { f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } };
   // ground override: first in the list, only answers while inside a room
   (window.__groundParts = window.__groundParts || []).unshift((x, z) => cur ? FY : null);
   let exitT = 0; function enterRoom(key) { const r = R[key]; if (!r || cur || busy) return; busy = 1; try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch (_) {} fadeOn(); info.enters++;
-    setTimeout(() => { r.from = [P.pos.x, P.pos.z]; cur = r; info.inside = key; P.pos.set(r.spawn[0], FY + 1.7, r.spawn[1]); P.yaw = r.yaw; P.pitch = 0.02;
+    setTimeout(() => { music.bind(); r.from = [P.pos.x, P.pos.z]; cur = r; info.inside = key; P.pos.set(r.spawn[0], FY + 1.7, r.spawn[1]); P.yaw = r.yaw; P.pitch = 0.02;
       fx.clear = fx.clear || []; r.clr = [r.spawn[0], r.spawn[1], 40]; fx.clear.push(r.clr); // collider swap: world solids off, room clamp on
-      if (r.track) music.play(r.track); fx.cullT = 0; busy = 0; }, 180); }
+      if (key === 'viper' && window.IE_V87_VIPER_STAGE !== false) { stage.show(r); } else if (r.track) music.play(r.track); fx.cullT = 0; busy = 0; }, 180); }
+  /* v109: clear interior state WITHOUT moving the player — used by map teleport so outdoor jumps actually land */
+  function clearRoomState() { const r = cur; if (!r) return false; stage.hide(); music.stop(); cur = null; info.inside = null; if (fx.clear && r.clr) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
+    if (r.ui) r.ui.style.display = 'none'; for (const k in R) R[k].g.visible = false; btn.style.display = 'none'; act = null; busy = 0; exitT = performance.now(); fx.cullT = 0; return true; }
   function exitRoom() { const r = cur; if (!r || busy) return; busy = 1; fadeOn(); info.exits++;
-    setTimeout(() => { music.stop(); const o = r.out(); cur = null; info.inside = null; if (fx.clear) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
+    setTimeout(() => { stage.hide(); music.stop(); const o = r.out(); cur = null; info.inside = null; if (fx.clear) { const i = fx.clear.indexOf(r.clr); if (i >= 0) fx.clear.splice(i, 1); }
       P.pos.set(o[0], 1.7 + (o[3] || 0), o[1]); P.yaw = Math.atan2(-(o[2][0] - o[0]), -(o[2][1] - o[1])); P.pitch = 0.05; fx.cullT = 0; busy = 0; exitT = performance.now(); btn.style.display = 'none'; }, 180); }
-  fx.enterRoom = enterRoom; fx.exitRoom = exitRoom;
+  fx.enterRoom = enterRoom; fx.exitRoom = exitRoom; fx.clearRoomState = clearRoomState;
   // prompt: high z so HUD/player never steal the tap; Enter / F / tap
   let btn = document.getElementById('v87act');
   if (!btn) { btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v87act'; document.body.appendChild(btn); }
@@ -155,16 +324,18 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       const armR = new T.Group(); armR.position.set(0.4, 0.68, 0); up.add(armR); box(armR, C, 0.16, 0.6, 0.16, 0, 0.3, 0);
       r.dj = { up, armL, armR, decks }; }
     // NOW PLAYING strip on booth front
-    board(g, 'NOW PLAYING \u00b7 MANHATTAN SHUFFLE (DUB DANCE)', 5.2, 0.32, 0, 1.25, -4.76, 0, '#07020a', '#55ffcc');
+    board(g, 'NOW PLAYING \u00b7 VIPER STAGE SET (wall)', 5.6, 0.32, 0, 1.25, -4.76, 0, '#07020a', '#55ffcc');
     // speakers stacks either side of stage
     for (const s of [-9.5, 9.5]) { box(g, 0x2a2a34, 1.8, 3.6, 1.6, s, 1.8, -7.4); box(g, 0x777788, 1.2, 1.2, 0.05, s, 2.4, -6.58); box(g, 0x777788, 0.7, 0.7, 0.05, s, 1.0, -6.58); box(g, 0xff2e4a, 1.8, 0.06, 0.06, s, 3.62, -6.58); }
-    // back wall: logo high and clear (v102: nothing overlaps it), title board above
-    const logoM = new T.Mesh(new T.PlaneGeometry(7.2, 3.1), mat(0x220810)); logoM.position.set(0, 3.55, NW + 0.05); g.add(logoM);
-    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=107').then(r => r.text()).then(b64 => {
+    // v112: stage widescreen opening on back wall; logo moved to west side panel; title above screen
+    const logoM = new T.Mesh(new T.PlaneGeometry(4.2, 1.8), mat(0x220810)); logoM.position.set(-8.6, 4.0, NW + 0.05); g.add(logoM); r.stageLogo = logoM;
+    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=112').then(rr => rr.text()).then(b64 => {
       const u = b64.trim().startsWith('data:') ? b64.trim() : 'data:image/png;base64,' + b64.trim();
       new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; logoM.material = new T.MeshBasicMaterial({ map: tx, transparent: true, fog: false, toneMapped: false }); });
     }).catch(() => {});
-    board(g, 'VIPER ROOM GY', 6.5, 0.7, 0, 5.5, NW + 0.04, 0, '#07020a', '#ff2e4a');
+    board(g, 'VIPER ROOM GY', 5.2, 0.55, 0, 5.7, NW + 0.04, 0, '#07020a', '#ff2e4a');
+    board(g, 'STAGE SET \u00b7 JUjbods6cWw', 5.2, 0.35, 0, 0.75, -8.4, 0, '#07020a', '#55ffcc');
+    stage.build(r);
     const ev = board(g, 'EVENTS \u00b7 toon.fm/viper-room-gy\n(tap wall / Enter)', 5.6, 1.7, -EW, 2.6, -1, Math.PI / 2, '#120308', '#ff8a9a');
     art(g, 'manhattan-shuffle-dub-dance-version', 5.6, EW, 2.9, -1, -Math.PI / 2);
     fiction(g, 0, 4.8, SW, Math.PI);
@@ -247,7 +418,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       if (r.crowd) for (const [p, ph] of r.crowd) p.position.y = 0.08 * Math.abs(Math.sin(t * 4.2 + ph));
       if (r.figs) for (const [p, ph, a0, fr, aL, aR] of r.figs) { const a = a0 + t * 0.15; p.position.set(Math.cos(a) * fr, 0.12 * Math.abs(Math.sin(t * 3.6 + ph)), Math.sin(a) * fr); p.rotation.y = -a - Math.PI / 2 + 0.3 * Math.sin(t * 1.8 + ph); aL.rotation.z = -0.6 - 0.7 * Math.abs(Math.sin(t * 3.6 + ph)); aR.rotation.z = 0.6 + 0.7 * Math.abs(Math.sin(t * 3.6 + ph + 1)); }
       if (r.lasers && r.laserG.visible) for (const [p, i] of r.lasers) { p.rotation.z = 0.95 * Math.sin(t * 0.9 + i * 0.7); p.rotation.x = -1.1 + 0.45 * Math.sin(t * 0.55 + i * 1.3); }
-      if (r.loop && window.JX && JX.current && JX.current.id === r.track && !JX.playing && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
+      // Natural-end replay is handled by music.bind(); paused or replaced playback is left alone.
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < (r.exitR || 3.8));
       if (r.key === 'viper' && r.evAt && Math.hypot(P.pos.x - r.evAt[0], P.pos.z - r.evAt[1]) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
       else if (near) show('EXIT — tap / Enter / F', exitRoom); else btn.style.display = 'none'; return; }
@@ -255,5 +426,5 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const k in R) { const d = R[k].door && R[k].door(); if (d && Math.hypot(P.pos.x - d[0], P.pos.z - d[1]) < d[2] && P.pos.y < 12) { hit = R[k]; break; } }
     if (hit && !tipOwns()) show(hit.label, () => enterRoom(hit.key)); else if (!cur) btn.style.display = 'none';
   }
-  return { info, update, enterRoom, exitRoom };
+  return { info, update, enterRoom, exitRoom, clearRoomState };
 }
