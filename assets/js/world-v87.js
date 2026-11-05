@@ -30,10 +30,43 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
   const fiction = (g, x, y, z, ry) => board(g, FICTION, 4.4, 0.5, x, y, z, ry, '#06140c', '#3dff9a');
   /* v109: room owns only the track it started; stop/pause never kills a visitor-picked song.
      Auto-loop listens for JX 'state' pause vs natural end — deliberate pause must stick. */
-  const music = { owned: null, hold: 0,
-    play(id) { const J = window.JX; if (!J) return; J.load().then(() => { const t = J.tracks.find(q => q.id === id); if (t) { music.owned = id; music.hold = 0; info.track = id; J.play(t, [t]); } }).catch(() => {}); },
-    stop() { const J = window.JX; if (J && music.owned && J.current && J.current.id === music.owned && J.playing && J.toggle) J.toggle(); music.owned = null; music.hold = 0; info.track = null; },
-    bind() { const J = window.JX; if (!J || !J.on || music._bound) return; music._bound = 1; J.on('state', d => { if (!music.owned || !d || !d.track || d.track.id !== music.owned) return; if (!d.playing) music.hold = 1; else music.hold = 0; }); } };
+  const music = {
+    owned: null, hold: 0, token: 0,
+    play(id) {
+      const J = window.JX; if (!J) return;
+      const token = ++music.token;
+      J.load().then(() => {
+        if (token !== music.token || !cur || cur.track !== id) return;
+        const track = J.tracks.find(q => q.id === id); if (!track) return;
+        music.owned = id; music.hold = 0; info.track = id;
+        J.play(track, [track]);
+      }).catch(() => {});
+    },
+    stop() {
+      const J = window.JX, id = music.owned;
+      ++music.token; music.owned = null; music.hold = 0; info.track = null;
+      if (J && id && J.current && J.current.id === id && J.playing && J.toggle) J.toggle();
+    },
+    bind() {
+      const J = window.JX; if (!J || !J.on || music._bound) return;
+      music._bound = 1;
+      J.on('state', d => {
+        if (!music.owned || !d || !d.track) return;
+        if (d.track.id !== music.owned) {
+          ++music.token; music.owned = null; music.hold = 0; info.track = null;
+          return;
+        }
+        music.hold = d.playing ? 0 : 1;
+      });
+      J.on('ended', d => {
+        const id = music.owned, token = music.token;
+        if (!id || !cur || !cur.loop || cur.track !== id || !d || !d.track || d.track.id !== id) return;
+        Promise.resolve().then(() => {
+          if (token === music.token && music.owned === id && cur && cur.loop && cur.track === id) music.play(id);
+        });
+      });
+    }
+  };
   const R = {}; let cur = null, busy = 0;
   const fadeOn = () => { const f = fx.bm && fx.bm.fade; if (f) { f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } };
   // ground override: first in the list, only answers while inside a room
@@ -254,9 +287,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       if (r.crowd) for (const [p, ph] of r.crowd) p.position.y = 0.08 * Math.abs(Math.sin(t * 4.2 + ph));
       if (r.figs) for (const [p, ph, a0, fr, aL, aR] of r.figs) { const a = a0 + t * 0.15; p.position.set(Math.cos(a) * fr, 0.12 * Math.abs(Math.sin(t * 3.6 + ph)), Math.sin(a) * fr); p.rotation.y = -a - Math.PI / 2 + 0.3 * Math.sin(t * 1.8 + ph); aL.rotation.z = -0.6 - 0.7 * Math.abs(Math.sin(t * 3.6 + ph)); aR.rotation.z = 0.6 + 0.7 * Math.abs(Math.sin(t * 3.6 + ph + 1)); }
       if (r.lasers && r.laserG.visible) for (const [p, i] of r.lasers) { p.rotation.z = 0.95 * Math.sin(t * 0.9 + i * 0.7); p.rotation.x = -1.1 + 0.45 * Math.sin(t * 0.55 + i * 1.3); }
-      /* v109: only re-queue after a natural end (hold cleared / track dropped), never override deliberate pause */
-      if (r.loop && music.owned === r.track && window.JX && JX.current && JX.current.id === r.track && !JX.playing && !music.hold && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
-      else if (r.loop && music.owned === r.track && window.JX && (!JX.current || JX.current.id !== r.track) && !music.hold && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
+      // Natural-end replay is handled by music.bind(); paused or replaced playback is left alone.
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < (r.exitR || 3.8));
       if (r.key === 'viper' && r.evAt && Math.hypot(P.pos.x - r.evAt[0], P.pos.z - r.evAt[1]) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
       else if (near) show('EXIT — tap / Enter / F', exitRoom); else btn.style.display = 'none'; return; }

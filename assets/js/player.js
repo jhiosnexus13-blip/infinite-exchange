@@ -121,7 +121,7 @@
   function onEvt(e) {
     const t = cur(); if (!t) return;
     if (e === 'play') { bc && bc.postMessage({ playing: true, tab: tabId }); lastT = src.time; }
-    if (e === 'ended') return next(true);
+    if (e === 'ended') { emit('ended', { track: t }); return next(true); }
     if (e === 'error') { toast('Could not play “' + t.title + '” — skipping'); return setTimeout(() => next(true), 800); }
     if (e === 'blocked') toast('Tap play to start audio');
     if (e === 'timeupdate' && src && src.playing) {

@@ -4,6 +4,7 @@
    no Mainframe plugin. Phones: same geometry + boards; no heavy textures. */
 export function initV109Office({ T, S, LITE, warp, fx, P }) {
   const info = { ready: false, rooms: [], inside: null, unlocked: false, plan: 'v110-walkable' };
+  window.__jhiosOffice = info;
   if (window.IE_V109_OFFICE === false) { info.off = true; info.ready = true; return { info, update() {} }; }
 
   const PASS = String(window.IE_OFFICE_PASS || 'JHIOS-MAINFRAME'); // Joseph can override via window.IE_OFFICE_PASS
@@ -48,7 +49,7 @@ export function initV109Office({ T, S, LITE, warp, fx, P }) {
     { t: '║                                     ║', s: 22 },
     { t: '║  STATUS   · ONLINE                  ║', s: 24, c: '#7fe9ff' },
     { t: '║  FLEET    · 5 agents linked         ║', s: 24 },
-    { t: '║  PREVIEW  · v2-round2 /world?v=110  ║', s: 22 },
+    { t: '║  PREVIEW  · v2-round2 /world?v=111  ║', s: 22 },
     { t: '║  LIVE     · main locked (no promote)║', s: 22, c: '#ffcc4a' },
     { t: '╚═════════════════════════════════════╝', s: 26, b: 1 },
   ], 12, 4.4, 0, 2.8, 7.35, Math.PI, { cw: 900, ch: 520 });
@@ -144,7 +145,7 @@ export function initV109Office({ T, S, LITE, warp, fx, P }) {
   let modal = document.getElementById('v109pass');
   if (!modal) {
     modal = document.createElement('div'); modal.id = 'v109pass'; modal.hidden = true;
-    modal.style.cssText = 'position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.72);font-family:ui-monospace,monospace';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);font-family:ui-monospace,monospace';
     modal.innerHTML = `<form style="background:#020806;border:2px solid #3dff9a;border-radius:10px;padding:18px 20px;min-width:280px;max-width:92vw;box-shadow:0 0 24px rgba(61,255,154,.25)">
       <div style="color:#3dff9a;font-weight:700;margin-bottom:8px">JHIOS OFFICE // AUTH</div>
       <div style="color:#7fe9ff;font-size:12px;margin-bottom:12px">Authorized agents only. Visitors stay locked out.</div>
