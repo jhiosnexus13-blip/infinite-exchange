@@ -143,22 +143,26 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const hr = new T.Mesh(new T.RingGeometry(4.6, 6.2, 48), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.95, side: T.DoubleSide, toneMapped: false })); hr.rotation.x = -Math.PI / 2; hr.position.set(156, 0.12, -288); grp.add(hr);
     const hb = new T.Mesh(new T.CylinderGeometry(1.2, 4.6, 40, 24, 1, true), new T.MeshBasicMaterial({ color: 0x00ff9d, transparent: true, opacity: 0.18, depthWrite: false, side: T.DoubleSide, toneMapped: false })); hb.position.set(156, 20, -288); grp.add(hb);
     const hc = new T.Mesh(new T.CylinderGeometry(0.35, 0.35, 70, 12, 1, true), new T.MeshBasicMaterial({ color: 0x9dffd8, transparent: true, opacity: 0.45, depthWrite: false, toneMapped: false })); hc.position.set(156, 35, -288); grp.add(hc); } // v70: bigger plate/ring + tall light column so scouts spot the hatch
-  { const [e, n] = loc(52.604471, 1.736196); const TL = window.IE_V105_TOWER_LIFT != null ? +window.IE_V105_TOWER_LIFT : 22; /* v105: shaft raised 22 m so the tower clearly rises above the Arena podium */ AB(0xe7dcc6, 20, 36 + TL, 26, e - 4, n, (36 + TL) / 2); AB(0x4b4f55, 21, 0.8, 27, e - 4, n, 36.4 + TL); for (let y = 4; y < 35 + TL; y += 3.2) AB(0x2a2f38, 0.3, 1.6, 22, e + 6.1, n, y);  // v84 ONE REAL crown (05 drone + 06 360 aerial): every earlier crown gated; revert window.IE_V84_TOWER_OLD=true (restores v70/v74/v75/v76 stack)
-    const te = e - 4; if (window.IE_V84_TOWER_OLD !== true) { info.towerCrown = 'v84';
-      const gm = (geo, col, y, op = 1, de = 0, dn = 0, ry = Math.PI / 8) => { const m = new T.Mesh(geo, new T.MeshBasicMaterial({ color: col, fog: false, toneMapped: false, transparent: op < 1, opacity: op })); const w = warp(te + de, n + dn); m.position.set(w.x, y + TL, w.z); m.rotation.y = ry; grp.add(m); return m; };
-      const O = 8, R = 10.6, Y0 = 38.4, Y1 = 46.0, P0 = Y0 + TL, P1 = Y1 + TL; // octagon drum glazed band 38.4..46.0, cantilevered past the 20x26 shaft
-      gm(new T.CylinderGeometry(7.2, 7.2, 1.6, O), 0xe7dcc6, 37.6); // cream neck: square shaft -> octagon
+  { const [e, n] = loc(52.604471, 1.736196); const TL = window.IE_V105_TOWER_LIFT != null ? +window.IE_V105_TOWER_LIFT : 22; /* v105/v107: shaft stays tall (default +22 m) above Marina Centre + inland flatblock */ const SH = 36 + TL; AB(0xe7dcc6, 20, SH, 26, e - 4, n, SH / 2); AB(0x4b4f55, 21, 0.8, 27, e - 4, n, 36.4 + TL); for (let y = 4; y < 35 + TL; y += 3.2) AB(0x1a2a55, 0.35, 1.8, 22, e + 6.1, n, y); // seaward blue glass strip
+    // v107: navy corner pillars + arched cross-bracing on cream shaft (video audit)
+    for (const [de, dn] of [[10, 13], [10, -13], [-10, 13], [-10, -13]]) AB(0x152038, 1.1, SH, 1.1, e - 4 + de, n + dn, SH / 2);
+    for (let y = 6; y < SH - 8; y += 7) { for (const s of [-1, 1]) { AB(0x1a2f5a, 0.35, 0.45, 24, e - 4 + 10.2, n, y); AB(0x1a2f5a, 18, 0.45, 0.35, e - 4, n + s * 13.1, y); } // horizontal rings
+      AB(0x1a2f5a, 0.4, 5.2, 0.4, e - 4 + 9.5, n + 6, y + 2.4, 0.55); AB(0x1a2f5a, 0.4, 5.2, 0.4, e - 4 + 9.5, n - 6, y + 2.4, -0.55); } // diagonal braces on sea face
+    const te = e - 4; if (window.IE_V84_TOWER_OLD !== true) { info.towerCrown = 'v107hex';
+      const gm = (geo, col, y, op = 1, de = 0, dn = 0, ry = Math.PI / 6) => { const m = new T.Mesh(geo, new T.MeshBasicMaterial({ color: col, fog: false, toneMapped: false, transparent: op < 1, opacity: op })); const w = warp(te + de, n + dn); m.position.set(w.x, y + TL, w.z); m.rotation.y = ry; grp.add(m); return m; };
+      const O = 6, R = 8.4, Y0 = 38.4, Y1 = 46.0, P0 = Y0 + TL, P1 = Y1 + TL; // v107: hexagonal observation band (not fat octagon stump), slim cantilever
+      gm(new T.CylinderGeometry(7.2, 7.2, 1.6, O), 0xe7dcc6, 37.6); // cream neck: square shaft -> hex
       gm(new T.CylinderGeometry(R + 0.4, 7.4, 1.0, O), 0xeeeae2, Y0 - 0.5); // flat light cantilever underside
-      gm(new T.CylinderGeometry(R - 0.35, R - 0.35, Y1 - Y0, O), 0x1b2c44, (Y0 + Y1) / 2); // tinted dark interior glass on all 8 facets
+      gm(new T.CylinderGeometry(R - 0.35, R - 0.35, Y1 - Y0, O), 0x1b2c44, (Y0 + Y1) / 2); // tinted dark interior glass on all 6 facets
       for (const [y, h] of [[Y0 + 0.15, 0.3], [Y0 + 5.4, 0.35], [Y1 - 0.15, 0.3]]) gm(new T.CylinderGeometry(R, R, h, O), 0x1d4fd0, y); // bold blue transoms (short top panes over tall panes)
-      { const W = warp(te, n), cor = []; for (let i = 0; i < O; i++) { const t = i / O * Math.PI * 2 + Math.PI / 8; cor.push([Math.sin(t), Math.cos(t)]); } // octagon corners in the drum's own frame (three cylinder: x=sin, z=cos, + rotation pi/8)
+      { const W = warp(te, n), cor = []; for (let i = 0; i < O; i++) { const t = i / O * Math.PI * 2 + Math.PI / 6; cor.push([Math.sin(t), Math.cos(t)]); } // hex corners (cylinder + rotation pi/6)
         const pil = (x, z, w, col, y, h) => { const m = new T.Mesh(new T.BoxGeometry(w, h, w), new T.MeshBasicMaterial({ color: col, fog: false, toneMapped: false })); m.position.set(W.x + x, y, W.z + z); grp.add(m); return m; };
         for (let i = 0; i < O; i++) { const [ax, az] = cor[i], [bx, bz] = cor[(i + 1) % O];
           pil(ax * R, az * R, 0.6, 0x1d4fd0, (P0 + P1) / 2, Y1 - Y0); for (const f of [1 / 3, 2 / 3]) pil((ax + (bx - ax) * f) * R, (az + (bz - az) * f) * R, 0.3, 0x1d4fd0, (P0 + P1) / 2, Y1 - Y0); // corner + vertical mullions on every facet
           const mx = (ax + bx) / 2 * 8.4, mz = (az + bz) / 2 * 8.4; pil(mx, mz, 0.5, 0xeeeae2, P0 - 1.5, 1.2); const L = new T.Mesh(new T.SphereGeometry(0.32, 6, 4), new T.MeshBasicMaterial({ color: 0xff2020, fog: false })); L.position.set(W.x + mx, P0 - 2.2, W.z + mz); grp.add(L); } } // brackets + red lights under the drum
       gm(new T.CylinderGeometry(R + 0.6, R + 0.6, 0.6, O), 0xd9dbde, Y1 + 0.3); // eaves ring
-      gm(new T.CylinderGeometry(0.7, R + 0.6, 3.2, O), 0xb9bdc2, Y1 + 0.6 + 1.6); // low-pitched octagon pyramid roof, light grey
-      { const rg = new T.CylinderGeometry(0.7, R + 0.6, 3.2, O), w = warp(te, n), l = new T.LineSegments(new T.EdgesGeometry(rg), new T.LineBasicMaterial({ color: 0x7d8288, fog: false })); l.position.set(w.x, P1 + 2.2, w.z); l.rotation.y = Math.PI / 8; grp.add(l); } // seamed hip lines
+      gm(new T.CylinderGeometry(0.7, R + 0.6, 3.2, O), 0xb9bdc2, Y1 + 0.6 + 1.6); // low-pitched hexagonal pyramid roof, light grey
+      { const rg = new T.CylinderGeometry(0.7, R + 0.6, 3.2, O), w = warp(te, n), l = new T.LineSegments(new T.EdgesGeometry(rg), new T.LineBasicMaterial({ color: 0x7d8288, fog: false })); l.position.set(w.x, P1 + 2.2, w.z); l.rotation.y = Math.PI / 6; grp.add(l); } // seamed hex hip lines
       gm(new T.BoxGeometry(1.3, 0.5, 1.3), 0x8d9196, Y1 + 2.3, 1, 6, 0, 0); // square hatch on the beach-facing (east) facet
       gm(new T.CylinderGeometry(0.07, 0.42, 24, 8), 0xdfe3e8, Y1 + 3.8 + 12); gm(new T.SphereGeometry(0.45, 8, 6), 0xff2020, Y1 + 3.8 + 24.2); // thin metallic spire at the apex
       { let k = 0; const up = () => { const f = fx.feature; if (f && f.grp && f.key === 'tower_complex') { f.grp.position.y += 34 + TL; if (f.y0 != null) f.y0 += 34 + TL; return; } if (++k < 30) setTimeout(up, 700); }; setTimeout(up, 600); } /* VIPER feature screen lifted clear of the drum (overlay, never geometry) */
@@ -246,15 +250,25 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
   { const [e, n] = loc(52.611367, 1.7273138); AB(0x8a8780, 22, 14, 62, e, n - 4, 7); AB(0x5d5a55, 23, 1, 63, e, n - 4, 14.5); AB(0x8a8780, 34, 12, 14, e, n + 6, 6); AB(0x9a968e, 11, 30, 11, e, n + 26, 15); CY(0x57534c, 0, 6, 9, e, n + 26, 34.5, 4);
     for (let i = 0; i < 5; i++) AB(0x2a2f38, 0.3, 6, 2.2, e - 11.2, n - 26 + i * 11, 7); }
 
-  { const [e, n] = loc(52.604471, 1.736196); // Tower Complex solid facade (stand-in behind the wire frame): cream render, red-brick base, corner turrets, dark arched windows
-    AB(0xe7dcc6, 26, 15, 40, e, n, 7.5); AB(0x8a3f2e, 26.4, 3.2, 40.4, e, n, 1.6); AB(0x4b4f55, 27, 0.8, 41, e, n, 15.4);
-    for (const dn of [-19, 19]) { CY(0xe7dcc6, 3.2, 3.2, 22, e + 12, n + dn, 11, 12); CY(0x5c6a74, 0, 3.6, 5, e + 12, n + dn, 24.5, 12); }
-    for (let i = 0; i < 7; i++) AB(0x1d2128, 0.3, 4.5, 2.6, e + 13.1, n - 15 + i * 5, 8.5);
-    AB(0xd9d4c8, 14, 22, 20, e - 4, n, 26); for (let f = 0; f < 6; f++) AB(0x8f9499, 1.4, 0.2, 18, e + 3.7, n, 17 + f * 3.4); for (let f = 0; f < 6; f++) AB(0x1d2128, 0.2, 1.6, 18, e + 3.1, n, 18 + f * 3.4);
-    if (window.IE_V84_TOWER_OLD === true) for (const dn of [-6, 0, 5]) AB(0x9aa0a6, 0.2, 6, 0.2, e - 4, n + dn, 40); /* v84: roof masts poked through the drum */
-    // ground-floor fascias as seen on Street View, Marine Parade, Sep 2024 (Joseph's seafront SV frame); Viper stays a logo panel elsewhere, no venue
+  { const [e, n] = loc(52.604471, 1.736196); // v107: inland flatblock (~22% of ~58 m tower) west of shaft — NOT a tall arena podium under the tower
+    const FH = 13; // ~22% of (36+22) shaft
+    AB(0xcfd3d8, 22, FH, 28, e - 18, n, FH / 2); // grey/white inland residential/hotel
+    AB(0xaeb4ba, 22.6, 0.5, 28.6, e - 18, n, FH + 0.25); // flat roof slab
+    for (let i = 0; i < 5; i++) for (let j = 0; j < 4; j++) AB(0x2a3038, 0.2, 1.5, 2.2, e - 18 + 11.1, n - 10 + i * 5, 2.2 + j * 2.8); // dark windows on east face toward shaft
+    for (const [de, dn] of [[-6, -8], [-2, 4], [5, -3], [-8, 9], [3, 10], [-4, -12]]) AB(0x8a9098, 2.2 + (de & 1), 1.4, 2.4, e - 18 + de, n + dn, FH + 1.0); // HVAC greebles
+    if (window.IE_V84_TOWER_OLD === true) for (const dn of [-6, 0, 5]) AB(0x9aa0a6, 0.2, 6, 0.2, e - 4, n + dn, 40);
+    // existing ground fascias on tower prom face (Street View); do not invent new subway-style boards
     board('THE BUDDHA CLUB', 10, 1.3, e + 13.3, n - 13, 4.4, Math.PI / 2, '#8d9096', '#ffffff', 0.6); board('THE TOWER BAR\nPublic House', 10, 1.5, e + 13.3, n, 4.4, Math.PI / 2, '#5b2a86', '#ffffff', 0.55);
-    board('SUBWAY', 7, 1.3, e + 13.3, n + 13, 4.4, Math.PI / 2, '#0b7a3e', '#ffd200', 0.7); AB(0x2f6fb2, 0.3, 8, 38, e + 13.2, n, 11.5); for (let i = 0; i < 8; i++) AB(0xe9e1cc, 0.5, 8.2, 0.6, e + 13.4, n - 17.5 + i * 5, 11.5); AB(0x111111, 0.3, 1.0, 40, e + 13.4, n, 15.8); }
+    board('SUBWAY', 7, 1.3, e + 13.3, n + 13, 4.4, Math.PI / 2, '#0b7a3e', '#ffd200', 0.7); }
+  { const [e, n] = loc(52.604614, 1.737329); // v107: Marina Centre (OSM way 1083970021) seaward across Marine Parade — dark navy, 1–2 storeys (~10% tower ht), solar roof, surface parking
+    const MH = 6; // ~10% of 58 m shaft
+    AB(0x15253a, 34, MH, 48, e, n, MH / 2); // navy body, long axis // coast (N–S)
+    AB(0x1a2a44, 34.4, 0.45, 48.4, e, n, MH + 0.22); // flat roof
+    for (let i = 0; i < 6; i++) for (let j = 0; j < 4; j++) AB(0xb8c4d0, 1.6, 0.08, 2.2, e - 10 + i * 3.5, n - 8 + j * 4.5, MH + 0.5); // solar-panel grid patch
+    board('MARINA CENTRE', 22, 1.8, e - 17.3, n, 3.6, -Math.PI / 2, '#15253a', '#ffffff', 0.7); // white lettering facing road/prom (west)
+    AB(0x5a5e64, 28, 0.08, 36, e + 8, n + 40, 0.05); // surface parking asphalt beside (north)
+    for (let i = 0; i < 5; i++) AB(0xe8e8e4, 2.4, 0.04, 0.12, e + 2 + (i % 3) * 3, n + 28 + i * 4, 0.08); // bay lines
+    info.marinaCentre = { h: MH, e, n }; }
   { const [e, n] = loc(52.6278547, 1.7383001); // The Iron Duke (1930s Art Deco pub, North Drive): dark brick mass, pale bands, rounded end bays, lettering facing the sea road
     AB(0x4a2c24, 16, 8.6, 30, e, n, 4.3); AB(0x4a2c24, 10, 11, 10, e - 2, n, 5.5); for (const y of [3.0, 6.2, 8.7]) AB(0xe9e3d2, 16.4, 0.45, 30.4, e, n, y);
     for (const dn of [-15, 15]) { CY(0x4a2c24, 5, 5, 8.6, e + 3, n + dn, 4.3, 16); for (const y of [3.0, 6.2, 8.7]) CY(0xe9e3d2, 5.2, 5.2, 0.45, e + 3, n + dn, y, 16); }
