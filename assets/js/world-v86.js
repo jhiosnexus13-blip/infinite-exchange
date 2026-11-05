@@ -30,14 +30,17 @@ export function initV86({ T, S, LBL, LITE, warp, fx }) {
     if (L1) { board('M', 1.6, 1.6, -491.6, NF + 1.2, 5.6, N_, '#1f3d2b', '#ffc72c', 0.9); box(0x6b6f74, 0.12, 2.2, 0.12, -491.6, NF + 1.2, 3.7); board("SPENCER'S SPORTS BAR", 9, 0.8, -506, NF + 0.2, 5.4, N_, '#101418', '#e8e8e8', 0.55); }
     jump('regent_kfc_mcd', 'KFC + McDonald\u2019s (Regent Rd)', -506, 402, -506, NF, 0.08, 'market_gates'); });
 
-  run('troll', () => { const FE = -457.6; // east face of OSM 175596035 (hanging sign side)
-    box(0x15181c, 0.25, 1.1, 22, FE - 0.2, 435, 4.0); if (L1) board('THE TROLL CART  \u00b7  J D WETHERSPOON', 21, 0.95, FE + 0.05, 435, 4.0, E_, '#15181c', '#f2f2f2', 0.55);
-    box(0x223040, 0.12, 2.6, 20, FE + 0.02, 435, 1.5, 0, { transparent: true, opacity: 0.72 }); for (let i = 0; i <= 5; i++) box(0xe8e2d4, 0.18, 2.7, 0.22, FE + 0.06, 425 + i * 4, 1.5);
+  run('troll', () => { // v108: Joseph 5 Nov 2026 — front was backwards. Glass front + fascia now on the WEST face of OSM 175596035
+    // (e≈-478.4, n 437-457), facing Market Gates bus underpass/stands (buses e≈-490..-506). Rotation: board ry W_ (-PI/2 about Y) instead of E_ (+PI/2),
+    // i.e. 180° about the vertical Y axis. Hanging sign stays on the east/back side (e≈-456.6) per Joseph. Old east front: IE_V108_TROLL_EASTFRONT=true.
+    const OLD = window.IE_V108_TROLL_EASTFRONT === true, FE = OLD ? -457.6 : -478.4, N0 = OLD ? 425 : 437, NC = N0 + 10, DIR = OLD ? 1 : -1, RY = OLD ? E_ : W_;
+    box(0x15181c, 0.25, 1.1, 22, FE - 0.2 * DIR, NC, 4.0); if (L1) board('THE TROLL CART  \u00b7  J D WETHERSPOON', 21, 0.95, FE + 0.05 * DIR, NC, 4.0, RY, '#15181c', '#f2f2f2', 0.55);
+    box(0x223040, 0.12, 2.6, 20, FE + 0.02 * DIR, NC, 1.5, 0, { transparent: true, opacity: 0.72 }); for (let i = 0; i <= 5; i++) box(0xe8e2d4, 0.18, 2.7, 0.22, FE + 0.06 * DIR, N0 + i * 4, 1.5);
     if (window.IE_V86_TROLL_OLD !== true) { const e = -456.6, n = 437; cyl(0x2b2b2b, 0.06, 0.06, 1.8, e + 1.0, n, 4.9, 6); box(0x2b2b2b, 2.6, 0.09, 0.09, e + 1.3, n, 5.8);
       for (const s of [-0.03, 0.03]) board('THE TROLL CART', 2.4, 1.4, e + 1.6, n + s, 4.95, s < 0 ? 0 : Math.PI, '#3a1d12', '#f2d38a', 0.5, 'Georgia, serif'); }
-    if (L1) for (let i = 0; i < 4; i++) { const n = 426 + i * 5; cyl(0x2a2a2a, 0.45, 0.45, 0.06, -452.5, n, 0.75, 12); cyl(0x2a2a2a, 0.05, 0.05, 0.72, -452.5, n, 0.37, 6); for (const s of [-1, 1]) box(0x3b2a1e, 0.4, 0.45, 1.2, -452.5 + s * 0.9, n, 0.23); solid(-452.5, n, 2.2, 1.4); }
-    if (L2) for (let i = 0; i < 5; i++) cyl(0x3f8a3a, 0.35, 0.2, 0.4, FE + 0.6, 425 + i * 5, 3.1, 8);
-    jump('troll_cart', 'The Troll Cart', -440, 437, -458, 437, 0.12, 'market_gates'); info.troll = 1; });
+    const TE = FE + 5.1 * DIR; if (L1) for (let i = 0; i < 4; i++) { const n = N0 + 1 + i * 5; cyl(0x2a2a2a, 0.45, 0.45, 0.06, TE, n, 0.75, 12); cyl(0x2a2a2a, 0.05, 0.05, 0.72, TE, n, 0.37, 6); for (const s of [-1, 1]) box(0x3b2a1e, 0.4, 0.45, 1.2, TE + s * 0.9, n, 0.23); solid(TE, n, 2.2, 1.4); }
+    if (L2) for (let i = 0; i < 5; i++) cyl(0x3f8a3a, 0.35, 0.2, 0.4, FE + 0.6 * DIR, N0 + i * 5, 3.1, 8);
+    if (OLD) jump('troll_cart', 'The Troll Cart', -440, 437, -458, 437, 0.12, 'market_gates'); else jump('troll_cart', 'The Troll Cart', -495, 444, -478, 447, 0.12, 'market_gates'); info.troll = 1; info.trollFront = OLD ? 'east' : 'west'; });
 
   run('buses', () => { if (!L1) return; for (const [e, n, ry] of [[-490.5, 452, 0.05], [-506.5, 476, 0.2]]) for (const s of [-1, 1]) { const ox = Math.cos(ry) * 1.31 * s, on = -Math.sin(ry) * 1.31 * s;
       board('first', 3.2, 0.7, e + ox, n + on, 1.15, ry + (s > 0 ? E_ : W_), '#5b2a86', '#ffffff', 0.8); }
