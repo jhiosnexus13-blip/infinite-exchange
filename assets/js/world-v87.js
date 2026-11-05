@@ -1,5 +1,6 @@
 /* JHIOS world v87 — enterable pocket rooms (preview only; live stays ?v=81).
    window.IE_V87_ROOMS = false disables every room (no prompts, no meshes). Per-room gates: IE_V87_CERN / IE_V87_DANCE / IE_V87_VIPER = false.
+   v106 Viper FX: strobe (ceiling wash + 4 truss heads + side walls) and lasers (14 core+glow beams, 4 colours, wide sweep; 8 at L0) now build at EVERY tier; IE_V87_STROBE=false / IE_V87_LASERS=false still off; in-room STROBE / LASERS toggle buttons (top centre) while inside Viper.
    v104: art() ytId accepts youtu.be/shorts/embed (Dance covers were grey); Dance exitR 10->4.5 (no EXIT tip on spawn); Viper crowd centre aisle |x|>=1.8 + pushed 0.8 m south for DJ sightline.
    v102 Viper FX flags (default ON): IE_V87_DJ=false hides DJ, IE_V87_CROWD=false hides crowd, IE_V87_STROBE=false / IE_V87_LASERS=false turn those off (both only build at L1+ / DET>=1).
    v102 sizes: CERN 40x40x6.5 @x-1560, Dance 42x42x12 @x-1490, Viper 24x18x6 @x-1420 (all z -4600, inside world.js clamp x>=-1600, z>=-4700).
@@ -159,7 +160,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const s of [-9.5, 9.5]) { box(g, 0x2a2a34, 1.8, 3.6, 1.6, s, 1.8, -7.4); box(g, 0x777788, 1.2, 1.2, 0.05, s, 2.4, -6.58); box(g, 0x777788, 0.7, 0.7, 0.05, s, 1.0, -6.58); box(g, 0xff2e4a, 1.8, 0.06, 0.06, s, 3.62, -6.58); }
     // back wall: logo high and clear (v102: nothing overlaps it), title board above
     const logoM = new T.Mesh(new T.PlaneGeometry(7.2, 3.1), mat(0x220810)); logoM.position.set(0, 3.55, NW + 0.05); g.add(logoM);
-    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=105').then(r => r.text()).then(b64 => {
+    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=106').then(r => r.text()).then(b64 => {
       const u = b64.trim().startsWith('data:') ? b64.trim() : 'data:image/png;base64,' + b64.trim();
       new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; logoM.material = new T.MeshBasicMaterial({ map: tx, transparent: true, fog: false, toneMapped: false }); });
     }).catch(() => {});
@@ -186,13 +187,22 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
         if (i % 3 === 0) box(p, i % 2 ? 0x55ffcc : 0xff2e4a, 0.06, 0.4, 0.06, 0.3, hgt + 0.35, 0);
         r.crowd.push([p, i * 1.7]); } }
     // strobe (IE_V87_STROBE=false off; default on at L1+)
-    const st = new T.Mesh(new T.PlaneGeometry(VW - 0.6, VD - 0.6), new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, side: T.DoubleSide, depthWrite: false })); st.rotation.x = Math.PI / 2; st.position.y = VH - 0.15; g.add(st);
-    r.strobe = (L1 && window.IE_V87_STROBE !== false) ? st : null; if (!r.strobe) st.visible = false;
+    const sm = new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, side: T.DoubleSide, depthWrite: false, blending: T.AdditiveBlending, toneMapped: false });
+    const st = new T.Group(); g.add(st); { const c = new T.Mesh(new T.PlaneGeometry(VW - 0.6, VD - 0.6), sm); c.rotation.x = Math.PI / 2; c.position.y = VH - 0.15; st.add(c); // v106: ceiling wash + 4 strobe heads on the truss + side-wall flash panels, one shared additive material
+      for (const x of [-8, -3, 3, 8]) { const h = new T.Mesh(new T.BoxGeometry(1.2, 0.5, 0.6), sm); h.position.set(x, VH - 0.7, -4.2); st.add(h); }
+      for (const s of [-1, 1]) { const w = new T.Mesh(new T.PlaneGeometry(VD - 2, VH - 1.5), sm); w.rotation.y = Math.PI / 2; w.position.set(s * (VW / 2 - 0.1), VH / 2, 0); st.add(w); } }
+    r.strobe = window.IE_V87_STROBE !== false ? sm : null; r.strobeG = st; if (!r.strobe) st.visible = false;
     // lasers (IE_V87_LASERS=false off; default on at L1+): thin additive cylinders hung from the truss, slow sweep
-    r.lasers = []; if (L1 && window.IE_V87_LASERS !== false) { const LL = 7;
-      for (let i = 0; i < 6; i++) { const piv = new T.Group(); piv.position.set(-7.5 + i * 3, VH - 0.6, -3.6); g.add(piv);
-        const b = new T.Mesh(new T.CylinderGeometry(0.025, 0.025, LL, 4, 1, true), new T.MeshBasicMaterial({ color: i % 2 ? 0x33e0ff : 0xff2040, transparent: true, opacity: 0.7, blending: T.AdditiveBlending, depthWrite: false, fog: false }));
-        b.position.y = -LL / 2; piv.add(b); piv.rotation.x = -0.9; r.lasers.push([piv, i]); } }
+    r.lasers = []; r.laserG = new T.Group(); g.add(r.laserG); if (window.IE_V87_LASERS !== false) { const LL = 14, NL = L1 ? 14 : 8, LC = [0x33e0ff, 0xff2040, 0x40ff60, 0xff40ff]; // v106: 14 beams (8 at L0), core + glow sleeve, 4 colours, wide fan sweep
+      for (let i = 0; i < NL; i++) { const piv = new T.Group(); piv.position.set(-9 + i * 18 / (NL - 1), VH - 0.6, -4.2); r.laserG.add(piv); const col = LC[i % 4];
+        const core = new T.Mesh(new T.CylinderGeometry(0.04, 0.04, LL, 5, 1, true), new T.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.95, blending: T.AdditiveBlending, depthWrite: false, fog: false, toneMapped: false }));
+        const glow = new T.Mesh(new T.CylinderGeometry(0.16, 0.16, LL, 6, 1, true), new T.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.22, blending: T.AdditiveBlending, depthWrite: false, fog: false, toneMapped: false }));
+        core.position.y = glow.position.y = -LL / 2; piv.add(core, glow); piv.rotation.x = -1.1; r.lasers.push([piv, i]); } }
+    { const ui = document.createElement('div'); ui.style.cssText = 'position:fixed;top:64px;left:50%;transform:translateX(-50%);display:none;gap:8px;z-index:30;font:700 12px monospace'; // v106: in-room toggles (Viper only)
+      const mk = (lbl, get, set) => { const b = document.createElement('button'); b.style.cssText = 'background:#100818cc;color:#ff40ff;border:1px solid #ff40ff;border-radius:6px;padding:6px 10px;cursor:pointer'; const f = () => b.textContent = lbl + (get() ? ' ON' : ' OFF'); b.onclick = e => { e.stopPropagation(); set(!get()); f(); b.blur(); }; f(); ui.appendChild(b); };
+      mk('STROBE', () => r.strobeG.visible && !!r.strobe, v => { r.strobe = v ? sm : null; r.strobeG.visible = v; sm.opacity = 0; });
+      mk('LASERS', () => r.laserG.visible && r.lasers.length > 0, v => { r.laserG.visible = v; });
+      document.body.appendChild(ui); r.ui = ui; }
     r.spawn = [ox, oz + 6.8]; r.yaw = 0; r.track = 'manhattan-shuffle-dub-dance-version'; r.loop = true; r.events = ev;
     r.exits = [[ox, oz + 7.6]]; r.evAt = [ox - EW + 1.2, oz - 1];
     const vbase = () => (fx.feature && fx.feature.grp) ? fx.feature.grp.position : (fx.viper && fx.viper.grp && fx.viper.grp.getWorldPosition(new T.Vector3()));
@@ -229,14 +239,14 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
   let tk = 0;
   function update(t, dt) {
 
-    for (const k in R) R[k].g.visible = cur === R[k];
+    for (const k in R) { R[k].g.visible = cur === R[k]; if (R[k].ui) R[k].ui.style.display = cur === R[k] ? 'flex' : 'none'; }
     if (cur) { const r = cur; P.pos.x = Math.max(r.x0, Math.min(r.x1, P.pos.x)); P.pos.z = Math.max(r.z0, Math.min(r.z1, P.pos.z)); if (P.pos.y < FY + 1) P.pos.y = FY + 1.7; // no fall-through
       if (r.spin) r.spin.forEach((m, i) => { m.rotation.z = t * (0.6 + i); m.scale.y = 1 + 0.12 * Math.sin(t * (6 + i * 3)); });
-      if (r.strobe) r.strobe.material.opacity = (Math.sin(t * 22) > 0.85 ? 0.35 : 0) * (window.__beat ? __beat() : 1);
+      if (r.strobe) r.strobe.opacity = (Math.sin(t * 24) > 0.8 && Math.sin(t * 1.3) > -0.3 ? 0.85 : 0) * (window.__beat ? Math.max(0.5, __beat()) : 1);
       if (r.dj) { const d = r.dj; d.up.rotation.z = 0.08 * Math.sin(t * 4.2); d.up.position.y = 0.9 + 0.05 * Math.abs(Math.sin(t * 4.2)); d.armL.rotation.y = 0.3 * Math.sin(t * 2.1); d.armR.rotation.x = -0.4 + 0.5 * Math.sin(t * 8.4); d.decks.forEach(p => p.rotation.y = t * 3.5); }
       if (r.crowd) for (const [p, ph] of r.crowd) p.position.y = 0.08 * Math.abs(Math.sin(t * 4.2 + ph));
       if (r.figs) for (const [p, ph, a0, fr, aL, aR] of r.figs) { const a = a0 + t * 0.15; p.position.set(Math.cos(a) * fr, 0.12 * Math.abs(Math.sin(t * 3.6 + ph)), Math.sin(a) * fr); p.rotation.y = -a - Math.PI / 2 + 0.3 * Math.sin(t * 1.8 + ph); aL.rotation.z = -0.6 - 0.7 * Math.abs(Math.sin(t * 3.6 + ph)); aR.rotation.z = 0.6 + 0.7 * Math.abs(Math.sin(t * 3.6 + ph + 1)); }
-      if (r.lasers) for (const [p, i] of r.lasers) { p.rotation.z = 0.5 * Math.sin(t * 0.6 + i * 0.9); p.rotation.x = -0.9 + 0.25 * Math.sin(t * 0.4 + i); }
+      if (r.lasers && r.laserG.visible) for (const [p, i] of r.lasers) { p.rotation.z = 0.95 * Math.sin(t * 0.9 + i * 0.7); p.rotation.x = -1.1 + 0.45 * Math.sin(t * 0.55 + i * 1.3); }
       if (r.loop && window.JX && JX.current && JX.current.id === r.track && !JX.playing && t - (r.lt || 0) > 3) { r.lt = t; music.play(r.track); }
       const near = r.exits.some(([x, z]) => Math.hypot(P.pos.x - x, P.pos.z - z) < (r.exitR || 3.8));
       if (r.key === 'viper' && r.evAt && Math.hypot(P.pos.x - r.evAt[0], P.pos.z - r.evAt[1]) < 2) show('OPEN VIPER ROOM EVENTS — tap', () => open('https://toon.fm/viper-room-gy', '_blank', 'noopener'));
