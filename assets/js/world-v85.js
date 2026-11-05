@@ -60,8 +60,11 @@ export function initV85({ T, S, LBL, LITE, warp, fx }) {
 
   function parade(D) { if (!L1 && window.IE_V86_SHELTER_L0 === false) return; /* v86: canopies show at L0 too */ for (const p of D.shelters) { let e0 = 1e9, e1 = -1e9, n0 = 1e9, n1 = -1e9; for (const [e, n] of p) { e0 = Math.min(e0, e); e1 = Math.max(e1, e); n0 = Math.min(n0, n); n1 = Math.max(n1, n); }
       const e = (e0 + e1) / 2, n = (n0 + n1) / 2, len = n1 - n0, wid = e1 - e0, q = warp(e, n);
-      const g = new T.CylinderGeometry(wid * 0.75, wid * 0.75, len, 14, 1, true, -Math.PI * 0.32, Math.PI * 0.64); g.rotateX(Math.PI / 2); const m = mesh(g, 0xf7f7f4, { side: T.DoubleSide }); m.position.set(q.x, 3.3 - wid * 0.75, q.z); // white sail canopy
-      for (const dn of [-len / 2 + 0.6, len / 2 - 0.6]) box(0xdfe3e6, 0.18, 3.1, 0.18, e + wid * 0.35, n + dn, 1.55); if (L2) box(0x5a4632, wid * 0.6, 0.12, 0.45, e + wid * 0.2, n, 0.5); info.shelters++; }
+      const g = new T.CylinderGeometry(wid * 0.75, wid * 0.75, len, 14, 1, true, -Math.PI * 0.32, Math.PI * 0.64); g.rotateX(-Math.PI / 2); const m = mesh(g, 0xf7f7f4, { side: T.DoubleSide }); m.scale.y = 0.3; m.position.set(q.x, 3.0 - wid * 0.75 * 0.3, q.z); // v105: arc now faces UP (was hanging ~4 m below ground); crown 3.0 m, eaves ~2.5 m
+      for (const dn of [-len / 2 + 0.6, len / 2 - 0.6]) box(0xdfe3e6, 0.18, 3.0, 0.18, e + wid * 0.35, n + dn, 1.5); if (L2) box(0x5a4632, wid * 0.6, 0.12, 0.45, e + wid * 0.2, n, 0.5); info.shelters++; }
+    // v105: Marine Parade WEST frontage, south->north per Joseph's Street View (38 Marine Parade @52.60628,1.73673, cam heading 253 deg WSW): Leisureland left/south of Empire, then Gold Rush, Magic City, Cash Casino north. Fascia boards only (no solids), face east toward the prom.
+    if (window.IE_V105_STRIP !== false) for (const [t, n, w, h, y, bg, fg] of [['LEISURELAND', 296, 11, 1.6, 4.6, '#d8262e', '#ffe14a'], ['THE EMPIRE', 307, 7, 1.1, 9.2, '#c9b48a', '#3a2d1c'], ['GOLD RUSH', 321, 9, 1.4, 4.4, '#1a1a1a', '#ffcc33'], ['MAGIC CITY', 335, 9, 1.4, 4.4, '#3a1a6a', '#ffdf5a'], ['CASH CASINO', 350, 10, 1.5, 4.4, '#e8107a', '#ffffff']]) {
+      board(t, w, h, 10.2, n, y, Math.PI / 2, bg, fg); info.strip = (info.strip || 0) + 1; }
     box(0x2a2f36, 0.2, 1.1, 7.5, 38.8, 387.5, 3.4); board("FRYLY'S DESSERTS · CHIPS", 7.4, 1.0, 38.65, 387.5, 3.4, W_, '#2a2f36', '#f6d36b', 0.55);
     if (L2) { const R = 0xc4122f; box(R, 1.2, 0.25, 14, 54, 352, 0.15); box(R, 9, 0.25, 1.2, 54, 357, 0.15); const a = cyl(R, 5, 5, 0.25, 54, 346, 0.15, 24); a.scale.set(1, 1, 0.35); cyl(0xf0e9da, 1.4, 1.4, 0.26, 54, 360, 0.16, 16); } } // anchor bed
 

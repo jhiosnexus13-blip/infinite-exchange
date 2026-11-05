@@ -45,7 +45,7 @@ export function initV81(o) {
       tip.textContent = 'Opening CERN…';
       try {
         if (!fx.enterRoom) {
-          const m = await import('/assets/js/world-v87.js?v=104');
+          const m = await import('/assets/js/world-v87.js?v=105');
           if (!fx.v87) fx.v87 = m.initV87({ T, S, LITE: !!(window.__lite), warp, fx, P });
         }
         const fn = fx.enterRoom || (fx.v87 && fx.v87.enterRoom);
