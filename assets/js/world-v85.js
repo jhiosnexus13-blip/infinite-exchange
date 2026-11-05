@@ -23,7 +23,7 @@ export function initV85({ T, S, LBL, LITE, warp, fx }) {
     ls.forEach((l, i) => { let s = px; g.font = `bold ${s}px Arial, sans-serif`; while (g.measureText(l).width > c.width * 0.92 && s > 8) g.font = `bold ${--s}px Arial, sans-serif`; g.fillText(l, c.width / 2, c.height * (i + 0.5) / ls.length); });
     const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: new T.CanvasTexture(c), side: T.DoubleSide })); const p = warp(e, n); m.position.set(p.x, y, p.z); m.rotation.y = ry; grp.add(m); return m; };
   const W_ = -Math.PI / 2; // board facing west (Marine Parade side)
-  fetch('/assets/data/v85-geo.json?v=87').then(r => r.json()).then(D => {
+  fetch('/assets/data/v85-geo.json?v=107').then(r => r.json()).then(D => {
     const run = (k, f) => { try { f(); } catch (e) { console.warn('v85 ' + k, e); info[k + 'Err'] = String(e); } };
     run('wheel', () => wheel(D)); if (window.IE_V85_JOYLAND !== false) run('joyland', () => joyland(D)); run('waterways', () => waterways(D)); run('parade', () => parade(D)); if (window.IE_V85_NELSON_OLD !== true) run('nelson', () => nelson(D));
     grp.traverse(o => { if (o.isMesh && !o.userData.hit) o.raycast = () => {}; });
@@ -62,9 +62,32 @@ export function initV85({ T, S, LBL, LITE, warp, fx }) {
       const e = (e0 + e1) / 2, n = (n0 + n1) / 2, len = n1 - n0, wid = e1 - e0, q = warp(e, n);
       const g = new T.CylinderGeometry(wid * 0.75, wid * 0.75, len, 14, 1, true, -Math.PI * 0.32, Math.PI * 0.64); g.rotateX(-Math.PI / 2); const m = mesh(g, 0xf7f7f4, { side: T.DoubleSide }); m.scale.y = 0.3; m.position.set(q.x, 3.0 - wid * 0.75 * 0.3, q.z); // v105: arc now faces UP (was hanging ~4 m below ground); crown 3.0 m, eaves ~2.5 m
       for (const dn of [-len / 2 + 0.6, len / 2 - 0.6]) box(0xdfe3e6, 0.18, 3.0, 0.18, e + wid * 0.35, n + dn, 1.5); if (L2) box(0x5a4632, wid * 0.6, 0.12, 0.45, e + wid * 0.2, n, 0.5); info.shelters++; }
-    // v105: Marine Parade WEST frontage, south->north per Joseph's Street View (38 Marine Parade @52.60628,1.73673, cam heading 253 deg WSW): Leisureland left/south of Empire, then Gold Rush, Magic City, Cash Casino north. Fascia boards only (no solids), face east toward the prom.
-    if (window.IE_V105_STRIP !== false) for (const [t, n, w, h, y, bg, fg] of [['LEISURELAND', 296, 11, 1.6, 4.6, '#d8262e', '#ffe14a'], ['THE EMPIRE', 307, 7, 1.1, 9.2, '#c9b48a', '#3a2d1c'], ['GOLD RUSH', 321, 9, 1.4, 4.4, '#1a1a1a', '#ffcc33'], ['MAGIC CITY', 335, 9, 1.4, 4.4, '#3a1a6a', '#ffdf5a'], ['CASH CASINO', 350, 10, 1.5, 4.4, '#e8107a', '#ffffff']]) {
-      board(t, w, h, 10.2, n, y, Math.PI / 2, bg, fg); info.strip = (info.strip || 0) + 1; }
+    // v107: Marine Parade WEST frontage south→north (Leisureland, Empire, Gold Rush, Magic City, Cash Casino) — real low-poly building mass + fascia (not floating boards alone). Joyland untouched.
+    if (window.IE_V105_STRIP !== false) {
+      const strip = [
+        ['LEISURELAND', 296, 12, 7.2, 9, 0xd8262e, '#d8262e', '#ffe14a', 4.6],
+        ['THE EMPIRE', 307, 9, 10.5, 8, 0xc9b48a, '#c9b48a', '#3a2d1c', 8.8],
+        ['GOLD RUSH', 321, 10, 7.0, 9, 0x1a1a1a, '#1a1a1a', '#ffcc33', 4.4],
+        ['MAGIC CITY', 335, 10, 7.0, 9, 0x3a1a6a, '#3a1a6a', '#ffdf5a', 4.4],
+        ['CASH CASINO', 350, 11, 7.4, 9, 0xe8107a, '#e8107a', '#ffffff', 4.4],
+      ];
+      for (const [name, n, wn, bh, depth, col, bg, fg, sy] of strip) {
+        const eC = 10.2 - depth / 2; // mass sits west of Marine Parade kerb; fascia on east face
+        box(col, depth, bh, wn, eC, n, bh / 2); // L0 massing
+        box(0x2a2e34, depth + 0.3, 0.35, wn + 0.3, eC, n, bh + 0.15); // flat roof slab
+        if (L1) {
+          board(name, Math.min(wn - 0.6, 11), Math.max(1.1, bh * 0.18), 10.25, n, sy, Math.PI / 2, bg, fg);
+          solid(eC, n, depth, wn, -1, bh + 1);
+          // simple ground arcade glazing strip
+          box(0x88c8e8, 0.2, Math.min(3.2, bh * 0.45), wn - 1.2, 10.15, n, Math.min(2.0, bh * 0.28));
+        }
+        if (L2) {
+          for (let i = 0; i < 3; i++) box(0x1a1d22, 0.15, 1.2, 1.6, 10.18, n - wn * 0.28 + i * (wn * 0.28), bh * 0.62); // upper windows
+        }
+        info.strip = (info.strip || 0) + 1;
+      }
+      info.stripMass = 1;
+    }
     box(0x2a2f36, 0.2, 1.1, 7.5, 38.8, 387.5, 3.4); board("FRYLY'S DESSERTS · CHIPS", 7.4, 1.0, 38.65, 387.5, 3.4, W_, '#2a2f36', '#f6d36b', 0.55);
     if (L2) { const R = 0xc4122f; box(R, 1.2, 0.25, 14, 54, 352, 0.15); box(R, 9, 0.25, 1.2, 54, 357, 0.15); const a = cyl(R, 5, 5, 0.25, 54, 346, 0.15, 24); a.scale.set(1, 1, 0.35); cyl(0xf0e9da, 1.4, 1.4, 0.26, 54, 360, 0.16, 16); } } // anchor bed
 
