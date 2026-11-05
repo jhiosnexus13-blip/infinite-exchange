@@ -159,7 +159,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     for (const s of [-9.5, 9.5]) { box(g, 0x2a2a34, 1.8, 3.6, 1.6, s, 1.8, -7.4); box(g, 0x777788, 1.2, 1.2, 0.05, s, 2.4, -6.58); box(g, 0x777788, 0.7, 0.7, 0.05, s, 1.0, -6.58); box(g, 0xff2e4a, 1.8, 0.06, 0.06, s, 3.62, -6.58); }
     // back wall: logo high and clear (v102: nothing overlaps it), title board above
     const logoM = new T.Mesh(new T.PlaneGeometry(7.2, 3.1), mat(0x220810)); logoM.position.set(0, 3.55, NW + 0.05); g.add(logoM);
-    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=104').then(r => r.text()).then(b64 => {
+    fetch('/assets/img/viper-room-gy-logo.b64.txt?v=105').then(r => r.text()).then(b64 => {
       const u = b64.trim().startsWith('data:') ? b64.trim() : 'data:image/png;base64,' + b64.trim();
       new T.TextureLoader().load(u, tx => { tx.colorSpace = T.SRGBColorSpace; logoM.material = new T.MeshBasicMaterial({ map: tx, transparent: true, fog: false, toneMapped: false }); });
     }).catch(() => {});
