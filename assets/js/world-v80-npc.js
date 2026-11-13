@@ -57,14 +57,18 @@ export function initNpc(o) {
       const g = new T.Group(); const hull = new T.Mesh(BX, M(pick([0xf0f0ea, 0x2a5a8a, 0xb83a2a]))); hull.scale.set(1.6, 0.5, 4.2); hull.position.y = 0.2; g.add(hull); const p1 = person(pick(STY), 0.9); p1.g.position.set(0, -0.2, 0.6); p1.legs.forEach(l => l.rotation.x = -1.4); g.add(p1.g);
       if (rnd() < 0.6) { const p2 = person(undefined, 0.9); p2.g.position.set(0, -0.2, -0.9); p2.legs.forEach(l => l.rotation.x = -1.4); g.add(p2.g); } root.add(g); boats.push({ g, e, n0, ph: rnd() * 6 }); info.boats++; return true; } } return false; };
   setTimeout(() => { for (const [e, n] of [[-967, 300], [-975, 420], [-960, 180], [-940, 973], [-930, 1060]]) boatAt(e, n); }, 4000);
-  // ---- seafront arcade glow: lit fascia + sign + bulb canopy on the land side of Marine Parade, Britannia -> Pleasure Beach ----
+  // ---- v114: generic repeated arcade fronts REMOVED (Joseph: seafront was flooded with filler).
+  // Named Marine Parade fronts (Leisureland, Empire, Gold Rush, Magic City, Cash Casino, Joyland) stay in world-v85.
+  // Gaps are the real OSM buildings / plain frontage. Restore the old glow strip with IE_V114_ARCADE_GLOW=true.
   const NE = [0xff3fb0, 0x2ff0ff, 0xd04aff, 0xffb02a, 0xff5a3a, 0x7aff5a], glow = [];
+  if (window.IE_V114_ARCADE_GLOW === true) {
   for (let n = 470; n > -1060; n -= 34 + rnd() * 18) { if (Math.abs(n - 107) < 22) continue; // Tower Complex has its own frontage
     const e = roadE(n) - 13.5, w = at(e, n), c = pick(NE), L = 18 + rnd() * 10, grp = new T.Group(); grp.position.set(w.x, 0, w.z); root.add(grp);
     const add = (col, sx, sy, sz, x, y, z, x2) => { const m = new T.Mesh(BX, x2 ? new T.MeshBasicMaterial(Object.assign({ color: col, fog: false, toneMapped: false }, x2)) : M(col, { fog: false, toneMapped: false })); m.scale.set(sx, sy, sz); m.position.set(x, y, z); grp.add(m); return m; };
     add(0x14101c, 0.4, 7, L, -0.4, 3.5, 0); const sign = add(c, 0.3, 1.4, L * 0.8, 0.1, 5.6, 0, { transparent: true }); const win = add(pick(NE), 0.2, 2.6, L * 0.7, 0.1, 1.9, 0, { transparent: true, opacity: 0.55 });
     for (const y of [4.6, 6.6]) add(0xfff2c0, 0.15, 0.12, L, 0.2, y, 0); for (let z = -L / 2; z <= L / 2; z += 1.6) add(0xffe08a, 0.25, 0.25, 0.25, 0.9, 4.3, z);
     glow.push({ sign, win, ph: rnd() * 6, f: 2 + rnd() * 5 }); info.arcades++; }
+  }
   fx.npcInfo = info;
   const cam = o.P; let lastCull = 0;
   return { info, update(t, dt) {

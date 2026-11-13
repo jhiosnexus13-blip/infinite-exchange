@@ -57,6 +57,6 @@ export function initV80(o) {
   { let n = 0; const yd = () => { let k = 0; for (const c of fx.clusters || []) { const p = c.grp.position; if (Math.hypot(p.x + 66, p.z + 2380) < 70 && !c.grp.userData.v80) { c.grp.userData.v80 = 1; c.grp.position.y += 9; c.grp.position.z -= 14; c.grp.scale.setScalar(0.75); k++; } }
       info.youthDeclutter = (info.youthDeclutter || 0) + k; if (++n < 20) setTimeout(yd, 1500); }; setTimeout(yd, 2000); }
   // ---- 7: people, boats, arcade glow ----
-  let npc = null; import('./world-v80-npc.js?v=87').then(m => { npc = m.initNpc(o); info.npc = npc.info; }).catch(e => console.warn('v80 npc', e));
+  let npc = null; import('./world-v80-npc.js?v=114').then(m => { npc = m.initNpc(o); info.npc = npc.info; }).catch(e => console.warn('v80 npc', e));
   fx.v80Info = info; return { info, update(t, dt) { if (npc) npc.update(t, dt); } };
 }

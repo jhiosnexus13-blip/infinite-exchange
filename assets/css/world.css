@@ -76,3 +76,6 @@ body.touch .wcredits{font-size:.5rem;opacity:.8}
 /* v113: CSS3D stage under transparent WebGL canvas */
 body.viper-stage-on #scene{background:transparent!important}
 #v87stage-css3d{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+
+/* v114: joystick zones on top (full gutter rules injected by world-v114-ui.js) */
+body.touch .stick{z-index:90;pointer-events:auto}

@@ -1,0 +1,37 @@
+{
+  "attribution": "Terrain: Environment Agency LIDAR Composite DTM 1m \u00a9 Environment Agency copyright and/or database right 2022. All rights reserved. Licensed under the Open Government Licence v3.0. Aerial: Copernicus Sentinel-2 cloudless 2025 mosaic by EOX (https://s2maps.eu/), CC BY 4.0; contains modified Copernicus Sentinel data.",
+  "origin": {
+    "lat": 52.6035,
+    "lon": 1.7365,
+    "bng_e": 653106.5959042636,
+    "bng_n": 307192.1401213533,
+    "aod": 3.532162666320801
+  },
+  "bbox": {
+    "lon0": 1.7128,
+    "lat0": 52.5691,
+    "lon1": 1.7498,
+    "lat1": 52.6469
+  },
+  "height": {
+    "min": -8.0,
+    "max": 16.0,
+    "unit": "m AOD",
+    "channel": "R",
+    "scale": "R/255*(max-min)+min",
+    "coverage": "G==255 means EA LIDAR sample, else filled with origin AOD"
+  },
+  "lidar_bng": {
+    "e0": 652000,
+    "e1": 654000,
+    "n0": 305000,
+    "n1": 308500,
+    "res_m": 1
+  },
+  "files": {
+    "aerial": "/assets/img/gy-s2-2025.jpg",
+    "aerial_lite": "/assets/img/gy-s2-2025-lite.jpg",
+    "dtm": "/assets/img/gy-dtm.png",
+    "dtm_lite": "/assets/img/gy-dtm-lite.png"
+  }
+}
