@@ -667,6 +667,9 @@ export function initV116(o) {
     mkWall(50 + gap / 2, sE1, sN, sD, H, H / 2, brick);
     /* lintel over the gate opening */
     mkWall(50 - gap / 2 - 0.2, 50 + gap / 2 + 0.2, sN, sD, 1.7, H - 0.85, brick);
+    /* lobby back wall, just behind the doors, so the gate opening does not
+       look through onto the noisy v69 facade skin (merged 400 m tile, cannot hide) */
+    mkWall(50 - 4.2, 50 + 4.2, sN + 2.6, 0.45, H, H / 2, cream);
     /* short returns so the corners read as a building */
     for (const e of [sE0, sE1]) mkWall(e - 0.7, e + 0.7, sN + 3.4, 6.6, H, H / 2, brick);
     /* felt roof over the frontage */
@@ -1044,25 +1047,36 @@ export function initV116(o) {
   info.ready = true; fx.v116Info = info; window.__fx116 = info;
   console.info('[IE] v116 ready', { gfx, phone, LOW, LITE, shadows: !!info.shadows });
 
+  function hideRealisticFloaters() {
+    /* called EVERY frame after world-fx updateClusters, which would otherwise
+       re-show nearby clusters (pint + album screens) on the 29 frames we used
+       to skip. Neon is unchanged. Pinned Jellicoe underpass screen is kept. */
+    applyFloatingCleanup(true);
+    if (fx.clusters) fx.clusters.forEach(c => { if (c.grp && !c.grp.userData.v116pinned) c.grp.visible = false; });
+    if (fx.orbits) fx.orbits.forEach(o => { if (o.grp && !o.grp.userData.v116pinned) o.grp.visible = false; });
+    if (fx.feature && fx.feature.grp && !fx.feature.grp.userData.v116pinned) fx.feature.grp.visible = false;
+    const pint = S.getObjectByName('neon-pint'); if (pint && !(pint.parent && pint.parent.userData && pint.parent.userData.v116pinned)) pint.visible = false;
+    if (fx.screens) fx.screens.forEach(s => { if (s && !s.userData.v116pinned) s.visible = false; });
+  }
   function update(/* t, dt */) {
     tuneSky();
     reducePopin();
     /* keep neon visibility stable against v115-solid's delayed re-hide */
     if (window.__gfx === 'neon' && (update._n = (update._n || 0) + 1) % 40 === 0) setNeonVisible(true);
-    if (window.__gfx !== 'neon' && (update._f = (update._f || 0) + 1) % 30 === 0) {
-      applyFloatingCleanup(true);
-      placeJellicoeScreen(true);
-      /* any leftover unattached track screens still floating in the sky */
-      S.traverse(o => {
-        if (!o.isMesh && !o.isGroup) return;
-        if (o.userData && o.userData.v116) return;
-        const u = o.userData || (o.parent && o.parent.userData) || {};
-        if ((u.track || u.feature || u.orbit) && (o.position.y > 4 || (o.parent && o.parent.position && o.parent.position.y > 4))) {
-          (o.parent && o.parent.userData && o.parent.userData.orbit ? o.parent : o).visible = false;
-        }
-      });
-      if (fx.clusters) fx.clusters.forEach(c => { if (c.grp && !c.grp.userData.v116pinned) c.grp.visible = false; });
-      if (fx.feature && fx.feature.grp && !fx.feature.grp.userData.v116pinned) fx.feature.grp.visible = false;
+    if (window.__gfx !== 'neon') {
+      hideRealisticFloaters();
+      if ((update._f = (update._f || 0) + 1) % 45 === 0) {
+        placeJellicoeScreen(true);
+        S.traverse(o => {
+          if (!o.isMesh && !o.isGroup) return;
+          if (o.userData && o.userData.v116) return;
+          const u = o.userData || (o.parent && o.parent.userData) || {};
+          if ((u.track || u.feature || u.orbit) && !u.v116pinned) {
+            const host = (o.parent && o.parent.userData && o.parent.userData.orbit) ? o.parent : o;
+            if (!host.userData || !host.userData.v116pinned) host.visible = false;
+          }
+        });
+      }
     }
     if (window.__gfx !== 'neon' && fx.feature && fx.feature.grp && fx.feature.grp.userData.v116pinned) {
       fx.feature.y0 = 2.8;
