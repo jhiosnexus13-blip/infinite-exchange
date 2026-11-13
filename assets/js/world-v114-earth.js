@@ -171,6 +171,7 @@ export function initV114Earth(o) {
     if (sky) sky.visible = !vip;
     if (sunLight) sunLight.visible = !vip;
     if (hemi) hemi.visible = !vip;
+    if (fx.skyMesh && window.IE_V114_SKY !== false) fx.skyMesh.visible = false;
     if (vip) return;
     if (sky) sky.position.copy(CAM.position);
     const phase = E ? E.phase : 0.3;
