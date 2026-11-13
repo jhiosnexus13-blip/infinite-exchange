@@ -242,7 +242,9 @@ export function initV116(o) {
     g.strokeStyle = fg; g.lineWidth = 12; g.strokeRect(14, 14, c.width - 28, c.height - 28);
     g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle';
     const lines = String(text).split('\n');
-    g.font = 'bold ' + Math.floor(c.height / (lines.length + 1.15)) + 'px Georgia,serif';
+    let px = Math.floor(c.height / (lines.length + 1.15));
+    lines.forEach((ln) => { g.font = 'bold ' + px + 'px Georgia,serif'; while (g.measureText(ln).width > c.width * 0.88 && px > 12) { px--; g.font = 'bold ' + px + 'px Georgia,serif'; } });
+    g.font = 'bold ' + px + 'px Georgia,serif';
     lines.forEach((ln, i) => g.fillText(ln, c.width / 2, c.height * (i + 1) / (lines.length + 1)));
     const tx = new T.CanvasTexture(c); if (tx.colorSpace !== undefined) tx.colorSpace = T.SRGBColorSpace; tx.anisotropy = 4;
     const mat = Mbasic({ map: tx, side: T.FrontSide, fog: true, toneMapped: false });
@@ -275,7 +277,10 @@ export function initV116(o) {
           sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',
             `#ifdef USE_MAP\n if (!gl_FrontFacing) vMapUv.x = 1.0 - vMapUv.x;\n#endif\n#include <map_fragment>`);
         };
-        mat.customProgramCacheKey = () => (mat.customProgramCacheKey && mat.customProgramCacheKey()) + '|v116flip';
+        const prevKey = mat.customProgramCacheKey ? mat.customProgramCacheKey.bind(mat) : () => '';
+        mat.customProgramCacheKey = () => {
+          try { return prevKey() + '|v116flip'; } catch (_) { return 'v116flip'; }
+        };
         mat.needsUpdate = true; return;
       }
       if (seen.has(ch)) return; seen.add(ch);
@@ -464,9 +469,16 @@ export function initV116(o) {
     const nx = Math.sin(ry), nz = Math.cos(ry);
     m.position.set(p.x + nx * 0.1, y, p.z + nz * 0.1); m.rotation.y = ry;
     m.castShadow = false; m.receiveShadow = false; parent.add(m);
-    /* white frame as a slightly larger rim behind? in front: thin boxes */
-    const fr = new T.Mesh(new T.BoxGeometry(w + 0.1, h + 0.1, 0.05), mats.white);
-    fr.position.set(p.x + nx * 0.07, y, p.z + nz * 0.07); fr.rotation.y = ry; parent.add(fr);
+    /* thin white rim (four edges), not a solid white plate */
+    const tkn = 0.07, dep = 0.06;
+    for (const [ww, hh, ox, oy] of [
+      [w + tkn * 2, tkn, 0, (h + tkn) / 2], [w + tkn * 2, tkn, 0, -(h + tkn) / 2],
+      [tkn, h, -(w + tkn) / 2, 0], [tkn, h, (w + tkn) / 2, 0]
+    ]) {
+      const fr = new T.Mesh(new T.BoxGeometry(ww, hh, dep), mats.white);
+      fr.position.set(p.x + nx * 0.07 + Math.cos(ry) * ox, y + oy, p.z + nz * 0.07 - Math.sin(ry) * ox);
+      fr.rotation.y = ry; parent.add(fr);
+    }
     return m;
   }
 
@@ -638,13 +650,14 @@ export function initV116(o) {
     const sh = new T.Shape();
     const cx = 48, cy = 2733;
     SCHOOL.forEach((pt, i) => {
-      const k = 1.03; const e = cx + (pt[0] - cx) * k, n = cy + (pt[1] - cy) * k;
+      const k = 1.08; const e = cx + (pt[0] - cx) * k, n = cy + (pt[1] - cy) * k;
       if (i === 0) sh.moveTo(e, n); else sh.lineTo(e, n);
     }); sh.closePath();
-    const H = 7.2;
+    const H = 7.4;
     const geo = new T.ExtrudeGeometry(sh, { depth: H, bevelEnabled: false, steps: 1 });
-    geo.rotateX(-Math.PI / 2);
-    const mat = Mstd({ map: proc.render, color: 0xe6dcc4, roughness: 0.78 }); /* cream / buff school */
+    geo.rotateX(-Math.PI / 2); geo.computeVertexNormals();
+    const mat = Mstd({ map: proc.render, color: 0xe6dcc4, roughness: 0.78, side: T.DoubleSide,
+      polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 });
     const body = new T.Mesh(geo, mat); body.castShadow = !!wantShadows; body.receiveShadow = true; g.add(body);
     /* flat felt roof, slightly inset */
     const roofSh = new T.Shape();
@@ -826,15 +839,8 @@ export function initV116(o) {
       const fresh = host.cloneNode(false); host.parentNode.replaceChild(fresh, host); fresh.id = 'wlite';
       fill(fresh);
     }
-    /* if the MENU already exists, keep #wlite (gathered first) as the obvious switcher.
-       Also stamp a dedicated block at the top of the panel in case gather hasn't run. */
-    const panel = document.getElementById('v115panel');
-    if (panel && !document.getElementById('v116gfx')) {
-      const box = document.createElement('div'); box.id = 'v116gfx';
-      fill(box);
-      const body = panel.querySelector('.v115body');
-      panel.insertBefore(box, body || panel.firstChild);
-    }
+    /* #wlite is the first widget the v115 MENU gathers, so GRAPHICS is at the top of the menu.
+       Do not insert a second #v116gfx — that duplicated the switcher. */
     window.__setGfx = setLevel;
   }
   function refreshUI() {
@@ -927,7 +933,7 @@ export function initV116(o) {
       if (sunL) sunL.intensity = Math.max(0.25, (sunL.intensity || 1) * (0.55 - gloom * 0.15));
       if (hemi) hemi.intensity = 0.55 + (1 - gloom) * 0.15;
       if (S.fog) { S.fog.color.setHex(0x8a9298); S.fog.density = (phone ? 0.00095 : 0.0007) * (E && E.fogK ? E.fogK : 1); }
-      if (R && R.toneMappingExposure != null) R.toneMappingExposure = 0.85 + (1 - gloom) * 0.2;
+      if (R && R.toneMappingExposure != null) R.toneMappingExposure = 0.68 + (1 - gloom) * 0.15;
     } else if (day <= 0.35) {
       /* night: dark blue-grey horizon, not pitch black; no neon sky-sphere (that caused the v115 blob) */
       if (sky && sky.material && sky.material.uniforms) {
@@ -1019,7 +1025,21 @@ export function initV116(o) {
     reducePopin();
     /* keep neon visibility stable against v115-solid's delayed re-hide */
     if (window.__gfx === 'neon' && (update._n = (update._n || 0) + 1) % 40 === 0) setNeonVisible(true);
-    /* pin featured screen so it does not bob into the sky at realistic levels */
+    if (window.__gfx !== 'neon' && (update._f = (update._f || 0) + 1) % 30 === 0) {
+      applyFloatingCleanup(true);
+      placeJellicoeScreen(true);
+      /* any leftover unattached track screens still floating in the sky */
+      S.traverse(o => {
+        if (!o.isMesh && !o.isGroup) return;
+        if (o.userData && o.userData.v116) return;
+        const u = o.userData || (o.parent && o.parent.userData) || {};
+        if ((u.track || u.feature || u.orbit) && (o.position.y > 4 || (o.parent && o.parent.position && o.parent.position.y > 4))) {
+          (o.parent && o.parent.userData && o.parent.userData.orbit ? o.parent : o).visible = false;
+        }
+      });
+      if (fx.clusters) fx.clusters.forEach(c => { if (c.grp && !c.grp.userData.v116pinned) c.grp.visible = false; });
+      if (fx.feature && fx.feature.grp && !fx.feature.grp.userData.v116pinned) fx.feature.grp.visible = false;
+    }
     if (window.__gfx !== 'neon' && fx.feature && fx.feature.grp && fx.feature.grp.userData.v116pinned) {
       fx.feature.y0 = 2.8;
     }
