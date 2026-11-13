@@ -623,7 +623,7 @@ function updateClusters(t, dt) {
   if (fx.foodHeart && !RED) fx.foodHeart.rotation.y = t * 0.8;
   if (fx.foodBeam && !RED) { const k = 0.5 + 0.5 * Math.sin(t * 1.6); fx.foodBeam.material.opacity = 0.26 + 0.14 * k; fx.foodHalo.scale.setScalar(1 + 0.12 * k); }
   if (fx.damG) fx.damG.rotation.y = Math.atan2(CAM.position.x - fx.damG.position.x, CAM.position.z - fx.damG.position.z);
-  for (const c of fx.clusters) { const p = c.grp.position, d = Math.hypot(P.pos.x - p.x, P.pos.z - p.z); c.grp.visible = d < (LOW ? 900 : 1600);
+  for (const c of fx.clusters) { const p = c.grp.position, d = Math.hypot(P.pos.x - p.x, P.pos.z - p.z); c.grp.visible = d < (LOW ? 900 : 1600) && (window.__gfx === 'neon' || !window.__gfx || c.grp.userData.v116pinned || c.grp.userData.v116keep);
     if (!c.grp.visible) continue; if (!RED) c.grp.rotation.y += dt * (c.spin || 0.05);
     for (const m of c.grp.children) { if (!m.userData.track) continue; m.lookAt(CAM.position.x, m.getWorldPosition(fx.v || (fx.v = new T.Vector3())).y, CAM.position.z);
       const u = m.userData, on = window.JX && JX.current && JX.current.id === u.track; m.scale.setScalar(on ? 1.25 + 0.1 * Math.sin(t * 4) : 1);
@@ -901,7 +901,7 @@ function updateOrbits(t, dt) {
   for (const o of fx.orbits) {
     if (!RED) o.grp.rotation.y += dt * 0.15;
     const d = Math.hypot(P.pos.x - o.h.o.pos[0], P.pos.z - o.h.o.pos[1]);
-    o.grp.visible = d < 70;
+    o.grp.visible = d < 70 && (window.__gfx === 'neon' || !window.__gfx);
     for (const m of o.grp.children) {
       m.lookAt(CAM.position.x, m.getWorldPosition(fx.v || (fx.v = new T.Vector3())).y, CAM.position.z);
       const u = m.userData; // lazy thumbnail load when near, capped

@@ -189,7 +189,7 @@ export function initV116(o) {
   /* tiling */
   const tile = (tx, a, b) => { if (tx && tx.repeat) tx.repeat.set(a, b); };
   tile(proc.brick, 4, 8); tile(proc.brickN, 4, 8);
-  tile(proc.roof, 4, 4); tile(proc.asphalt, 8, 40);
+  tile(proc.roof, 4, 4); tile(proc.asphalt, 1, 1);
   tile(proc.pave, 10, 40); tile(proc.paveN, 10, 40);
   tile(proc.grass, 20, 40); tile(proc.sand, 16, 16);
 
@@ -212,8 +212,8 @@ export function initV116(o) {
   loadMap('brick_4_nor_gl_1k.jpg', 'brickDk', 'normal', 3, 6);
   loadMap('roof_tiles_14_diff_1k.jpg', 'roof', 'map', 3, 3);
   loadMap('roof_tiles_14_nor_gl_1k.jpg', 'roof', 'normal', 3, 3);
-  loadMap('asphalt_04_diff_1k.jpg', 'asphalt', 'map', 6, 30);
-  loadMap('asphalt_04_nor_gl_1k.jpg', 'asphalt', 'normal', 6, 30);
+  loadMap('asphalt_04_diff_1k.jpg', 'asphalt', 'map', 1, 1);
+  loadMap('asphalt_04_nor_gl_1k.jpg', 'asphalt', 'normal', 1, 1);
   loadMap('aerial_grass_rock_diff_1k.jpg', 'grass', 'map', 14, 28);
 
   /* HDRI environment (REAL level) — lighting only; sky visual still follows time/weather */
@@ -647,27 +647,47 @@ export function initV116(o) {
   /* ---------- school: real footprint, cream render, proper windows, no z-fight ---------- */
   function buildSchool() {
     const g = new T.Group(); g.name = 'v116-school'; g.userData.v116 = 1; grpStrip.add(g);
-    const sh = new T.Shape();
-    const cx = 48, cy = 2733;
-    SCHOOL.forEach((pt, i) => {
-      const k = 1.08; const e = cx + (pt[0] - cx) * k, n = cy + (pt[1] - cy) * k;
-      if (i === 0) sh.moveTo(e, n); else sh.lineTo(e, n);
-    }); sh.closePath();
     const H = 7.4;
-    const geo = new T.ExtrudeGeometry(sh, { depth: H, bevelEnabled: false, steps: 1 });
-    geo.rotateX(-Math.PI / 2); geo.computeVertexNormals();
-    const mat = Mstd({ map: proc.render, color: 0xe6dcc4, roughness: 0.78, side: T.DoubleSide,
-      polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6 });
-    const body = new T.Mesh(geo, mat); body.castShadow = !!wantShadows; body.receiveShadow = true; g.add(body);
-    /* flat felt roof, slightly inset */
-    const roofSh = new T.Shape();
-    SCHOOL.forEach((pt, i) => { if (i === 0) roofSh.moveTo(pt[0], pt[1]); else roofSh.lineTo(pt[0], pt[1]); }); roofSh.closePath();
-    const rg = new T.ExtrudeGeometry(roofSh, { depth: 0.28, bevelEnabled: false }); rg.rotateX(-Math.PI / 2);
-    const roof = new T.Mesh(rg, Mstd({ color: 0x3a3a38, roughness: 0.95 })); roof.position.y = H; g.add(roof);
-    /* south-frontage windows — inset planes, FrontSide, no z-fight. South wall is n≈2713-2715, e 13..86 */
-    for (let e = 18; e <= 80; e += 4.2) {
-      windowPane(1.7, 1.55, e, 2712.7, 2.15, Math.PI, g);
-      windowPane(1.7, 1.55, e, 2712.7, 5.15, Math.PI, g);
+    /* Opaque brick / cream materials — no procedural map, depthWrite on, so this
+       frontage covers the v69 400 m-tile facade skin (which we cannot hide without
+       taking the rest of the tile with it). Sits SOUTH of the OSM wall at n≈2713. */
+    const brick = (mats.brick && mats.brick.clone) ? mats.brick.clone() : Mstd({ color: 0x9a5a42, roughness: 0.86 });
+    brick.transparent = false; brick.depthWrite = true; brick.side = T.FrontSide;
+    const cream = Mstd({ color: 0xd4c6aa, roughness: 0.84, metalness: 0.02, side: T.FrontSide });
+    /* two south-wall slabs with a gate gap at e=50; thickness 1.8 m, centre n=2710.7 */
+    const sN = 2710.7, sD = 1.85, sE0 = 13, sE1 = 87, gap = 3.7;
+    const mkWall = (e0, e1, n, d, h, y, mat) => {
+      const m = new T.Mesh(new T.BoxGeometry(Math.max(0.2, e1 - e0), h, d), mat);
+      const p = warp((e0 + e1) / 2, n);
+      m.position.set(p.x, y, p.z);
+      m.castShadow = !!wantShadows; m.receiveShadow = true; m.renderOrder = 2;
+      g.add(m); return m;
+    };
+    mkWall(sE0, 50 - gap / 2, sN, sD, H, H / 2, brick);
+    mkWall(50 + gap / 2, sE1, sN, sD, H, H / 2, brick);
+    /* lintel over the gate opening */
+    mkWall(50 - gap / 2 - 0.2, 50 + gap / 2 + 0.2, sN, sD, 1.7, H - 0.85, brick);
+    /* short returns so the corners read as a building */
+    for (const e of [sE0, sE1]) mkWall(e - 0.7, e + 0.7, sN + 3.4, 6.6, H, H / 2, brick);
+    /* felt roof over the frontage */
+    const rf = new T.Mesh(new T.BoxGeometry(sE1 - sE0 + 2, 0.3, 8.2), Mstd({ color: 0x3a3a38, roughness: 0.95 }));
+    const rp = warp((sE0 + sE1) / 2, sN + 2.5);
+    rf.position.set(rp.x, H + 0.14, rp.z); g.add(rf);
+    /* body mass behind the slab (covers the rest of the v69 school from other angles).
+       A single outset box, not a self-intersecting extrusion. */
+    const body = new T.Mesh(new T.BoxGeometry(90, H - 0.2, 36), cream);
+    const bp = warp(48, 2732);
+    body.position.set(bp.x, (H - 0.2) / 2, bp.z);
+    body.castShadow = !!wantShadows; body.receiveShadow = true; g.add(body);
+    const roof2 = new T.Mesh(new T.BoxGeometry(91, 0.28, 37), Mstd({ color: 0x3a3a38, roughness: 0.95 }));
+    roof2.position.set(bp.x, H + 0.1, bp.z); g.add(roof2);
+    /* windows on the SOUTH face (toward the path / camera). Plane faces +z (south)
+       when ry = 0; previous Math.PI faced north, so the glass was invisible. */
+    const faceN = sN - sD / 2 - 0.05;
+    for (let e = 16; e <= 84; e += 4.2) {
+      if (Math.abs(e - 50) < gap / 2 + 0.6) continue;
+      windowPane(1.65, 1.5, e, faceN, 2.2, 0, g);
+      windowPane(1.65, 1.5, e, faceN, 5.15, 0, g);
     }
     info.school = true; return g;
   }
@@ -679,7 +699,13 @@ export function initV116(o) {
     const len = ND_N1 - ND_N0, midN = (ND_N0 + ND_N1) / 2;
     const mid = warp(ND_E, midN);
     /* carriageway — plane, length along N (world −z) */
+    const worldUV = (geo, wu, wv, tileM = 8) => {
+      const uv = geo.attributes.uv;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * wu / tileM, uv.getY(i) * wv / tileM);
+      uv.needsUpdate = true;
+    };
     const road = new T.Mesh(new T.PlaneGeometry(ND_W, len + 4), mats.asphalt);
+    worldUV(road.geometry, ND_W, len + 4);
     road.rotation.x = -Math.PI / 2; road.position.set(mid.x, 0.045, mid.z);
     road.receiveShadow = true; g.add(road);
     /* white edge lines + dashed centre */
@@ -709,10 +735,8 @@ export function initV116(o) {
     const jn = 2668.5, je0 = -50, je1 = ND_E + ND_W / 2, jlen = je1 - je0, jmid = (je0 + je1) / 2;
     const jm = warp(jmid, jn);
     const jroad = new T.Mesh(new T.PlaneGeometry(jlen, 11.2), mats.asphalt);
-    jroad.rotation.x = -Math.PI / 2; jroad.rotation.z = Math.PI / 2; /* length along X (=e) */
-    /* PlaneGeometry(jlen, 11.2) after rotX -90: local Y→-Z (the 11.2 is N–S width). Wait, we want length along e (X).
-       Plane (width=jlen along X, height=11.2 along Y) rotX -90: height goes to -Z = N–S width. Width stays on X. Good, no rotZ. */
-    jroad.rotation.z = 0;
+    worldUV(jroad.geometry, jlen, 11.2);
+    jroad.rotation.x = -Math.PI / 2; jroad.rotation.z = 0;
     jroad.position.set(jm.x, 0.046, jm.z); jroad.receiveShadow = true; g.add(jroad);
     for (const s of [-1, 1]) {
       const pv = new T.Mesh(new T.PlaneGeometry(jlen, 2.4), mats.pave);
