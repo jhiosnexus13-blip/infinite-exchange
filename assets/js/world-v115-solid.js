@@ -14,6 +14,7 @@ export function initV115Solid(o) {
   const grp = new T.Group(); grp.name = 'v115-solid'; S.add(grp);
 
   const hideHolo = () => {
+    if (window.__gfx === 'neon' || window.IE_GFX === 'neon') return true; /* v116: NEON level keeps the holo layer */
     const city = S.getObjectByName('osm-buildings');
     if (!city) return false;
     if (fx.geo && fx.geo.done === false) return false;

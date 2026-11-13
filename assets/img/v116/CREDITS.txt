@@ -1,0 +1,12 @@
+v116 materials — all CC0 1.0 (public domain dedication). No account, no key.
+
+- brick_4_diff_1k.jpg, brick_4_nor_gl_1k.jpg
+  Poly Haven "brick_4" https://polyhaven.com/a/brick_4  — CC0
+- overcast_soil_puresky_1k.hdr
+  Poly Haven "Overcast Soil Puresky" https://polyhaven.com/a/overcast_soil_puresky — CC0
+- roof_tiles_14_* (if present) https://polyhaven.com/a/roof_tiles_14 — CC0
+- asphalt_04_* (if present) https://polyhaven.com/a/asphalt_04 — CC0
+- aerial_grass_rock_* (if present) https://polyhaven.com/a/aerial_grass_rock — CC0
+
+Procedural canvases (red block paving, sand, render, window frames) are original
+and unencumbered, in the same spirit as ambientCG CC0 patterns.
