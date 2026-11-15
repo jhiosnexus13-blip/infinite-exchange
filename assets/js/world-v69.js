@@ -100,7 +100,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     const h = (h0 || (A > 900 ? 9 : 6)) + 0.12; const pal = z === 'sea' ? PAL_SEA : z === 'town' ? (R() < 0.55 ? PAL_BRICK : PAL_RENDER) : (R() < 0.7 ? PAL_BRICK : PAL_RENDER);
     skin(pts, h, beattyCol(cx, cy) ?? pal[Math.floor(R() * pal.length)]); };
   // once the solid skins cover the footprints, hide the old translucent green slab fills (neon roof edges stay as the digital layer)
-  const hideSlabs = () => { const city = S.getObjectByName('osm-buildings'); if (!city || !(fx.geo && fx.geo.done)) return setTimeout(hideSlabs, 1000); let n = 0;
+  const hideSlabs = () => { if (window.__gfx === 'neon' || window.IE_GFX === 'neon') return; const city = S.getObjectByName('osm-buildings'); if (!city || !(fx.geo && fx.geo.done)) return setTimeout(hideSlabs, 1000); let n = 0;
     const hid = new T.MeshBasicMaterial({ visible: false }); city.traverse(o => { if (o.isMesh) { o.material = hid; n++; } else if (o.isLineSegments && o.material) { o.material.opacity = 0.35; } }); info.slabsHidden = n; };
   const step = () => { try { const end = Math.min(B.length, bi + (LITE ? 500 : 1200)); for (; bi < end; bi++) one(B[bi][0], B[bi][1]); if (bi < B.length) return setTimeout(step, 0); for (const t of skinTiles.values()) flushTile(t); info.skinsDone = true; hideSlabs(); } catch (e) { console.warn('v69 skins', e); } };
   let BD = null; const beattyCol = (e, n) => { if (!BD || e < -262 || e > -185 || n < 2500 || n > 2660) return null; const L = e > -222.5 ? BD.terraceEast : BD.terraceWest; const t = (L || []).find(t => n >= t.n0 && n < t.n1); return t ? new T.Color(t.col).getHex() : null; };
@@ -269,12 +269,17 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     AB(0x5a5e64, 28, 0.08, 36, e + 8, n + 40, 0.05); // surface parking asphalt beside (north)
     for (let i = 0; i < 5; i++) AB(0xe8e8e4, 2.4, 0.04, 0.12, e + 2 + (i % 3) * 3, n + 28 + i * 4, 0.08); // bay lines
     info.marinaCentre = { h: MH, e, n }; }
-  { const [e, n] = loc(52.6278547, 1.7383001); // The Iron Duke (1930s Art Deco pub, North Drive): dark brick mass, pale bands, rounded end bays, lettering facing the sea road
-    AB(0x4a2c24, 16, 8.6, 30, e, n, 4.3); AB(0x4a2c24, 10, 11, 10, e - 2, n, 5.5); for (const y of [3.0, 6.2, 8.7]) AB(0xe9e3d2, 16.4, 0.45, 30.4, e, n, y);
-    for (const dn of [-15, 15]) { CY(0x4a2c24, 5, 5, 8.6, e + 3, n + dn, 4.3, 16); for (const y of [3.0, 6.2, 8.7]) CY(0xe9e3d2, 5.2, 5.2, 0.45, e + 3, n + dn, y, 16); }
-    for (let i = 0; i < 6; i++) { AB(0x1a1d22, 0.3, 1.9, 2.4, e + 8.1, n - 11 + i * 4.4, 4.6); AB(0xe9e3d2, 0.34, 0.2, 2.8, e + 8.1, n - 11 + i * 4.4, 5.6); }
-    board('THE IRON DUKE', 12, 1.4, e + 8.3, n, 7.4, Math.PI / 2, '#1f1410', '#f2e6c4', 0.7);
-    for (let i = 0; i < 9; i++) { AB(0x22262c, 0.18, 0.9, 0.18, e + 14, n - 16 + i * 4, 0.45); } AB(0x6f6b63, 4, 0.14, 36, e + 11, n, 0.07); }
+  { const [e, n] = loc(52.6278547, 1.7383001); // The Iron Duke — isolated group so v116 can hide this stand-in at realistic levels (NEON keeps it)
+    const duke = new T.Group(); duke.name = 'v69-iron-duke';
+    const DM = (c) => new T.MeshBasicMaterial({ color: c });
+    const DAB = (col, w, h, d, ee, nn, y, ry = 0) => { const m = new T.Mesh(new T.BoxGeometry(w, h, d), DM(col)); const p = warp(ee, nn); m.position.set(p.x, y, p.z); m.rotation.y = ry; duke.add(m); };
+    const DCY = (col, r0, r1, h, ee, nn, y, seg = 10) => { const m = new T.Mesh(new T.CylinderGeometry(r0, r1, h, seg), DM(col)); const p = warp(ee, nn); m.position.set(p.x, y, p.z); duke.add(m); };
+    DAB(0x4a2c24, 16, 8.6, 30, e, n, 4.3); DAB(0x4a2c24, 10, 11, 10, e - 2, n, 5.5); for (const y of [3.0, 6.2, 8.7]) DAB(0xe9e3d2, 16.4, 0.45, 30.4, e, n, y);
+    for (const dn of [-15, 15]) { DCY(0x4a2c24, 5, 5, 8.6, e + 3, n + dn, 4.3, 16); for (const y of [3.0, 6.2, 8.7]) DCY(0xe9e3d2, 5.2, 5.2, 0.45, e + 3, n + dn, y, 16); }
+    for (let i = 0; i < 6; i++) { DAB(0x1a1d22, 0.3, 1.9, 2.4, e + 8.1, n - 11 + i * 4.4, 4.6); DAB(0xe9e3d2, 0.34, 0.2, 2.8, e + 8.1, n - 11 + i * 4.4, 5.6); }
+    const db = board('THE IRON DUKE', 12, 1.4, e + 8.3, n, 7.4, Math.PI / 2, '#1f1410', '#f2e6c4', 0.7); if (db && db.parent) duke.attach(db);
+    for (let i = 0; i < 9; i++) DAB(0x22262c, 0.18, 0.9, 0.18, e + 14, n - 16 + i * 4, 0.45); DAB(0x6f6b63, 4, 0.14, 36, e + 11, n, 0.07);
+    grp.add(duke); }
   // ---------- 7. bottom of Beatty Road (Joseph's photos) ----------
   fetch('/assets/data/beatty-bottom.json?v=87').then(r => r.json()).then(D => { try {
     const BE = -222.5; const s = D.busStop; // shelter on the east kerb, facing the road (west)

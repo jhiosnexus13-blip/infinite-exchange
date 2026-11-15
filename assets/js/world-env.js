@@ -61,21 +61,25 @@ function chip() {
 
 /* ---------- rain streaks (slanted by wind) ---------- */
 function rainInit() {
-  const N = LITE ? 450 : 1800, pos = new Float32Array(N * 6), g = new T.BufferGeometry();
+  /* v116: still driven by live E.rain / E.drizzle — only the LOOK is refined:
+     more, shorter, fainter grey streaks instead of crude long cyan lines. */
+  const N = LITE ? 900 : 2800, pos = new Float32Array(N * 6), g = new T.BufferGeometry();
   for (let i = 0; i < N; i++) { pos[i * 6] = (Math.random() - 0.5) * 70; pos[i * 6 + 1] = Math.random() * 30; pos[i * 6 + 2] = (Math.random() - 0.5) * 70; }
   g.setAttribute('position', new T.BufferAttribute(pos, 3)); g.setDrawRange(0, 0);
-  const m = new T.LineBasicMaterial({ color: 0xa8d8ff, transparent: true, opacity: 0.45, depthWrite: false, fog: false });
+  const m = new T.LineBasicMaterial({ color: 0xc5cdd4, transparent: true, opacity: 0.2, depthWrite: false, fog: true });
   const l = new T.LineSegments(g, m); l.frustumCulled = false; S.add(l); E.rl = { l, pos, N, g, m };
 }
 function rainUpdate(dt) {
   const R = E.rl; if (!R) return; const n = Math.floor(R.N * E.rain); R.g.setDrawRange(0, n * 2); if (!n) return;
-  const w = Math.min(1.2, E.wind / 40), wx = -Math.sin(E.dir) * w, wz = Math.cos(E.dir) * w; // wind FROM dir: blows toward opposite (world z = -north)
-  const vy = E.drizzle ? 7 : 18, len = E.drizzle ? 0.35 : 1.1, p = R.pos;
+  const w = Math.min(1.2, E.wind / 40), wx = -Math.sin(E.dir) * w, wz = Math.cos(E.dir) * w;
+  const vy = E.drizzle ? 5.5 : 12, len = E.drizzle ? 0.16 : (0.22 + E.rain * 0.18), p = R.pos;
   for (let i = 0; i < n; i++) { const k = i * 6; let y = p[k + 1] - vy * dt;
     let x = p[k] + wx * vy * dt, z = p[k + 2] + wz * vy * dt;
-    if (y < 0 || Math.abs(x - P.pos.x) > 40 || Math.abs(z - P.pos.z) > 40) { y = 20 + Math.random() * 12; x = P.pos.x + (Math.random() - 0.5) * 70; z = P.pos.z + (Math.random() - 0.5) * 70; }
+    if (y < 0 || Math.abs(x - P.pos.x) > 40 || Math.abs(z - P.pos.z) > 40) { y = 16 + Math.random() * 10; x = P.pos.x + (Math.random() - 0.5) * 70; z = P.pos.z + (Math.random() - 0.5) * 70; }
     p[k] = x; p[k + 1] = y; p[k + 2] = z; p[k + 3] = x - wx * len; p[k + 4] = y + len; p[k + 5] = z - wz * len; }
-  R.g.attributes.position.needsUpdate = true; R.m.opacity = E.drizzle ? 0.3 : 0.5;
+  R.g.attributes.position.needsUpdate = true;
+  R.m.color.setHex(0xc8d0d6);
+  R.m.opacity = E.drizzle ? 0.15 : (0.18 + E.rain * 0.12);
 }
 
 /* ---------- lamps + Marine Parade lights along the Golden Mile ---------- */
@@ -118,7 +122,7 @@ function waves() {
 /* ---------- per frame ---------- */
 const C = {}; const col = (k, h) => C[k] || (C[k] = new T.Color(h));
 function update(t, dt) {
-  E.phase = (E.phase + dt / CYCLE) % 1;
+  if (!E.holdPhase) E.phase = (E.phase + dt / CYCLE) % 1; /* v116: holdPhase freezes the 5-min cycle so the sky can follow real GY time */
   const sun = Math.sin((E.phase - 0.05) * Math.PI * 2); // >0 day; noon at phase .30, midnight .80
   E.day = Math.min(1, Math.max(0, sun * 2.2 + 0.5)); const night = 1 - E.day, gloom = Math.min(1, E.cloud * 0.6 + E.rain * 0.4);
   if (E.btn) { const s = E.day > 0.5 ? '☀' : '☾'; if (E.btn.textContent !== s) E.btn.textContent = s; }
