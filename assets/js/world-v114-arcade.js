@@ -359,7 +359,7 @@ export function initV114Arcade(o) {
       let d;
       if (cab.userData.outdoor) {
         const w = cab.userData.wp; d = Math.hypot(w.x - pos.x, w.z - pos.z);
-        if ((frame & 15) === 0) cab.visible = d < 240;
+        cab.visible = d < 240;
         if (!cab.visible) continue;
       } else {
         if (!cab.visible || (cab.parent && cab.parent.visible === false)) continue;

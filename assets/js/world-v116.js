@@ -196,7 +196,7 @@ export function initV116(o) {
   /* ---------- load CC0 maps (replace procedural when ready) ---------- */
   const loader = new T.TextureLoader(); loader.crossOrigin = 'anonymous';
   function loadMap(file, matKey, kind /* 'map' | 'normal' */, rx, ry) {
-    loader.load(TEX + file + '?v=118', tx => {
+    loader.load(TEX + file + '?v=119', tx => {
       if (tx.colorSpace !== undefined && kind === 'map') tx.colorSpace = T.SRGBColorSpace;
       tx.wrapS = tx.wrapT = T.RepeatWrapping; tx.anisotropy = (R && R.capabilities && R.capabilities.getMaxAnisotropy) ? Math.min(8, R.capabilities.getMaxAnisotropy()) : 4;
       if (rx) tx.repeat.set(rx, ry);
@@ -220,7 +220,7 @@ export function initV116(o) {
   let envMap = null;
   if (R) {
     try {
-      new RGBELoader().setDataType(T.HalfFloatType).load(TEX + 'overcast_soil_puresky_1k.hdr?v=118', (hdr) => {
+      new RGBELoader().setDataType(T.HalfFloatType).load(TEX + 'overcast_soil_puresky_1k.hdr?v=119', (hdr) => {
         const pmrem = new T.PMREMGenerator(R); pmrem.compileEquirectangularShader();
         envMap = pmrem.fromEquirectangular(hdr).texture; hdr.dispose(); pmrem.dispose();
         info.hdri = true;
@@ -739,7 +739,9 @@ export function initV116(o) {
       const qp = warp(pe, midN); pv.rotation.x = -Math.PI / 2; pv.position.set(qp.x, 0.13, qp.z); pv.receiveShadow = true; g.add(pv);
     }
     /* Jellicoe approach (E–W) at n≈2668, from the bridge toward the junction */
-    const jn = 2668.5, je0 = -50, je1 = ND_E + ND_W / 2, jlen = je1 - je0, jmid = (je0 + je1) / 2;
+    /* v118: start the flat Jellicoe strip at the foot of the real east approach ramp (v63: deck e-54 + 1 + 45 m ramp = e-8).
+       It used to start at e-50 and its first-wins flat ground cut the ramp, so walking off the deck dropped ~6 m. */
+    const jn = 2668.5, je0 = window.IE_V63_JELLICOE_OLD === true ? -50 : -8, je1 = ND_E + ND_W / 2, jlen = je1 - je0, jmid = (je0 + je1) / 2;
     const jm = warp(jmid, jn);
     const jroad = new T.Mesh(new T.PlaneGeometry(jlen, 11.2), mats.asphalt);
     worldUV(jroad.geometry, jlen, 11.2);
