@@ -73,6 +73,7 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
   const STAGE_YT = 'JUjbods6cWw';
   const stage = {
     on: false, ready: false, css: null, scene: null, obj: null, hole: null, iframe: null, fail: null, pausedJx: null, ytReady: false,
+    generation: 0, timers: new Set(),
     async ensure() {
       if (window.IE_V87_VIPER_STAGE === false) return false;
       if (stage.ready) return true;
@@ -138,9 +139,13 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
     },
     async show(r) {
       if (window.IE_V87_VIPER_STAGE === false || !r || r.key !== 'viper') return;
+      const generation = ++stage.generation;
       stage.build(r);
       const ok = await stage.ensure();
+      if (generation !== stage.generation || cur !== r) return;
       if (!ok || !stage.css || !stage.scene) { if (stage.fail) stage.fail.visible = true; console.warn('viper stage: CSS3D unavailable'); return; }
+      const { CSS3DObject } = await import('three/addons/renderers/CSS3DRenderer.js');
+      if (generation !== stage.generation || cur !== r) return;
       if (stage.obj) { try { stage.scene.remove(stage.obj); } catch (_) {} stage.obj = null; }
       if (stage.iframe) { try { stage.iframe.src = 'about:blank'; } catch (_) {} stage.iframe = null; }
       const { sx, sy, sz, SW, SH } = r.stagePos;
@@ -156,7 +161,6 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       // Start muted for autoplay policy, then unMute+play via API (enter was a user gesture; JX also uses delayed play successfully)
       iframe.src = `https://www.youtube-nocookie.com/embed/${STAGE_YT}?autoplay=1&mute=1&controls=1&playsinline=1&rel=0&modestbranding=1&loop=1&playlist=${STAGE_YT}&enablejsapi=1&origin=${encodeURIComponent(location.origin)}`;
       wrap.appendChild(iframe);
-      const { CSS3DObject } = await import('three/addons/renderers/CSS3DRenderer.js');
       const obj = new CSS3DObject(wrap);
       wrap.style.pointerEvents = 'none';
       // World position matching room group (ox, FY, oz) + local screen
@@ -175,12 +179,17 @@ export function initV87({ T, S, LITE, warp, fx, P }) {
       if (stage.fail) stage.fail.visible = false;
       info.stage = { yt: STAGE_YT, muted: false, audio: 'stage' };
       // Force play + unmute shortly after iframe loads (and again once for slow mobiles)
-      const kick = () => { stage.ytCmd('playVideo'); stage.ytCmd('unMute'); stage.ytCmd('setVolume', [100]); };
-      iframe.addEventListener('load', () => { stage.ytReady = true; setTimeout(kick, 200); setTimeout(kick, 1200); });
-      setTimeout(kick, 800);
-      setTimeout(kick, 2500);
+      const valid = () => generation === stage.generation && cur === r && stage.on && stage.iframe === iframe;
+      const kick = () => { if (!valid()) return; stage.ytCmd('playVideo'); stage.ytCmd('unMute'); stage.ytCmd('setVolume', [100]); };
+      const later = delay => { const timer = setTimeout(() => { stage.timers.delete(timer); kick(); }, delay); stage.timers.add(timer); };
+      iframe.addEventListener('load', () => { if (!valid()) return; stage.ytReady = true; later(200); later(1200); });
+      later(800);
+      later(2500);
     },
     hide() {
+      ++stage.generation;
+      for (const timer of stage.timers) clearTimeout(timer);
+      stage.timers.clear();
       const was = stage.on;
       stage.on = false;
       if (stage.css) stage.css.domElement.style.display = 'none';

@@ -196,7 +196,7 @@ export function initV116(o) {
   /* ---------- load CC0 maps (replace procedural when ready) ---------- */
   const loader = new T.TextureLoader(); loader.crossOrigin = 'anonymous';
   function loadMap(file, matKey, kind /* 'map' | 'normal' */, rx, ry) {
-    loader.load(TEX + file + '?v=117', tx => {
+    loader.load(TEX + file + '?v=118', tx => {
       if (tx.colorSpace !== undefined && kind === 'map') tx.colorSpace = T.SRGBColorSpace;
       tx.wrapS = tx.wrapT = T.RepeatWrapping; tx.anisotropy = (R && R.capabilities && R.capabilities.getMaxAnisotropy) ? Math.min(8, R.capabilities.getMaxAnisotropy()) : 4;
       if (rx) tx.repeat.set(rx, ry);
@@ -220,7 +220,7 @@ export function initV116(o) {
   let envMap = null;
   if (R) {
     try {
-      new RGBELoader().setDataType(T.HalfFloatType).load(TEX + 'overcast_soil_puresky_1k.hdr?v=117', (hdr) => {
+      new RGBELoader().setDataType(T.HalfFloatType).load(TEX + 'overcast_soil_puresky_1k.hdr?v=118', (hdr) => {
         const pmrem = new T.PMREMGenerator(R); pmrem.compileEquirectangularShader();
         envMap = pmrem.fromEquirectangular(hdr).texture; hdr.dispose(); pmrem.dispose();
         info.hdri = true;
@@ -274,8 +274,12 @@ export function initV116(o) {
         const prev = mat.onBeforeCompile;
         mat.onBeforeCompile = (sh, r) => {
           if (prev) prev(sh, r);
+          /* v118: varyings are read-only in GLSL ES 3 (writing vMapUv failed to compile on Chrome/ANGLE),
+             so sample through a local, mirrored copy instead */
+          const chunk = (T.ShaderChunk && T.ShaderChunk.map_fragment) || '';
+          if (!chunk.includes('vMapUv')) return;
           sh.fragmentShader = sh.fragmentShader.replace('#include <map_fragment>',
-            `#ifdef USE_MAP\n if (!gl_FrontFacing) vMapUv.x = 1.0 - vMapUv.x;\n#endif\n#include <map_fragment>`);
+            `#ifdef USE_MAP\n vec2 ieFlipUv = vMapUv;\n if (!gl_FrontFacing) ieFlipUv.x = 1.0 - ieFlipUv.x;\n#endif\n` + chunk.split('vMapUv').join('ieFlipUv'));
         };
         const prevKey = mat.customProgramCacheKey ? mat.customProgramCacheKey.bind(mat) : () => '';
         mat.customProgramCacheKey = () => {

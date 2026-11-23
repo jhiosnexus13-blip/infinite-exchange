@@ -1,5 +1,5 @@
 /* World text chat (+ the list that carries voice notes, see voice.mjs).
-   GET  /api/chat?since=<k>       -> { msgs: [{ k, h, t, x? , v?: { id, d } }], me? }  newest last, max 50, last 30 min
+   GET  /api/chat?since=<k>       -> { msgs: [{ k, h, t, x? , v?: { id, d } }], me? }  newest last, max 50, last 4 h
    POST /api/chat { sid, text }   -> { ok, msg } | { error }
    Privacy / safety: anonymous handles ('visitor-xxxx', a one-way hash of a random per-tab id); no IPs, user agents or
    locations stored. Text is stripped of HTML, links and control characters, capped at 200 chars, profanity / slur filtered,

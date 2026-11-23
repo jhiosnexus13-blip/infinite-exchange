@@ -87,6 +87,12 @@ body.touch.world .queue{top:calc(env(safe-area-inset-top) + 7.4rem)!important;le
   right:auto!important;bottom:auto!important;max-height:36vh;z-index:49!important;width:min(280px,calc(100vw - 8rem))}
 body.touch #v109office{bottom:42%!important}
 body.touch .wcredits{display:none}
+/* v118: proximity prompts sat between the thumb sticks; lift them into the upper third on touch */
+body.touch #v81g,body.touch #v114act,body.touch #v66act{top:calc(env(safe-area-inset-top) + 30vh)!important;bottom:auto!important}
+/* v118: globe demo notice no longer collides with the title chip / minimap on phones */
+body.touch #globe-label{top:calc(env(safe-area-inset-top) + 7rem)!important;bottom:auto!important;left:50%!important;right:auto!important;
+  transform:translateX(-50%)!important;max-width:min(300px,72vw)!important;font-size:10px!important;line-height:1.3!important;white-space:normal!important;transition:opacity .6s}
+body.touch #globe-label.v118fade{opacity:0;pointer-events:none}
 `;
   document.head.appendChild(css);
 
@@ -99,7 +105,7 @@ body.touch .wcredits{display:none}
     const panel = document.createElement('div');
     panel.id = 'v115panel'; panel.hidden = true; panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Controls');
     panel.innerHTML = '<button class="v115x" type="button" aria-label="Close">×</button><h3>CONTROLS</h3><div class="v115body"></div>';
-    const place = () => { if (!isTouch()) { btn.style.display = 'none'; panel.hidden = true; return; } btn.style.display = ''; };
+    const place = () => { if (!isTouch()) { btn.style.display = 'none'; panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); restore(); return; } btn.style.display = ''; gather(); };
     const close = () => { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
     const open = () => { gather(); panel.hidden = false; btn.setAttribute('aria-expanded', 'true'); };
     btn.addEventListener('click', e => { e.stopPropagation(); panel.hidden ? open() : close(); });
@@ -108,13 +114,34 @@ body.touch .wcredits{display:none}
     document.addEventListener('pointerdown', e => { if (e.target && e.target.closest && e.target.closest('.stick')) close(); }, { passive: true });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
     const body = panel.querySelector('.v115body');
+    /* v118 (P0.3): only gather on touch layouts; remember each widget's original DOM anchor
+       so desktop (or a resize back to desktop) gets every widget back where it was. */
+    const anchors = new Map();
     const gather = () => {
+      if (!isTouch()) return;
       const ids = ['#wlite', '.wchips', '#v66op', '.wtrain', '.wsoc', '#wxhud', '.wpresence'];
       ids.forEach(sel => {
         const el = document.querySelector(sel);
-        if (el && el.closest('#v115panel') !== panel) body.appendChild(el);
+        if (el && el.closest('#v115panel') !== panel) {
+          if (!anchors.has(el) && el.parentNode) { const mk = document.createComment('v115-anchor'); el.parentNode.insertBefore(mk, el); anchors.set(el, mk); }
+          body.appendChild(el);
+        }
       });
     };
+    const restore = () => {
+      anchors.forEach((mk, el) => { if (mk.parentNode) { mk.parentNode.insertBefore(el, mk); mk.remove(); } });
+      anchors.clear();
+      /* widgets swapped in place while inside the menu (e.g. v116 re-creates #wlite) go back to the page */
+      body.querySelectorAll('#wlite,.wchips,#v66op,.wtrain,.wsoc,#wxhud,.wpresence').forEach(el => document.body.appendChild(el));
+    };
+    /* v118: desktop layout for the GRAPHICS switcher — compact, top-left under PLAYLISTS, so it no longer
+       covers the operator chip / STOPS along the bottom-left */
+    const dcss = document.createElement('style'); dcss.id = 'v118-desk';
+    dcss.textContent = `body:not(.touch) #wlite{position:fixed!important;left:.6rem!important;top:3.4rem!important;bottom:auto!important;right:auto!important;
+  transform:none!important;max-width:262px!important;z-index:30!important;padding:4px!important}
+body:not(.touch) #wlite button[data-gfx]{min-height:28px!important;min-width:0!important;padding:3px 8px!important;font-size:.7rem!important}
+body:not(.touch) #wlite .v116tip{display:none}`;
+    document.head.appendChild(dcss);
     document.body.append(btn, panel);
     place(); gather();
     addEventListener('resize', place);
@@ -128,6 +155,8 @@ body.touch .wcredits{display:none}
   const auto = (sel, ms) => { const el = document.querySelector(sel); if (!el || !isTouch()) return;
     setTimeout(() => { if (!el || !el.parentNode) return; const b = el.querySelector('button,[class*=x],.wmin'); if (b) b.click(); else el.style.display = 'none'; }, ms); };
   setTimeout(() => auto('.wctl70', 10000), 400);
+  /* v118: on phones the globe DEMO notice fades after 12 s (the in-world DEMO DATA sign stays on the globe) */
+  setTimeout(() => { const g = document.getElementById('globe-label'); if (g && isTouch()) g.classList.add('v118fade'); }, 12000);
 
   console.info('[IE] v115 UI: mobile controls collapsed into one menu; centre and sticks clear');
   return { ok: true };

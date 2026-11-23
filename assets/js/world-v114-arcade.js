@@ -4,7 +4,7 @@
    Scores stay in this browser (localStorage jhios.arc.*). Preview only. */
 export function initV114Arcade(o) {
   const { T, S, LBL, LITE, warp, fx, P, CL } = o;
-  const info = { cabs: 0, games: ['signal', 'runner', 'pulse', 'memory', 'orbit'] };
+  const info = { cabs: 0, games: ['signal', 'runner', 'pulse', 'memory', 'orbit', 'stack', 'bass'] };
   if (window.IE_V114_ARCADE === false) { info.off = true; return { info, update() {} }; }
 
   const LS = { get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return 0; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
@@ -14,7 +14,10 @@ export function initV114Arcade(o) {
     runner: { title: 'NEON RUNNER', sub: 'Tap to jump the blocks', col: 0xb48cff, fg: '#e6d4ff', bg: '#120818' },
     pulse:  { title: 'PULSE MATCH', sub: 'Tap when the needle is in the band', col: 0xffcc33, fg: '#ffe27a', bg: '#1a1404' },
     memory: { title: 'MEMORY GRID', sub: 'Repeat the sequence', col: 0xff3b5c, fg: '#ffd0d8', bg: '#1a060a' },
-    orbit:  { title: 'ORBIT DEFLECT', sub: 'Slide to bounce the spark', col: 0x33c0ff, fg: '#c8f0ff', bg: '#041018' }
+    orbit:  { title: 'ORBIT DEFLECT', sub: 'Slide to bounce the spark', col: 0x33c0ff, fg: '#c8f0ff', bg: '#041018' },
+    /* v118: two more distinct games */
+    stack:  { title: 'SCREW STACK', sub: 'Tap to drop each plate square on the stack', col: 0xff7a1a, fg: '#ffd2ad', bg: '#180c02' },
+    bass:   { title: 'BASS DROP', sub: 'Tap the lane as the beat hits the line', col: 0xff2bd6, fg: '#ffc8f3', bg: '#14031a' }
   };
 
   /* ---------- distinct cabinet meshes (each game has its own silhouette) ---------- */
@@ -42,6 +45,15 @@ export function initV114Arcade(o) {
       body(1.05, 0.22, 0.9, 0, 1.82, 0, C);
       /* 3x3 grid of tiles on the face */
       for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) body(0.18, 0.18, 0.05, (c - 1) * 0.24, 1.15 + (1 - r) * 0.24, 0.43, 0x4a1520);
+    } else if (kind === 'stack') { /* v118: narrow orange tower with stepped crown */
+      body(0.8, 1.7, 0.75, 0, 0.85, 0, 0x1c1006);
+      for (let i = 0; i < 4; i++) body(0.86 - i * 0.16, 0.12, 0.8 - i * 0.14, 0, 1.78 + i * 0.13, 0, i % 2 ? 0x2a1606 : C);
+      body(0.6, 0.18, 0.4, 0, 0.5, 0.36, 0x0e0803);
+    } else if (kind === 'bass') { /* v118: speaker-stack cabinet, two glowing cones */
+      body(1.2, 1.6, 0.85, 0, 0.8, 0, 0x120414);
+      for (const cy of [0.55, 1.95]) { const cone = new T.Mesh(new T.CylinderGeometry(0.34, 0.24, 0.1, 16), new T.MeshBasicMaterial({ color: C, fog: false })); cone.rotation.x = Math.PI / 2; cone.position.set(0, cy, 0.44); g.add(cone); }
+      body(1.24, 0.75, 0.8, 0, 1.98, -0.02, 0x0a020c);
+      body(1.3, 0.08, 0.9, 0, 2.38, 0, C);
     } else { /* orbit: low blue cockpit */
       body(1.25, 0.55, 1.2, 0, 0.38, 0, 0x081018);
       const bowl = new T.Mesh(new T.SphereGeometry(0.55, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.5), new T.MeshBasicMaterial({ color: C, fog: false, transparent: true, opacity: 0.45 })); bowl.position.set(0, 0.7, 0.05); g.add(bowl);
@@ -50,15 +62,17 @@ export function initV114Arcade(o) {
     }
     /* shared screen */
     const scr = new T.Mesh(new T.PlaneGeometry(kind === 'runner' ? 0.95 : 0.72, kind === 'runner' ? 0.55 : 0.48), new T.MeshBasicMaterial({ color: C, fog: false }));
-    const sy = kind === 'runner' ? 1.55 : kind === 'orbit' ? 1.22 : kind === 'pulse' ? 1.15 : kind === 'memory' ? 1.15 : 1.22;
+    const sy = kind === 'runner' ? 1.55 : kind === 'orbit' ? 1.22 : kind === 'pulse' ? 1.15 : kind === 'memory' ? 1.15 : kind === 'stack' ? 1.25 : kind === 'bass' ? 1.25 : 1.22;
     const sz = kind === 'runner' ? -0.05 : kind === 'orbit' ? -0.0 : 0.48;
     if (kind === 'runner') { scr.position.set(0, sy, sz); scr.rotation.x = -0.35; }
     else if (kind === 'orbit') { scr.position.set(0, 1.28, -0.0); }
+    else if (kind === 'stack') scr.position.set(0, sy, 0.38);
+    else if (kind === 'bass') scr.position.set(0, sy, 0.43);
     else scr.position.set(0, sy, 0.47);
     g.add(scr); g.userData.scr = scr; g.userData.kind = kind;
     /* hit box */
     const hit = new T.Mesh(new T.BoxGeometry(1.4, 2.2, 1.4), new T.MeshBasicMaterial({ visible: false }));
-    hit.position.set(0, 1.1, 0); hit.userData.v114game = kind; hit.userData.action = () => openGame(kind);
+    hit.position.set(0, 1.1, 0); hit.userData.v114game = kind; hit.userData.reach = 8; hit.userData.action = () => openGame(kind);
     g.add(hit);
     if (CL) CL.push(hit);
     try { const l = LBL && LBL('JHIOS · ' + meta.title, meta.fg, 0.7); if (l) { l.position.set(0, 2.45, 0); g.add(l); } } catch {}
@@ -86,7 +100,25 @@ export function initV114Arcade(o) {
   const cabs = [];
   for (const [kind, e, n, ry] of outdoor) {
     const w = warp(e, n);
-    const cab = cabinet(kind, w.x, 0, w.z, ry);
+    const cab = cabinet(kind, w.x, 0, w.z, ry); cab.userData.outdoor = 1;
+    S.add(cab); cabs.push(cab); info.cabs++;
+  }
+
+  /* v118: more locations (raw world x, floor y, z) beside real jump spots — piers' decks, Youth Centre forecourt,
+     Newtown park steps, North Drive by The Iron Duke, Venetian Waterways. Cabinets only; no fake fronts. */
+  const outdoorRaw = window.IE_V118_ARCADE_MORE === false ? [] : [
+    ['bass', 255.0, 1.6, -507.0, -2.24],   /* britannia pier */
+    ['stack', 255.0, 1.6, -515.0, -0.90],   /* britannia pier */
+    ['stack', 133.0, -0.5, 492.0, -2.24],   /* wellington pier */
+    ['memory', 133.0, -0.5, 484.0, -0.90],   /* wellington pier */
+    ['bass', -62.0, 0.0, -2377.0, -2.21],   /* youth centre */
+    ['runner', -83.0, 0.0, -2419.5, 0.00],   /* newtown park steps path (south side, clear of the flats) */
+    ['orbit', -78.5, 0.0, -2419.5, 0.00],   /* newtown park steps path */
+    ['stack', 100.0, 0.0, -2643.2, -2.03],   /* North Drive pavement by The Iron Duke */
+    ['signal', 116.4, 0.0, -1381.9, -2.57],   /* venetian waterways */
+  ];
+  for (const [kind, x, y, z, ry] of outdoorRaw) {
+    const cab = cabinet(kind, x, y, z, ry); cab.userData.outdoor = 1;
     S.add(cab); cabs.push(cab); info.cabs++;
   }
 
@@ -142,7 +174,7 @@ export function initV114Arcade(o) {
     const hit = ev => { ev.preventDefault(); tap = true; const r = c.getBoundingClientRect(); if (ev.clientX != null) px = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)); };
     const move = ev => { const r = c.getBoundingClientRect(); if (ev.clientX != null) px = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)); };
     c.addEventListener('pointerdown', hit); c.addEventListener('pointermove', move);
-    const keyH = ev => { if (!openKind) return; if (ev.code === 'Space' || ev.code === 'Enter') { ev.preventDefault(); ev.stopPropagation(); tap = true; } if (ev.code === 'ArrowLeft') px = Math.max(0, px - 0.08); if (ev.code === 'ArrowRight') px = Math.min(1, px + 0.08); };
+    const keyH = ev => { if (!openKind) return; if (ev.code === 'Space' || ev.code === 'Enter') { ev.preventDefault(); ev.stopPropagation(); tap = true; } const stp = openKind === 'bass' ? 0.34 : 0.08; if (ev.code === 'ArrowLeft') px = Math.max(0, px - stp); if (ev.code === 'ArrowRight') px = Math.min(0.99, px + stp); };
     addEventListener('keydown', keyH, true);
     gameStop = () => { alive = false; cancelAnimationFrame(raf); c.removeEventListener('pointerdown', hit); c.removeEventListener('pointermove', move); removeEventListener('keydown', keyH, true); if (extraStop) extraStop(); extraStop = null; };
     const bg = meta.bg, fg = meta.fg;
@@ -150,7 +182,56 @@ export function initV114Arcade(o) {
     else if (kind === 'runner') playRunner(x, sc, { alive: () => alive, tap: () => (tap ? (tap = false, true) : false), save, best: () => best, raf: f => (raf = requestAnimationFrame(f)), bg, fg });
     else if (kind === 'pulse') playPulse(x, sc, { alive: () => alive, tap: () => (tap ? (tap = false, true) : false), save, best: () => best, raf: f => (raf = requestAnimationFrame(f)), bg, fg });
     else if (kind === 'memory') playMemory(x, sc, { alive: () => alive, tap: () => (tap ? (tap = false, true) : false), px: () => px, save, best: () => best, raf: f => (raf = requestAnimationFrame(f)), bg, fg, canvas: c, onStop: fn => { extraStop = fn; } });
+    else if (kind === 'stack') playStack(x, sc, { alive: () => alive, tap: () => (tap ? (tap = false, true) : false), save, best: () => best, raf: f => (raf = requestAnimationFrame(f)), bg, fg });
+    else if (kind === 'bass') playBass(x, sc, { alive: () => alive, tap: () => (tap ? (tap = false, true) : false), px: () => px, save, best: () => best, raf: f => (raf = requestAnimationFrame(f)), bg, fg });
     else playOrbit(x, sc, { alive: () => alive, tap: () => (tap ? (tap = false, true) : false), px: () => px, save, best: () => best, raf: f => (raf = requestAnimationFrame(f)), bg, fg });
+  }
+
+  /* v118: SCREW STACK — a plate slides; tap to drop it; the overhang is trimmed; miss = game over */
+  function playStack(x, sc, A) {
+    let st, cur, dir, sp, score, dead, last = performance.now();
+    const reset = () => { st = [{ x: 120, w: 160 }]; cur = { x: 0, w: 160 }; dir = 1; sp = 2.2; score = 0; dead = false; };
+    reset();
+    const loop = now => { if (!A.alive()) return; const d = Math.min(3, (now - last) / 16.7); last = now;
+      if (A.tap()) {
+        if (dead) reset();
+        else { const top = st[st.length - 1]; const l = Math.max(top.x, cur.x), r = Math.min(top.x + top.w, cur.x + cur.w);
+          if (r - l <= 2) { dead = true; A.save(score); }
+          else { st.push({ x: l, w: r - l }); score++; cur = { x: dir > 0 ? 0 : 400 - (r - l), w: r - l }; sp = Math.min(7, sp + 0.25); } }
+      }
+      if (!dead) { cur.x += dir * sp * d; if (cur.x + cur.w > 400) { cur.x = 400 - cur.w; dir = -1; } if (cur.x < 0) { cur.x = 0; dir = 1; } }
+      x.fillStyle = A.bg; x.fillRect(0, 0, 400, 220);
+      const view = Math.max(0, st.length - 9);
+      st.forEach((p, i) => { if (i < view) return; const y = 200 - (i - view) * 18; x.fillStyle = i % 2 ? '#ff7a1a' : '#ffb36b'; x.fillRect(p.x, y, p.w, 16); });
+      if (!dead) { x.fillStyle = A.fg; x.fillRect(cur.x, 200 - (st.length - view) * 18, cur.w, 16); }
+      x.fillStyle = A.fg; x.font = '14px monospace'; x.textAlign = 'left'; x.fillText('height ' + score, 10, 20);
+      if (dead) { x.textAlign = 'center'; x.font = '18px monospace'; x.fillText('Stack fell. Tap to rebuild.', 200, 60); }
+      sc.textContent = 'best ' + A.best(); A.raf(loop);
+    }; A.raf(loop);
+  }
+  /* v118: BASS DROP — three lanes, beats fall; tap the lane (left / centre / right of the screen, or arrows + space) on the line */
+  function playBass(x, sc, A) {
+    let notes = [], score = 0, combo = 0, miss = 0, t = 0, next = 30, last = performance.now(), msg = '';
+    const LX = [80, 200, 320];
+    const loop = now => { if (!A.alive()) return; const d = Math.min(3, (now - last) / 16.7); last = now; t += d;
+      if (miss >= 8) { if (A.tap()) { notes = []; score = 0; combo = 0; miss = 0; msg = ''; } }
+      else {
+        next -= d; if (next <= 0) { notes.push({ l: Math.floor(Math.random() * 3), y: -10 }); next = Math.max(14, 34 - score * 0.15) + Math.random() * 18; }
+        const sp = 2.4 + Math.min(3, score * 0.02);
+        notes.forEach(n => n.y += sp * d);
+        if (A.tap()) { const lane = Math.min(2, Math.floor(A.px() * 3)); const n = notes.find(o => o.l === lane && Math.abs(o.y - 180) < 18);
+          if (n) { n.hit = 1; combo++; score += 1 + Math.floor(combo / 5); msg = combo > 4 ? 'x' + combo : 'HIT'; } else { combo = 0; msg = 'off-beat'; } }
+        notes = notes.filter(n => { if (n.hit) return false; if (n.y > 205) { miss++; combo = 0; return false; } return true; });
+        if (miss >= 8) { A.save(score); msg = 'Dropped. Tap to go again.'; }
+      }
+      x.fillStyle = A.bg; x.fillRect(0, 0, 400, 220);
+      for (let i = 0; i < 3; i++) { x.fillStyle = '#2a0a30'; x.fillRect(LX[i] - 40, 0, 80, 220); }
+      x.fillStyle = '#ff2bd6'; x.fillRect(0, 178, 400, 4);
+      notes.forEach(n => { x.fillStyle = '#ffc8f3'; x.beginPath(); x.arc(LX[n.l], n.y, 12, 0, Math.PI * 2); x.fill(); });
+      x.fillStyle = A.fg; x.font = '14px monospace'; x.textAlign = 'left'; x.fillText('score ' + score + '   misses ' + miss + '/8', 10, 20);
+      x.textAlign = 'center'; x.fillText(msg, 200, 120);
+      sc.textContent = 'best ' + A.best() + ' · tap a lane, or arrows + space'; A.raf(loop);
+    }; A.raf(loop);
   }
 
   function playSignal(x, sc, A) {
@@ -266,25 +347,26 @@ export function initV114Arcade(o) {
   });
 
   const tmp = new T.Vector3();
+  /* v118: lean per-frame update — no per-frame allocations; outdoor cabinets beyond ~240 m are culled */
+  for (const cab of cabs) { cab.userData.wp = new T.Vector3(); cab.updateMatrixWorld(true); cab.getWorldPosition(cab.userData.wp); }
+  let frame = 0;
   return { info, open: openGame, close, update(t) {
-    for (const cab of cabs) {
-      const scr = cab.userData.scr; if (!scr || !scr.material) continue;
-      const k = cab.userData.kind, c = GAMES[k].col;
-      const pulse = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * (1.6 + (c % 7) * 0.05) + cab.id));
-      scr.material.color.setHex(c);
-      scr.material.opacity = 1;
-    }
     const pos = (P && (P.pos || P.position)); if (!pos) return;
-    /* skip hidden cabinets (office / rooms not entered) */
+    frame++;
     cur = null;
     let bestD = 1e9;
-    for (const s of spots()) {
-      if (!s.cab.visible || (s.cab.parent && s.cab.parent.visible === false)) continue;
-      s.cab.getWorldPosition(tmp);
-      const d = Math.hypot(tmp.x - pos.x, tmp.y - (pos.y || 0), tmp.z - pos.z);
-      if (d < s.r && d < bestD) { bestD = d; cur = { kind: s.kind, t: s.t }; }
+    for (const cab of cabs) {
+      let d;
+      if (cab.userData.outdoor) {
+        const w = cab.userData.wp; d = Math.hypot(w.x - pos.x, w.z - pos.z);
+        if ((frame & 15) === 0) cab.visible = d < 240;
+        if (!cab.visible) continue;
+      } else {
+        if (!cab.visible || (cab.parent && cab.parent.visible === false)) continue;
+        cab.getWorldPosition(tmp); d = Math.hypot(tmp.x - pos.x, tmp.z - pos.z);
+      }
+      if (d < 3.6 && d < bestD) { bestD = d; cur = { kind: cab.userData.kind, t: 'PLAY · ' + (GAMES[cab.userData.kind] || {}).title }; }
     }
-    const indoorsOfficeLocked = (window.__jhiosOffice && !window.__jhiosOffice.inside && cur && false);
     act.style.display = cur && !openKind ? 'block' : 'none';
     if (cur) act.textContent = '[F] ' + cur.t;
   } };
