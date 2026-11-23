@@ -5,27 +5,40 @@
    Coordinates are world e/n (warp), only at places already in the world. Regent Road line is approximate (OSM line not in our data). */
 export function initNpc(o) {
   const { T, S, warp, fx } = o, root = new T.Group(); root.name = 'v80-npc'; S.add(root); const info = { busy: 0, mid: 0, quiet: 0, boats: 0, arcades: 0 };
-  const MC = new Map(), M = (c, x) => { const k = c + (x ? 'f' : ''); if (!MC.has(k)) MC.set(k, new T.MeshBasicMaterial(Object.assign({ color: c }, x || {}))); return MC.get(k); };
+  /* v120 tier ladder for figures (Joseph): L0 = simple figure (torso, head, two legs: 5 boxes, no arms/shoes/hair, 160 m cull),
+     L1 = solid body (the v80 figure: arms, hands, shoes, hair), L2 = most detailed (L1 + neck, eyes, belt, collar, lit Lambert shading).
+     Every tier keeps the same people in the same places; all figures are grounded on window.__groundParts (bridges/decks/terrain). */
+  const ON = window.IE_V120_FIG !== false, tierNow = () => !ON ? 1 : Math.max(0, Math.min(2, window.__detail ?? (o.LITE ? 0 : 1)));
+  let TIER = tierNow(); /* window.__detail follows the NEON/LITE/SOLID/REAL switcher at runtime (neon+lite = L0, solid = L1, real = L2) */
+  const MC = new Map(), M = (c, x, lit) => { const k = c + (x ? 'f' : '') + (lit ? 'l' : ''); if (!MC.has(k)) MC.set(k, (lit && !x ? new T.MeshLambertMaterial({ color: c }) : new T.MeshBasicMaterial(Object.assign({ color: c }, x || {})))); return MC.get(k); };
+  const groundY = (x, z, y0) => { for (const f of window.__groundParts || []) { const v = f(x, z, y0); if (v != null) return v; } return 0; };
   const BX = new T.BoxGeometry(1, 1, 1), at = (e, n) => warp(e, n), rnd = (s => () => (s = (s * 16807) % 2147483647) / 2147483647)(80);
   const pick = a => a[Math.floor(rnd() * a.length)];
   const SKIN = [0xf2c4a4, 0xe8b58e, 0xc68e62, 0x9a6440, 0x6b4428, 0xf6d2b8], HAIR = [0x1a1410, 0x3b2a1c, 0x6b4a2a, 0xc9a36a, 0xe07a2a, 0x9a9a9a, 0x2a2a2a],
     TOP = [0x2b3a55, 0x7a1f2b, 0x3a5a3a, 0xd8d4c8, 0x1f1f24, 0xe6c34a, 0x5a3f7a, 0xc8562a, 0x3f7fa8, 0xf0f0ea], LEG = [0x2a3448, 0x1c1c20, 0x4a4238, 0x3a4a6a, 0x6a5a48];
   const STYLES = { hivis: { top: 0xe8f020, leg: 0x2a2a30 }, coat: { top: 0x4a3a2a, leg: 0x3a3630, long: 1 }, hoodie: { top: 0x3a3f4a, hood: 1 }, tourist: { top: 0xff6fb0, leg: 0x6a8ab0 }, jacket: { top: 0x8a2a3a, leg: 0x1c1c20 } };
-  function person(style, sc = 1) { const g = new T.Group(), b = new T.Group(); g.add(b); const st = STYLES[style] || {}, sk = pick(SKIN), top = st.top ?? pick(TOP), leg = st.leg ?? pick(LEG);
-    const P = (c, w, h, d, x, y, z, par = b) => { const m = new T.Mesh(BX, M(c)); m.scale.set(w, h, d); m.position.set(x, y, z); par.add(m); return m; };
-    const legs = [-1, 1].map(s => { const p = new T.Group(); p.position.set(s * 0.11, 0.85, 0); b.add(p); P(leg, 0.15, 0.82, 0.17, 0, -0.41, 0, p); P(0x1a1a1a, 0.16, 0.08, 0.26, 0, -0.82, -0.04, p); return p; });
-    const arms = [-1, 1].map(s => { const p = new T.Group(); p.position.set(s * 0.29, 1.42, 0); b.add(p); P(top, 0.11, 0.6, 0.12, 0, -0.3, 0, p); P(sk, 0.09, 0.1, 0.1, 0, -0.64, 0, p); return p; });
-    P(top, 0.46, st.long ? 0.9 : 0.62, 0.26, 0, st.long ? 1.05 : 1.15, 0); P(sk, 0.22, 0.24, 0.22, 0, 1.63, 0); P(st.hood ? top : pick(HAIR), 0.24, st.hood ? 0.2 : 0.09, 0.24, 0, 1.77, 0.02);
-    g.scale.setScalar(sc * (0.92 + rnd() * 0.16)); root.add(g); return { g, b, legs, arms }; }
+  function person(style, sc = 1) { const g = new T.Group(), b = new T.Group(); g.add(b); const st = STYLES[style] || {};
+    const p = { g, b, st, sk: pick(SKIN), top: st.top ?? pick(TOP), leg: st.leg ?? pick(LEG), hair: st.hood ? 0 : pick(HAIR), legs: [], arms: [], tier: -1, sit: 0 };
+    dress(p, TIER); g.scale.setScalar(sc * (0.92 + rnd() * 0.16)); root.add(g); return p; }
+  function dress(p, tier) { if (p.tier === tier) return; p.tier = tier; const { b, st, sk, top, leg, hair } = p, lit = tier >= 2; while (b.children.length) b.remove(b.children[0]);
+    const P = (c, w, h, d, x, y, z, par = b) => { const m = new T.Mesh(BX, M(c, null, lit)); m.scale.set(w, h, d); m.position.set(x, y, z); par.add(m); return m; };
+    if (tier === 0) { p.legs = [-1, 1].map(s => { const q = new T.Group(); q.position.set(s * 0.1, 0.85, 0); b.add(q); P(leg, 0.17, 0.85, 0.19, 0, -0.42, 0, q); return q; });
+      P(top, 0.5, st.long ? 0.9 : 0.66, 0.28, 0, st.long ? 1.05 : 1.17, 0); P(sk, 0.24, 0.26, 0.24, 0, 1.64, 0); p.arms = [new T.Object3D(), new T.Object3D()]; }
+    else { p.legs = [-1, 1].map(s => { const q = new T.Group(); q.position.set(s * 0.11, 0.85, 0); b.add(q); P(leg, 0.15, 0.82, 0.17, 0, -0.41, 0, q); P(0x1a1a1a, 0.16, 0.08, 0.26, 0, -0.82, -0.04, q); return q; });
+      p.arms = [-1, 1].map(s => { const q = new T.Group(); q.position.set(s * 0.29, 1.42, 0); b.add(q); P(top, 0.11, 0.6, 0.12, 0, -0.3, 0, q); P(sk, 0.09, 0.1, 0.1, 0, -0.64, 0, q); return q; });
+      P(top, 0.46, st.long ? 0.9 : 0.62, 0.26, 0, st.long ? 1.05 : 1.15, 0); P(sk, 0.22, 0.24, 0.22, 0, 1.63, 0); P(st.hood ? top : hair, 0.24, st.hood ? 0.2 : 0.09, 0.24, 0, 1.77, 0.02);
+      if (tier >= 2) { P(sk, 0.1, 0.08, 0.1, 0, 1.5, 0); for (const x of [-0.05, 0.05]) P(0x14141a, 0.035, 0.03, 0.02, x, 1.66, -0.111); P(0x1a1a1a, 0.47, 0.05, 0.27, 0, 0.87, 0);
+        P(st.hood ? top : 0xe8e4da, 0.3, 0.05, 0.27, 0, 1.47, 0); if (!st.hood) P(hair, 0.24, 0.14, 0.05, 0, 1.69, 0.11); } }
+    if (p.sit) p.legs.forEach(l => l.rotation.x = -1.4); }
   function dog() { const g = new T.Group(), c = pick([0x3a2a1a, 0xd8c8a0, 0x1a1a1a, 0x8a5a2a]); const P = (w, h, d, x, y, z) => { const m = new T.Mesh(BX, M(c)); m.scale.set(w, h, d); m.position.set(x, y, z); g.add(m); };
     P(0.22, 0.22, 0.6, 0, 0.42, 0); P(0.18, 0.2, 0.22, 0, 0.58, -0.36); for (const x of [-0.08, 0.08]) for (const z of [-0.22, 0.22]) P(0.06, 0.32, 0.06, x, 0.16, z); P(0.04, 0.04, 0.22, 0, 0.55, 0.36); root.add(g); return g; }
   const A = [], tmp = new T.Vector3(), Y0 = {};
   // walker along a polyline of [e,n] (loop or ping-pong), optional pauses; y = deck height
   function walker(zone, pts, o2 = {}) { const p = person(o2.style, o2.sc); const W = pts.map(([e, n]) => at(e, n)); let L = 0; const seg = W.slice(1).map((b, i) => { const l = W[i].distanceTo(b); L += l; return l; });
-    const a = { p, W, seg, L, s: rnd() * L, v: o2.v ?? 1.2 + rnd() * 0.4, y: o2.y || 0, loop: o2.loop !== false, dir: 1, idle: o2.idle || 0, dog: o2.dog ? dog() : null, ph: rnd() * 6, door: o2.door, hide: 0, kind: 'walk' };
+    const a = { p, W, seg, L, s: rnd() * L, v: o2.v ?? 1.2 + rnd() * 0.4, y: o2.y || 0, loop: o2.loop !== false, dir: 1, idle: o2.idle || 0, dog: o2.dog ? dog() : null, ph: rnd() * 6, door: o2.door, hide: 0, kind: 'walk', fixY: o2.y != null };
     A.push(a); info[zone]++; return a; }
   function idler(zone, e, n, faceE, faceN, o2 = {}) { const p = person(o2.style, o2.sc), w = at(e, n), f = at(faceE, faceN); p.g.position.set(w.x, o2.y || 0, w.z); p.g.rotation.y = Math.atan2(-(f.x - w.x), -(f.z - w.z));
-    if (o2.sit) { p.legs.forEach(l => l.rotation.x = -1.4); p.b.position.y = -0.4; } A.push({ p, kind: 'idle', ph: rnd() * 6, chat: o2.chat }); info[zone]++; }
+    if (o2.sit) { p.sit = 1; p.legs.forEach(l => l.rotation.x = -1.4); p.b.position.y = -0.4; } A.push({ p, kind: 'idle', ph: rnd() * 6, chat: o2.chat, fixY: o2.y != null }); info[zone]++; }
   const posAt = (a, s) => { let i = 0; while (i < a.seg.length - 1 && s > a.seg[i]) { s -= a.seg[i]; i++; } const t = Math.min(1, s / (a.seg[i] || 1)); return [tmp.copy(a.W[i]).lerp(a.W[i + 1], t), a.W[i + 1].x - a.W[i].x, a.W[i + 1].z - a.W[i].z]; };
   // ---- BUSY: Marine Parade seafront, Britannia (n 517) -> Pleasure Beach (n -1078); road centre from golden_mile, people on both pavements ----
   const gm = [[22, 454], [15, 250], [-7, -15], [-5, -37], [-10, -104], [-13, -127], [-21, -153], [-44, -426], [-48, -514], [-54, -549], [-48, -569], [-46, -593], [-70, -1101]];
@@ -69,11 +82,12 @@ export function initNpc(o) {
     for (const y of [4.6, 6.6]) add(0xfff2c0, 0.15, 0.12, L, 0.2, y, 0); for (let z = -L / 2; z <= L / 2; z += 1.6) add(0xffe08a, 0.25, 0.25, 0.25, 0.9, 4.3, z);
     glow.push({ sign, win, ph: rnd() * 6, f: 2 + rnd() * 5 }); info.arcades++; }
   }
-  fx.npcInfo = info;
+  info.tier = ['L0 simple', 'L1 solid', 'L2 detailed'][TIER]; info.people = A.length; fx.npcInfo = info; if (/[?&]dbg=1/.test(location.search)) window.__ieNpc = { info, A };
   const cam = o.P; let lastCull = 0;
   return { info, update(t, dt) {
     const px = cam ? cam.pos.x : 0, pz = cam ? cam.pos.z : 0, day = fx.env && fx.env.state ? fx.env.state.day : 0.3;
-    if (t - lastCull > 0.5) { lastCull = t; for (const a of A) a.near = Math.hypot(a.p.g.position.x - px, a.p.g.position.z - pz) < 450; for (const a of A) { a.p.g.visible = a.near && !a.hide; if (a.dog) a.dog.visible = a.p.g.visible; } }
+    if (t - lastCull > 0.5) { lastCull = t; const tn = tierNow(); if (tn !== TIER) { TIER = tn; info.tier = ['L0 simple', 'L1 solid', 'L2 detailed'][TIER]; } const R = TIER === 0 ? 160 : 450; for (const a of A) a.near = Math.hypot(a.p.g.position.x - px, a.p.g.position.z - pz) < R; for (const a of A) { a.p.g.visible = a.near && !a.hide; if (a.dog) a.dog.visible = a.p.g.visible;
+        if (a.near) dress(a.p, TIER); if (a.near && !a.fixY) { const q = a.p.g.position; a.gy = groundY(q.x, q.z, (a.gy ?? 0) + 1); if (a.kind === 'idle') q.y = a.gy; } } }
     for (const a of A) { if (!a.near) continue;
       if (a.kind === 'idle') { a.p.b.rotation.z = Math.sin(t * 0.8 + a.ph) * 0.03; if (a.chat) a.p.arms[1].rotation.x = -0.4 - Math.sin(t * 2 + a.ph) * 0.3; continue; }
       if (a.hide > 0) { a.hide -= dt; if (a.hide <= 0) { a.s = 0; a.p.g.visible = true; } continue; }
@@ -81,9 +95,9 @@ export function initNpc(o) {
       a.s += a.v * dt * a.dir;
       if (a.s >= a.L || a.s <= 0) { if (a.door) { a.hide = 20 + rnd() * 20; a.p.g.visible = false; if (a.dog) a.dog.visible = false; continue; } // pub in/out cycle every ~20–40 s
         if (a.loop && a.W.length > 2) a.s = (a.s + a.L) % a.L; else { a.dir *= -1; a.s = Math.max(0, Math.min(a.L, a.s)); a.wait = a.idle; } }
-      const [p, dx, dz] = posAt(a, a.s); a.p.g.position.set(p.x, a.y, p.z); a.p.g.rotation.y = Math.atan2(-dx * a.dir, -dz * a.dir);
+      const [p, dx, dz] = posAt(a, a.s); a.p.g.position.set(p.x, a.fixY ? a.y : (a.gy ?? a.y), p.z); a.p.g.rotation.y = Math.atan2(-dx * a.dir, -dz * a.dir);
       const sw = Math.sin(t * a.v * 5 + a.ph) * 0.5; a.p.legs[0].rotation.x = sw; a.p.legs[1].rotation.x = -sw; a.p.arms[0].rotation.x = -sw * 0.7; a.p.arms[1].rotation.x = sw * 0.7;
-      if (a.dog) { const [q] = posAt(a, Math.max(0, Math.min(a.L, a.s + 1.6 * a.dir))); a.dog.position.set(q.x + 0.6, a.y, q.z); a.dog.rotation.y = a.p.g.rotation.y; } }
+      if (a.dog) { const [q] = posAt(a, Math.max(0, Math.min(a.L, a.s + 1.6 * a.dir))); a.dog.position.set(q.x + 0.6, a.fixY ? a.y : (a.gy ?? a.y), q.z); a.dog.rotation.y = a.p.g.rotation.y; } }
     for (const b of boats) { const n = b.n0 + Math.sin(t * 0.02 + b.ph) * 30, w = at(b.e, n); b.g.position.set(w.x, 0.1 + Math.sin(t * 1.3 + b.ph) * 0.06, w.z); b.g.rotation.z = Math.sin(t * 0.9 + b.ph) * 0.04; }
     const k = 0.75 + 0.25 * (1 - day); for (const g of glow) { const f = Math.sin(t * g.f + g.ph) > 0.92 ? 0.5 : 1; g.sign.material.opacity = k * f; g.win.material.opacity = 0.35 + 0.4 * (1 - day); }
   } };

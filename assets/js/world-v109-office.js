@@ -247,7 +247,7 @@ export function initV109Office({ T, S, LITE, warp, fx, P }) {
     const now = new Date();
     const hh = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/London' });
     hub.paint(FLEET_DEMO.concat([
-      { t: `Preview  ·  v2-round2 /world?v=119     live locked`, s: 18, c: '#7fe9ff' },
+      { t: `Preview  ·  v2-round2 /world?v=120     live locked`, s: 18, c: '#7fe9ff' },
       { t: `London  ${hh}     values are demo only`, s: 18, c: '#9a98b8' },
     ]));
   }

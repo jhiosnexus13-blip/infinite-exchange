@@ -141,7 +141,10 @@ export function initV114Earth(o) {
   }
 
   const loadImg = (url) => new Promise((res, rej) => { const i = new Image(); i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = () => rej(new Error('img ' + url)); i.src = url; });
-  const dtmUrl = lite ? '/assets/img/gy-dtm-lite.png?v=114' : '/assets/img/gy-dtm.png?v=114';
+  /* v120: DTM flattened under mapped town features (tools/bake-dtm-v120.py) so OSM buildings/roads/parks sit on the
+     ground instead of floating or sinking; real LIDAR relief kept outside town. IE_V120_FLAT=false restores the raw DTM. */
+  const flat = window.IE_V120_FLAT !== false;
+  const dtmUrl = flat ? (lite ? '/assets/img/gy-dtm-v120-lite.png?v=120' : '/assets/img/gy-dtm-v120.png?v=120') : (lite ? '/assets/img/gy-dtm-lite.png?v=114' : '/assets/img/gy-dtm.png?v=114');
   const aerUrl = lite ? '/assets/img/gy-s2-2025-lite.jpg?v=114' : '/assets/img/gy-s2-2025.jpg?v=114';
 
   Promise.all([loadImg(dtmUrl), loadImg(aerUrl)]).then(([dimg, aimg]) => {
