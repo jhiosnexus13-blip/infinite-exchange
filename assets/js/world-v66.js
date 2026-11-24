@@ -28,7 +28,7 @@ export function initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P: PL }) {
   const seaRoute = fx.route || []; // Golden Mile already has env lamps; add sheen only
   if (seaRoute.length) ribbon(sheen, seaRoute.map(p => (p.isVector3 ? p : new T.Vector3(p[0], 0, p[1]))), 3);
   const g = new T.Group(); g.name = 'v66-art'; S.add(g);
-  if (sheen.length) { const ge = new T.BufferGeometry(); ge.setAttribute('position', new T.Float32BufferAttribute(sheen, 3)); const m = new T.Mesh(ge, sheenMat); m.renderOrder = 2; g.add(m); st.sheen = sheen.length / 18; }
+  if (sheen.length) { const ge = new T.BufferGeometry(); ge.setAttribute('position', new T.Float32BufferAttribute(sheen, 3)); const m = new T.Mesh(ge, sheenMat); m.name = 'v66-sheen'; m.renderOrder = 2; g.add(m); st.sheen = sheen.length / 18; }
   const MAXL = LITE ? 500 : 1400; if (lp.length / 3 > MAXL) { const k = Math.ceil(lp.length / 3 / MAXL), a = [], b = []; for (let i = 0; i < lp.length / 3; i += k) { a.push(lp[i * 3], lp[i * 3 + 1], lp[i * 3 + 2]); b.push(pools[i * 2], pools[i * 2 + 1]); } lp.length = 0; lp.push(...a); pools.length = 0; pools.push(...b); }
   if (lp.length) { const ge = new T.BufferGeometry(); ge.setAttribute('position', new T.Float32BufferAttribute(lp, 3)); g.add(new T.Points(ge, lampMat)); st.lamps = lp.length / 3;
     if (!LITE) { const pg = [], R = 4.2; for (let i = 0; i < pools.length; i += 2) { const x = pools[i], z = pools[i + 1]; for (let s = 0; s < 8; s++) { const a0 = s / 8 * 6.283, a1 = (s + 1) / 8 * 6.283; pg.push(x, 0.04, z, x + Math.cos(a1) * R, 0.04, z + Math.sin(a1) * R, x + Math.cos(a0) * R, 0.04, z + Math.sin(a0) * R); } }

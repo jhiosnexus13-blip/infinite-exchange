@@ -73,9 +73,9 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
       segs.push([a, b, hw, ty, len]); }
     if (any) info.roads++; }
   const roadMat = new T.MeshBasicMaterial({ color: 0x33373c, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
-  if (rv.length) grp.add(new T.Mesh(geo(rv, ri), roadMat));
-  if (pv.length) grp.add(new T.Mesh(geo(pv, pi), new T.MeshBasicMaterial({ color: 0x77736c, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })));
-  if (mk.length) grp.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(mk), new T.LineBasicMaterial({ color: 0xc9c6bd, transparent: true, opacity: 0.6 })));
+  if (rv.length) { const m = new T.Mesh(geo(rv, ri), roadMat); m.name = 'v69-roads'; grp.add(m); }
+  if (pv.length) { const m = new T.Mesh(geo(pv, pi), new T.MeshBasicMaterial({ color: 0x77736c, side: T.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })); m.name = 'v69-pave'; grp.add(m); }
+  if (mk.length) { const m = new T.LineSegments(new T.BufferGeometry().setFromPoints(mk), new T.LineBasicMaterial({ color: 0xc9c6bd, transparent: true, opacity: 0.6 })); m.name = 'v69-marks'; grp.add(m); }
 
   // ---------- 2. solid weathered skins over OSM footprints ----------
   const seaE = n => { let best = 1e9, e = 200; for (const c of (G && G.coast) || []) for (let i = 0; i < c.length; i += 2) { const d = Math.abs(c[i + 1] - n); if (d < best) { best = d; e = c[i]; } } return e; };
