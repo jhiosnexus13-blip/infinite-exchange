@@ -60,7 +60,8 @@ export function initV109Facades({ T, S, LBL, LITE, warp, fx }) {
 
   // Optional remote Poly Haven brick (desktop L2 only; never on LITE/LOW)
   if (!LITE && window.IE_L2_REMOTE_TEX !== false) {
-    const url = 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brick_4/brick_4_diff_1k.jpg';
+    /* v122: self-hosted copy (the site CSP blocks dl.polyhaven.org); IE_V122_LOCALTEX=false tries the remote URL again */
+    const url = window.IE_V122_LOCALTEX === false ? 'https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/brick_4/brick_4_diff_1k.jpg' : '/assets/img/v116/brick_4_diff_1k.jpg';
     const loader = new T.TextureLoader(); loader.crossOrigin = 'anonymous';
     loader.load(url, tx => {
       tx.colorSpace = T.SRGBColorSpace; tx.wrapS = tx.wrapT = T.RepeatWrapping; tx.repeat.set(6, 3);

@@ -32,7 +32,7 @@ export function initV81(o) {
     mk(new T.CylinderGeometry(3.2, 3.2, 0.05, 40), 0x3dff9a, 0.3);
     mk(new T.CylinderGeometry(0.15, 0.15, 10, 8), 0x3dff9a, 5.2);
     board('JHIOS // VERSIONS OF REALITY · FICTION', 6.5, 0.85, hp.x + 0.2, 1.8, hp.z, E, '#06140c', '#3dff9a');
-    const lb = LBL && LBL('VERSIONS HATCH', '#3dff9a', 1.1); if (lb) { lb.position.set(hp.x, 7.5, hp.z); grp.add(lb); }
+    const lb = LBL && LBL('VERSIONS OF REALITY · STORY HATCH', '#3dff9a', 1.1); if (lb) { lb.position.set(hp.x, 7.5, hp.z); grp.add(lb); }
     fx.v65Info = fx.v65Info || {}; fx.v65Info.hatch = [he, hn];
     PJ.versions_hatch = [warp(he + 16, hn).x, warp(he + 16, hn).z, [hp.x, hp.z, 0.1]];
     addJumpBtn('versions_hatch', 'Versions Of Reality hatch', 'lodge');

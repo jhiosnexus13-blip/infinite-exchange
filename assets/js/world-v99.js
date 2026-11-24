@@ -33,7 +33,7 @@ export function initV99({ T, S, LBL, LITE, warp, fx }) {
     const css = document.createElement('style'); css.textContent = '.wtrain.v99-hide{display:none!important}'; document.head.appendChild(css);
     let t = 0; document.addEventListener('click', ev => { const b = ev.target.closest && ev.target.closest('[data-jump="lodge"]'); if (!b) return;
       const ui = document.querySelector('.wtrain'); if (!ui) return; ui.classList.add('v99-hide'); clearTimeout(t); t = setTimeout(() => ui.classList.remove('v99-hide'), 14000); }, true);
-    const relabel = () => { const b = document.querySelector('.wmap-jumps [data-jump="lodge"]'); if (!b) return false; b.textContent = 'Royal Assembly Rooms'; return true; };
+    const relabel = () => { const b = document.querySelector('.wmap-jumps [data-jump="lodge"]'); if (!b) return false; b.textContent = 'Masonic Lodge / Royal Assembly Rooms'; return true; };
     retry(relabel, 30, 1000);
     const side = warp(-93, -447.5);
     retry(() => { let k = 0; for (const c of fx.clusters || []) { if (c.key !== 'cat:royal-assembly-rooms' && c.key !== 'cat:assembly-rooms-hatch') continue; if (!c.grp.userData.v81) return false;

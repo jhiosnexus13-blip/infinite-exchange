@@ -26,8 +26,12 @@ export function initPresence(o) {
   /* three lazily-built sets, switched at runtime with the NEON/LITE/SOLID/REAL switcher (window.__detail) */
   const tierNow = () => window.IE_V120_FIG === false ? 0 : Math.max(0, Math.min(2, window.__detail ?? (LITE ? 0 : 1)));
   const SETS = [], mk = (g, m, col) => { const im = new T.InstancedMesh(g, m, MAX); if (col) im.setColorAt(0, new T.Color(0x6fd8e8)); im.count = 0; im.frustumCulled = false; im.raycast = () => {}; im.name = 'presence'; S.add(im); return im; };
-  const setFor = t => SETS[t] || (SETS[t] = t === 0 ? [mk(geo, mat)] : t === 1 ? [mk(geo, new T.MeshLambertMaterial({ emissive: 0x1c2630 }), true)]
-    : [mk(build(true, true), new T.MeshStandardMaterial({ roughness: 0.75, metalness: 0.05 }), true), mk(geo.clone().scale(1.05, 1.02, 1.05), mat)]);
+  /* v122: SOLID/REAL visitors were too faint at distance: brighter emissive body, never fogged, plus the glow shell on L1 too.
+     IE_V122_FIGS=false restores the v120 materials. */
+  const BRIGHT = window.IE_V122_FIGS !== false, shell = () => mk(geo.clone().scale(1.05, 1.02, 1.05), mat);
+  const setFor = t => SETS[t] || (SETS[t] = t === 0 ? [mk(geo, mat)]
+    : t === 1 ? (BRIGHT ? [mk(geo, new T.MeshLambertMaterial({ emissive: 0x3a6878, fog: false }), true), shell()] : [mk(geo, new T.MeshLambertMaterial({ emissive: 0x1c2630 }), true)])
+    : [mk(build(true, true), BRIGHT ? new T.MeshStandardMaterial({ roughness: 0.6, metalness: 0.05, emissive: 0x2f5866, fog: false }) : new T.MeshStandardMaterial({ roughness: 0.75, metalness: 0.05 }), true), shell()]);
   let DET = tierNow(), meshes = setFor(DET), mesh = meshes[0];
   const PAL = [0x5f8fd8, 0xd8566a, 0x6fbf6a, 0xe8e2d4, 0x9a7ad8, 0xf08a4a, 0x5ac8e8, 0xf0d050, 0x6fe8f0, 0xff8fc8], col = new T.Color();
   const tint = k => { let h = 0; for (const c of k) h = (h * 31 + c.charCodeAt(0)) | 0; return PAL[Math.abs(h) % PAL.length]; };
