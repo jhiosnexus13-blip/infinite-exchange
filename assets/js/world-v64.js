@@ -16,11 +16,14 @@ export function initV64(o) {
 
   // 1. station (OSM bbox e -1088.9..-1053.3, n 917.7..1008.8): 30 x 86 m shed, long axis N-S
   { const E0 = -1086, E1 = -1056, N0 = 920, N1 = 1006, EC = (E0 + E1) / 2, NC = (N0 + N1) / 2, W = E1 - E0, H = 7;
-    AB(0x8a4b3a, W, H, N1 - N0, EC, NC, H / 2);                                   // brick body
-    for (const s of [-1, 1]) { const g = new T.BoxGeometry(W / 2 + 1.2, 0.4, N1 - N0 + 2); g.rotateZ(s * -0.42); const p = warp(EC + s * W / 4, NC); g.translate(p.x, H + 3.1, p.z); put(0x4a4f57, g); } // pitched roof
+    /* v121: the 30 x 86 m bbox shed was ~70% bigger than the real L-shaped OSM footprint (1508 m2 vs 2580 m2) and doubled the OSM skin.
+       The real footprint (v69 walls + v115 roof + v109 facade) now stands alone; this keeps the entrance panel + canopy. IE_V121_STATION=false restores. */
+    const OLD = window.IE_V121_STATION === false;
+    if (OLD) AB(0x8a4b3a, W, H, N1 - N0, EC, NC, H / 2);                                   // brick body
+    if (OLD) for (const s of [-1, 1]) { const g = new T.BoxGeometry(W / 2 + 1.2, 0.4, N1 - N0 + 2); g.rotateZ(s * -0.42); const p = warp(EC + s * W / 4, NC); g.translate(p.x, H + 3.1, p.z); put(0x4a4f57, g); } // pitched roof
     AB(0xd8d2c4, 0.3, 2.6, 18, E1 + 0.2, NC, 2.2);                                // pale entrance panel (east, road side)
     AB(0x3b4048, 8, 0.3, 30, E1 + 4, NC, 4.2); for (const dn of [-13, 13]) AB(0x3b4048, 0.3, 4.2, 0.3, E1 + 7.5, NC + dn, 2.1); // canopy
-    solid(E0, N0, E1, N1); info.station = [E0, N0, E1, N1]; }
+    if (OLD) solid(E0, N0, E1, N1); info.station = [E0, N0, E1, N1]; }
 
   // 2. cemetery: headstone rows around (-509, 930)
   { let n = 0; for (let r = 0; r < 8; r++) for (let c = 0; c < 14; c++) { const e = -560 + c * 7 + (R() - 0.5), nn = 900 + r * 8 + (R() - 0.5); if (Math.hypot(e + 509, nn - 930) < 9) continue;

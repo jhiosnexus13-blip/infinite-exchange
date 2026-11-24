@@ -3,7 +3,7 @@
         -> { ok, msg }  and the note appears in the chat list (chat.mjs) as { h, t, v: { id, d } }
    GET  /api/voice?id=<id>          -> the clip bytes with their audio content-type
    Same safety as the chat: anonymous 'visitor-xxxx' handle, one post per 2 s per id (shared with text), same-origin only,
-   clips expire with their chat message (30 min / newest 50). No IPs, user agents or locations stored. */
+   clips expire with their chat message (4 h / newest 50). No IPs, user agents or locations stored. */
 import { json, chatStore, voiceStore, okSid, sameOrigin, handle, msgKey, rateOk, listMsgs, pub } from '../lib/chat-lib.mjs';
 
 const MAX_BYTES = 300 * 1024, MAX_MS = 15500, TYPES = /^audio\/(webm|mp4|ogg|aac|mpeg|x-m4a)(;.*)?$/i;

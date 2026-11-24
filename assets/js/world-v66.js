@@ -28,7 +28,7 @@ export function initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P: PL }) {
   const seaRoute = fx.route || []; // Golden Mile already has env lamps; add sheen only
   if (seaRoute.length) ribbon(sheen, seaRoute.map(p => (p.isVector3 ? p : new T.Vector3(p[0], 0, p[1]))), 3);
   const g = new T.Group(); g.name = 'v66-art'; S.add(g);
-  if (sheen.length) { const ge = new T.BufferGeometry(); ge.setAttribute('position', new T.Float32BufferAttribute(sheen, 3)); const m = new T.Mesh(ge, sheenMat); m.renderOrder = 2; g.add(m); st.sheen = sheen.length / 18; }
+  if (sheen.length) { const ge = new T.BufferGeometry(); ge.setAttribute('position', new T.Float32BufferAttribute(sheen, 3)); const m = new T.Mesh(ge, sheenMat); m.name = 'v66-sheen'; m.renderOrder = 2; g.add(m); st.sheen = sheen.length / 18; }
   const MAXL = LITE ? 500 : 1400; if (lp.length / 3 > MAXL) { const k = Math.ceil(lp.length / 3 / MAXL), a = [], b = []; for (let i = 0; i < lp.length / 3; i += k) { a.push(lp[i * 3], lp[i * 3 + 1], lp[i * 3 + 2]); b.push(pools[i * 2], pools[i * 2 + 1]); } lp.length = 0; lp.push(...a); pools.length = 0; pools.push(...b); }
   if (lp.length) { const ge = new T.BufferGeometry(); ge.setAttribute('position', new T.Float32BufferAttribute(lp, 3)); g.add(new T.Points(ge, lampMat)); st.lamps = lp.length / 3;
     if (!LITE) { const pg = [], R = 4.2; for (let i = 0; i < pools.length; i += 2) { const x = pools[i], z = pools[i + 1]; for (let s = 0; s < 8; s++) { const a0 = s / 8 * 6.283, a1 = (s + 1) / 8 * 6.283; pg.push(x, 0.04, z, x + Math.cos(a1) * R, 0.04, z + Math.sin(a1) * R, x + Math.cos(a0) * R, 0.04, z + Math.sin(a0) * R); } }
@@ -124,11 +124,15 @@ export function initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P: PL }) {
         x.fillStyle = '#00ff9d'; x.fillRect(40, 170 - y, 20, 20); x.fillStyle = '#b48cff'; for (const o of obs) x.fillRect(o.x, 190 - o.h, 14, o.h);
         x.fillStyle = '#cfe'; x.font = '13px monospace'; x.textAlign = 'left'; x.fillText('score ' + Math.floor(score), 10, 20); if (dead) { x.textAlign = 'center'; x.fillText('CRASHED. Tap to run again.', 200, 100); }
         sc.textContent = 'best ' + Math.max(best, LS.get('jhios.arc.run') || 0); raf = requestAnimationFrame(loop); }; raf = requestAnimationFrame(loop); } }
-  // arcade cabinet marker
-  const cab = new T.Group(); cab.position.set(ARC.x, 0, ARC.z); S.add(cab);
-  cab.add(at(new T.Mesh(new T.BoxGeometry(1.2, 2, 0.9), new T.MeshBasicMaterial({ color: 0x1a0f2e })), 0, 1, 0));
-  const scr = new T.Mesh(new T.PlaneGeometry(0.9, 0.6), new T.MeshBasicMaterial({ color: 0x00ff9d })); scr.position.set(0, 1.5, 0.46); cab.add(scr);
-  try { const l = LBL && LBL('JHIOS ARCADE · PLAY', '#00ff9d'); if (l) { l.position.set(ARC.x, 3, ARC.z); S.add(l); } } catch {}
+  // v114: old single cabinet skipped when the varied-cabinet pack is on (IE_V114_ARCADE=false restores)
+  const V114A = window.IE_V114_ARCADE !== false;
+  const cab = new T.Group(); let scr = { material: { color: { setHSL() {} } } };
+  if (!V114A) {
+    cab.position.set(ARC.x, 0, ARC.z); S.add(cab);
+    cab.add(at(new T.Mesh(new T.BoxGeometry(1.2, 2, 0.9), new T.MeshBasicMaterial({ color: 0x1a0f2e })), 0, 1, 0));
+    scr = new T.Mesh(new T.PlaneGeometry(0.9, 0.6), new T.MeshBasicMaterial({ color: 0x00ff9d })); scr.position.set(0, 1.5, 0.46); cab.add(scr);
+    try { const l = LBL && LBL('JHIOS ARCADE · PLAY', '#00ff9d'); if (l) { l.position.set(ARC.x, 3, ARC.z); S.add(l); } } catch {}
+  }
   /* ---------- THE STACK (layered-systems room) ---------- */
   const HP = warp(156, 288); const hatch = new T.Group(); hatch.position.set(HP.x, 0, HP.z); S.add(hatch);
   hatch.add(at(new T.Mesh(new T.BoxGeometry(2.2, 0.08, 2.2), new T.MeshBasicMaterial({ color: 0x1b2420 })), 0, 0.04, 0));
@@ -143,7 +147,7 @@ export function initV66({ T, S, LBL, LITE, warp, fx, G, CAM, P: PL }) {
     <p class="m">Status: built (panel). Deeper rooms: vision.</p>`); }
   /* ---------- proximity action button ---------- */
   const act = el('<div class="v66b" id="v66act"></div>'); document.body.appendChild(act); let cur = null;
-  const spots = () => [GB && { id: 'globe', p: GB.globe.position, r: 16, t: 'PLAZA GLOBE · regions / names / requests', f: () => globePanel() }, { id: 'arcade', p: ARC, r: 9, t: 'JHIOS ARCADE · PLAY', f: arcadePanel }, { id: 'stack', p: HP, r: 7, t: 'OPEN THE STACK', f: stackPanel }].filter(Boolean);
+  const spots = () => [GB && { id: 'globe', p: GB.globe.position, r: 16, t: 'PLAZA GLOBE · regions / names / requests', f: () => globePanel() }, !V114A && { id: 'arcade', p: ARC, r: 9, t: 'JHIOS ARCADE · PLAY', f: arcadePanel }, { id: 'stack', p: HP, r: 7, t: 'OPEN THE STACK', f: stackPanel }].filter(Boolean);
   act.onclick = () => cur && cur.f();
   addEventListener('keydown', e => { if (e.code !== 'KeyF' || !cur || st.open) return; const a = document.activeElement; if (a && /INPUT|TEXTAREA/.test(a.tagName)) return; cur.f(); });
   let acc = 0;

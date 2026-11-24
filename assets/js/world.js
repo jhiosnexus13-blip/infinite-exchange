@@ -45,7 +45,7 @@ canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); window.__
 canvas.addEventListener('webglcontextrestored', () => { werr('3D context restored'); setTimeout(() => window.__werr && window.__werr(''), 2500); if (window.__glLost >= 2) { try { sessionStorage.setItem('jx-lite', '1'); } catch (_) {} } }, false);
 const capDPR = () => Math.min(window.devicePixelRatio || 1, LOW ? 1 : (coarse || LITE) ? 1.5 : 2);
 renderer.setPixelRatio(capDPR());
-const scene = new THREE.Scene();
+const scene = new THREE.Scene(); if (/[?&]dbg=1/.test(location.search)) window.__ieS = scene;
 scene.background = new THREE.Color(0x050607);
 scene.fog = LOW ? null : new THREE.FogExp2(0x03100b, 0.011);
 /* v112: Viper CSS3D stage punch — clear alpha 0 + no scene.background while inside so the iframe shows through */
@@ -439,10 +439,40 @@ function hitAt(x, y) { // v59: one raycast shared by tap / click, the centre poi
   ray.setFromCamera(ndc, camera); const hits = ray.intersectObjects(clickables, false).filter(h => h.object.visible !== false && (!h.object.parent || h.object.parent.visible !== false));
   return hits.find(h => typeof h.object.userData.action === 'function') || hits.find(h => h.object.userData.feature) || hits.find(h => h.object.userData.track) || hits[0] || null;
 }
+/* v118: proximity-gated props (Joseph 26 Oct: small world objects / buttons work when you are close;
+   big landmarks and music screens stay tappable from afar). Opt out per object with userData.far,
+   or set userData.reach (metres). IE_V118_REACH=false turns the gate off. */
+const _rv = new THREE.Vector3(), _rs = new THREE.Vector3();
+function tooFar(hit) {
+  if (window.IE_V118_REACH === false) return false;
+  const o = hit.object, u = o.userData;
+  if (u.far || !(typeof u.action === 'function' || u.popup)) return false;
+  let reach = u.reach;
+  if (!reach) {
+    const g = o.geometry; if (!g) return false;
+    if (!g.boundingSphere) g.computeBoundingSphere();
+    o.getWorldScale(_rs); const r = (g.boundingSphere ? g.boundingSphere.radius : 0) * Math.max(_rs.x, _rs.y, _rs.z);
+    if (r >= 4) return false; /* landmark-sized: usable from distance */
+    reach = 22;
+  }
+  o.getWorldPosition(_rv);
+  const d = Math.hypot(_rv.x - player.pos.x, _rv.z - player.pos.z);
+  if (d <= reach) return false;
+  nearToast('Walk closer to use this · ' + Math.round(d - reach + 1) + ' m');
+  return true;
+}
+let _nt = null, _ntT = 0;
+function nearToast(msg) {
+  if (!_nt) { _nt = document.createElement('div'); _nt.id = 'v118near'; _nt.setAttribute('role', 'status');
+    _nt.style.cssText = 'position:fixed;left:50%;top:24%;transform:translateX(-50%);z-index:85;background:#06140cee;border:1px solid #1d6b4b;color:#bfffe3;font:12px/1.4 ui-monospace,monospace;padding:6px 12px;border-radius:8px;pointer-events:none;transition:opacity .25s';
+    document.body.appendChild(_nt); }
+  _nt.textContent = msg; _nt.style.opacity = '1'; clearTimeout(_ntT); _ntT = setTimeout(() => { _nt.style.opacity = '0'; }, 1600);
+}
 function pick(x, y, hit0) {
   if (window.__mapOpen) return;
   const hit = hit0 || hitAt(x, y);
   if (!hit) return false; const u = hit.object.userData;
+  if (tooFar(hit)) return true;
   if (typeof u.action === 'function') { try { u.action(); return true; } catch (e) { console.warn('click action', e); } }
   if (u.track) { if (window.JX) JX.load().then(() => { const t = JX.tracks.find(x => x.id === u.track); if (t) { JX.play(t, JX.byLane(t.lane)); selectLane(t.lane); openPanel(true); } }); return true; }
   if (u.popup) { window.__lastOpen = 'popup:' + (u.id || ''); u.popup(); return true; }
@@ -480,26 +510,38 @@ const relayout = () => { resize(); setTimeout(resize, 150); setTimeout(resize, 6
 addEventListener('orientationchange', relayout); if (window.visualViewport) visualViewport.addEventListener('resize', resize); if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', relayout);
 /* environment module is loaded dynamically: if it (or its data) fails, the lanes, plaza and controls keep running */
 let updateWorldFX = () => {};
-import('./world-fx.js?v=113').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane });
+import('./world-v114-ui.js?v=121').then(m => { try { m.initV114UI(); } catch (e) { console.warn('v114-ui', e); } }).catch(e => console.warn('v114-ui', e));
+import('./world-v115-ui.js?v=121').then(m => { try { m.initV115UI(); } catch (e) { console.warn('v115-ui', e); } }).catch(e => console.warn('v115-ui', e));
+import('./world-fx.js?v=121').then(m => { try { m.buildEnvironment({ THREE, scene, camera, player, holos, clickables, labelSprite, canvas, LOW, LITE, reduced, HOLO_OBJS, getPlaying: () => playingLane, renderer });
     updateWorldFX = (t, dt) => { try { m.updateWorldFX(t, dt); } catch (e) { updateWorldFX = () => {}; werr('world fx stopped: ' + (e && e.message)); } };
     Object.defineProperties(window.__world, Object.getOwnPropertyDescriptors(m.worldDebug)); } catch (e) { werr('environment: ' + (e && e.message || e)); } })
   .catch(e => werr('could not load world-fx.js: ' + (e && e.message || e)));
 /* v58: gamepad (world-gamepad.js) drives the same actions: centre tap = pick(), the same panel / map functions, and the same move/look sums as the touch sticks */
 let pad = { mx: 0, my: 0, lx: 0, ly: 0, sprint: false, poll() { return this; } };
 const nearScreens = () => { const v = new THREE.Vector3(), out = []; for (const o of clickables) { if (o.visible === false || (o.parent && o.parent.visible === false)) continue; o.getWorldPosition(v); const d = Math.hypot(v.x - player.pos.x, v.z - player.pos.z); if (d < 40 && d > 1) out.push({ o, x: v.x, y: v.y, z: v.z, a: Math.atan2(-(v.x - player.pos.x), -(v.z - player.pos.z)) }); } return out.sort((p, q) => p.a - q.a); };
-Promise.all([import('./world-gamepad.js?v=113'), import('./world-ui.js?v=113')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+Promise.all([import('./world-gamepad.js?v=121'), import('./world-ui.js?v=121')]).then(([m, U]) => { const ui = U.initUI({ openPanel }); window.__ui = ui; const ctr = () => { const r = canvas.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
   pad = m.initGamepad({ ui, pickCentre: h => !!pick(...ctr(), h), peekCentre: () => { if (window.__mapOpen) return null; const h = hitAt(...ctr()); if (!h) return null; const u = h.object.userData, t = u.track && window.JX && JX.tracks.find(x => x.id === u.track);
       return { hit: h, label: u.track ? 'PLAY TRACK' + (t || u.title ? ' · ' + (t ? t.title : u.title) : '') : u.popup ? 'OPEN · ' + (u.title || 'panel') : u.link ? 'OPEN LINK · ' + (u.title || u.label || 'link') : u.lane ? 'PLAY LANE · ' + u.lane : 'USE' }; }, openPanel,
   openMap: () => window.__world.openMap && window.__world.openMap(), closeMap: () => window.__world.closeMap && window.__world.closeMap(), nearScreens,
   faceAt: t => { player.yaw = t.a; player.pitch = Math.max(-1.2, Math.min(1.2, Math.atan2(t.y - player.pos.y, Math.hypot(t.x - player.pos.x, t.z - player.pos.z)))); } }); window.__pad = pad; }).catch(e => console.warn('gamepad', e));
 const clock = new THREE.Clock(), fwd = new THREE.Vector3(), right = new THREE.Vector3();
 const MOVE = 7, TURN = 1.8;
+const sm = { mv: 0, st: 0, turn: 0 };
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   const gp = pad.poll();
   let mv = (keys.has('f') ? 1 : 0) - (keys.has('b') ? 1 : 0) + stickL.y + gp.my;
   let st = (keys.has('sr') ? 1 : 0) - (keys.has('sl') ? 1 : 0) + stickL.x + gp.mx;
-  const turn = window.__mapOpen ? 0 : ((keys.has('tr') ? 1 : 0) - (keys.has('tl') ? 1 : 0) + stickR.x + gp.lx);
+  let turn = window.__mapOpen ? 0 : ((keys.has('tr') ? 1 : 0) - (keys.has('tl') ? 1 : 0) + stickR.x + gp.lx);
+  /* v118: smoother motion — ease walking / strafing / turning in and out instead of instant start-stop
+     (stops faster than it starts so it never feels floaty). IE_V118_SMOOTH=false restores raw input. */
+  if (window.IE_V118_SMOOTH !== false) {
+    if (window.__mapOpen) { mv = 0; st = 0; }
+    const ease = (cur, want, up, down) => cur + (want - cur) * (1 - Math.exp(-dt * (Math.abs(want) > Math.abs(cur) ? up : down)));
+    sm.mv = ease(sm.mv, mv, 9, 14); sm.st = ease(sm.st, st, 9, 14); sm.turn = ease(sm.turn, turn, 12, 18);
+    if (Math.abs(sm.mv) < 0.002) sm.mv = 0; if (Math.abs(sm.st) < 0.002) sm.st = 0; if (Math.abs(sm.turn) < 0.002) sm.turn = 0;
+    mv = sm.mv; st = sm.st; turn = sm.turn;
+  }
   player.yaw -= turn * TURN * dt;              // positive turn = turn right
   if (!window.__mapOpen) player.pitch += (stickR.y + gp.ly) * TURN * 0.7 * dt;  // stick up = look up
   player.pitch = Math.max(-1.3, Math.min(1.3, player.pitch));
