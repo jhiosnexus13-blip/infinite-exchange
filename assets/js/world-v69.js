@@ -111,15 +111,54 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
 
   // ---------- 3. parked cars (instanced) ----------
   const lmk = Object.values(fx.landmarks || {}).map(l => [l.pos.x, l.pos.z]);
-  const cars = []; const CARCOL = [0x1b1f24, 0xd9dcdf, 0x7d8288, 0x2c3e5c, 0x8c1d1d, 0x3f5d3a, 0xb9b39f, 0x101012];
+  const cars = []; const CARCOL = [0x2a3340, 0xd9dcdf, 0x8a9096, 0x2c4a6e, 0xb42a2a, 0x3f5d3a, 0xc8bda3, 0xe8e4dc, 0x5a4332, 0xc9a227, 0x4a2a54, 0x1f4a62];
   const MAXC = LITE ? 260 : 1400;
   for (const [a, b, hw, ty, len] of segs) { if (ty > 1 || len < 24 || cars.length >= MAXC) continue; const dx = (b[0] - a[0]) / len, dy = (b[1] - a[1]) / len, n = [-dy, dx];
     for (let s = 10; s < len - 10; s += 5.6) for (const sd of [1, -1]) { if (R() > 0.32 || cars.length >= MAXC) continue; const e = a[0] + dx * s + n[0] * sd * (hw - 1.1), nn = a[1] + dy * s + n[1] * sd * (hw - 1.1);
       if (holes.some(([he, hn, r]) => Math.hypot(e - he, nn - hn) < r + 6)) continue; const w = warp(e, nn); if (lmk.some(([x, z]) => Math.hypot(w.x - x, w.z - z) < 18)) continue;
-      cars.push([w, Math.atan2(-(b[0] - a[0]), -(b[1] - a[1])) , CARCOL[Math.floor(R() * CARCOL.length)]]); } }
-  const addCars = list => { if (!list.length) return; const bodyG = new T.BoxGeometry(1.8, 1.0, 4.2); bodyG.translate(0, 0.65, 0); const cabG = new T.BoxGeometry(1.62, 0.62, 2.2); cabG.translate(0, 1.45, -0.2);
-    const bm = new T.InstancedMesh(bodyG, new T.MeshBasicMaterial({ color: 0xffffff }), list.length), cm = new T.InstancedMesh(cabG, new T.MeshBasicMaterial({ color: 0x15191e }), list.length); const M = new T.Matrix4(), Qt = new T.Quaternion(), Y = new T.Vector3(0, 1, 0), One = new T.Vector3(1, 1, 1);
-    list.forEach(([w, ry, col], i) => { Qt.setFromAxisAngle(Y, ry); M.compose(w, Qt, One); bm.setMatrixAt(i, M); cm.setMatrixAt(i, M); bm.setColorAt(i, C.setHex(col)); }); grp.add(bm, cm); info.cars += list.length; };
+      cars.push([w, Math.atan2(-(b[0] - a[0]), -(b[1] - a[1])), CARCOL[Math.floor(R() * CARCOL.length)], R() < 0.22]); } }
+  const addCars = list => {
+    if (!list.length) return;
+    const M = new T.Matrix4(), Qt = new T.Quaternion(), Y = new T.Vector3(0, 1, 0), One = new T.Vector3(1, 1, 1), sc = new T.Vector3(), tmp = new T.Vector3();
+    /* v123: low-poly instanced cars/vans (body colour, glass, roof, wheels, lights). IE_V123_CARS=false restores the old two-box slabs. */
+    if (window.IE_V123_CARS === false) {
+      const bodyG = new T.BoxGeometry(1.8, 1.0, 4.2); bodyG.translate(0, 0.65, 0); const cabG = new T.BoxGeometry(1.62, 0.62, 2.2); cabG.translate(0, 1.45, -0.2);
+      const bm = new T.InstancedMesh(bodyG, new T.MeshBasicMaterial({ color: 0xffffff, fog: false }), list.length), cm = new T.InstancedMesh(cabG, new T.MeshBasicMaterial({ color: 0x15191e, fog: false }), list.length);
+      list.forEach(([w, ry, col], i) => { Qt.setFromAxisAngle(Y, ry); M.compose(w, Qt, One); bm.setMatrixAt(i, M); cm.setMatrixAt(i, M); bm.setColorAt(i, C.setHex(col)); });
+      bm.instanceMatrix.needsUpdate = true; if (bm.instanceColor) bm.instanceColor.needsUpdate = true; grp.add(bm, cm); info.cars += list.length; return;
+    }
+    const bodyG = new T.BoxGeometry(1.8, 0.72, 4.2); bodyG.translate(0, 0.56, 0);
+    const roofG = new T.BoxGeometry(1.7, 0.1, 1.7); roofG.translate(0, 1.54, -0.35);
+    const glassG = new T.BoxGeometry(1.68, 0.62, 1.65); glassG.translate(0, 1.18, -0.35);
+    const bake = (parts) => { const v = [], i = []; for (const [x, y, z, w, h, d] of parts) { const g = new T.BoxGeometry(w, h, d); g.translate(x, y, z); const pos = g.attributes.position, k = v.length / 3; for (let n = 0; n < pos.count; n++) v.push(pos.getX(n), pos.getY(n), pos.getZ(n)); const idx = g.index; for (let n = 0; n < idx.count; n++) i.push(idx.getX(n) + k); g.dispose(); } const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(v, 3)); g.setIndex(i); g.computeVertexNormals(); return g; };
+    const lightFG = bake([[0.58, 0.62, 2.12, 0.32, 0.14, 0.08], [-0.58, 0.62, 2.12, 0.32, 0.14, 0.08]]);
+    const lightBG = bake([[0.58, 0.62, -2.12, 0.32, 0.14, 0.08], [-0.58, 0.62, -2.12, 0.32, 0.14, 0.08]]);
+    const wheelG = new T.CylinderGeometry(0.32, 0.32, 0.22, 8); wheelG.rotateZ(Math.PI / 2);
+    const n = list.length;
+    const mat = (hex, extra) => new T.MeshBasicMaterial(Object.assign({ color: hex, fog: false }, extra || {}));
+    const body = new T.InstancedMesh(bodyG, mat(0xffffff), n), roof = new T.InstancedMesh(roofG, mat(0xffffff), n);
+    const glass = new T.InstancedMesh(glassG, mat(0x1a2a38), n);
+    const lightsF = new T.InstancedMesh(lightFG, mat(0xffe8b0), n), lightsB = new T.InstancedMesh(lightBG, mat(0xc21c18), n);
+    const wheels = new T.InstancedMesh(wheelG, mat(0x1a1a1a), n * 4);
+    body.name = roof.name = glass.name = lightsF.name = lightsB.name = wheels.name = 'v69-cars';
+    const WPOS = [[-0.85, 0.32, 1.35], [0.85, 0.32, 1.35], [-0.85, 0.32, -1.35], [0.85, 0.32, -1.35]];
+    fx.cars = fx.cars || [];
+    list.forEach(([w, ry, col, van], i) => {
+      Qt.setFromAxisAngle(Y, ry); sc.set(1, van ? 1.18 : 1, van ? 1.28 : 1); M.compose(w, Qt, sc);
+      body.setMatrixAt(i, M); roof.setMatrixAt(i, M); glass.setMatrixAt(i, M); lightsF.setMatrixAt(i, M); lightsB.setMatrixAt(i, M);
+      body.setColorAt(i, C.setHex(col)); roof.setColorAt(i, C.setHex(col).multiplyScalar(0.85));
+      const cs = Math.cos(ry), sn = Math.sin(ry);
+      for (let k = 0; k < 4; k++) { const [lx, ly, lz0] = WPOS[k], lz = lz0 * (van ? 1.28 : 1); tmp.set(w.x + cs * lx + sn * lz, ly, w.z - sn * lx + cs * lz); M.compose(tmp, Qt, One); wheels.setMatrixAt(i * 4 + k, M); }
+      fx.cars.push({ x: w.x, z: w.z, r: van ? 2.0 : 1.6 });
+    });
+    for (const m of [body, roof, glass, lightsF, lightsB, wheels]) { m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; m.frustumCulled = true; grp.add(m); }
+    /* cheap spatial hash so walking into a car is blocked (same grid the world collider consults via fx.carHit) */
+    const CH = 16, H = new Map();
+    for (const c of fx.cars) { const k = (c.x / CH | 0) + ':' + (c.z / CH | 0); (H.get(k) || H.set(k, []).get(k)).push(c); }
+    fx.carHash = H;
+    fx.carHit = (x, z, r = 0.8) => { const h = fx.carHash; if (!h) return false; const ix = x / CH | 0, iz = z / CH | 0; for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const L = h.get((ix + i) + ':' + (iz + j)); if (L) for (const c of L) { const dx = x - c.x, dz = z - c.z; if (dx * dx + dz * dz < (c.r + r) * (c.r + r)) return true; } } return false; };
+    info.cars += list.length;
+  };
   addCars(cars);
 
   // ---------- 4. spawn plaza: paving, kerb, furniture, globe plinth ----------

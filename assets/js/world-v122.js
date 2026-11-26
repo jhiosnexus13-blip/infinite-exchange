@@ -2,12 +2,14 @@
    IE_V122_JUMPGUARD=false  no jump-list click guard       IE_V122_ZFIX=false   no extra facade polygon offset
    IE_V122_GOLDBOT=false    no GoldBot kiosk               IE_V122_HUDFIX=false no weather/visitor pill nudge
    IE_V122_VR=false         no Enter VR button             (also in other files: IE_V122_FIGS, IE_V122_TOAST, IE_V122_NORELOAD, IE_V122_LOCALTEX)
+   v123 (preview bump): IE_V123_CLIP=false  old camera/collision    IE_V123_CARS=false  old two-box vehicles
+                        IE_V123_FACADES=false  no untextured-wall reskin
    GoldBot / Digital AssetOps is Zak Denny's project; text here is deliberately plain: research & demo testing, no claims, no numbers. */
 const on = k => window['IE_V122_' + k] !== false;
 const GOLDBOT = 'https://goldbot-digitalassetops.lovable.app', FB = 'https://www.facebook.com/profile.php?id=61578308143435';
 
 export function initV122({ T, S, CAM, P, LBL, CL, LITE, warp, fx }) {
-  const st = { t: 0, t0: performance.now(), zfix: 0, hud: 0, ground: 0 };
+  const st = { t: 0, t0: performance.now(), zfix: 0, hud: 0, ground: 0, facades: 0, facadesN: 0, facadeNames: [] };
 
   /* A2: jump list — modules keep inserting stops for ~30 s, so a tap could land on whatever slid under the finger.
      Block a click if the list changed in the last 600 ms or if the button under the finger changed between press and release;
@@ -98,6 +100,59 @@ export function initV122({ T, S, CAM, P, LBL, CL, LITE, warp, fx }) {
     };
   }
 
+
+  /* v123-1: if the player ends up inside a wall (jump, residual gap), spiral them out. Runs every frame, cheap grid test. */
+  if (window.IE_V123_CLIP !== false) {
+    window.__camUnclip = (pl) => {
+      const C = window.__collide; if (!C || !C(pl.pos.x, pl.pos.z, 0.3)) return;
+      for (let rad = 0.5; rad <= 10; rad += 0.5) {
+        const n = Math.max(8, (rad * 8) | 0);
+        for (let i = 0; i < n; i++) {
+          const a = i * 6.28318530718 / n, x = pl.pos.x + Math.cos(a) * rad, z = pl.pos.z + Math.sin(a) * rad;
+          if (!C(x, z, 0.85)) { pl.pos.x = x; pl.pos.z = z; return; }
+        }
+      }
+    };
+    /* backup solids for the two custom Marine Parade blocks (Arc Cinema + Fallen Angels) in case the OSM footprint is slightly smaller than the visible box */
+    try {
+      /* pad ~1.2 m past the visible boxes: Fallen Angels is drawn 1% larger than its OSM footprint, which is how the camera could clip the last half-metre */
+      fx.addSolid && fx.addSolid([[19.8, 614], [56.2, 614], [56.2, 674.2], [19.8, 674.2]]);
+      fx.addSolid && fx.addSolid([[24.6, 669.6], [57.8, 669.6], [57.8, 700.4], [24.6, 700.4]]);
+    } catch (_) {}
+  }
+
+  /* v123-3: world-wide sweep — any large untextured / flat-coloured wall gets the v69 world-space facade shader (windows, doors, grime).
+     Skips roads, cars, roofs-with-maps, holograms, thin signs, and anything already using facade69. The Arc Cinema's cream box is the one in Joseph's recording. */
+  const on123 = k => window['IE_V123_' + k] !== false;
+  const facCache = new Map();
+  function reskinFacades() {
+    if (!on123('FACADES') || !fx.facade69) return 0;
+    const skipName = /road|pavement|kerb|ground|dtm|terrain|water|sea|river|car|vehicle|wheel|tree|hedge|fence|rail|lamp|holo|screen|poster|sign|presence|player|train|track|kiosk|globe|sand|dune|asphalt|grass|pave|deck|bridge|waterway|v115-solid|v121|osm-buildings|sky|sun|earth|cloud|moon|atmos|env|hemi|v114/;
+    const box = new T.Box3(), sz = new T.Vector3();
+    let n = 0;
+    S.traverse(o => {
+      if (!o.isMesh || o.isInstancedMesh || o.userData.v123facade) return;
+      const nm = ((o.name || '') + ' ' + ((o.parent && o.parent.name) || '') + ' ' + ((o.parent && o.parent.parent && o.parent.parent.name) || '')).toLowerCase();
+      if (skipName.test(nm)) return;
+      const mats = Array.isArray(o.material) ? o.material : [o.material];
+      const okType = m => m && (m.isMeshBasicMaterial || m.isMeshLambertMaterial || m.isMeshStandardMaterial || m.isMeshPhongMaterial);
+      if (!mats[0] || mats.some(m => !okType(m) || m.map || m.alphaMap || m.uniforms || (m.transparent && m.opacity < 0.9) || (m.blending && m.blending !== T.NormalBlending))) return;
+      if (mats.some(m => m.customProgramCacheKey && /^facade69/.test(String(m.customProgramCacheKey())))) { o.userData.v123facade = 1; return; }
+      box.setFromObject(o); box.getSize(sz);
+      if (sz.y < 2.2 || Math.min(sz.x, sz.z) < 0.4 || Math.max(sz.x, sz.y, sz.z) < 4 || Math.max(sz.x, sz.y, sz.z) > 400) return;
+      const hex = (mats[0].color && mats[0].color.getHex) ? mats[0].color.getHex() : 0xcccccc;
+      const lum = ((hex >> 16) & 255) * 0.3 + ((hex >> 8) & 255) * 0.59 + (hex & 255) * 0.11;
+      if (lum < 28 || lum > 245) return; // skip near-black and near-white emissive/trim
+      const sat = Math.max((hex >> 16) & 255, (hex >> 8) & 255, hex & 255) - Math.min((hex >> 16) & 255, (hex >> 8) & 255, hex & 255);
+      if (sat > 200 && lum > 80) return; // skip neon greens / magentas
+      const fac = facCache.get(hex) || facCache.set(hex, fx.facade69({ color: hex })).get(hex);
+      if (mats.length === 1) o.material = fac;
+      else o.material = mats.map(m => { const h = m.color && m.color.getHex ? m.color.getHex() : hex; return facCache.get(h) || facCache.set(h, fx.facade69({ color: h })).get(h); });
+      o.userData.v123facade = 1; n++; if (st.facadeNames.length < 30) st.facadeNames.push((o.parent&&o.parent.name)||o.name||hex.toString(16));
+    });
+    return n;
+  }
+
   return {
     update(t, dt) {
       st.t = (performance.now() - st.t0) / 1000; // wall-clock seconds (dt is clamped on slow devices)
@@ -110,6 +165,7 @@ export function initV122({ T, S, CAM, P, LBL, CL, LITE, warp, fx }) {
         if (a && b && !b.closest('#v115panel') && a.offsetParent && b.offsetParent) { const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
           if (ra.bottom > rb.top && rb.bottom > ra.top && ra.right > rb.left && rb.right > ra.left) b.style.top = Math.ceil(ra.bottom + 6) + 'px'; } }
       if (kiosk && st.ground < 60) { st.ground++; let g = null; const k = kiosk.position; for (const f of window.__groundParts || []) { const v = f(k.x, k.z, 50); if (v != null) { g = v; break; } } if (g != null) { k.y = g; if (kiosk.userData.lbl) kiosk.userData.lbl.position.y = g + 3.2; } }
+      if (on123('FACADES') && st.facades < 4 && st.t > 3 + st.facades * 8) { st.facades++; st.facadesN += reskinFacades(); fx.v123 = Object.assign(fx.v123 || {}, { facades: st.facadesN, names: st.facadeNames }); }
     }
   };
 }
