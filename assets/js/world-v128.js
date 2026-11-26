@@ -1,12 +1,12 @@
-/* v128 — street fronts + cheap shared enterable interior for ordinary OSM buildings (preview only).
+/* v128/v129 — street fronts + cheap shared enterable interiors for ordinary OSM buildings (preview only).
    IE_V128_FRONTS=false  no doors / canopies / ground-floor windows
    IE_V128_ENTER=false   fronts stay visual only (no walk-in)
    Fronts: 4 shared InstancedMeshes (frames, doors, glass, canopies), streamed within ~110 m (80 m on phones), capped.
-   Enter: ONE shared lit room built off-map once, re-tinted per building; exit returns to the same door, collision-safe.
-   Skipped: landmarks/plaza clear zones, hand-built Newtown (Sturdee terrace + private homes stay closed and unlabelled), rooms owned by v87/office.
-   Nothing here is labelled with a name — private homes are never labelled. No procedural facade shader (no TV static). */
+   Enter: ONE shared off-map room, built lazily, with several prop-set variants picked deterministically per building
+   (lounge, kitchen, cafe, pub, office, bedroom, arcade, workshop). Same door exit. Never labelled.
+   v129: Newtown homes (Sturdee Avenue terrace, Lewi G's house and the rest) get the same fronts and interiors.
+   Landmarks / plaza clear zones and rooms owned by v87 / the office are still skipped. No facade shader. */
 const on = k => window['IE_V128_' + k] !== false;
-const NT = [-330, 2060, 240, 2760]; /* Newtown residential box (e0, n0, e1, n1) — leave exactly as built */
 
 export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
   const info = { fronts: 0, enters: 0, exits: 0, inside: false, doors: 0, ready: true };
@@ -24,7 +24,6 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
   const put = (im, i, x, y, z, ry, sx, sy, sz) => { dummy.position.set(x, y, z); dummy.rotation.set(0, ry, 0); dummy.scale.set(sx, sy, sz); dummy.updateMatrix(); im.setMatrixAt(i, dummy.matrix); };
 
   const hAt = (x, z) => { try { return fx.earth && fx.earth.heightAt ? Math.max(0, Math.min(3, fx.earth.heightAt(x, z))) : 0; } catch (_) { return 0; } };
-  const inNT = (e, n) => e > NT[0] && e < NT[2] && n > NT[1] && n < NT[3];
   const freeAt = (e, n, self) => { const l = fx.COL.get(Math.floor(e / fx.COLC) + ':' + Math.floor(n / fx.COLC)); if (!l) return true; for (const b of l) if (b !== self && b.h > 0 && e > b.x0 && e < b.x1 && n > b.y0 && n < b.y1 && fx.inPoly(b.p, e, n)) return false; return true; };
 
   /* pick the best street-facing edge once per building, cached on the collision record */
@@ -32,7 +31,6 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     if (b.f128 !== undefined) return b.f128;
     b.f128 = null; const p = b.p; if (!p || p.length < 3 || b.h < 3.2) return null;
     let cx = 0, cn = 0; for (const [e, n] of p) { cx += e; cn += n; } cx /= p.length; cn /= p.length;
-    if (inNT(cx, cn)) return null;
     let best = null, bs = -1;
     for (let i = 0; i < p.length; i++) {
       const [e0, n0] = p[i], [e1, n1] = p[(i + 1) % p.length], dx = e1 - e0, dy = n1 - n0, len = Math.hypot(dx, dy); if (len < 4.2) continue;
@@ -81,35 +79,113 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     info.fronts = nd; info.doors = st.doors.length; info.glass = ng; st.cx = px; st.cz = pz;
   }
 
-  /* ---------------- shared generic interior (one lit room, built on first entry, off-map like v87) ---------------- */
+  /* ---------------- one shared off-map room; v129 swaps a cheap prop-set variant per building ---------------- */
   const RX = -1300, RZ = -4600, FY = -230, W = 12, D = 10, HH = 3.2;
+  const KINDS = ['lounge', 'kitchen', 'cafe', 'pub', 'office', 'bedroom', 'arcade', 'workshop'];
   let room = null, cur = null, busy = 0, exitAt = 0, dwell = 0;
-  const PAL = [
-    { wall: 0xe6dccb, floor: 0x8a6a46, sofa: 0x40607e, rug: 0x9a3b3b },
-    { wall: 0xcfd8cf, floor: 0x6f5a45, sofa: 0x7a3b3b, rug: 0x2f5d4d },
-    { wall: 0xdad2c0, floor: 0xa28b68, sofa: 0x3d4a40, rug: 0x3b4f7a },
-    { wall: 0xc8cfdc, floor: 0x5d5149, sofa: 0x8a6a35, rug: 0x6b3b63 },
-    { wall: 0xe2c9b0, floor: 0x7d6b5a, sofa: 0x2f3b52, rug: 0x7a5d2b }];
   const fadeOn = () => { const f = fx.bm && fx.bm.fade; if (f) { f.classList.remove('on'); void f.offsetWidth; f.classList.add('on'); } };
+  function kindOf(d) {
+    const b = d.b || {}, h = b.h || 6, area = Math.max(1, (b.x1 - b.x0) * (b.y1 - b.y0));
+    let k = Math.abs(((b.x0 * 13 + b.y0 * 29) | 0) + ((d.seed * 97) | 0)) % 8;
+    if (area > 420 || h > 10) k = [2, 3, 4, 6][k % 4];
+    else if (area < 90) k = [0, 5, 1, 7][k % 4];
+    return KINDS[k];
+  }
   function buildRoom() {
     const g = new T.Group(); g.name = 'v128-room'; g.position.set(RX, FY, RZ); g.visible = false; S.add(g);
     const M = c => new T.MeshBasicMaterial({ color: c });
-    const shell = [M(0xd8d0c0), M(0xd8d0c0), M(0xf4f1ea), M(0x8a6a46), M(0xcfc7b6), M(0xcfc7b6)]; /* +x -x ceiling floor +z -z (BackSide) */
+    const shell = [M(0xd8d0c0), M(0xd8d0c0), M(0xf4f1ea), M(0x8a6a46), M(0xcfc7b6), M(0xcfc7b6)];
     shell.forEach(m => m.side = T.BackSide);
-    const room_ = new T.Mesh(new T.BoxGeometry(W, HH, D), shell); room_.position.y = HH / 2; g.add(room_);
-    const add = (geo, col, x, y, z, ry = 0) => { const m = new T.Mesh(geo, M(col)); m.position.set(x, y, z); m.rotation.y = ry; g.add(m); return m; };
+    const box = new T.Mesh(new T.BoxGeometry(W, HH, D), shell); box.position.y = HH / 2; g.add(box);
     const B = (a, b, c) => new T.BoxGeometry(a, b, c);
-    const rug = add(B(4, 0.02, 3), 0x9a3b3b, 0, 0.012, 0.2);
-    const sofa1 = add(B(2.2, 0.5, 0.9), 0x40607e, -3.0, 0.25, -3.6), sofa2 = add(B(2.2, 0.5, 0.18), 0x40607e, -3.0, 0.7, -4.02);
-    const table = add(B(1.1, 0.45, 0.7), 0x5b4129, 0, 0.225, 0.2);
-    const shelf = add(B(2.6, 2.0, 0.4), 0x5b4129, 3.6, 1.0, -4.5); for (let i = 0; i < 6; i++) add(B(0.3, 0.4, 0.28), [0xaa3333,0x3366aa,0x22aa66,0xccaa33,0x8844aa,0xcccccc][i], 2.7 + i * 0.36, 1.45 + (i % 2) * 0.4, -4.45);
-    const counter = add(B(3.0, 1.0, 0.7), 0x8a8f95, 4.5, 0.5, 1.6, Math.PI / 2);
-    add(new T.CylinderGeometry(0.22, 0.18, 0.4, 10), 0x7a4a2a, -5.0, 0.2, 2.0); add(new T.SphereGeometry(0.4, 10, 8), 0x2f7a3b, -5.0, 0.8, 2.0); /* plant */
-    add(B(0.06, 1.1, 1.8), 0xbfe4ff, -5.97, 1.7, -0.5); /* wall window glow */
-    add(B(0.9, 0.06, 0.9), 0xfff4d0, 0, HH - 0.05, 0); add(new T.SphereGeometry(0.16, 8, 6), 0xffe9a8, -3.6, 1.15, -3.0); /* ceiling light + lamp */
-    const door = add(B(1.0, 2.1, 0.08), 0x2b2b30, 0, 1.05, D / 2 - 0.05); add(B(1.2, 2.25, 0.04), 0xd9d2c2, 0, 1.12, D / 2 - 0.03);
-    room = { g, shell, rug, sofa1, sofa2, floor: shell[3], wall: [shell[0], shell[1], shell[4], shell[5]], door };
+    const add = (par, geo, col, x, y, z, ry = 0) => { const m = new T.Mesh(geo, M(col)); m.position.set(x, y, z); m.rotation.y = ry; par.add(m); return m; };
+    /* shared door, window glow, ceiling light — same exit wall every variant */
+    add(g, B(1.0, 2.1, 0.08), 0x2b2b30, 0, 1.05, D / 2 - 0.05);
+    add(g, B(1.2, 2.25, 0.04), 0xd9d2c2, 0, 1.12, D / 2 - 0.03);
+    add(g, B(0.06, 1.1, 1.8), 0xbfe4ff, -5.97, 1.7, -0.5);
+    const ceil = add(g, B(0.9, 0.06, 0.9), 0xfff4d0, 0, HH - 0.05, 0);
+    const variants = {}, blockers = {};
+    const kit = (name, wall, floor, light, fn) => {
+      const v = new T.Group(); v.name = 'v129-' + name; v.visible = false; v.userData = { wall, floor, light }; g.add(v);
+      const A = (geo, col, x, y, z, ry, hx, hz) => { add(v, geo, col, x, y, z, ry || 0); if (hx) (blockers[name] || (blockers[name] = [])).push({ x, z, hx, hz }); };
+      fn(A); variants[name] = v;
+    };
+    kit('lounge', 0xe6dccb, 0x8a6a46, 0xfff4d0, A => {
+      A(B(3.2, 0.02, 2.4), 0x9a3b3b, 0, 0.012, -0.4);
+      A(B(2.4, 0.5, 0.95), 0x40607e, -2.4, 0.25, -3.7, 0, 1.4, 0.7);
+      A(B(2.4, 0.45, 0.18), 0x40607e, -2.4, 0.7, -4.1);
+      A(B(1.1, 0.4, 0.7), 0x5b4129, 0, 0.2, -0.2, 0, 0.8, 0.6);
+      A(B(1.8, 0.7, 0.4), 0x2b2b30, 3.6, 0.35, -4.5, 0, 1.0, 0.4);
+      A(B(1.2, 0.7, 0.08), 0x1a1a22, 3.6, 1.15, -4.55);
+      A(new T.CylinderGeometry(0.22, 0.18, 0.4, 8), 0x7a4a2a, -5.0, 0.2, 2.0);
+      A(new T.SphereGeometry(0.4, 8, 6), 0x2f7a3b, -5.0, 0.8, 2.0);
+      A(new T.SphereGeometry(0.16, 8, 6), 0xffe9a8, -3.6, 1.15, -3.0);
+    });
+    kit('kitchen', 0xe8efe8, 0xc9b89a, 0xfff8e8, A => {
+      A(B(8, 1.0, 0.7), 0xded7ca, 0, 0.5, -4.5, 0, 4.0, 0.5);
+      A(B(8, 0.08, 0.7), 0x8a8f95, 0, 1.02, -4.5);
+      A(B(0.7, 2.2, 0.7), 0xcfd4d8, -5.2, 1.1, -4.5, 0, 0.5, 0.5);
+      A(B(2.2, 0.9, 1.0), 0xeee6d8, 0.2, 0.45, -0.8, 0, 1.3, 0.7);
+      A(B(1.4, 0.75, 0.9), 0x5b4129, 3.6, 0.38, 1.4, 0, 0.9, 0.7);
+      A(B(0.08, 0.7, 0.7), 0x88c4e0, -1.6, 1.7, -4.55);
+      A(B(0.08, 0.7, 0.7), 0x88c4e0, 1.6, 1.7, -4.55);
+    });
+    kit('cafe', 0xf0e4d4, 0x6b4a32, 0xffe8c8, A => {
+      A(B(0.8, 1.15, 5.5), 0x5b3a28, -4.6, 0.58, -0.6, 0, 0.6, 2.8);
+      A(B(0.7, 1.0, 0.7), 0x3d2a1c, -4.6, 1.65, -2.8);
+      A(B(0.9, 1.1, 0.9), 0xeee6d8, -2.0, 0.55, 1.6, 0, 0.6, 0.6);
+      A(B(0.9, 1.1, 0.9), 0xeee6d8, 1.4, 0.55, 0.2, 0, 0.6, 0.6);
+      A(B(0.9, 1.1, 0.9), 0xeee6d8, 3.4, 0.55, -2.4, 0, 0.6, 0.6);
+      A(B(0.7, 0.08, 0.7), 0x7a1f1f, -2.0, 1.12, 1.6);
+      A(B(0.7, 0.08, 0.7), 0x7a1f1f, 1.4, 1.12, 0.2);
+      A(B(1.6, 1.2, 0.5), 0xd8c4a0, 4.6, 0.6, -4.3, 0, 0.9, 0.4);
+    });
+    kit('pub', 0x4a3024, 0x3a2a20, 0xffc878, A => {
+      A(B(8.5, 1.15, 0.9), 0x5b3a22, 0, 0.58, -4.3, 0, 4.2, 0.6);
+      A(B(8.5, 1.4, 0.3), 0x2b1a12, 0, 1.9, -4.55);
+      for (let i = 0; i < 8; i++) A(B(0.12, 0.28, 0.12), [0x7a1f1f, 0xccaa99, 0x2f7a3b, 0xc4a35a][i % 4], -3.2 + i * 0.8, 1.55, -4.45);
+      A(B(0.9, 1.0, 0.9), 0x3d2418, -3.0, 0.5, -0.6, 0, 0.6, 0.6);
+      A(B(0.9, 1.0, 0.9), 0x3d2418, 1.2, 0.5, 0.8, 0, 0.6, 0.6);
+      A(B(0.35, 0.7, 0.35), 0x2b2b30, -3.0, 0.35, -1.4);
+      A(B(0.35, 0.7, 0.35), 0x2b2b30, 1.2, 0.35, 0.0);
+      A(B(0.12, 1.8, 2.2), 0x1a120c, 5.7, 1.4, -1.0);
+    });
+    kit('office', 0xd8dee6, 0x6a6560, 0xe8f0ff, A => {
+      A(B(2.4, 0.75, 1.1), 0x5b5149, -2.4, 0.38, -2.2, 0.4, 1.4, 0.9);
+      A(B(0.55, 1.1, 0.55), 0x2b2b30, -2.0, 0.55, -1.2);
+      A(B(0.7, 0.45, 0.08), 0x1a1a22, -2.2, 1.15, -2.5, 0.4);
+      A(B(1.0, 1.3, 0.5), 0x6a6e74, 4.4, 0.65, -4.3, 0, 0.7, 0.4);
+      A(B(1.0, 1.3, 0.5), 0x6a6e74, 5.1, 0.65, -3.4, 0, 0.6, 0.4);
+      A(B(0.4, 2.0, 2.6), 0x5b4129, 5.5, 1.0, 1.2, 0, 0.4, 1.4);
+      A(B(1.6, 0.02, 1.2), 0x3b4f7a, 1.2, 0.012, 1.6);
+    });
+    kit('bedroom', 0xe8d8d0, 0x9a8a78, 0xffe0d0, A => {
+      A(B(2.2, 0.5, 1.8), 0x6b3b4a, -2.6, 0.28, -2.6, 0, 1.3, 1.1);
+      A(B(2.2, 0.25, 0.4), 0xe8e2d2, -2.6, 0.65, -3.3);
+      A(B(0.45, 0.45, 0.45), 0x5b4129, -4.0, 0.23, -2.6, 0, 0.35, 0.35);
+      A(B(0.45, 0.45, 0.45), 0x5b4129, -1.2, 0.23, -2.6, 0, 0.35, 0.35);
+      A(B(1.2, 2.1, 0.55), 0x5b5149, 4.8, 1.05, -4.3, 0, 0.7, 0.4);
+      A(B(2.0, 0.02, 1.4), 0x7a5d2b, 1.6, 0.012, 1.2);
+      A(new T.SphereGeometry(0.14, 8, 6), 0xffe9a8, -4.0, 0.7, -2.6);
+    });
+    kit('arcade', 0x1a1230, 0x2a2438, 0xff66cc, A => {
+      for (let i = 0; i < 3; i++) { A(B(0.9, 1.6, 0.8), [0x2a1a44, 0x1a2a44, 0x1a2040][i], -3.6 + i * 2.2, 0.8, -3.6, 0, 0.6, 0.55); A(B(0.8, 0.55, 0.08), [0xff2e4a, 0x3b7bff, 0x00ff9d][i], -3.6 + i * 2.2, 1.35, -3.2); }
+      for (let i = 0; i < 2; i++) { A(B(0.9, 1.6, 0.8), 0x241a38, 2.2 + i * 2.0, 0.8, 0.4, 0, 0.6, 0.55); A(B(0.8, 0.55, 0.08), [0xffc83a, 0xff66cc][i], 2.2 + i * 2.0, 1.35, 0.8); }
+      A(B(2.2, 1.0, 0.7), 0x3b2a5e, -4.4, 0.5, 2.0, 0, 1.2, 0.5);
+      A(B(0.2, 0.2, 0.2), 0xff66cc, 0, 3.0, 0);
+    });
+    kit('workshop', 0xc8c0b0, 0x6a5a48, 0xffe8a0, A => {
+      A(B(3.6, 0.9, 0.9), 0x5b4129, -2.2, 0.45, -4.2, 0, 1.9, 0.6);
+      A(B(0.5, 0.3, 0.8), 0x8a8f95, -1.2, 1.0, -4.2);
+      A(B(0.08, 1.6, 3.0), 0x4a4038, 5.7, 1.4, -1.4);
+      A(B(1.0, 0.8, 1.0), 0x3b3f45, 3.8, 0.4, -3.8, 0, 0.6, 0.6);
+      A(B(0.8, 0.6, 0.8), 0x6a4a22, 4.6, 0.3, -2.4, 0, 0.5, 0.5);
+      A(new T.CylinderGeometry(0.45, 0.45, 0.3, 12), 0x2b2b30, -4.4, 0.15, 1.6);
+      A(B(1.2, 1.2, 0.8), 0x7a6a50, 3.2, 0.6, 1.8, 0, 0.7, 0.5);
+    });
+    room = { g, shell, floor: shell[3], wall: [shell[0], shell[1], shell[4], shell[5]], ceil, variants, blockers };
   }
+
   (window.__groundParts = window.__groundParts || []).unshift(() => cur ? FY : null);
 
   const btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v128tip'; document.body.appendChild(btn);
@@ -128,8 +204,10 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     setTimeout(() => {
       try {
         if (!room) buildRoom();
-        const pal = PAL[Math.floor(d.seed * PAL.length) % PAL.length];
-        room.wall.forEach(m => m.color.setHex(pal.wall)); room.floor.color.setHex(pal.floor); room.rug.material.color.setHex(pal.rug); room.sofa1.material.color.setHex(pal.sofa); room.sofa2.material.color.setHex(pal.sofa);
+        const kind = kindOf(d); d.kind = kind; info.kind = kind;
+        for (const k in room.variants) room.variants[k].visible = k === kind;
+        const u = room.variants[kind].userData;
+        room.wall.forEach(m => m.color.setHex(u.wall)); room.floor.color.setHex(u.floor); room.ceil.material.color.setHex(u.light);
         room.g.visible = true; cur = d; info.inside = true; fx.cullT = 0;
         P.pos.set(RX, FY + 1.7, RZ + 2.4); P.yaw = 0; P.pitch = 0;
       } catch (err) { console.warn('v128 enter', err); cur = null; info.inside = false; }
@@ -153,7 +231,8 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     wrapClear();
     if (cur) { /* inside: clamp to the room, push off the table, exit at the door */
       let x = P.pos.x, z = P.pos.z; x = Math.max(RX - 5.2, Math.min(RX + 5.2, x)); z = Math.max(RZ - 4.2, Math.min(RZ + 4.3, z));
-      const tx = x - RX, tz = z - (RZ + 0.2); if (Math.abs(tx) < 1.45 && Math.abs(tz) < 1.05) { if (Math.abs(tx) / 1.45 > Math.abs(tz) / 1.05) x = RX + Math.sign(tx || 1) * 1.45; else z = RZ + 0.2 + Math.sign(tz || 1) * 1.05; }
+      const bl = (cur && cur.kind && room && room.blockers[cur.kind]) || [];
+      for (const b of bl) { const dx = x - (RX + b.x), dz = z - (RZ + b.z); if (Math.abs(dx) < b.hx + 0.45 && Math.abs(dz) < b.hz + 0.45) { if (Math.abs(dx) / (b.hx + 0.45) > Math.abs(dz) / (b.hz + 0.45)) x = RX + b.x + Math.sign(dx || 1) * (b.hx + 0.45); else z = RZ + b.z + Math.sign(dz || 1) * (b.hz + 0.45); } }
       P.pos.x = x; P.pos.z = z; if (P.pos.y < FY + 1) P.pos.y = FY + 1.7;
       const nearDoor = Math.abs(x - RX) < 1.4 && z > RZ + 3.3; const fz = -Math.cos(P.yaw);
       if (nearDoor && !busy) { show('EXIT — tap / Enter / F', leave); dwell = (z > RZ + 4.0 && fz > 0.55) ? dwell + 1 / 60 : 0; if (dwell > 0.4 && performance.now() - exitAt > 900) leave(); } else if (!busy) { hide(); dwell = 0; }

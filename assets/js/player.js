@@ -108,6 +108,8 @@
 
   const audio = new AudioSource(), yt = new YouTubeSource(ytbox);
   let volume = 100, src = null, queue = [], idx = -1, tracks = [], seeking = false, counted = new Set(), playedS = 0, lastT = 0;
+  /* v129: one-time clear of a volume the pre-v126 walk-up fade (25–100 by distance to the playing holo) may have left in jx_vol. After this, only the visitor's slider or device volume changes it. World code must never pass a distance-scaled value to setVolume. */
+  try { if (localStorage.getItem('jx_vol_v129') !== '1') { localStorage.setItem('jx_vol', '100'); localStorage.setItem('jx_vol_v129', '1'); } } catch (_) {}
   try { const sv = localStorage.getItem('jx_vol'); if (sv !== null && !isNaN(+sv)) { volume = Math.max(0, Math.min(100, +sv)); audio.setVolume(volume); yt.vol = volume; } yt.muted = localStorage.getItem('jx_mute') === '1'; } catch (_) {}
   showVol(); window.__ytdbg = { get info() { return yt.info; }, set: setYV };
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('jx-audio') : null;
@@ -207,7 +209,7 @@
     toggle, next, prev,
     get current() { return cur(); }, get playing() { return !!(src && src.playing); },
     /* volume 0-100, applied to both YouTube and self-hosted audio (persists across track changes) */
-    setVolume(v) { v = Math.max(0, Math.min(100, +v || 0)); volume = v; audio.setVolume(v); yt.setVolume(v); },
+    setVolume(v) { v = Math.max(0, Math.min(100, +v || 0)); volume = v; audio.setVolume(v); yt.setVolume(v); }, /* v129: no distance / rolloff — callers must pass the visitor's volume only */
     get volume() { return volume; },
     get time() { return src ? src.time || 0 : 0; },
     get audioEl() { return src === audio ? audio.el : null; },

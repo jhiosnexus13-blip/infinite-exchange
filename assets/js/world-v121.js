@@ -78,6 +78,6 @@ export function initV121(o) {
   const wait = (D) => { const earthOk = !fx.earth || (fx.earth.info && fx.earth.info.ready) || (fx.earth.info && fx.earth.info.off);
     const mods = ['v69-roads', 'v116', 'v63', 'newtown-streets'].every(n => S.getObjectByName(n)); const late = performance.now() - t0 > 25000;
     if ((earthOk && mods) || late) { try { go(D); } catch (e) { console.warn('v121 roads', e); } } else setTimeout(() => wait(D), 500); };
-  fetch('/assets/data/gy-roads-v121.json?v=128').then(r => r.json()).then(D => wait(D)).catch(e => console.warn('v121 roads data', e));
+  fetch('/assets/data/gy-roads-v121.json?v=129').then(r => r.json()).then(D => wait(D)).catch(e => console.warn('v121 roads data', e));
   return { info, update() { const d = window.__detail ?? 1; if (paveM) paveM.visible = d >= 1; if (dashM) dashM.visible = d >= 1; } };
 }
