@@ -69,8 +69,8 @@ export function initV81(o) {
       c.grp.userData.v81y = 1; c.grp.position.set(-66 + ((i++ % 5) - 2) * 26, Math.max(0, p.y - 9), -2380 + 55 + Math.floor(i / 5) * 20); c.grp.scale.setScalar(0.6); k++; } }
     info.youthMoved = (info.youthMoved || 0) + k; return false; }, 15, 1500); info.fixes.push('youth-declutter');
 
-  // ---- P0 3: Barnard Bridge road (v77/v80: BE -60, BN 2236, deck ±8, ramps 10, top 3.8) ----
-  { const BE = -60, BN = 2236, TOP = 3.8, HALF = 8, RAMP = 10, tar = M(0x2b2e33, { polygonOffset: true, polygonOffsetFactor: -3 }), pav = M(0xa8a49c, { polygonOffset: true, polygonOffsetFactor: -3 }), grass = M(0x5f8a3e);
+  // ---- P0 3: old Barnard Field toy-bridge tarmac (v127: off by default; v115 is the real deck) ----
+  if (window.IE_V127_FIELD === false) { const BE = -60, BN = 2236, TOP = 3.8, HALF = 8, RAMP = 10, tar = M(0x2b2e33, { polygonOffset: true, polygonOffsetFactor: -3 }), pav = M(0xa8a49c, { polygonOffset: true, polygonOffsetFactor: -3 }), grass = M(0x5f8a3e);
     const strip = (mat, w, e, n0, n1, y0, y1, th = 0.12) => { const a = warp(e, n0), b = warp(e, n1), L = Math.hypot(b.x - a.x, b.z - a.z, y1 - y0); const m = new T.Mesh(new T.BoxGeometry(w, th, L), mat);
       m.position.set((a.x + b.x) / 2, (y0 + y1) / 2 + th / 2, (a.z + b.z) / 2); m.rotation.order = 'YXZ'; m.rotation.y = Math.atan2(b.x - a.x, b.z - a.z); m.rotation.x = -Math.atan2(y1 - y0, Math.hypot(b.x - a.x, b.z - a.z)); grp.add(m); };
     for (const [w, off, mat, dy] of [[5.6, 0, tar, 0.04], [1.4, 3.5, pav, 0.14], [1.4, -3.5, pav, 0.14]] /* v83: pavements 2.8..4.2 m, inside the 4.4 m parapets */) { const e = BE + off;

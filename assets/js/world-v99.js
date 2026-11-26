@@ -20,7 +20,7 @@ export function initV99({ T, S, LBL, LITE, warp, fx }) {
     v85.traverse(o => { if (o.isMesh && o.material && o.material.color && o.material.color.getHex() === 0x6f7378 && o.geometry && o.geometry.type === 'ExtrudeGeometry') o.visible = false; });
     info.wheel = 1; return true; }));
 
-  if (window.IE_V99_BARNARD !== false) run('barnard', () => {
+  if (window.IE_V99_BARNARD !== false && window.IE_V127_FIELD === false) run('barnard', () => { /* v127: leftover field sign/jump off */
     const BE = -60, BN = 2236, TOP = 3.7, a = warp(BE, BN - 5), f = warp(BE, BN + 40);
     PJ.barnard_bridge = [a.x, a.z, [f.x, f.z, 0.05, TOP], true]; // raw: stand on the deck, look north along it
     const c = document.createElement('canvas'); c.width = 1024; c.height = 160; const g = c.getContext('2d');

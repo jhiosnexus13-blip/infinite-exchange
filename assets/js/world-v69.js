@@ -51,7 +51,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
             bool door = fl < 0.5 && fy < 0.7 && fs > 0.38 && fs < 0.62 && rnd > 0.72;
             if (door) col = mix(vec3(0.42, 0.08, 0.07), vec3(0.12, 0.16, 0.22), step(0.86, rnd));
             else if (win) { col = vec3(0.07, 0.09, 0.11) + vec3(0.05) * fs; if (rnd < 0.08) col = vec3(0.6, 0.45, 0.24); if (fy < 0.4 || fy > 0.78 || fs < 0.26 || fs > 0.68) col = mix(base * shade, vec3(0.8, 0.79, 0.75), 0.35); }
-            float aa = clamp(1.6 - max(fwidth(s), fwidth(y)) * 5.0, 0.0, 1.0); diffuseColor.rgb = mix(base * shade * 0.82, col, aa); } }`); };
+            /* v127: drop the window pattern once a pixel covers too much of it (high-frequency hash was TV-static sparkle, worst at distance / on large brick and cream walls) */ float fw = max(fwidth(s), fwidth(y)); if (fw > 0.10) col = base * shade; float aa = 1.0 - smoothstep(0.045, 0.10, fw); diffuseColor.rgb = mix(base * shade, col, aa); } }`); };
     m.customProgramCacheKey = () => 'facade69' + (opts.vc ? 'v' : 'c'); return m; };
   fx.facade69 = facade;
 
