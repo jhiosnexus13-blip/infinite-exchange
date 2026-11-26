@@ -29,7 +29,7 @@ export function initV127({ T, S, LITE, warp, fx }) {
     })();
     const loader = new T.TextureLoader();
     let brickTex = plaster, ready = false;
-    loader.load('/assets/img/v116/brick_4_diff_1k.jpg?v=127', tx => {
+    loader.load('/assets/img/v116/brick_4_diff_1k.jpg?v=128', tx => {
       tx.colorSpace = T.SRGBColorSpace || tx.colorSpace; tx.wrapS = tx.wrapT = T.RepeatWrapping;
       tx.generateMipmaps = true; tx.minFilter = T.LinearMipmapLinearFilter; tx.magFilter = T.LinearFilter;
       tx.anisotropy = plaster.anisotropy; tx.needsUpdate = true; brickTex = tx; ready = true;
@@ -38,7 +38,7 @@ export function initV127({ T, S, LITE, warp, fx }) {
 
     const mats = [];
     const mkMat = (vc, tint) => {
-      const m = new T.MeshBasicMaterial({ color: tint ?? 0xffffff, vertexColors: !!vc, fog: true });
+      const m = new T.MeshBasicMaterial({ color: tint ?? 0xffffff, vertexColors: !!vc, fog: true, side: T.DoubleSide }); /* v128: OSM wall winding is mixed — FrontSide (v127) made street fronts vanish ('open garages'). facade69 was always DoubleSide. */
       const uBrick = { value: brickTex }, uPlas = { value: plaster };
       m.userData.brickU = uBrick;
       m.onBeforeCompile = sh => {
@@ -46,7 +46,7 @@ export function initV127({ T, S, LITE, warp, fx }) {
         sh.vertexShader = 'varying vec3 vW127;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n vW127 = (modelMatrix * vec4(transformed, 1.0)).xyz;');
         sh.fragmentShader = 'varying vec3 vW127;\nuniform sampler2D uBrick, uPlas;\n' + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
           { vec3 nn = normalize(cross(dFdx(vW127), dFdy(vW127)));
-            if (abs(nn.y) < 0.6) {
+            if (abs(nn.y) >= 0.6) { diffuseColor.rgb = diffuseColor.rgb * 0.42 + vec3(0.03); } else {
               vec2 tng = normalize(vec2(-nn.z, nn.x));
               vec2 uv = vec2(dot(vW127.xz, tng), vW127.y) * 0.45; /* ~2.2 m per tile, with mips — never a noise-scale repeat */
               vec3 br = texture2D(uBrick, uv).rgb;

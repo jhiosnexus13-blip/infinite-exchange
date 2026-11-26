@@ -147,7 +147,7 @@ export function initV114Earth(o) {
   /* v121: adaptive edge blend (<= ~7% slope at dune / river-bank / beach edges) + the v121 street network in the flat mask (tools/bake-dtm-v121.py).
      IE_V121_SLOPES=false loads the v120 images. */
   const dv = window.IE_V121_SLOPES === false ? 'v120' : 'v121';
-  const dtmUrl = flat ? (lite ? `/assets/img/gy-dtm-${dv}-lite.png?v=127` : `/assets/img/gy-dtm-${dv}.png?v=127`) : (lite ? '/assets/img/gy-dtm-lite.png?v=114' : '/assets/img/gy-dtm.png?v=114');
+  const dtmUrl = flat ? (lite ? `/assets/img/gy-dtm-${dv}-lite.png?v=128` : `/assets/img/gy-dtm-${dv}.png?v=128`) : (lite ? '/assets/img/gy-dtm-lite.png?v=114' : '/assets/img/gy-dtm.png?v=114');
   const aerUrl = lite ? '/assets/img/gy-s2-2025-lite.jpg?v=114' : '/assets/img/gy-s2-2025.jpg?v=114';
 
   Promise.all([loadImg(dtmUrl), loadImg(aerUrl)]).then(([dimg, aimg]) => {
