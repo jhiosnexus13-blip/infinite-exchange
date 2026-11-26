@@ -3,7 +3,7 @@
    IE_V122_GOLDBOT=false    no GoldBot kiosk               IE_V122_HUDFIX=false no weather/visitor pill nudge
    IE_V122_VR=false         no Enter VR button             (also in other files: IE_V122_FIGS, IE_V122_TOAST, IE_V122_NORELOAD, IE_V122_LOCALTEX)
    v123 (preview bump): IE_V123_CLIP=false  old camera/collision    IE_V123_CARS=false  old two-box vehicles
-                        IE_V123_FACADES=false  no untextured-wall reskin
+                        IE_V123_FACADES=true   town-wide reskin (off by default: it made TV-static noise). Arc windows still applied.
    GoldBot / Digital AssetOps is Zak Denny's project; text here is deliberately plain: research & demo testing, no claims, no numbers. */
 const on = k => window['IE_V122_' + k] !== false;
 const GOLDBOT = 'https://goldbot-digitalassetops.lovable.app', FB = 'https://www.facebook.com/profile.php?id=61578308143435';
@@ -126,12 +126,14 @@ export function initV122({ T, S, CAM, P, LBL, CL, LITE, warp, fx }) {
   const on123 = k => window['IE_V123_' + k] !== false;
   const facCache = new Map();
   function reskinFacades() {
-    if (!on123('FACADES') || !fx.facade69) return 0;
+    if (!fx.facade69) return 0;
+    const wide = window.IE_V123_FACADES === true; /* v124: default off — the town-wide pass read as red/white static; Arc Cinema still gets windows */
     const skipName = /road|pavement|kerb|ground|dtm|terrain|water|sea|river|car|vehicle|wheel|tree|hedge|fence|rail|lamp|holo|screen|poster|sign|presence|player|train|track|kiosk|globe|sand|dune|asphalt|grass|pave|deck|bridge|waterway|v115-solid|v121|osm-buildings|sky|sun|earth|cloud|moon|atmos|env|hemi|v114/;
     const box = new T.Box3(), sz = new T.Vector3();
     let n = 0;
     S.traverse(o => {
       if (!o.isMesh || o.isInstancedMesh || o.userData.v123facade) return;
+      if (!wide && (o.parent && o.parent.name) !== 'arc-cinema' && o.name !== 'arc-cinema') return;
       const nm = ((o.name || '') + ' ' + ((o.parent && o.parent.name) || '') + ' ' + ((o.parent && o.parent.parent && o.parent.parent.name) || '')).toLowerCase();
       if (skipName.test(nm)) return;
       const mats = Array.isArray(o.material) ? o.material : [o.material];
@@ -165,7 +167,7 @@ export function initV122({ T, S, CAM, P, LBL, CL, LITE, warp, fx }) {
         if (a && b && !b.closest('#v115panel') && a.offsetParent && b.offsetParent) { const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
           if (ra.bottom > rb.top && rb.bottom > ra.top && ra.right > rb.left && rb.right > ra.left) b.style.top = Math.ceil(ra.bottom + 6) + 'px'; } }
       if (kiosk && st.ground < 60) { st.ground++; let g = null; const k = kiosk.position; for (const f of window.__groundParts || []) { const v = f(k.x, k.z, 50); if (v != null) { g = v; break; } } if (g != null) { k.y = g; if (kiosk.userData.lbl) kiosk.userData.lbl.position.y = g + 3.2; } }
-      if (on123('FACADES') && st.facades < 4 && st.t > 3 + st.facades * 8) { st.facades++; st.facadesN += reskinFacades(); fx.v123 = Object.assign(fx.v123 || {}, { facades: st.facadesN, names: st.facadeNames }); }
+      if (st.facades < 4 && st.t > 3 + st.facades * 8) { st.facades++; st.facadesN += reskinFacades(); fx.v123 = Object.assign(fx.v123 || {}, { facades: st.facadesN, names: st.facadeNames }); }
     }
   };
 }

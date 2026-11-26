@@ -196,7 +196,7 @@ export function initV116(o) {
   /* ---------- load CC0 maps (replace procedural when ready) ---------- */
   const loader = new T.TextureLoader(); loader.crossOrigin = 'anonymous';
   function loadMap(file, matKey, kind /* 'map' | 'normal' */, rx, ry) {
-    loader.load(TEX + file + '?v=123', tx => {
+    loader.load(TEX + file + '?v=124', tx => {
       if (tx.colorSpace !== undefined && kind === 'map') tx.colorSpace = T.SRGBColorSpace;
       tx.wrapS = tx.wrapT = T.RepeatWrapping; tx.anisotropy = (R && R.capabilities && R.capabilities.getMaxAnisotropy) ? Math.min(8, R.capabilities.getMaxAnisotropy()) : 4;
       if (rx) tx.repeat.set(rx, ry);
@@ -220,7 +220,7 @@ export function initV116(o) {
   let envMap = null;
   if (R) {
     try {
-      new RGBELoader().setDataType(T.HalfFloatType).load(TEX + 'overcast_soil_puresky_1k.hdr?v=123', (hdr) => {
+      new RGBELoader().setDataType(T.HalfFloatType).load(TEX + 'overcast_soil_puresky_1k.hdr?v=124', (hdr) => {
         const pmrem = new T.PMREMGenerator(R); pmrem.compileEquirectangularShader();
         envMap = pmrem.fromEquirectangular(hdr).texture; hdr.dispose(); pmrem.dispose();
         info.hdri = true;
