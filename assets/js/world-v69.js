@@ -51,7 +51,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
             bool door = fl < 0.5 && fy < 0.7 && fs > 0.38 && fs < 0.62 && rnd > 0.72;
             if (door) col = mix(vec3(0.42, 0.08, 0.07), vec3(0.12, 0.16, 0.22), step(0.86, rnd));
             else if (win) { col = vec3(0.07, 0.09, 0.11) + vec3(0.05) * fs; if (rnd < 0.08) col = vec3(0.6, 0.45, 0.24); if (fy < 0.4 || fy > 0.78 || fs < 0.26 || fs > 0.68) col = mix(base * shade, vec3(0.8, 0.79, 0.75), 0.35); }
-            float aa = clamp(1.6 - max(fwidth(s), fwidth(y)) * 5.0, 0.0, 1.0); diffuseColor.rgb = mix(base * shade * 0.82, col, aa); } }`); };
+            /* v127: drop the window pattern once a pixel covers too much of it (high-frequency hash was TV-static sparkle, worst at distance / on large brick and cream walls) */ float fw = max(fwidth(s), fwidth(y)); if (fw > 0.10) col = base * shade; float aa = 1.0 - smoothstep(0.045, 0.10, fw); diffuseColor.rgb = mix(base * shade, col, aa); } }`); };
     m.customProgramCacheKey = () => 'facade69' + (opts.vc ? 'v' : 'c'); return m; };
   fx.facade69 = facade;
 
@@ -111,15 +111,54 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
 
   // ---------- 3. parked cars (instanced) ----------
   const lmk = Object.values(fx.landmarks || {}).map(l => [l.pos.x, l.pos.z]);
-  const cars = []; const CARCOL = [0x1b1f24, 0xd9dcdf, 0x7d8288, 0x2c3e5c, 0x8c1d1d, 0x3f5d3a, 0xb9b39f, 0x101012];
+  const cars = []; const CARCOL = [0x2a3340, 0xd9dcdf, 0x8a9096, 0x2c4a6e, 0xb42a2a, 0x3f5d3a, 0xc8bda3, 0xe8e4dc, 0x5a4332, 0xc9a227, 0x4a2a54, 0x1f4a62];
   const MAXC = LITE ? 260 : 1400;
   for (const [a, b, hw, ty, len] of segs) { if (ty > 1 || len < 24 || cars.length >= MAXC) continue; const dx = (b[0] - a[0]) / len, dy = (b[1] - a[1]) / len, n = [-dy, dx];
     for (let s = 10; s < len - 10; s += 5.6) for (const sd of [1, -1]) { if (R() > 0.32 || cars.length >= MAXC) continue; const e = a[0] + dx * s + n[0] * sd * (hw - 1.1), nn = a[1] + dy * s + n[1] * sd * (hw - 1.1);
       if (holes.some(([he, hn, r]) => Math.hypot(e - he, nn - hn) < r + 6)) continue; const w = warp(e, nn); if (lmk.some(([x, z]) => Math.hypot(w.x - x, w.z - z) < 18)) continue;
-      cars.push([w, Math.atan2(-(b[0] - a[0]), -(b[1] - a[1])) , CARCOL[Math.floor(R() * CARCOL.length)]]); } }
-  const addCars = list => { if (!list.length) return; const bodyG = new T.BoxGeometry(1.8, 1.0, 4.2); bodyG.translate(0, 0.65, 0); const cabG = new T.BoxGeometry(1.62, 0.62, 2.2); cabG.translate(0, 1.45, -0.2);
-    const bm = new T.InstancedMesh(bodyG, new T.MeshBasicMaterial({ color: 0xffffff }), list.length), cm = new T.InstancedMesh(cabG, new T.MeshBasicMaterial({ color: 0x15191e }), list.length); const M = new T.Matrix4(), Qt = new T.Quaternion(), Y = new T.Vector3(0, 1, 0), One = new T.Vector3(1, 1, 1);
-    list.forEach(([w, ry, col], i) => { Qt.setFromAxisAngle(Y, ry); M.compose(w, Qt, One); bm.setMatrixAt(i, M); cm.setMatrixAt(i, M); bm.setColorAt(i, C.setHex(col)); }); grp.add(bm, cm); info.cars += list.length; };
+      cars.push([w, Math.atan2(-(b[0] - a[0]), -(b[1] - a[1])), CARCOL[Math.floor(R() * CARCOL.length)], R() < 0.22]); } }
+  const addCars = list => {
+    if (!list.length) return;
+    const M = new T.Matrix4(), Qt = new T.Quaternion(), Y = new T.Vector3(0, 1, 0), One = new T.Vector3(1, 1, 1), sc = new T.Vector3(), tmp = new T.Vector3();
+    /* v123: low-poly instanced cars/vans (body colour, glass, roof, wheels, lights). IE_V123_CARS=false restores the old two-box slabs. */
+    if (window.IE_V123_CARS === false) {
+      const bodyG = new T.BoxGeometry(1.8, 1.0, 4.2); bodyG.translate(0, 0.65, 0); const cabG = new T.BoxGeometry(1.62, 0.62, 2.2); cabG.translate(0, 1.45, -0.2);
+      const bm = new T.InstancedMesh(bodyG, new T.MeshBasicMaterial({ color: 0xffffff, fog: false }), list.length), cm = new T.InstancedMesh(cabG, new T.MeshBasicMaterial({ color: 0x15191e, fog: false }), list.length);
+      list.forEach(([w, ry, col], i) => { Qt.setFromAxisAngle(Y, ry); M.compose(w, Qt, One); bm.setMatrixAt(i, M); cm.setMatrixAt(i, M); bm.setColorAt(i, C.setHex(col)); });
+      bm.instanceMatrix.needsUpdate = true; if (bm.instanceColor) bm.instanceColor.needsUpdate = true; grp.add(bm, cm); info.cars += list.length; return;
+    }
+    const bodyG = new T.BoxGeometry(1.8, 0.72, 4.2); bodyG.translate(0, 0.56, 0);
+    const roofG = new T.BoxGeometry(1.7, 0.1, 1.7); roofG.translate(0, 1.54, -0.35);
+    const glassG = new T.BoxGeometry(1.68, 0.62, 1.65); glassG.translate(0, 1.18, -0.35);
+    const bake = (parts) => { const v = [], i = []; for (const [x, y, z, w, h, d] of parts) { const g = new T.BoxGeometry(w, h, d); g.translate(x, y, z); const pos = g.attributes.position, k = v.length / 3; for (let n = 0; n < pos.count; n++) v.push(pos.getX(n), pos.getY(n), pos.getZ(n)); const idx = g.index; for (let n = 0; n < idx.count; n++) i.push(idx.getX(n) + k); g.dispose(); } const g = new T.BufferGeometry(); g.setAttribute('position', new T.Float32BufferAttribute(v, 3)); g.setIndex(i); g.computeVertexNormals(); return g; };
+    const lightFG = bake([[0.58, 0.62, 2.12, 0.32, 0.14, 0.08], [-0.58, 0.62, 2.12, 0.32, 0.14, 0.08]]);
+    const lightBG = bake([[0.58, 0.62, -2.12, 0.32, 0.14, 0.08], [-0.58, 0.62, -2.12, 0.32, 0.14, 0.08]]);
+    const wheelG = new T.CylinderGeometry(0.32, 0.32, 0.22, 8); wheelG.rotateZ(Math.PI / 2);
+    const n = list.length;
+    const mat = (hex, extra) => new T.MeshBasicMaterial(Object.assign({ color: hex, fog: false }, extra || {}));
+    const body = new T.InstancedMesh(bodyG, mat(0xffffff), n), roof = new T.InstancedMesh(roofG, mat(0xffffff), n);
+    const glass = new T.InstancedMesh(glassG, mat(0x1a2a38), n);
+    const lightsF = new T.InstancedMesh(lightFG, mat(0xffe8b0), n), lightsB = new T.InstancedMesh(lightBG, mat(0xc21c18), n);
+    const wheels = new T.InstancedMesh(wheelG, mat(0x1a1a1a), n * 4);
+    body.name = roof.name = glass.name = lightsF.name = lightsB.name = wheels.name = 'v69-cars';
+    const WPOS = [[-0.85, 0.32, 1.35], [0.85, 0.32, 1.35], [-0.85, 0.32, -1.35], [0.85, 0.32, -1.35]];
+    fx.cars = fx.cars || [];
+    list.forEach(([w, ry, col, van], i) => {
+      Qt.setFromAxisAngle(Y, ry); sc.set(1, van ? 1.18 : 1, van ? 1.28 : 1); M.compose(w, Qt, sc);
+      body.setMatrixAt(i, M); roof.setMatrixAt(i, M); glass.setMatrixAt(i, M); lightsF.setMatrixAt(i, M); lightsB.setMatrixAt(i, M);
+      body.setColorAt(i, C.setHex(col)); roof.setColorAt(i, C.setHex(col).multiplyScalar(0.85));
+      const cs = Math.cos(ry), sn = Math.sin(ry);
+      for (let k = 0; k < 4; k++) { const [lx, ly, lz0] = WPOS[k], lz = lz0 * (van ? 1.28 : 1); tmp.set(w.x + cs * lx + sn * lz, ly, w.z - sn * lx + cs * lz); M.compose(tmp, Qt, One); wheels.setMatrixAt(i * 4 + k, M); }
+      fx.cars.push({ x: w.x, z: w.z, r: van ? 2.0 : 1.6 });
+    });
+    for (const m of [body, roof, glass, lightsF, lightsB, wheels]) { m.instanceMatrix.needsUpdate = true; if (m.instanceColor) m.instanceColor.needsUpdate = true; m.frustumCulled = true; grp.add(m); }
+    /* cheap spatial hash so walking into a car is blocked (same grid the world collider consults via fx.carHit) */
+    const CH = 16, H = new Map();
+    for (const c of fx.cars) { const k = (c.x / CH | 0) + ':' + (c.z / CH | 0); (H.get(k) || H.set(k, []).get(k)).push(c); }
+    fx.carHash = H;
+    fx.carHit = (x, z, r = 0.8) => { const h = fx.carHash; if (!h) return false; const ix = x / CH | 0, iz = z / CH | 0; for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) { const L = h.get((ix + i) + ':' + (iz + j)); if (L) for (const c of L) { const dx = x - c.x, dz = z - c.z; if (dx * dx + dz * dz < (c.r + r) * (c.r + r)) return true; } } return false; };
+    info.cars += list.length;
+  };
   addCars(cars);
 
   // ---------- 4. spawn plaza: paving, kerb, furniture, globe plinth ----------
@@ -216,7 +255,7 @@ export function initV69({ T, S, LBL, LITE, warp, fx, G: G0 }) {
     for (const dn of [-Wd / 2, Wd / 2]) for (let y = 0.6; y < 14; y += 1.2) AB(0xe2b83a, 0.6, 0.55, 0.6 + (Math.round(y / 1.2) % 2) * 0.6, F + 0.05, NC + dn, y); // yellow corner quoins
     for (let i = 0; i < 5; i++) { const n = S0 + Wd * (i + 0.5) / 5, outer = i === 0 || i === 4;
       AB(0xd9cba8, 0.4, 0.6, 3.2, F + 0.25, n, 6.1); AB(0xd9cba8, 0.5, 0.5, 0.5, F + 0.3, n, 6.5); // beige arch head + keystone
-      AB(0xf4f2ec, 0.15, 3.6, 2.4, F + 0.08, n, 10.4); AB(0x7a4632, 0.16, 3.2, 1.9, F + 0.09, n, 10.3); AB(0xf4f2ec, 0.17, 0.9, 2.4, F + 0.1, n, 12.2); // white blind arch panel upper
+      AB(0xf4f2ec, 0.15, 3.6, 2.4, F + 0.08, n, 10.4); AB(0x7a4632, 0.16, 3.2, 1.9, F + 0.15, n, 10.3); AB(0xf4f2ec, 0.17, 0.9, 2.4, F + 0.22, n, 12.2); /* v122: faces 6 cm apart (were 1.5 cm: speckle) */ // white blind arch panel upper
       if (outer) { AB(0x203046, 0.1, 4.6, 2.8, F + 0.12, n, 3.3); if (window.IE_V84_LODGE_CARDS === true) { const lb = board('ROYAL ASSEMBLY\nROOMS', 4.0, 1.8, F + 0.35, n, 5.4, E, '#0f1a2a', '#fff6d8', 0.5); lb.material.fog = false; lb.material.toneMapped = false; } /* v84: duplicate ROYAL cards gated, v81 one-line fascia is the sign; revert IE_V84_LODGE_CARDS=true */ emb(3.0, 3.0, F + 0.35, n, 2.6, '#0f1a2a', '#ffd76a'); /* v76: lit + larger so it reads from the hatch apron */ }
       else { AB(0x1a1d22, 0.1, 5.2, 2.8, F - 1.8, n, 2.6); AB(0x2b4058, 0.1, 3.6, 1.6, F - 1.7, n, 1.9); CY(0x2e5a2e, 0.5, 0.4, 1.0, F + 0.8, n, 0.5, 8); } } // recessed arched glazed door + topiary pot
     for (let i = 1; i < 5; i++) { if (i === 1 || i === 4) continue; } for (const i of [1, 2, 3, 4]) CY(0x9a9ea3, 0.35, 0.4, 5.8, F + 0.6, S0 + Wd * i / 5, 2.9, 12); // grey Tuscan columns between the bays

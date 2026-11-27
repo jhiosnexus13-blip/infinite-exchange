@@ -23,17 +23,21 @@ export function initV80(o) {
       acc = Math.max(0, (acc - L) % every); if (acc <= 0) acc += every; }
   };
   const pairs = a => { const o = []; for (let i = 0; i + 1 < a.length; i += 2) o.push([a[i], a[i + 1]]); return o; };
-  fetch('/assets/data/newtown-extra.json?v=121').then(r => r.json()).then(X => { const r = X.north_denes_road && X.north_denes_road.road; if (r && r.length) { paint('North Denes Road', r); info.fixes.push('road:North Denes Road'); } }).catch(e => console.warn('v80 roads', e));
-  fetch('/assets/data/newtown-streets.json?v=121').then(r => r.json()).then(X => { for (const [name, segs] of Object.entries(X.roads || {})) for (const s of segs) paint(name, pairs(s), 0.11, 70); info.fixes.push('road:newtown'); }).catch(e => console.warn('v80 roads', e));
-  fetch('/assets/data/yarmouth-geo' + (LITE ? '-lite' : '') + '.json?v=121').then(r => r.json()).then(G => { const gm = G.golden_mile; if (!gm) return; // Marine Parade = the seafront road between the piers (n ≈ -490 … +520)
+  fetch('/assets/data/newtown-extra.json?v=129').then(r => r.json()).then(X => { const r = X.north_denes_road && X.north_denes_road.road; if (r && r.length) { paint('North Denes Road', r); info.fixes.push('road:North Denes Road'); } }).catch(e => console.warn('v80 roads', e));
+  fetch('/assets/data/newtown-streets.json?v=129').then(r => r.json()).then(X => { for (const [name, segs] of Object.entries(X.roads || {})) for (const s of segs) paint(name, pairs(s), 0.11, 70); info.fixes.push('road:newtown'); }).catch(e => console.warn('v80 roads', e));
+  fetch('/assets/data/yarmouth-geo' + (LITE ? '-lite' : '') + '.json?v=129').then(r => r.json()).then(G => { const gm = G.golden_mile; if (!gm) return; // Marine Parade = the seafront road between the piers (n ≈ -490 … +520)
     const mp = pairs(gm.coords).filter(p => p[1] > -490 && p[1] < 520); if (mp.length > 1) { paint('Marine Parade', mp, 0.12, 110); info.fixes.push('road:Marine Parade'); } }).catch(e => console.warn('v80 roads', e));
   paint('Jellicoe Road', [[-70.5, 2689.6], [-57.5, 2689.6]], 6.47, 9); // on the v63 Jellicoe bridge deck (DT 6.4)
   // ---- 2: Barnard Bridge (world-v77: BE -60, BN 2236, 9 m wide, 16 m long along n, road top ~3.76) walkable + south-bank join ----
-  { const BE = -60, BN = 2236, TOP = 3.8, HALF = 8, RAMP = 10, gp = window.__groundParts = window.__groundParts || [];
-    gp.unshift((x, z) => { const e = x, n = -z; if (Math.abs(e - BE) > 4.3) return null; const d = Math.abs(n - BN); if (d <= HALF) return TOP; if (d <= HALF + RAMP) return TOP * (1 - (d - HALF) / RAMP); return null; });
-    for (const s of [-1, 1]) fx.addSolid && fx.addSolid([[BE + s * 4.3 - 0.25, BN - HALF], [BE + s * 4.3 + 0.25, BN - HALF], [BE + s * 4.3 + 0.25, BN + HALF], [BE + s * 4.3 - 0.25, BN + HALF]], TOP - 1, 99); // parapets block walkers on the deck only
-    const J = fx.extraJumps || (fx.extraJumps = {}), a = warp(BE, BN - HALF - RAMP - 4), f = warp(BE, BN + HALF + 6); J.barnard_bridge = [a.x, a.z, [f.x, f.z, 0.08], true];
-    let k = 0; const add = () => { const nav = document.querySelector('.wmap-jumps'); if (!nav) { if (++k < 30) setTimeout(add, 800); return; } if (!nav.querySelector('[data-jump="barnard_bridge"]')) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = 'barnard_bridge'; b.textContent = 'Barnard Bridge'; const bf = nav.querySelector('[data-jump="barnard_field"]'); bf ? bf.after(b) : nav.appendChild(b); } }; add();
+  { const BE = -60, BN = 2236, TOP = 3.8, HALF = 8, RAMP = 10;
+    /* v127: the old toy-bridge ground + parapets sat in Barnard Field; v115 owns the real bridge. IE_V127_FIELD=false restores the leftover bump. */
+    if (window.IE_V127_FIELD === false) {
+      const gp = window.__groundParts = window.__groundParts || [];
+      gp.unshift((x, z) => { const e = x, n = -z; if (Math.abs(e - BE) > 4.3) return null; const d = Math.abs(n - BN); if (d <= HALF) return TOP; if (d <= HALF + RAMP) return TOP * (1 - (d - HALF) / RAMP); return null; });
+      for (const s of [-1, 1]) fx.addSolid && fx.addSolid([[BE + s * 4.3 - 0.25, BN - HALF], [BE + s * 4.3 + 0.25, BN - HALF], [BE + s * 4.3 + 0.25, BN + HALF], [BE + s * 4.3 - 0.25, BN + HALF]], TOP - 1, 99);
+      const J = fx.extraJumps || (fx.extraJumps = {}), a = warp(BE, BN - HALF - RAMP - 4), f = warp(BE, BN + HALF + 6); J.barnard_bridge = [a.x, a.z, [f.x, f.z, 0.08], true];
+      let k = 0; const add = () => { const nav = document.querySelector('.wmap-jumps'); if (!nav) { if (++k < 30) setTimeout(add, 800); return; } if (!nav.querySelector('[data-jump="barnard_bridge"]')) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = 'barnard_bridge'; b.textContent = 'Barnard Bridge'; const bf = nav.querySelector('[data-jump="barnard_field"]'); bf ? bf.after(b) : nav.appendChild(b); } }; add();
+    }
     let k2 = 0; const addJ = () => { const nav = document.querySelector('.wmap-jumps'); if (!nav) { if (++k2 < 30) setTimeout(addJ, 800); return; } const un = nav.querySelector('[data-jump="jellicoe"]'); if (!un) { if (++k2 < 30) setTimeout(addJ, 800); return; }
       if (!nav.querySelector('[data-jump="jellicoe_deck"]')) { const b = document.createElement('button'); b.type = 'button'; b.dataset.jump = 'jellicoe_deck'; b.textContent = 'Jellicoe Road (deck)'; un.before(b); } }; addJ(); // deck-level jump; underside kept as a clip test
     info.fixes.push('barnard-bridge-walk'); }
@@ -57,6 +61,6 @@ export function initV80(o) {
   { let n = 0; const yd = () => { let k = 0; for (const c of fx.clusters || []) { const p = c.grp.position; if (Math.hypot(p.x + 66, p.z + 2380) < 70 && !c.grp.userData.v80) { c.grp.userData.v80 = 1; c.grp.position.y += 9; c.grp.position.z -= 14; c.grp.scale.setScalar(0.75); k++; } }
       info.youthDeclutter = (info.youthDeclutter || 0) + k; if (++n < 20) setTimeout(yd, 1500); }; setTimeout(yd, 2000); }
   // ---- 7: people, boats, arcade glow ----
-  let npc = null; import('./world-v80-npc.js?v=121').then(m => { npc = m.initNpc(o); info.npc = npc.info; }).catch(e => console.warn('v80 npc', e));
+  let npc = null; import('./world-v80-npc.js?v=129').then(m => { npc = m.initNpc(o); info.npc = npc.info; }).catch(e => console.warn('v80 npc', e));
   fx.v80Info = info; return { info, update(t, dt) { if (npc) npc.update(t, dt); } };
 }
