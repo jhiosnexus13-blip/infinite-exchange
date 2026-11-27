@@ -29,7 +29,7 @@ export function initV127({ T, S, LITE, warp, fx }) {
     })();
     const loader = new T.TextureLoader();
     let brickTex = plaster, ready = false;
-    loader.load('/assets/img/v116/brick_4_diff_1k.jpg?v=129', tx => {
+    loader.load('/assets/img/v116/brick_4_diff_1k.jpg?v=130', tx => {
       tx.colorSpace = T.SRGBColorSpace || tx.colorSpace; tx.wrapS = tx.wrapT = T.RepeatWrapping;
       tx.generateMipmaps = true; tx.minFilter = T.LinearMipmapLinearFilter; tx.magFilter = T.LinearFilter;
       tx.anisotropy = plaster.anisotropy; tx.needsUpdate = true; brickTex = tx; ready = true;
