@@ -5,6 +5,8 @@
    Enter: ONE shared off-map room, built lazily, with several prop-set variants picked deterministically per building
    (lounge, kitchen, cafe, pub, office, bedroom, arcade, workshop). Same door exit. Never labelled.
    v129: Newtown homes (Sturdee Avenue terrace, Lewi G's house and the rest) get the same fronts and interiors.
+   v130: two-storey houses share a cheap upstairs + staircase (bungalows and shops stay single-storey).
+   A building may hand off to fx.interiorFor(d) (the unlabelled Sturdee bedroom module).
    Landmarks / plaza clear zones and rooms owned by v87 / the office are still skipped. No facade shader. */
 const on = k => window['IE_V128_' + k] !== false;
 
@@ -90,6 +92,17 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     if (area > 420 || h > 10) k = [2, 3, 4, 6][k % 4];
     else if (area < 90) k = [0, 5, 1, 7][k % 4];
     return KINDS[k];
+  }
+  function isTwoStorey(d) {
+    const b = d.b || {}, h = b.h || 0;
+    if (h < 5 || h > 10.5) return false;
+    const area = Math.max(1, (b.x1 - b.x0) * (b.y1 - b.y0));
+    if (area > 420) return false;
+    const cx = (b.x0 + b.x1) / 2, cn = (b.y0 + b.y1) / 2;
+    if (cn > 2352 && cn < 2366 && cx > -135 && cx < -95) return false; /* Beatty Close north bungalows */
+    if (Math.abs(cx + 148) < 10 && cn > 2290 && cn < 2328) return false;
+    if (Math.abs(cx + 82) < 10 && cn > 2290 && cn < 2328) return false;
+    return true;
   }
   function buildRoom() {
     const g = new T.Group(); g.name = 'v128-room'; g.position.set(RX, FY, RZ); g.visible = false; S.add(g);
@@ -184,9 +197,35 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
       A(B(1.2, 1.2, 0.8), 0x7a6a50, 3.2, 0.6, 1.8, 0, 0.7, 0.5);
     });
     room = { g, shell, floor: shell[3], wall: [shell[0], shell[1], shell[4], shell[5]], ceil, variants, blockers };
+    /* v130: one shared upstairs + stair, shown only for two-storey houses */
+    const up = new T.Group(); up.name = 'v128-up'; up.visible = false; up.position.y = HH; g.add(up);
+    const stair = new T.Group(); stair.name = 'v128-stair'; stair.visible = false; g.add(stair);
+    const xS = 4.3, z0 = 2.8, STEPS = 8, rise = HH / STEPS, run = 2.2 / STEPS;
+    for (let i = 0; i < STEPS; i++) add(stair, B(1.1, 0.08, run + 0.02), 0x6a5a48, xS, rise * (i + 1) - 0.04, z0 - run * i - run / 2);
+    add(stair, B(0.08, HH, 0.08), 0x4a4038, xS - 0.58, HH / 2, z0 - 1.1);
+    add(up, B(W - 2.6, 0.08, D - 0.2), 0x8a6a46, -1.3, 0.04, 0);
+    add(up, B(2.4, 0.08, D - 3.2), 0x8a6a46, 4.3, 0.04, -1.7);
+    add(up, B(2.0, 0.45, 1.5), 0x6b3b4a, -2.4, 0.25, -2.4);
+    add(up, B(1.1, 1.6, 0.5), 0x5b5149, 3.0, 0.8, -4.3);
+    add(up, B(0.08, 1.0, 1.2), 0xbfe4ff, -5.97, 1.5, 1.0);
+    room.up = up; room.stair = stair; room.xS = xS; room.z0 = z0; room.zTop = z0 - 2.2;
   }
 
-  (window.__groundParts = window.__groundParts || []).unshift(() => cur ? FY : null);
+  (window.__groundParts = window.__groundParts || []).unshift((x, z) => {
+    if (!cur) return null;
+    if (cur.special) return null;
+    if (!cur.two) return FY;
+    const lx = x - RX, lz = z - RZ, xS = 4.3, z0 = 2.8, zTop = z0 - 2.2;
+    if (lx > xS - 0.7 && lx < xS + 0.7 && lz < z0 + 0.15 && lz > zTop - 0.25) {
+      const t = Math.max(0, Math.min(1, (z0 - lz) / (z0 - zTop)));
+      return FY + t * HH;
+    }
+    if (Math.abs(lx) < 5.2 && Math.abs(lz) < 4.3 && P.pos.y - FY > HH * 0.55) {
+      const onWell = lx > xS - 0.85 && lx < xS + 0.85 && lz > zTop - 0.2 && lz < z0 + 0.3;
+      if (!onWell) return FY + HH;
+    }
+    return FY;
+  });
 
   const btn = document.createElement('button'); btn.type = 'button'; btn.id = 'v128tip'; document.body.appendChild(btn);
   btn.style.cssText = 'position:fixed;left:50%;bottom:30%;transform:translateX(-50%);z-index:140;display:none;padding:12px 20px;font:bold 16px Arial,sans-serif;background:#0b0e12;color:#e8e2d2;border:2px solid #b9a97f;border-radius:8px;cursor:pointer;pointer-events:auto;touch-action:manipulation';
@@ -199,12 +238,17 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
 
   const clearOK = (x, z) => { const C = window.__collide; return !C || !C(x, z, 0.8); };
   function enter(d) {
-    if (cur || busy || !on('ENTER')) return; busy = 1; hide(); fadeOn(); info.enters++;
+    if (cur || busy || !on('ENTER')) return;
+    const sp = fx.interiorFor && fx.interiorFor(d);
+    if (sp) { d.special = sp; cur = d; info.inside = true; info.kind = 'special'; info.enters++; sp.enter(d); return; }
+    busy = 1; hide(); fadeOn(); info.enters++;
     try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch (_) {}
     setTimeout(() => {
       try {
         if (!room) buildRoom();
         const kind = kindOf(d); d.kind = kind; info.kind = kind;
+        const two = isTwoStorey(d); d.two = two; info.two = two;
+        if (room.up) room.up.visible = two; if (room.stair) room.stair.visible = two;
         for (const k in room.variants) room.variants[k].visible = k === kind;
         const u = room.variants[kind].userData;
         room.wall.forEach(m => m.color.setHex(u.wall)); room.floor.color.setHex(u.floor); room.ceil.material.color.setHex(u.light);
@@ -215,7 +259,9 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     }, 180);
   }
   function leave() {
-    if (!cur || busy) return; busy = 1; hide(); fadeOn(); info.exits++; const d = cur;
+    if (!cur || busy) return;
+    if (cur.special) { const sp = cur.special; cur = null; info.inside = false; hide(); sp.leave(); return; }
+    busy = 1; hide(); fadeOn(); info.exits++; const d = cur;
     setTimeout(() => {
       let x = d.x + d.ox * 1.7, z = d.z + d.oz * 1.7;
       for (const k of [1.7, 2.4, 3.2, 4.2]) { x = d.x + d.ox * k; z = d.z + d.oz * k; if (clearOK(x, z)) break; if (clearOK(x - d.oz * 1.2, z + d.ox * 1.2)) { x = x - d.oz * 1.2; z = z + d.ox * 1.2; break; } if (clearOK(x + d.oz * 1.2, z - d.ox * 1.2)) { x = x + d.oz * 1.2; z = z - d.ox * 1.2; break; } }
@@ -224,11 +270,13 @@ export function initV128({ T, S, CAM, P, LITE, warp, fx }) {
     }, 180);
   }
   let wrapped = false;
-  const wrapClear = () => { if (wrapped || !fx.clearRoomState) return; wrapped = true; const o = fx.clearRoomState; fx.clearRoomState = function () { if (cur) { cur = null; info.inside = false; if (room) room.g.visible = false; busy = 0; hide(); exitAt = performance.now(); } return o.apply(this, arguments); }; };
+  const wrapClear = () => { if (wrapped || !fx.clearRoomState) return; wrapped = true; const o = fx.clearRoomState; fx.clearRoomState = function () { if (cur) { if (cur.special) { try { cur.special.leave(); } catch (_) {} } cur = null; info.inside = false; if (room) room.g.visible = false; busy = 0; hide(); exitAt = performance.now(); } return o.apply(this, arguments); }; };
 
   let tk = 0;
   function update(t) {
     wrapClear();
+    if (info.dirty) { info.dirty = 0; st.cx = 1e9; }
+    if (cur && cur.special) return;
     if (cur) { /* inside: clamp to the room, push off the table, exit at the door */
       let x = P.pos.x, z = P.pos.z; x = Math.max(RX - 5.2, Math.min(RX + 5.2, x)); z = Math.max(RZ - 4.2, Math.min(RZ + 4.3, z));
       const bl = (cur && cur.kind && room && room.blockers[cur.kind]) || [];
